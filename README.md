@@ -6,6 +6,11 @@ This repository is for our Bachelors project; a project in which we want to be a
 
 `git clone --recurse-submodules https://github.com/OleJonas/Got-Your-Back.git 'GotYourBack'`
 
+#### Setup
+
+We have to fix the setupprocess for openzen, for Linux and for Windows. Maybe create a script for building, adding classpath and updating the openzen.pyd/so for Linux and Mac automatically if possible?
+
+
 #### Structure
 
 Here we will describe the folderstructure
