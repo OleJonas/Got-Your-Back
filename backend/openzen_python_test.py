@@ -64,9 +64,10 @@ while True:
         sensor = zenEvent.data.sensor_found
 
         if sensor_desc_connect is None:
-            if sensor.name == "LPMSB2-3036EB":
-                print("Found sensor {} on IoType {}".format(zenEvent.data.sensor_found.name,
-                                                            zenEvent.data.sensor_found.io_type))
+            # Sensor with no label is LPMSB-4B3326
+            if sensor.name == "LPMSB2-4B3326":
+                print ("Found sensor {} on IoType {}".format( zenEvent.data.sensor_found.name,
+                zenEvent.data.sensor_found.io_type))
                 sensor_desc_connect = zenEvent.data.sensor_found
 
     if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
@@ -132,8 +133,10 @@ print("Sensor is streaming data: {}".format(is_streaming))
 time1 = time.perf_counter()
 print(time1)
 runSome = 0
-with open("data.csv", "w", newline="") as f:
-    writer = csv.writer(f, delimiter=",")
+with open("data2.csv", "w", newline="") as f:
+    writer = csv.writer(f, delimiter=",",quoting=csv.QUOTE_NONE, escapechar="")
+
+    writer.writerow(['Timestamp','a_x','a_y','a_z','g_x','g_y','g_z','w_x','w_y','w_z','r_x','r_y','r_z','q_w','q_x','q_y','q_z'])
 
     while True:
         zenEvent = client.wait_for_next_event()
@@ -145,8 +148,8 @@ with open("data.csv", "w", newline="") as f:
                 zenEvent.component.handle == imu.component.handle:
 
             imu_data = zenEvent.data.imu_data
-            #print ("A: {} m/s^2".format(imu_data.a))
-            #print ("G: {} degree/s".format(imu_data.g))
+            print ("A: {} m/s^2".format(imu_data.a))
+            print ("G: {} degree/s".format(imu_data.g))
 
             data = []
             data.append(imu_data.timestamp)
@@ -154,11 +157,17 @@ with open("data.csv", "w", newline="") as f:
                 data.append(adata)
             for gdata in imu_data.g:
                 data.append(gdata)
+            for wdata in imu_data.w:
+                data.append(wdata)
+            for rdata in imu_data.r:
+                data.append(rdata)
+            for qdata in imu_data.q:
+                data.append(qdata)
 
             writer.writerow(data)
 
         runSome = runSome + 1
-        if runSome > 5000:
+        if runSome > 6000:
             break
 print(time.perf_counter())
 print(time.perf_counter() - time1)
