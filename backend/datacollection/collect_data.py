@@ -142,5 +142,7 @@ def collect_data(*args):
     pass
 
 
-client, sensor, imu = connect_to_sensor(2)
-collect_data(client, sensor, imu)
+if __name__ == '__main__':
+    client, sensor, imu = connect_to_sensor(
+        int(input(f"Which sensor [1-{len(SENSORS)}] do you want to use? ")))
+    collect_data(client, sensor, imu)
