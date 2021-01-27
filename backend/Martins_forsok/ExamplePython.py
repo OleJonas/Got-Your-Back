@@ -9,89 +9,57 @@
 #
 ###########################################################################
 
-import sys
-import openzen
+
 import csv
 import time
+import openzen
+import sys
 
+WRITE_PATH = "backend/Martins_forsok/data.csv"
 
-
-
-"""
-import cv2 
-  
-  
-# define a video capture object 
-vid = cv2.VideoCapture(0) 
-  
-while(True): 
-      
-    # Capture the video frame 
-    # by frame 
-    ret, frame = vid.read() 
-  
-    # Display the resulting frame 
-    cv2.imshow('frame', frame) 
-      
-    # the 'q' button is set as the 
-    # quitting button you may use any 
-    # desired button of your choice 
-    if cv2.waitKey(1) & 0xFF == ord('q'): 
-        break
-  
-# After the loop release the cap object 
-vid.release() 
-# Destroy all the windows 
-cv2.destroyAllWindows() 
-"""
-
-print(time.perf_counter())
 openzen.set_log_level(openzen.ZenLogLevel.Warning)
 
 error, client = openzen.make_client()
 if not error == openzen.ZenError.NoError:
-    print("Error while initializing OpenZen library")
+    print("Error while initializinng OpenZen library")
     sys.exit(1)
 
 error = client.list_sensors_async()
 
 # check for events
 sensor_desc_connect = None
+print("Starting up...\nTrying to connect to bluetooth sensor")
 while True:
     zenEvent = client.wait_for_next_event()
 
     if zenEvent.event_type == openzen.ZenEventType.SensorFound:
-        sensor = zenEvent.data.sensor_found
-
+        # print("Found sensor {} on IoType {}".format(zenEvent.data.sensor_found.name,
+        # zenEvent.data.sensor_found.io_type))
         if sensor_desc_connect is None:
-            if sensor.name == "LPMSB2-3036EB":
-                print("Found sensor {} on IoType {}".format(zenEvent.data.sensor_found.name,
-                                                            zenEvent.data.sensor_found.io_type))
-                sensor_desc_connect = zenEvent.data.sensor_found
+            sensor_desc_connect = zenEvent.data.sensor_found
 
     if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
         lst_data = zenEvent.data.sensor_listing_progress
-        print("Sensor listing progress: {} %".format(lst_data.progress * 100))
+        # print("Sensor listing progress: {} %".format(lst_data.progress * 100))
         if lst_data.complete > 0:
             break
-print("Sensor Listing complete")
+# print("Sensor Listing complete")
 
 if sensor_desc_connect is None:
     print("No sensors found")
     sys.exit(1)
 
-
 # connect to the first sensor found
 error, sensor = client.obtain_sensor(sensor_desc_connect)
 
 # or connect to a sensor by name
-#error, sensor = client.obtain_sensor_by_name("LinuxDevice", "LPMSCU2000003")
+# error, sensor = client.obtain_sensor_by_name("Bluetooth", "LPMSB2-4B31EE")
 
 if not error == openzen.ZenSensorInitError.NoError:
     print("Error connecting to sensor")
     sys.exit(1)
 
-print("Connected to sensor !")
+print(f"Connected to sensor {sensor_desc_connect.name}!")
 
 imu = sensor.get_any_component_of_type(openzen.component_type_imu)
 if imu is None:
@@ -132,7 +100,7 @@ print("Sensor is streaming data: {}".format(is_streaming))
 time1 = time.perf_counter()
 print(time1)
 runSome = 0
-with open("data.csv", "w", newline="") as f:
+with open(WRITE_PATH, "w", newline="") as f:
     writer = csv.writer(f, delimiter=",")
 
     while True:
