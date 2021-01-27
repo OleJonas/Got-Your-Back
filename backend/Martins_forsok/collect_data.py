@@ -17,10 +17,18 @@ import sys
 from tqdm import tqdm
 
 WRITE_PATH = "backend/Martins_forsok/data.csv"
-SENSOR_NAMES = {
-    1: "LPMSB2-3036EB",
-    2: "LPMSB2-4B3326",
-    3: "LPMSB2-4B31EE",
+
+
+class sensor:
+    def __init__(self, name, bluetooth_address):
+        self.name = name
+        self.bluetooth_address = bluetooth_address
+
+
+SENSORS = {
+    1: sensor("LPMSB2-3036EB", "00-04-3e-30-36-eb"),
+    2: sensor("LPMSB2-4B3326", "00-04-3e-4b-33-26"),
+    3: sensor("LPMSB2-4B31EE", "00-04-3e-4b-31-ee"),
 }
 HERTZ = 100
 
@@ -38,7 +46,7 @@ def connect_to_sensor(sensor_no=1):
     sensor_desc_connect = None
     print("Starting up...")
     input(
-        f'Connect to sensor "{SENSOR_NAMES[sensor_no]}" on your machine, and press enter')
+        f'Connect to sensor "{SENSORS[sensor_no].name}" on your machine, and press enter')
     print("Trying to establish connection...")
     while True:
         zenEvent = client.wait_for_next_event()
@@ -46,9 +54,9 @@ def connect_to_sensor(sensor_no=1):
             sensor = zenEvent.data.sensor_found
 
             if sensor_desc_connect is None:
-                if sensor.name == SENSOR_NAMES[sensor_no]:
-                    sensor_desc_connect = zenEvent.data.sensor_found
-                # sensor_desc_connect = zenEvent.data.sensor_found
+                # if sensor.name == SENSORS[sensor_no].name:
+                #     sensor_desc_connect = zenEvent.data.sensor_found
+                sensor_desc_connect = zenEvent.data.sensor_found
         if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
             lst_data = zenEvent.data.sensor_listing_progress
             # print("Sensor listing progress: {} %".format(lst_data.progress * 100))
@@ -59,10 +67,10 @@ def connect_to_sensor(sensor_no=1):
         sys.exit(1)
 
     # connect to the first sensor found
-    error, sensor = client.obtain_sensor(sensor_desc_connect)
+    # error, sensor = client.obtain_sensor(sensor_desc_connect)
     # or connect to a sensor by name (This method does not work!)
-    # error, sensor = client.obtain_sensor_by_name(
-    #     "Bluetooth", SENSOR_NAMES[sensor_no])
+    error, sensor = client.obtain_sensor_by_name(
+        "Bluetooth", SENSORS[sensor_no].bluetooth_address)
 
     if not error == openzen.ZenSensorInitError.NoError:
         print("Error connecting to sensor")
@@ -81,7 +89,6 @@ def connect_to_sensor(sensor_no=1):
         print("Can't load streaming settings")
         sys.exit(1)
     # print("Sensor is streaming data: {}".format(is_streaming))
-
     return client, sensor, imu
 
 
@@ -100,6 +107,8 @@ def collect_data(*args):
     time1 = time.perf_counter()
     with open(WRITE_PATH, "w", newline="") as f:
         writer = csv.writer(f, delimiter=",")
+        writer.writerow(['Timestamp', 'a_x', 'a_y', 'a_z', 'g_x', 'g_y', 'g_z',
+                         'w_x', 'w_y', 'w_z', 'r_x', 'r_y', 'r_z', 'q_w', 'q_x', 'q_y', 'q_z'])
 
         for _ in tqdm(range(rows)):
             zenEvent = zenClient.wait_for_next_event()
@@ -133,5 +142,5 @@ def collect_data(*args):
     pass
 
 
-client, sensor, imu = connect_to_sensor(3)
+client, sensor, imu = connect_to_sensor(2)
 collect_data(client, sensor, imu)
