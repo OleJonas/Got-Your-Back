@@ -16,7 +16,7 @@ import openzen
 import sys
 from tqdm import tqdm
 
-WRITE_PATH = "backend/Martins_forsok/data.csv"
+WRITE_PATH = "backend/datacollection/data.csv"
 
 
 class sensor:

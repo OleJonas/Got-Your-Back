@@ -1,9 +1,0 @@
-ID;start;end;token
-f0t0e0;21.12;28.36;bra
-f0t0e1;28.4;28.88;Overgang
-f0t0e2;28.92;36.08;Darlig
-f0t0e3;37.4;45.12;Darlig
-f0t0e4;45.4;47.04;Overgang
-f0t0e5;47.08;51;Bra
-f0t0e6;51.68;60;Darlig
-f0t0e7;61.4;66.04;Bra
