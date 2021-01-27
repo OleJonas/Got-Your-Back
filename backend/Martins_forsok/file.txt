@@ -1,0 +1,6 @@
+                            <marker start="5/12s" duration="100/2400s" value="Bra"/>
+                            <marker start="13/6s" duration="100/2400s" value="overgang"/>
+                            <marker start="23/6s" duration="100/2400s" value="bra"/>
+                            <marker start="43/8s" duration="100/2400s" value="overgang"/>
+                            <marker start="187/24s" duration="100/2400s" value="overgang"/>
+                            <marker start="281/24s" duration="100/2400s" value="bra"/>
