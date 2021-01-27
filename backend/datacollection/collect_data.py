@@ -120,8 +120,8 @@ def collect_data(*args):
                     zenEvent.component.handle == imu.component.handle:
 
                 imu_data = zenEvent.data.imu_data
-                #print ("A: {} m/s^2".format(imu_data.a))
-                #print ("G: {} degree/s".format(imu_data.g))
+                # print ("A: {} m/s^2".format(imu_data.a))
+                # print ("G: {} degree/s".format(imu_data.g))
 
                 data = []
                 data.append(imu_data.timestamp)
@@ -129,6 +129,12 @@ def collect_data(*args):
                     data.append(adata)
                 for gdata in imu_data.g:
                     data.append(gdata)
+                for wdata in imu_data.w:
+                    data.append(wdata)
+                for rdata in imu_data.r:
+                    data.append(rdata)
+                for qdata in imu_data.q:
+                    data.append(qdata)
 
                 writer.writerow(data)
     # print(time.perf_counter())
