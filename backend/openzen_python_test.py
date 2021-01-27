@@ -10,7 +10,6 @@
 ###########################################################################
 
 import sys
-sys.path.append("C:/Users/Jonas/ntnu_3/Bachelor/")
 import openzen
 import csv
 import time
@@ -62,7 +61,8 @@ while True:
         sensor = zenEvent.data.sensor_found
         
         if sensor_desc_connect is None:
-            if sensor.name == "LPMSB2-3036EB":
+            # Sensor with no label is LPMSB-4B3326
+            if sensor.name == "LPMSB2-4B3326":
                 print ("Found sensor {} on IoType {}".format( zenEvent.data.sensor_found.name,
                 zenEvent.data.sensor_found.io_type))
                 sensor_desc_connect = zenEvent.data.sensor_found
