@@ -15,40 +15,12 @@ import openzen
 import csv
 import time
 
-"""
-import cv2 
-  
-  
-# define a video capture object 
-vid = cv2.VideoCapture(0) 
-  
-while(True): 
-      
-    # Capture the video frame 
-    # by frame 
-    ret, frame = vid.read() 
-  
-    # Display the resulting frame 
-    cv2.imshow('frame', frame) 
-      
-    # the 'q' button is set as the 
-    # quitting button you may use any 
-    # desired button of your choice 
-    if cv2.waitKey(1) & 0xFF == ord('q'): 
-        break
-  
-# After the loop release the cap object 
-vid.release() 
-# Destroy all the windows 
-cv2.destroyAllWindows() 
-"""
-
 print(time.perf_counter())
 openzen.set_log_level(openzen.ZenLogLevel.Warning)
 
 error, client = openzen.make_client()
 if not error == openzen.ZenError.NoError:
-    print ("Error while initializing OpenZen library")
+    print ("Error while initializinng OpenZen library")
     sys.exit(1)
 
 error = client.list_sensors_async()
@@ -62,7 +34,9 @@ while True:
         sensor = zenEvent.data.sensor_found
         
         if sensor_desc_connect is None:
-            if sensor.name == "LPMSB2-3036EB":
+            print("yo")
+            if sensor.name == "LPMSB2-4B31EE":
+                print("yo")
                 print ("Found sensor {} on IoType {}".format( zenEvent.data.sensor_found.name,
                 zenEvent.data.sensor_found.io_type))
                 sensor_desc_connect = zenEvent.data.sensor_found
