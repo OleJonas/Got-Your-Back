@@ -1,8 +1,16 @@
-def _divisionToSeconds(string):
+def _division_to_seconds(string):
     if "/" in string:
         elements = string.split('/')
         return float(elements[0])/float(elements[1])
     return float(string)
+
+
+def _extract_markers(filepath_to_fcpxml):
+    bashCommand = f"cat [path to XML] | grep marker > [filename].txt"
+    import subprocess
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    pass
 
 
 POSE_MAP = {
@@ -12,7 +20,7 @@ POSE_MAP = {
 }
 
 
-def get_timestamp_and_pose_from_XML(filename):
+def get_timestamp_and_pose_from_XML(filepath_to_fcpxml, filepath_to_video, filepath_to_markers="./markers.txt"):
     """
     This method turns an xml-file exported from Final Cut Pro X with markers for video annotation, into the same list as returned in the original get_timestamp_and_pose() method.
 
@@ -29,13 +37,14 @@ def get_timestamp_and_pose_from_XML(filename):
     with open(filename, "r") as f:
         lines = f.readlines()
         # This offset is the duration spent in the video before recording of data begun.
-        offset = _divisionToSeconds(lines[0].strip().split('\"')[1].strip('s'))
+        offset = _division_to_seconds(
+            lines[0].strip().split('\"')[1].strip('s'))
         finished_row = [0]
         posture = POSE_MAP[lines[0].strip().split('\"')[5].lower()]
         for l in lines[1:]:
             sep_row = l.strip().split('\"')
             finished_row.append(
-                round(_divisionToSeconds(sep_row[1].strip('s'))-offset, 2))
+                round(_division_to_seconds(sep_row[1].strip('s'))-offset, 2))
             finished_row.append(posture)
             rows.append(finished_row)
             finished_row = [finished_row[1]]
@@ -47,4 +56,4 @@ def get_timestamp_and_pose_from_XML(filename):
     return rows
 
 
-print(get_timestamp_and_pose_from_XML("backend/Martins_forsok/file.txt"))
+print(get_timestamp_and_pose_from_XML("backend/Martins_forsok/markers.txt"))
