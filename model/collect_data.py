@@ -18,9 +18,12 @@ import os
 
 # Fix the filenames and folderstructure based on our naming convention
 test_person = input("Testobject: ").capitalize()
-test_form = input("Trainingdata? [y/n]: ").strip()[0].lower()
+test_form = None
+while test_form not in {"train", "test"}:
+    test_form = input(
+        "Purpose of data? [train/test]: ").strip().lower()
 if test_form == 'y':
-    test_form = 'training'
+    test_form = 'train'
 else:
     test_form = 'test'
 number = len([name for name in os.listdir(os.path.join(
