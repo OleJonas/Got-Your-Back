@@ -1,0 +1,5 @@
+matplotlib==3.3.3
+pandas==1.1.2
+seaborn==0.11.1
+tqdm==4.52.0
+Sphinx==3.4.3
