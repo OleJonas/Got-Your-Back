@@ -9,7 +9,6 @@
 #
 ###########################################################################
 
-
 import csv
 import time
 import openzen
@@ -17,6 +16,7 @@ import sys
 from tqdm import tqdm
 import os
 
+# Fix the filenames and folderstructure based on our naming convention
 test_person = input("Testobject: ").capitalize()
 test_form = input("Trainingdata? [y/n]: ").strip()[0].lower()
 if test_form == 'y':
