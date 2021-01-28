@@ -1,4 +1,5 @@
 import os
+import csv
 
 
 def _extract_markers(filepath_to_fcpxml):
@@ -15,34 +16,40 @@ def _duration_to_decimal(string):
     return float(string)
 
 
-def _calculate_video_length(filepath_to_video):
-    "Calculates video length from video"
-    from moviepy.video.io.VideoFileClip import VideoFileClip
-    clip = VideoFileClip(filepath_to_video)
-    return clip.duration
+def _duration_from_rows_and_hertz(filepath_to_data, sensor_hz):
+    file = open(filepath_to_data)
+    reader = csv.reader(file)
+    lines = len(list(reader))+1
+    duration = lines/sensor_hz
+    return duration
 
 
 POSE_MAP = {
-    "bra": 0,
-    "overgang": 1,
-    "darlig": 2
+    "ingen_data": -1,
+    "rett": 0,
+    "framover": 1,
+    "bakover": 2,
+    "venstre": 3,
+    "hoyre": 4,
+    "overgang": 5
 }
 
 
-def get_timestamp_and_pose_from_XML(filepath_to_fcpxml, filepath_to_video, filepath_to_markers=f"{os.path.dirname(__file__)}/markers.txt"):
+def get_timestamp_and_pose_from_FCPXML(filepath_to_fcpxml, filepath_to_data, sensor_hz=100, filepath_to_markers=f"{os.path.dirname(__file__)}/markers.txt"):
     """
     This method turns an xml-file exported from Final Cut Pro X with markers for video annotation, into the same list as returned in the original get_timestamp_and_pose() method.
 
     Input:\n
     - filepath_to_fcpxml, 
-    - filepath_to_video, 
-    - filepath_to_markers, 
+    - filepath_to_data,
+    - sensor_hz, default 100
+    - filepath_to_markers, default './markers.txt'
 
     Output:
     A list on form [[starttime, endtime, pose], ...] for information from markers/annotation
     """
     _extract_markers(filepath_to_fcpxml)
-    duration = float(_calculate_video_length(filepath_to_video))
+    duration = _duration_from_rows_and_hertz(filepath_to_data, sensor_hz)
     rows = []
     with open(filepath_to_markers, "r") as f:
         lines = f.readlines()
@@ -65,6 +72,7 @@ def get_timestamp_and_pose_from_XML(filepath_to_fcpxml, filepath_to_video, filep
     return rows
 
 
-path_to_xml = "/Users/martinnilsen/Desktop/Annotation.fcpxml"
-path_to_video = "/Users/martinnilsen/Desktop/martinsVideo.mov"
-print(get_timestamp_and_pose_from_XML(path_to_xml, path_to_video))
+if __name__ == '__main__':
+    path_to_xml = "/Users/martinnilsen/Desktop/Annotation.fcpxml"
+    path_to_data = "backend/datacollection/data.csv"
+    print(get_timestamp_and_pose_from_FCPXML(path_to_xml, path_to_data))

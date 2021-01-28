@@ -16,7 +16,9 @@ import openzen
 import sys
 from tqdm import tqdm
 
-WRITE_PATH = "backend/datacollection/data.csv"
+test_person = input("Testobject: ")
+test_form = input("Purpose of collection? [training/test]: ").lower()
+WRITE_PATH = f"data/{test_form}_data/{test_person}_{test_form}.csv"
 
 
 class sensor:

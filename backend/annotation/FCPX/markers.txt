@@ -1,7 +1,7 @@
-                            <marker start="0s" duration="100/2400s" value="bra"/>
+                            <marker start="0s" duration="100/2400s" value="rett"/>
                             <marker start="3/4s" duration="100/2400s" value="overgang"/>
-                            <marker start="29/12s" duration="100/2400s" value="darlig"/>
+                            <marker start="29/12s" duration="100/2400s" value="hoyre"/>
                             <marker start="8/3s" duration="100/2400s" value="overgang"/>
-                            <marker start="25/6s" duration="100/2400s" value="darlig"/>
+                            <marker start="25/6s" duration="100/2400s" value="venstre"/>
                             <marker start="29/6s" duration="100/2400s" value="overgang"/>
-                            <marker start="65/12s" duration="100/2400s" value="bra"/>
+                            <marker start="65/12s" duration="100/2400s" value="rett"/>
