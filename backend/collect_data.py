@@ -15,10 +15,17 @@ import time
 import openzen
 import sys
 from tqdm import tqdm
+import os
 
-test_person = input("Testobject: ")
-test_form = input("Purpose of collection? [training/test]: ").lower()
-WRITE_PATH = f"data/{test_form}_data/{test_person}_{test_form}.csv"
+test_person = input("Testobject: ").capitalize()
+test_form = input("Trainingdata? [y/n]: ").strip()[0].lower()
+if test_form == 'y':
+    test_form = 'training'
+else:
+    test_form = 'test'
+number = len([name for name in os.listdir(os.path.join(
+    os.getcwd(), f"data/{test_form}_data/")) if name.startswith(test_person)])+1
+WRITE_PATH = f"data/{test_form}_data/{test_person}_{test_form}_{number}.csv"
 
 
 class sensor:
