@@ -62,6 +62,7 @@ def connect_to_sensor(sensor_no=1):
             sensor = zenEvent.data.sensor_found
 
             if sensor_desc_connect is None:
+                # Old method
                 # if sensor.name == SENSORS[sensor_no].name:
                 #     sensor_desc_connect = zenEvent.data.sensor_found
                 sensor_desc_connect = zenEvent.data.sensor_found
