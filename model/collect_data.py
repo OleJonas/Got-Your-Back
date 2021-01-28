@@ -17,15 +17,11 @@ from tqdm import tqdm
 import os
 
 # Fix the filenames and folderstructure based on our naming convention
-test_person = input("Testobject: ").capitalize()
+test_person = input("Name: ").capitalize()
 test_form = None
 while test_form not in {"train", "test"}:
     test_form = input(
         "Purpose of data? [train/test]: ").strip().lower()
-if test_form == 'y':
-    test_form = 'train'
-else:
-    test_form = 'test'
 number = len([name for name in os.listdir(os.path.join(
     os.getcwd(), f"data/{test_form}_data/")) if name.startswith(test_person)])+1
 WRITE_PATH = f"data/{test_form}_data/{test_person}_{test_form}_{number}.csv"
@@ -110,7 +106,13 @@ def collect_data(*args):
     imu = args[2]
 
     print("\nReady to start collecting data")
-    seconds = int(input("For how many seconds do you want to collect? "))
+    while True:
+        try:
+            seconds = int(
+                input("For how many seconds do you want to collect? "))
+            break
+        except ValueError:
+            pass
     input("Press enter to start collection...")
 
     rows = seconds*HERTZ
