@@ -30,24 +30,15 @@ WRITE_PATH = f"data/{test_form}_data/{test_person}_{test_form}_{number}.csv"
 
 
 @dataclass
-class Sensor:
-    name: str
-    bluetooth_address: str
-
-
-@dataclass
 class SensorInstance:
+    name: str
     client: openzen.ZenClient
     sensor: openzen.ZenSensor
     imu: openzen.ZenSensorComponent
 
 
+sensorInstances = []
 HERTZ = 100
-SENSORS = {
-    1: Sensor("LPMSB2-3036EB", "00-04-3e-30-36-eb"),
-    2: Sensor("LPMSB2-4B3326", "00-04-3e-4b-33-26"),
-    3: Sensor("LPMSB2-4B31EE", "00-04-3e-4b-31-ee"),
-}
 
 
 def _create_openzen_instance():
@@ -76,10 +67,8 @@ def connect_to_sensor(client):
                     sensor = zenEvent.data.sensor_found
 
                     if sensor_desc_connect is None:
-                        # Old method
-                        # if sensor.name == SENSORS[sensor_no].name:
-                        # sensor_desc_connect = zenEvent.data.sensor_found
-                        sensor_desc_connect = zenEvent.data.sensor_found
+                        if sensor.name not in [x.name for x in sensorInstances]:
+                            sensor_desc_connect = zenEvent.data.sensor_found
                 if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
                     lst_data = zenEvent.data.sensor_listing_progress
                     # print("Sensor listing progress: {} %".format(lst_data.progress * 100))
@@ -114,9 +103,9 @@ def connect_to_sensor(client):
             connected = True
             print("---------------")
 
-        except None:
+        except ValueError:
             pass
-    return SensorInstance(client, sensor, imu)
+    return SensorInstance(sensor_desc_connect.name, client, sensor, imu)
 
 
 def collect_data(sensorInstances: list):
@@ -182,11 +171,10 @@ def collect_data(sensorInstances: list):
     # print("OpenZen library was closed")
     pass
 
+
 if __name__ == '__main__':
     amount_of_sensors = int(
-        input(f"How many sensors [1-{len(SENSORS)}] do you want to use? "))
-    print("---------------")
-    sensorInstances = []
+        input(f"How many sensors [1-3] do you want to use? "))
     client = _create_openzen_instance()
     for _ in range(amount_of_sensors):
         sensorInstances.append(connect_to_sensor(client=client))
