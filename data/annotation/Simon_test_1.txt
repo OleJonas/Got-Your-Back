@@ -1,6 +1,6 @@
 ID;start;end;token
 f0t0e0;0;12.28;rett
-f0t0e1;12.6;22.64;framover
+f0t0e1;12.6;22.64;fram
 f0t0e2;24.16;31.64;venstre
 f0t0e3;32.76;42;hoyre
-f0t0e4;42.64;58.64;bakover
+f0t0e4;42.64;58.64;bak

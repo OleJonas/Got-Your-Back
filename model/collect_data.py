@@ -182,7 +182,6 @@ def collect_data(sensorInstances: list):
     # print("OpenZen library was closed")
     pass
 
-
 if __name__ == '__main__':
     amount_of_sensors = int(
         input(f"How many sensors [1-{len(SENSORS)}] do you want to use? "))
