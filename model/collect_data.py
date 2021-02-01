@@ -60,24 +60,15 @@ def _create_openzen_instance():
     return client
 
 
-def connect_to_sensor(sensor_no, client):
+def connect_to_sensor(client):
     print("---------------")
     connected = False
     while not connected:
         try:
-            # Create instance
-            openzen.set_log_level(openzen.ZenLogLevel.Warning)
-            error, client = openzen.make_client()
-            if not error == openzen.ZenError.NoError:
-                print("Error while initializinng OpenZen library")
-                sys.exit(1)
             error = client.list_sensors_async()
-
             # check for events and find clients
             sensor_desc_connect = None
 
-            input(
-                f'Connect to sensor "{SENSORS[sensor_no].name}" on your machine, and press enter')
             print("Trying to establish connection...")
             while True:
                 zenEvent = client.wait_for_next_event()
@@ -87,7 +78,7 @@ def connect_to_sensor(sensor_no, client):
                     if sensor_desc_connect is None:
                         # Old method
                         # if sensor.name == SENSORS[sensor_no].name:
-                        #     sensor_desc_connect = zenEvent.data.sensor_found
+                        # sensor_desc_connect = zenEvent.data.sensor_found
                         sensor_desc_connect = zenEvent.data.sensor_found
                 if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
                     lst_data = zenEvent.data.sensor_listing_progress
@@ -100,9 +91,13 @@ def connect_to_sensor(sensor_no, client):
                 # sys.exit(1)
                 continue
 
+            # connect to the first sensor found
+            error, sensor = client.obtain_sensor(sensor_desc_connect)
+
             # Connect to sensor
-            error, sensor = client.obtain_sensor_by_name(
-                "Bluetooth", SENSORS[sensor_no].bluetooth_address)
+            # error, sensor = client.obtain_sensor_by_name(
+            #     "Bluetooth", SENSORS[sensor_no].bluetooth_address)
+
             if not error == openzen.ZenSensorInitError.NoError:
                 print("Error connecting to sensor")
                 # sys.exit(1)
@@ -122,14 +117,6 @@ def connect_to_sensor(sensor_no, client):
         except None:
             pass
     return SensorInstance(client, sensor, imu)
-
-
-"""
-def collect_data(*args):
-    zenClient = args[0]
-    sensor = args[1]
-    imu = args[2]
-"""
 
 
 def collect_data(sensorInstances: list):
@@ -203,6 +190,5 @@ if __name__ == '__main__':
     sensorInstances = []
     client = _create_openzen_instance()
     for _ in range(amount_of_sensors):
-        sensorInstances.append(connect_to_sensor(sensor_no=int(
-            input(f"Which sensor [1-{len(SENSORS)}] do you want to use? ")), client=client))
+        sensorInstances.append(connect_to_sensor(client=client))
     collect_data(sensorInstances)
