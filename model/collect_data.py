@@ -162,7 +162,6 @@ def collect_data(*args):
     # print("OpenZen library was closed")
     pass
 
-
 if __name__ == '__main__':
     client, sensor, imu = connect_to_sensor(
         int(input(f"Which sensor [1-{len(SENSORS)}] do you want to use? ")))
