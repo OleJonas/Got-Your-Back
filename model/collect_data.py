@@ -50,7 +50,17 @@ SENSORS = {
 }
 
 
-def connect_to_sensor(sensor_no=1):
+def _create_openzen_instance():
+    openzen.set_log_level(openzen.ZenLogLevel.Warning)
+    error, client = openzen.make_client()
+    if not error == openzen.ZenError.NoError:
+        print("Error while initializinng OpenZen library")
+        sys.exit(1)
+    error = client.list_sensors_async()
+    return client
+
+
+def connect_to_sensor(sensor_no, client):
     print("---------------")
     connected = False
     while not connected:
@@ -124,7 +134,8 @@ def collect_data(*args):
 
 def collect_data(sensorInstances: list):
     for element in sensorInstances:
-        assert isinstance(element, SensorInstance), "You can only collect data from sensorInstances!" 
+        assert isinstance(
+            element, SensorInstance), "You can only collect data from sensorInstances!"
 
     print("\nReady to start collecting data")
     while True:
@@ -188,9 +199,10 @@ def collect_data(sensorInstances: list):
 if __name__ == '__main__':
     amount_of_sensors = int(
         input(f"How many sensors [1-{len(SENSORS)}] do you want to use? "))
+    print("---------------")
     sensorInstances = []
+    client = _create_openzen_instance()
     for _ in range(amount_of_sensors):
-        sensorInstances.append(connect_to_sensor(
-            int(input(f"Which sensor [1-{len(SENSORS)}] do you want to use? "))))
-
+        sensorInstances.append(connect_to_sensor(sensor_no=int(
+            input(f"Which sensor [1-{len(SENSORS)}] do you want to use? ")), client=client))
     collect_data(sensorInstances)
