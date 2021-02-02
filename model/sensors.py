@@ -10,3 +10,6 @@ SENSORS = {
     2: Sensor("LPMSB2-4B3326", "00-04-3e-4b-33-26"),
     3: Sensor("LPMSB2-4B31EE", "00-04-3e-4b-31-ee"),
 }
+
+
+
