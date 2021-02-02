@@ -99,7 +99,6 @@ def connect_to_sensor(client):
                 print("No IMU found")
                 # sys.exit(1)
                 continue
-
             connected = True
             print("---------------")
 
