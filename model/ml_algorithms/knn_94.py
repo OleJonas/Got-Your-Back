@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import sys
+import os
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 csv_f_name = "../../data/sensortest/data_martin_sensortest.csv"
