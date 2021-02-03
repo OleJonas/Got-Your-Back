@@ -31,7 +31,12 @@ class struct_data:
 
 
     def trim_excess_data(self):
-        pass
+        df_lengths = [len(frame.index) for frame in self.df_arr]
+        min_len = min(df_lengths)
+
+        for frame in self.df_arr:
+            frame = frame.iloc[:min_len, :]
+                    
 
 
     def get_timestamp_and_pose(self):
