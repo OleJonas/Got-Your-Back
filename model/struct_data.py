@@ -10,13 +10,19 @@ class struct_data:
         self.pose_map = pose_map
 
         csv = pd.read_csv(self.data_f_name)
-        self.df_arr = [pd.DataFrame(csv)]
+        self.df = pd.DataFrame(csv)
+        self.df_arr = []
 
-
+    def split_mult_sensor_data(self, n_sensors):
+        for id in range(n_sensors):
+            sensor_df = self.df[self.df["SensorId"] == (id+1)]
+            self.df_arr.append(sensor_df)
+    
     def fix_offsets(self, n_sensors):
         offsets = []
         for sensor in range(n_sensors):
-            df_time_offset = self.df[self.df[" TimeStamp (s)"] == (sensor+1)][0]
+            print(self.df[self.df[" TimeStamp (s)"] == (sensor+1)])
+            df_time_offset = self.df[self.df[" TimeStamp (s)"] == (sensor+1)]
             offsets.append(df_time_offset)
             self.df[" TimeStamp (s)"] = self.df[self.df[" TimeStamp (s)"] == (sensor+1)] - df_time_offset
         return offsets
