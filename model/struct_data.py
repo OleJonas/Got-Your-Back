@@ -31,8 +31,7 @@ class struct_data:
 
 
     def trim_excess_data(self):
-        for sensor_data in self.df_arr:
-            sensor_data.
+        pass
 
 
     def get_timestamp_and_pose(self):
