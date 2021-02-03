@@ -15,10 +15,10 @@ class struct_data:
 
     def fix_offsets(self, n_sensors):
         offsets = []
-        for sensor in n_sensors:
-            df_time_offset = self.df[self.df[" TimeStamp (s)"] == sensor][0]
+        for sensor in range(n_sensors):
+            df_time_offset = self.df[self.df[" TimeStamp (s)"] == (sensor+1)][0]
             offsets.append(df_time_offset)
-            self.df[" TimeStamp (s)"] = self.df[self.df[" TimeStamp (s)"] == sensor] - df_time_offset
+            self.df[" TimeStamp (s)"] = self.df[self.df[" TimeStamp (s)"] == (sensor+1)] - df_time_offset
         return offsets
 
 
@@ -56,8 +56,10 @@ class struct_data:
                     df_stamped_poses.append(pose_id)
                 else:
                     self.df = self.df.drop(row_index)
+                    drops += 1
             else:
                 self.df = self.df.drop(row_index)
+                drops += 1
             row_index += 1
 
         print(len(self.df.index))
