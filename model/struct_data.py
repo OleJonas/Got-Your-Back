@@ -56,8 +56,10 @@ class struct_data:
                     df_stamped_poses.append(pose_id)
                 else:
                     self.df = self.df.drop(row_index)
+                    drops += 1
             else:
                 self.df = self.df.drop(row_index)
+                drops += 1
             row_index += 1
 
         print(len(self.df.index))
