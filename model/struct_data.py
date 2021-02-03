@@ -14,15 +14,6 @@ class struct_data:
         self.df_arr = []
 
 
-    def fix_offsets(self):
-        offsets = []
-        for sensor_data in self.df_arr:
-            df_time_offset = sensor_data[" TimeStamp (s)"].iloc[0]
-            offsets.append(df_time_offset)
-            sensor_data[" TimeStamp (s)"] = sensor_data[" TimeStamp (s)"] - df_time_offset
-        return offsets
-
-
     def split_mult_sensor_data(self, n_sensors):
         for id in range(n_sensors):
             print(id+1)
@@ -30,12 +21,24 @@ class struct_data:
             self.df_arr.append(sensor_df)
 
 
+    def fix_offsets(self):
+        offsets = []
+        for i in range(len(self.df_arr)):
+            df_time_offset = self.df_arr[i][" TimeStamp (s)"].iloc[0]
+            offsets.append(df_time_offset)
+            self.df_arr[i][" TimeStamp (s)"] = self.df_arr[i][" TimeStamp (s)"] - df_time_offset
+        return offsets
+
+
     def trim_excess_data(self):
         df_lengths = [len(frame.index) for frame in self.df_arr]
         min_len = min(df_lengths)
+        print(min_len)
 
-        for frame in self.df_arr:
-            frame = frame.iloc[:min_len, :]
+        for i in range(len(self.df_arr)):
+            self.df_arr[i] = self.df_arr[i].iloc[:min_len]
+            print(len(self.df_arr[i]))
+        return min_len
                     
 
 
