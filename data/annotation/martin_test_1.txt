@@ -1,0 +1,10 @@
+ID;start;end;token
+f0t0e0;0;9.8;rett
+f0t0e1;10.88;19.52;fram
+f0t0e2;21.08;29.68;fram-hoyre
+f0t0e3;31.32;39.96;hoyre
+f0t0e4;41;49.64;bak-hoyre
+f0t0e5;51.24;59.52;bak
+f0t0e6;60.72;70;bak-venstre
+f0t0e7;71.4;79.64;venstre
+f0t0e8;81.24;89.64;fram-venstre
