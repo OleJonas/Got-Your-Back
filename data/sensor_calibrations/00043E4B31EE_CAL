@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<LpmsControlConfiguration>
+	<FieldEstimate>42.4946</FieldEstimate>
+	<HardIronOffset>-28.3046, 0.103589, -73.4086</HardIronOffset>
+	<SoftIronMatrix>0.998693, 0, 0, 0, 0.98099, 0, 0, 0, 1.02071</SoftIronMatrix>
+	<MisalignmentMatrix>0.997655, 0.00488678, -0.00453061, -0.00502054, 0.995643, -0.0162748, 0.00374966, 0.0290986, 0.996868</MisalignmentMatrix>
+	<AccelerometerBias>0.0140868, 0.00812388, -0.00603317</AccelerometerBias>
+	<GyroMisalignmentMatrix>1.01591, -0.00232942, -0.0101046, 0.00308555, 1.00147, -0.0519945, -0.00929835, -0.0224862, 1.00046</GyroMisalignmentMatrix>
+	<GyroMisalignmentBias>3.9968e-07, 2.71747e-07, 5.43616e-08</GyroMisalignmentBias>
+</LpmsControlConfiguration>
