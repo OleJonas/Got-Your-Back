@@ -30,10 +30,18 @@ class struct_data:
         return offsets
 
 
-    def trim_excess_data(self):
+    def fit_rows_columns(self):
+        # Fits and drops the columns 'SensorId',' TimeStamp (s)',' FrameNumber',' LinAccX (g)',' LinAccY (g)',
+        # ' LinAccZ (g)',' Pressure (kPa)',' Altitude (m)',' Temperature (degC)',' HeaveMotion (m)'
+        # from all data from the sensors. Timestamps will be kept for the first sensor, whil ethe rest is dropped.
+
+        print("Dropping unused columns...")
+        self.df = self.df.drop(['SensorId',' FrameNumber',' LinAccX (g)',' LinAccY (g)',' LinAccZ (g)',' Pressure (kPa)',' Altitude (m)',' Temperature (degC)',' HeaveMotion (m)'],axis=1)
+
+
         df_lengths = [len(frame.index) for frame in self.df_arr]
         min_len = min(df_lengths)
-        print(min_len)
+        print("Min length of sensor data: ", min_len)
 
         for i in range(len(self.df_arr)):
             self.df_arr[i] = self.df_arr[i].iloc[:min_len]
