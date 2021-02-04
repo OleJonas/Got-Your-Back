@@ -30,7 +30,7 @@ class struct_data:
         return offsets
 
 
-    def fix_rows_columns(self):
+    def fix_ro_columns(self):
         # Fits and drops the columns 'SensorId',' TimeStamp (s)',' FrameNumber',' LinAccX (g)',' LinAccY (g)',
         # ' LinAccZ (g)',' Pressure (kPa)',' Altitude (m)',' Temperature (degC)',' HeaveMotion (m)'
         # from all data from the sensors. Timestamps will be kept for the first sensor, whil ethe rest is dropped.
