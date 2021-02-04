@@ -30,10 +30,11 @@ class struct_data:
         return offsets
 
 
-    def fix_ro_columns(self):
+    def concat_sensor_data(self, n_sensors):
         # Fits and drops the columns 'SensorId',' TimeStamp (s)',' FrameNumber',' LinAccX (g)',' LinAccY (g)',
         # ' LinAccZ (g)',' Pressure (kPa)',' Altitude (m)',' Temperature (degC)',' HeaveMotion (m)'
-        # from all data from the sensors. Timestamps will be kept for the first sensor, whil ethe rest is dropped.
+        # from all data from the sensors. Timestamps will be kept for the first sensor, while the rest is dropped.
+        # Then concatenates data into a common dataframe.
 
         print("Dropping unused columns...")
         self.df = self.df.drop(['SensorId',' FrameNumber',' LinAccX (g)',' LinAccY (g)',' LinAccZ (g)',' Pressure (kPa)',' Altitude (m)',' Temperature (degC)',' HeaveMotion (m)'],axis=1)
