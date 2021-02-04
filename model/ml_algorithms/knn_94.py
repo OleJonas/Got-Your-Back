@@ -1,12 +1,14 @@
-from sklearn.neighbors import NeighborhoodComponentsAnalysis, KNeighborsClassifier
-from sklearn.metrics import classification_report, confusion_matrix
+import os
+import sys
+import seaborn as sns
+import numpy as np
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from struct_data import struct_data
 import pandas as pd
-import numpy as np
-import seaborn as sns
-import sys
-import os
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
+from sklearn.neighbors import NeighborhoodComponentsAnalysis, KNeighborsClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+
+os.getcwd() + "/data/sensortest/data_martin_sensortest.csv"
 
 csv_f_name = "../../data/sensortest/data_martin_sensortest.csv"
 annot_f_name = "../../data/annotation/martin_sensortest.txt"
@@ -187,4 +189,4 @@ for num in range(len(predictions)):
 
 print("number of correct: {}".format(number_of_corrects))
 print("number of guesses: {}".format(len(predictions)))
-print("% correct: {}".format(number_of_corrects/len(predictions)*100))
+print("% correct: {}".format(number_of_corrects / len(predictions) * 100))
