@@ -30,7 +30,7 @@ class struct_data:
         return offsets
 
 
-    def fit_rows_columns(self):
+    def fix_rows_columns(self):
         # Fits and drops the columns 'SensorId',' TimeStamp (s)',' FrameNumber',' LinAccX (g)',' LinAccY (g)',
         # ' LinAccZ (g)',' Pressure (kPa)',' Altitude (m)',' Temperature (degC)',' HeaveMotion (m)'
         # from all data from the sensors. Timestamps will be kept for the first sensor, whil ethe rest is dropped.
@@ -38,6 +38,7 @@ class struct_data:
         print("Dropping unused columns...")
         self.df = self.df.drop(['SensorId',' FrameNumber',' LinAccX (g)',' LinAccY (g)',' LinAccZ (g)',' Pressure (kPa)',' Altitude (m)',' Temperature (degC)',' HeaveMotion (m)'],axis=1)
 
+        self.split_mult_sensor_data()
 
         df_lengths = [len(frame.index) for frame in self.df_arr]
         min_len = min(df_lengths)
@@ -48,6 +49,9 @@ class struct_data:
             print(len(self.df_arr[i]))
         return min_len
                     
+
+    def concat_sensor_data(self):
+
 
 
     def get_timestamp_and_pose(self):
