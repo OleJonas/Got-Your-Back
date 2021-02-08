@@ -1,12 +1,14 @@
 from sklearn.neighbors import NeighborhoodComponentsAnalysis, KNeighborsClassifier
 from sklearn.metrics import classification_report, confusion_matrix
+import sys
+import os
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from struct_data import struct_data
 import pandas as pd
 import numpy as np
 import seaborn as sns
-import sys
-import os
-sys.path.insert(1, os.path.join(sys.path[0], '..'))
+import matplotlib
+from matplotlib import pyplot as pp
 
 csv_f_name = "../../data/sensortest/data_martin_sensortest.csv"
 annot_f_name = "../../data/annotation/martin_sensortest.txt"
@@ -74,9 +76,11 @@ print(len(knn_train.df.index))
 # print(len(df_stamped_poses))
 y_train = knn_train.df["Pose"]
 # df['Pose'].hist(bins=4)
-sns.lineplot(data=df_train, x=" TimeStamp (s)", y='Pose')
+#sns.lineplot(data=df_train, x=" TimeStamp (s)", y='Pose')
+#pp.show()
 
-sns.histplot(data=df_train['SensorId'])
+#sns.histplot(data=df_train['SensorId'])
+#pp.show()
 
 print(y_train)
 print(len(y_train))
@@ -97,7 +101,8 @@ df_test, df_stamped_poses = knn_test.align_poses(s_poses)
 
 y_test = df_stamped_poses  # df_test["Pose"]
 
-sns.histplot(data=df_test['SensorId'])
+#sns.histplot(data=df_test['SensorId'])
+#pp.show()
 
 
 x_test = df_test.drop([' TimeStamp (s)'], axis=1)
@@ -107,7 +112,8 @@ x_test = x_test.drop(['Pose', ' FrameNumber', ' LinAccX (g)', ' LinAccY (g)', ' 
 x_test
 
 
-sns.histplot(x_train['SensorId'])
+#sns.histplot(x_train['SensorId'])
+#pp.show()
 
 
 """
@@ -172,13 +178,15 @@ for num in range(len(predictions)):
 """
 
 df_predict = pd.DataFrame({'x': df_test[' TimeStamp (s)'], 'y': predictions})
-sns.lineplot(data=df_predict, x='x', y='y')
+#sns.lineplot(data=df_predict, x='x', y='y')
+#pp.show()
 
 print(confusion_matrix(y_test, predictions))
 print(classification_report(y_test, predictions, zero_division=True))
 
-sns.heatmap(confusion_matrix(y_test, predictions),
-            cmap="YlGnBu", annot=True, fmt="d")
+#sns.heatmap(confusion_matrix(y_test, predictions),
+            #cmap="YlGnBu", annot=True, fmt="d")
+#pp.show()
 
 number_of_corrects = 0
 for num in range(len(predictions)):
