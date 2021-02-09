@@ -17,7 +17,6 @@ from tqdm import tqdm
 import os
 from dataclasses import dataclass
 
-
 # Fix the filenames and folderstructure based on our naming convention
 test_person = input("Name: ").capitalize()
 test_form = None
@@ -25,8 +24,8 @@ while test_form not in {"train", "test"}:
     test_form = input(
         "Purpose of data? [train/test]: ").strip().lower()
 number = len([name for name in os.listdir(os.path.join(
-    os.getcwd(), f"data/{test_form}_data/")) if name.startswith(test_person)])+1
-WRITE_PATH = f"data/{test_form}_data/{test_person}_{test_form}_{number}.csv"
+    os.getcwd(), f"data/live/{test_form}_data/")) if name.startswith(test_person)])+1
+WRITE_PATH = f"data/live/{test_form}_data/{test_person}_{test_form}_{number}.csv"
 
 
 @dataclass
@@ -38,7 +37,7 @@ class SensorInstance:
 
 
 sensorInstances = []
-HERTZ = 100
+HERTZ = 50
 
 
 def _create_openzen_instance():
