@@ -48,13 +48,13 @@ class df_wrapper:
             self.df['SensorId'] = [1 for i in range(len(self.df.index))]
             self.df = self.df.rename(columns={"Timestamp": " TimeStamp (s)"})
 
-        print("Splitting into ", n_sensors, " separate dataframes...")
+        #print("Splitting into ", n_sensors, " separate dataframes...")
         self.split_mult_sensor_data(n_sensors)
 
-        print("Fixing time offsets")
+        #print("Fixing time offsets")
         offsets = self.fix_offsets()
 
-        print("Dropping unused columns...")
+        #print("Dropping unused columns...")
 
         drop_arr = []
         if " FrameNumber" not in self.df.columns:
@@ -71,7 +71,7 @@ class df_wrapper:
 
         df_lengths = [len(frame.index) for frame in self.df_arr]
         min_len = min(df_lengths)
-        print("Min length of sensor data: ", min_len)
+        #print("Min length of sensor data: ", min_len)
 
         # Cutting excess data and fixing indexing after being cut
         for i in range(len(self.df_arr)):
@@ -104,10 +104,11 @@ class df_wrapper:
                 drops += 1
             row_index += 1
 
-        # print(len(self.df.index))
+        """
         print("drops: {}".format(drops))
         print("length of knn_train.df after drops: {}".format(len(self.df.index)))
         print(len(df_stamped_poses))
+        """
         self.df["Pose"] = df_stamped_poses
 
         return df_stamped_poses
@@ -154,6 +155,10 @@ def get_timestamp_and_pose(annot_f_name, pose_map):
             finished_row.append(pose_map[sep_row[3].lower()])
             rows.append(finished_row)
     return rows
+
+
+def combine_dataframes(dataframes):
+    return pd.concat(dataframes)
 
 
 if __name__ == "__main__":
