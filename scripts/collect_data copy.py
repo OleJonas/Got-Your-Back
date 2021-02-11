@@ -56,15 +56,14 @@ def scan_for_sensors(client):
     listingComplete = False
     while not listingComplete:
         event = client.wait_for_next_event()
-        e_type = event.event_type
         if not event:
             break
 
         if not event.component.handle:
             # switch event.eventType:
 
-            if e_type.SensorFound:
-                print("Found sensor ", event.data.SensorFound.name)
+            if event.event_type.SensorFound:
+                print("Found sensor ", event.data.sensor_found.name)
                 sensors_found.append(event.data.sensorFound)
                 break
 
@@ -75,6 +74,58 @@ def scan_for_sensors(client):
                     listingComplete = True
                 break
     return sensors_found
+
+
+def scan_for_sensors_test(client):
+    sensor_instances = []
+    connected = False
+    while not connected:
+        try:
+            error = client.list_sensors_async()
+            sensor_desc_connect = None
+            while True:
+                zenEvent = client.wait_for_next_event()
+                if zenEvent.event_type == openzen.ZenEventType.SensorFound:
+                    sensor = zenEvent.data.sensor_found
+                    if sensor_desc_connect is None:
+                        if sensor.name not in [x.name for x in sensor_instances]:
+                            sensor_desc_connect = zenEvent.data.sensor_found
+                if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
+                    lst_data = zenEvent.data.sensor_listing_progress
+                    # print("Sensor listing progress: {} %".format(lst_data.progress * 100))
+                    if lst_data.complete > 0:
+                        break
+
+            if sensor_desc_connect is None:
+                print("No sensors found")
+                # sys.exit(1)
+                continue
+
+            # connect to the first sensor found
+            error, sensor = client.obtain_sensor(sensor_desc_connect)
+
+            # Connect to sensor
+            # error, sensor = client.obtain_sensor_by_name(
+            #     "Bluetooth", SENSORS[sensor_no].bluetooth_address)
+
+            if not error == openzen.ZenSensorInitError.NoError:
+                print("Error connecting to sensor")
+                # sys.exit(1)
+                continue
+            print(f"Connected to sensor {sensor_desc_connect.name}!")
+
+            # Get instance/connection to imu in sensor
+            imu = sensor.get_any_component_of_type(openzen.component_type_imu)
+            if imu is None:
+                print("No IMU found")
+                # sys.exit(1)
+                continue
+            connected = True
+            print("---------------")
+
+        except ValueError:
+            pass
+    return SensorInstance(sensor_desc_connect.name, client, sensor, imu)
 
 
 def connect_to_sensor_test(client, sensor):
@@ -160,7 +211,7 @@ if __name__ == '__main__':
     # collect_data(sensorInstances)
 
     print("Scanning for sensors...")
-    sensors_found = scan_for_sensors(client)
+    sensors_found = scan_for_sensors_test(client)
 
     if len(sensors_found) == 0:
         print("No available sensors found")
