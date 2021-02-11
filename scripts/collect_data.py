@@ -18,7 +18,7 @@ import os
 from dataclasses import dataclass
 
 # Fix the filenames and folderstructure based on our naming convention
-test_person = input("Name: ").capitalize()
+test_person = input("Name: ").lower()
 test_form = None
 while test_form not in {"train", "test"}:
     test_form = input(
