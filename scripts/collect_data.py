@@ -16,17 +16,16 @@ import sys
 from tqdm import tqdm
 import os
 from dataclasses import dataclass
+from datetime import datetime
 
 # Fix the filenames and folderstructure based on our naming convention
 test_person = input("Name: ").lower()
-test_form = None
-while test_form not in {"train", "test"}:
-    test_form = input(
-        "Purpose of data? [train/test]: ").strip().lower()
-number = len([name for name in os.listdir(os.path.join(
-    os.getcwd(), f"data/live/{test_form}_data/")) if name.startswith(test_person)])+1
-WRITE_PATH = f"data/live/{test_form}_data/{test_person}_{test_form}_{number}.csv"
+n_sensors = 3
 
+#number = len([name for name in os.listdir(os.path.join(os.getcwd(), f"data/live/")) if name.startswith(test_person)])+1
+now = datetime.now()
+date_time = now.strftime("%d%m%y_%H%M")
+WRITE_PATH = f"data/live/{test_person}_{n_sensors}_{date_time}.csv"
 
 @dataclass
 class SensorInstance:
@@ -35,10 +34,8 @@ class SensorInstance:
     sensor: openzen.ZenSensor
     imu: openzen.ZenSensorComponent
 
-
 sensorInstances = []
 HERTZ = 50
-
 
 def _create_openzen_instance():
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
@@ -52,6 +49,7 @@ def _create_openzen_instance():
 
 def connect_to_sensor(client):
     print("---------------")
+    sensor_arr = []
     connected = False
     while not connected:
         try:
@@ -121,7 +119,7 @@ def collect_data(sensorInstances: list):
             pass
     input("Press enter to start collection...")
 
-    rows = seconds*HERTZ
+    rows = seconds * HERTZ
 
     # start streaming data
     time1 = time.perf_counter()
