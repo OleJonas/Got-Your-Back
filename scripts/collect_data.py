@@ -103,7 +103,6 @@ def connect_to_sensor(client):
             pass
     return SensorInstance(sensor_desc_connect.name, client, sensor, imu)
 
-
 def collect_data(sensorInstances: list):
     for element in sensorInstances:
         assert isinstance(
