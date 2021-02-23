@@ -52,6 +52,9 @@ def connect_to_sensors(client, sensors, chosen_sensors):
     Output:\n
     connected_sensors - list of connected sensors
     """
+    if len(sensors) < 1:
+        sys.exit("No sensors found!\nExiting...")
+
     connected_sensors = []
 
     for index in chosen_sensors:
@@ -95,14 +98,11 @@ def connect_to_sensor(client, s):
 
 def collect_data(client, sensors):
     imus = [sensor.get_any_component_of_type(openzen.component_type_imu) for sensor in sensors]
-    #imu_sensors = [x.sensor for x in imus]
-    #imu_handles = [x.component.handle for x in imus]
-    #print(sensors[1].sensor.handle)
-    print("Length of imus: ", len(imus))
 
     #Synchronize
     for imu in imus: imu.execute_property(openzen.ZenImuProperty.StartSensorSync)
-    time.sleep(3)
+    time.sleep(5)
+    #Back to normal mode
     for imu in imus: imu.execute_property(openzen.ZenImuProperty.StopSensorSync)
     
     for imu in imus: 
@@ -118,61 +118,42 @@ def collect_data(client, sensors):
 
     runSome = 0
     occurences = [0,0,0]
+    data = []
+    columns = ['SensorId',' TimeStamp (s)',' FrameNumber',' AccX (g)',' AccY (g)',' AccZ (g)',' GyroX (deg/s)',' GyroY (deg/s)',' GyroZ (deg/s)',' MagX (uT)', ' MagY (uT)', ' MagZ (uT)', ' EulerX (deg)', ' EulerY (deg)', ' EulerZ (deg)',' QuatW',' QuatX', 'QuatY', 'QuatZ']
+    data.append(columns)
     while True:
+        dataRow = []
         zenEvent = client.wait_for_next_event()
-        # check if its an IMU sample event and if it
-        # comes from our IMU and sensor component
+        # Check if it's an IMU sample event and if it comes from our IMU and sensor component
         if zenEvent.event_type == openzen.ZenEventType.ImuData and \
             zenEvent.component.handle == imu.component.handle:
             occurences[int(zenEvent.sensor.handle)-1] += 1
             
             imu_data = zenEvent.data.imu_data
-            """print(f"A: {imu_data.a} m/s^2")
-            print(f"G: {imu_data.g} degree/s")"""
+            #print(f"Timestamp: {imu_data.timestamp} s, \n")
+            #print(f"A: {imu_data.a} m/s^2, \n")
+            #print(f"G: {imu_data.g} degree/s, \n")
+            print("imu sensor handle: ", imu.sensor.handle)
+            print("zenEvent sensor handle: ", zenEvent.sensor.handle)
+            dataRow.append(zenEvent.sensor.handle)
+            dataRow.append(imu_data.timestamp)
 
+            for i in range(3): 
+                dataRow.append(imu_data.a[i])
+                dataRow.append(imu_data.g[i])
+                dataRow.append(imu_data.w[i])
+                dataRow.append(imu_data.r[i])
+            for j in range(4):
+                dataRow.append(imu_data.q[i])
+        data.append(dataRow)
         runSome += 1
-        if runSome > 100000:
+        if runSome > 5000:
             break
-
+        
     print(occurences)
-    
-        
+    return data
     print ("Streaming of sensor data complete")
-"""
-def collect_data_test(client_sensor_pair):
-    imu = client_sensor_pair[1].get_any_component_of_type(openzen.component_type_imu)
-    
-    if imu is None:
-        print ("No IMU found")
-        sys.exit(1)
-        
-    error, is_streaming = imu.get_bool_property(openzen.ZenImuProperty.StreamData)
-    if not error == openzen.ZenError.NoError:
-        print ("Can't load streaming settings")
-        sys.exit(1)
 
-    print ("Sensor is streaming data: {}".format(is_streaming))
-
-    runSome = 0
-    while True:
-        zenEvent = client.wait_for_next_event()
-
-        # check if its an IMU sample event and if it
-        # comes from our IMU and sensor component
-        if zenEvent.event_type == openzen.ZenEventType.ImuData and \
-            zenEvent.sensor == imu.sensor and \
-            zenEvent.component.handle == imu.component.handle:
-
-            imu_data = zenEvent.data.imu_data
-            print ("A: {} m/s^2".format(imu_data.a))
-            print ("G: {} degree/s".format(imu_data.g))
-
-        runSome = runSome + 1
-        if runSome > 50:
-            break
-
-    print ("Streaming of sensor data complete")
-"""
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
 
@@ -183,37 +164,12 @@ if __name__ == "__main__":
 
     sensors_found = scan_for_sensors(client)
     
-    user_input = [0,1,2]
+    user_input = [0,1]
     #user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
 
     connected_sensors = connect_to_sensors(client, sensors_found, user_input)
-    collect_data(client, connected_sensors)
 
-    
-
-    """client_sensor_pairs.append((client, first_sensor))
-    for index in user_input[1:]:
-        error, c = openzen.make_client()
-        if not error == openzen.ZenError.NoError:
-            print ("Error while initializinng OpenZen library")
-            sys.exit(1)
-        #clients.append(c)
-        #connected.append(connect_to_sensor(c, sensors_found[index]))
-        client_sensor_pairs.append((c, connect_to_sensor(c, sensors_found[index])))
-    """
-
-    """
-    import threading
-    threads = []
-    for sensor in connected:
-        t = threading.Thread(target=collect_data, args=(sensor,))
-        t.start()
-        threads.append(t)
-
-    import time
-    time.sleep(10)
-    for t in threads:
-        t.kill()
-        if not t.isAlive():
-            print("Coudn't kill!")
-    """
+    data_arr = collect_data(client, connected_sensors)
+    with open('realtimetest.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(data_arr)
