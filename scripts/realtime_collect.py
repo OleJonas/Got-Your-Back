@@ -3,6 +3,17 @@ import time
 import sys
 import openzen
 
+SAMPLING_RATE = 10
+SUPPORTED_SAMPLING_RATES = [5, 10, 15, 25, 50, 100, 200, 400]
+
+def set_sampling_rate(IMU, sampling_rate):
+    assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
+    IMU.set_int32_property(openzen.ZenImuProperty.SamplingRate, sampling_rate)
+    return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
+
+def get_sampling_rate(IMU):
+    return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
+
 def scan_for_sensors(client):
     """
     Scan for available sensors
@@ -40,18 +51,20 @@ def scan_for_sensors(client):
     print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
     return sensors
 
-def connect_to_sensors(client, sensors, chosen_sensors):
+def connect_and_get_imus(client, sensors, chosen_sensors):
     """
     Connects to all sensors using one client
     
     Input:\n
-    client - clientobject from the OpenZen-library
-    sensors - list of available sensors
-    chosen_sensors - user input with chosen sensors
-
+    client - clientobject from the OpenZen-library\n
+    sensors - list of available sensors\n
+    chosen_sensors - user input with chosen sensors\n
+    
     Output:\n
-    connected_sensors - list of connected sensors
+    connected_sensors - list of connected sensors\n
     """
+    imus = []
+
     if len(sensors) < 1:
         sys.exit("No sensors found!\nExiting...")
 
@@ -62,49 +75,45 @@ def connect_to_sensors(client, sensors, chosen_sensors):
         
         while not error == openzen.ZenSensorInitError.NoError:
             print ("Error connecting to sensor")
-            
-            # Trying again
             print("Trying again...")
             error, sensor = client.obtain_sensor(sensors[index])
+            
+        # Obtain IMU from sensor and prevents it from streaming data yet
+        imu = sensor.get_any_component_of_type(openzen.component_type_imu)
+        imu.set_bool_property(openzen.ZenImuProperty.StreamData, False)
+        is_streaming = imu.get_bool_property(openzen.ZenImuProperty.StreamData)
 
-        """if not error == openzen.ZenSensorInitError.NoError:
-            print ("Error connecting to sensor")
-            sys.exit(1)"""
+        # Set sampling rate
+        set_sampling_rate(imu, SAMPLING_RATE)
+        
+        imus.append(imu)
 
         print ("Connected to sensor {}!".format(sensors[index].name))
 
         connected_sensors.append(sensor)
     #print("Connected to sensors:\n", [x.name for x in connected_sensors])
-    return connected_sensors
-    
-def connect_to_sensor(client, s):
-    error, sensor = client.obtain_sensor(s)
-    
-    while not error == openzen.ZenSensorInitError.NoError:
-        print ("Error connecting to sensor")
-        
-        # Trying again
-        print("Trying again...")
-        error, sensor = client.obtain_sensor(s)
+    return connected_sensors, imus
 
-    """if not error == openzen.ZenSensorInitError.NoError:
-        print ("Error connecting to sensor")
-        sys.exit(1)"""
+def collect_data(client, imus):
+    """
+    Method for collecting data from the connected IMUs in given client
 
-    print("Connected to sensor {}!".format(s.name))
+    Input:\n
+    client - clientobject from the OpenZen-library\n
+    imus - list of Inertial Measurement Units in sensors given in client\n
 
-    #print("Connected to sensors:\n", [x.name for x in connected_sensors])
-    return sensor
-
-def collect_data(client, sensors):
-    imus = [sensor.get_any_component_of_type(openzen.component_type_imu) for sensor in sensors]
-
-    #Synchronize
-    for imu in imus: imu.execute_property(openzen.ZenImuProperty.StartSensorSync)
+    Output:\n
+    data - list of data from all IMUs\n
+    """
+    # Synchronize
+    for imu in imus:imu.execute_property(openzen.ZenImuProperty.StartSensorSync)
     time.sleep(5)
-    #Back to normal mode
-    for imu in imus: imu.execute_property(openzen.ZenImuProperty.StopSensorSync)
-    
+    # Back to normal mode
+    for imu in imus:imu.execute_property(openzen.ZenImuProperty.StopSensorSync)
+    # Start streaming data
+    for imu in imus:imu.set_bool_property(openzen.ZenImuProperty.StreamData, True)
+
+    # Check if sensors stream data and has an IMU
     for imu in imus: 
         error, is_streaming = imu.get_bool_property(openzen.ZenImuProperty.StreamData)
         if not error == openzen.ZenError.NoError:
@@ -117,7 +126,7 @@ def collect_data(client, sensors):
         print(f"Sensor {imu.sensor.handle} is streaming data: {is_streaming}")
 
     runSome = 0
-    occurences = [0,0,0]
+    occurences = [0,0,0] # Helper array to check if the sensors are streaming approx same amount of data
     data = []
     columns = ['SensorId',' TimeStamp (s)',' FrameNumber',' AccX (g)',' AccY (g)',' AccZ (g)',' GyroX (deg/s)',' GyroY (deg/s)',' GyroZ (deg/s)',' MagX (uT)', ' MagY (uT)', ' MagZ (uT)', ' EulerX (deg)', ' EulerY (deg)', ' EulerZ (deg)',' QuatW',' QuatX', 'QuatY', 'QuatZ']
     data.append(columns)
@@ -130,14 +139,11 @@ def collect_data(client, sensors):
             occurences[int(zenEvent.sensor.handle)-1] += 1
             
             imu_data = zenEvent.data.imu_data
-            #print(f"Timestamp: {imu_data.timestamp} s, \n")
-            #print(f"A: {imu_data.a} m/s^2, \n")
-            #print(f"G: {imu_data.g} degree/s, \n")
-            print("imu sensor handle: ", imu.sensor.handle)
-            print("zenEvent sensor handle: ", zenEvent.sensor.handle)
+        
             dataRow.append(zenEvent.sensor.handle)
             dataRow.append(imu_data.timestamp)
 
+            # Write to csv file for each sensor
             for i in range(3): 
                 dataRow.append(imu_data.a[i])
                 dataRow.append(imu_data.g[i])
@@ -147,29 +153,29 @@ def collect_data(client, sensors):
                 dataRow.append(imu_data.q[i])
         data.append(dataRow)
         runSome += 1
-        if runSome > 5000:
+        if runSome > 200:
             break
         
     print(occurences)
-    return data
     print ("Streaming of sensor data complete")
+    return data
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
 
     error, client = openzen.make_client()
     if not error == openzen.ZenError.NoError:
-        print ("Error while initializinng OpenZen library")
+        print ("Error while initializing OpenZen library")
         sys.exit(1)
 
     sensors_found = scan_for_sensors(client)
     
-    user_input = [0,1]
+    user_input = [0,1,2]
     #user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
 
-    connected_sensors = connect_to_sensors(client, sensors_found, user_input)
+    connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
 
-    data_arr = collect_data(client, connected_sensors)
-    with open('realtimetest.csv', 'w', newline='') as file:
+    data_arr = collect_data(client, imus)
+    with open('realtimetest.csv', 'w+', newline='') as file:
         writer = csv.writer(file)
         writer.writerows(data_arr)
