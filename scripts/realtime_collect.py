@@ -4,7 +4,7 @@ import sys
 import openzen
 
 SAMPLING_RATE = 10
-SUPPORTED_SAMPLING_RATES = [5, 10, 15, 25, 50, 100, 200, 400]
+SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 
 
 def set_sampling_rate(IMU, sampling_rate):
