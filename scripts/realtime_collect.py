@@ -78,10 +78,15 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
     for index in chosen_sensors:
         error, sensor = client.obtain_sensor(sensors[index])
 
+        attempts = 0
         while not error == openzen.ZenSensorInitError.NoError:
+            attempts += 1
             print("Error connecting to sensor")
             print("Trying again...")
             error, sensor = client.obtain_sensor(sensors[index])
+            if attempts >= 100:
+                print("Can't connect to sensor")
+                sys.exit(1)
 
         # Obtain IMU from sensor and prevents it from streaming data yet
         imu = sensor.get_any_component_of_type(openzen.component_type_imu)
@@ -183,8 +188,9 @@ if __name__ == "__main__":
 
     sensors_found = scan_for_sensors(client)
 
-    user_input = [0, 1, 2]
-    #user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
+    # user_input = [0, 1, 2]
+    user_input = [int(i) for i in (input(
+        "Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
 
     connected_sensors, imus = connect_and_get_imus(
         client, sensors_found, user_input)
