@@ -6,6 +6,7 @@ import keras
 import time
 import os
 import openzen
+import numpy as np
 import threading
 
 SAMPLING_RATE = 10
@@ -14,6 +15,31 @@ global data
 data = []
 
 SLEEPTIME = 0.5
+
+class Queue:
+    def __init__(self, n_sensors):
+        self.queue = np.array(n_sensors)
+        self.n_sensors = n_sensors
+
+    def pop(self):
+        """
+        Pops the chosen amount of entries off each queue column
+        """
+
+        out = np.array(self.n_sensors)
+        for i in range(self.n_sensors):
+            if self.queue[i][0] == None: # Return None if the queue didn't have data for all sensors requested
+                return None
+            out[i].append(self.queue[i][0])
+
+        for i in range(self.n_sensors):
+            np.delete(self.queue, i, 0)
+        
+        return out
+    
+    def push(self, sensor_id, data):
+        self.queue[sensor_id-1].append(data)
+        
 
 def get_model():
     return keras.model.load_model('../model/saved_model.pb')
