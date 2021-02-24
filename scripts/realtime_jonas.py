@@ -1,14 +1,16 @@
-from . import realtime_collect as rtc
+from realtime_collect import *
 import threading 
 import keras
 import time
-
+import pandas as pd
 
 def get_model():
     return keras.model.load_model('../model/saved_model.pb')
 
 
-def concat_data(data, analyze_buf):    
+def analyze_data(data, analyze_buf, model, pred_arr):    
+
+    pipe = make_pipeline(model)
 
     timestamp = 0
     tolerance = 0.5 # Used to give some leeway to the timestamps as they won't be exactly the same all the time
@@ -38,16 +40,11 @@ def concat_data(data, analyze_buf):
                     search_for += 1
                     break
         
-        # Append the now organized data
-        analyze_buf.append(buf)
+        data_point = pd.DataFrame(buf)
+        pred_arr.append(pipe.predict(data_point))
         
 
 if __name__ == "__main__":
-    global buf
-    buf = []
-
-    threading.Thread(target=concat_data_thread)
-
-    # Run main thread data collection ...
+    pass
     
 

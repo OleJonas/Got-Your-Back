@@ -1,14 +1,49 @@
 import csv
 import time
 import sys
+import threading 
+import keras
+import time
+import os
 import openzen
 import threading
-from .realtime_analyze import concat_data_thread
 
 SAMPLING_RATE = 10
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 global data
 data = []
+
+SLEEPTIME = 0.5
+
+def get_model():
+    return keras.model.load_model('../model/saved_model.pb')
+
+
+def concat_data_thread():
+    counter = 0
+    while(counter < 1000):
+        predict_buff = []
+        id_found = [False for i in range(3)]
+        if(len(data) == 0):
+            print("No work for thread... sleeping for {SLEEPTIME} second(s)")
+            time.sleep(SLEEPTIME)
+        else:
+            first_timestamp = data[0][1]
+            first_id = data[0][0]
+            id_found[int(first_id)] = True
+            predict_buff.append(data[0])
+            for row in data[1:-1]:
+                if(row[1] == first_timestamp and id_found[int(row[0])] == False):
+                    id_found[int(row[0])] = True
+                    predict_buff.append(row)
+                if(id_found[0] == True, id_found[1] == True, id_found[2] == True):
+                    
+                    #FOUND SAME TIMESTAMP FROM ALL SENSORS. 
+                    #ROW CONCATINATION HERE
+
+                    print(predict_buff)
+                    break
+        counter += 1
 
 def set_sampling_rate(IMU, sampling_rate):
     assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
@@ -131,7 +166,7 @@ def sync_sensors(client, imus):
     return imus
 
 
-def collect_data(client, imus, buf):
+def collect_data(client, imus):
     """
     Method for collecting data from the connected IMUs in given client
 
@@ -146,9 +181,9 @@ def collect_data(client, imus, buf):
     runSome = 0
     # Helper array to check if the sensors are streaming approx same amount of data
     occurences = [0, 0, 0]
-    columns = ['SensorId', ' TimeStamp (s)', ' FrameNumber', ' AccX (g)', ' AccY (g)', ' AccZ (g)', ' GyroX (deg/s)', ' GyroY (deg/s)', ' GyroZ (deg/s)',
-               ' MagX (uT)', ' MagY (uT)', ' MagZ (uT)', ' EulerX (deg)', ' EulerY (deg)', ' EulerZ (deg)', ' QuatW', ' QuatX', 'QuatY', 'QuatZ']
-    data.append(columns)
+    #columns = ['SensorId', ' TimeStamp (s)', ' FrameNumber', ' AccX (g)', ' AccY (g)', ' AccZ (g)', ' GyroX (deg/s)', ' GyroY (deg/s)', ' GyroZ (deg/s)',
+               #' MagX (uT)', ' MagY (uT)', ' MagZ (uT)', ' EulerX (deg)', ' EulerY (deg)', ' EulerZ #(deg)', ' QuatW', ' QuatX', 'QuatY', 'QuatZ']
+    #data.append(columns)
 
     #MAKE THREAD WORK HERE?
     concat_thread.start()
@@ -181,7 +216,7 @@ def collect_data(client, imus, buf):
     
     print(occurences)
     print("Streaming of sensor data complete")
-    return data
+    #return data
 
 
 if __name__ == "__main__":
@@ -202,7 +237,8 @@ if __name__ == "__main__":
 
     concat_thread = threading.Thread(target=concat_data_thread)
     
-    data_arr = collect_data(client, sync_sensors(client, imus))
-    with open('realtimetest.csv', 'w+', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerows(data_arr)
+    collect_data(client, sync_sensors(client, imus))
+
+    #with open('realtimetest.csv', 'w+', newline='') as file:
+    #    writer = csv.writer(file)
+    #    writer.writerows(data_arr)
