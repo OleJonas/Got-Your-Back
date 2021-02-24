@@ -23,6 +23,8 @@ def analyze_data(data, analyze_buf, model, pred_arr):
         found_first = False
         search_for = 1
 
+        last_found_index = [0,0,0] # Keeping track of where the last value for the different sensors was found.
+
         while not found_first:
             for row in data:
                 if row[0] == search_for and row[1] <= tolerance:
