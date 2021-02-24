@@ -18,15 +18,12 @@ SLEEPTIME = 0.5
 
 class Queue:
     def __init__(self, n_sensors):
-        self.queue = np.array(n_sensors)
+        self.queue = [[[[]]] for i in range(n_sensors)]
         self.n_sensors = n_sensors
 
     def pop(self):
-        """
-        Pops the chosen amount of entries off each queue column
-        """
 
-        out = np.array(self.n_sensors)
+        out = [[] for i in range(self.n_sensors)]
         for i in range(self.n_sensors):
             if self.queue[i][0] == None: # Return None if the queue didn't have data for all sensors requested
                 return None
