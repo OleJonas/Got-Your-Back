@@ -6,6 +6,10 @@ import keras
 def getModel():
     return keras.model.load_model('../model/saved_model.pb')
 
+
+def threadFunction():
+    
+
 class ThreadPool:
     pool = []
     
@@ -14,12 +18,5 @@ class ThreadPool:
             pool.push
 
 if __name__ == "__main__":
-    pass
-
-
-
-
-
-
-
+    global 
 
