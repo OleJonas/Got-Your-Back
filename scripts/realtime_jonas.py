@@ -1,4 +1,4 @@
-from realtime_collect import *
+from .realtime_collect_jonas import *
 import threading 
 import keras
 import time
