@@ -214,6 +214,9 @@ def collect_data(client, imus):
 
     #MAKE THREAD WORK HERE?
     concat_thread.start()
+
+    
+
     while True:
         dataRow = []
         zenEvent = client.wait_for_next_event()
