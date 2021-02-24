@@ -12,38 +12,41 @@ SAMPLING_RATE = 10
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 global data
 data = []
+done_collecting = False
 
-SLEEPTIME = 0.5
 
 def get_model():
     return keras.model.load_model('../model/saved_model.pb')
 
+def all_found(arr):
+    for i in range(arr):
+        if(arr[i] == False):
+            return False
+    return True
+
+def get_values(dest_arr, src_arr):
+    for i in range(src_arr):
+        dest_arr.append(src_arr[i])
 
 def concat_data_thread():
-    counter = 0
-    while(counter < 1000):
-        predict_buff = []
-        id_found = [False for i in range(3)]
+    NUM_SENSORS = 3
+    SLEEPTIME = 0.5
+    finds = [NUM_SENSORS-1]
+    while(not done_collecting):
+        temp_buff = []
         if(len(data) == 0):
             print("No work for thread... sleeping for {SLEEPTIME} second(s)")
             time.sleep(SLEEPTIME)
         else:
-            first_timestamp = data[0][1]
-            first_id = data[0][0]
-            id_found[int(first_id)] = True
-            predict_buff.append(data[0])
-            for row in data[1:-1]:
-                if(row[1] == first_timestamp and id_found[int(row[0])] == False):
-                    id_found[int(row[0])] = True
-                    predict_buff.append(row)
-                if(id_found[0] == True, id_found[1] == True, id_found[2] == True):
-                    
-                    #FOUND SAME TIMESTAMP FROM ALL SENSORS. 
-                    #ROW CONCATINATION HERE
+            first_timestamp = data[0][0][1]
+            while(not all_found(finds)):
+                for i in range(1,NUM_SENSORS):
+                    if(data[i][0][1] == first_timestamp):
+                        get_values(temp_buff, data[i][0])
+                    finds[i] = True
 
-                    print(predict_buff)
-                    break
-        counter += 1
+            # ALL TIMESTAMPS FOUND FOR ALL SENSORS
+            # POP TOP ROW IN DATA HERE
 
 def set_sampling_rate(IMU, sampling_rate):
     assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
@@ -215,6 +218,7 @@ def collect_data(client, imus):
             break
     
     print(occurences)
+    done_collecting = True
     print("Streaming of sensor data complete")
     #return data
 
