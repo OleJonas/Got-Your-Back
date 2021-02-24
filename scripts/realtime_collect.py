@@ -69,11 +69,10 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
     connected_sensors - list of connected sensors\n
     """
     imus = []
+    connected_sensors = []
 
     if len(sensors) < 1:
         sys.exit("No sensors found!\nExiting...")
-
-    connected_sensors = []
 
     for index in chosen_sensors:
         error, sensor = client.obtain_sensor(sensors[index])
