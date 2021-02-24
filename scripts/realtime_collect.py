@@ -13,12 +13,14 @@ SAMPLING_RATE = 10
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 global data
 data = []
+
 done_collecting = False
 
+queue = Queue(3)
 
 class Queue:
     def __init__(self, n_sensors):
-        self.queue = [[[[]]] for i in range(n_sensors)]
+        self.queue = [[[]] for i in range(n_sensors)]
         self.n_sensors = n_sensors
 
     def pop(self):
@@ -37,7 +39,6 @@ class Queue:
     def push(self, sensor_id, data):
         self.queue[sensor_id-1].append(data)
         
-
 def get_model():
     return keras.model.load_model('../model/saved_model.pb')
 
@@ -244,7 +245,6 @@ def collect_data(client, imus):
     done_collecting = True
     print("Streaming of sensor data complete")
     #return data
-
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
