@@ -2,20 +2,21 @@ import csv
 import time
 import sys
 import openzen
+import threading
+from .realtime_analyze import concat_data_thread
 
 SAMPLING_RATE = 10
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
-
+global data
+data = []
 
 def set_sampling_rate(IMU, sampling_rate):
     assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
     IMU.set_int32_property(openzen.ZenImuProperty.SamplingRate, sampling_rate)
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
-
 def get_sampling_rate(IMU):
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
-
 
 def scan_for_sensors(client):
     """
@@ -103,18 +104,7 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
     #print("Connected to sensors:\n", [x.name for x in connected_sensors])
     return connected_sensors, imus
 
-
-def collect_data(client, imus):
-    """
-    Method for collecting data from the connected IMUs in given client
-
-    Input:\n
-    client - clientobject from the OpenZen-library\n
-    imus - list of Inertial Measurement Units in sensors given in client\n
-
-    Output:\n
-    data - list of data from all IMUs\n
-    """
+def sync_sensors(client, imus):
     # Synchronize
     for imu in imus:
         imu.execute_property(openzen.ZenImuProperty.StartSensorSync)
@@ -138,20 +128,35 @@ def collect_data(client, imus):
             print("No IMU found")
             sys.exit(1)
         print(f"Sensor {imu.sensor.handle} is streaming data: {is_streaming}")
+    return imus
 
+
+def collect_data(client, imus, buf):
+    """
+    Method for collecting data from the connected IMUs in given client
+
+    Input:\n
+    client - clientobject from the OpenZen-library\n
+    imus - list of Inertial Measurement Units in sensors given in client\n
+
+    Output:\n
+    data - list of data from all IMUs\n
+    """
+    
     runSome = 0
     # Helper array to check if the sensors are streaming approx same amount of data
     occurences = [0, 0, 0]
-    data = []
     columns = ['SensorId', ' TimeStamp (s)', ' FrameNumber', ' AccX (g)', ' AccY (g)', ' AccZ (g)', ' GyroX (deg/s)', ' GyroY (deg/s)', ' GyroZ (deg/s)',
                ' MagX (uT)', ' MagY (uT)', ' MagZ (uT)', ' EulerX (deg)', ' EulerY (deg)', ' EulerZ (deg)', ' QuatW', ' QuatX', 'QuatY', 'QuatZ']
     data.append(columns)
+
+    #MAKE THREAD WORK HERE?
+    concat_thread.start()
     while True:
         dataRow = []
         zenEvent = client.wait_for_next_event()
         # Check if it's an IMU sample event and if it comes from our IMU and sensor component
-        if zenEvent.event_type == openzen.ZenEventType.ImuData and \
-                zenEvent.component.handle == imu.component.handle:
+        if zenEvent.event_type == openzen.ZenEventType.ImuData:
             occurences[int(zenEvent.sensor.handle) - 1] += 1
 
             imu_data = zenEvent.data.imu_data
@@ -167,11 +172,13 @@ def collect_data(client, imus):
                 dataRow.append(imu_data.r[i])
             for j in range(4):
                 dataRow.append(imu_data.q[i])
+        #LÅS MUTEX
         data.append(dataRow)
+        #SLIPPE MUTEX HER 
         runSome += 1
         if runSome > 200:
             break
-
+    
     print(occurences)
     print("Streaming of sensor data complete")
     return data
@@ -191,10 +198,11 @@ if __name__ == "__main__":
     user_input = [int(i) for i in (input(
         "Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
 
-    connected_sensors, imus = connect_and_get_imus(
-        client, sensors_found, user_input)
+    connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
 
-    data_arr = collect_data(client, imus)
+    concat_thread = threading.Thread(target=concat_data_thread)
+    
+    data_arr = collect_data(client, sync_sensors(client, imus))
     with open('realtimetest.csv', 'w+', newline='') as file:
         writer = csv.writer(file)
         writer.writerows(data_arr)
