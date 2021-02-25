@@ -1,7 +1,7 @@
 import csv
 import time
 import sys
-import threading 
+import threading
 import keras
 import time
 import os
@@ -13,10 +13,7 @@ SAMPLING_RATE = 10
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 global data
 data = []
-
 done_collecting = False
-
-queue = Queue(3)
 
 class Queue:
     def __init__(self, n_sensors):
@@ -24,23 +21,23 @@ class Queue:
         self.n_sensors = n_sensors
 
     def pop(self):
-
         out = [[] for i in range(self.n_sensors)]
         for i in range(self.n_sensors):
-            if self.queue[i][0] == None: # Return None if the queue didn't have data for all sensors requested
+            if self.queue[i][0] == None:  # Return None if the queue didn't have data for all sensors requested
                 return None
             out[i].append(self.queue[i][0])
-
         for i in range(self.n_sensors):
             np.delete(self.queue, i, 0)
-        
         return out
-    
+
     def push(self, sensor_id, data):
-        self.queue[sensor_id-1].append(data)
-        
+        self.queue[sensor_id - 1].append(data)
+
+queue = Queue(3)
+
 def get_model():
     return keras.model.load_model('../model/saved_model.pb')
+
 
 def all_found(arr):
     for i in range(arr):
@@ -48,14 +45,16 @@ def all_found(arr):
             return False
     return True
 
+
 def get_values(dest_arr, src_arr):
     for i in range(src_arr):
         dest_arr.append(src_arr[i])
 
+
 def concat_data_thread():
     NUM_SENSORS = 3
     SLEEPTIME = 0.5
-    finds = [NUM_SENSORS-1]
+    finds = [NUM_SENSORS - 1]
     while(not done_collecting):
         temp_buff = []
         if(len(data) == 0):
@@ -64,21 +63,23 @@ def concat_data_thread():
         else:
             first_timestamp = data[0][0][1]
             while(not all_found(finds)):
-                for i in range(1,NUM_SENSORS):
+                for i in range(1, NUM_SENSORS):
                     if(data[i][0][1] == first_timestamp):
                         get_values(temp_buff, data[i][0])
                     finds[i] = True
-
             # ALL TIMESTAMPS FOUND FOR ALL SENSORS
             # POP TOP ROW IN DATA HERE
+
 
 def set_sampling_rate(IMU, sampling_rate):
     assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
     IMU.set_int32_property(openzen.ZenImuProperty.SamplingRate, sampling_rate)
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
+
 def get_sampling_rate(IMU):
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
+
 
 def scan_for_sensors(client):
     """
@@ -166,6 +167,7 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
     #print("Connected to sensors:\n", [x.name for x in connected_sensors])
     return connected_sensors, imus
 
+
 def sync_sensors(client, imus):
     # Synchronize
     for imu in imus:
@@ -204,18 +206,16 @@ def collect_data(client, imus):
     Output:\n
     data - list of data from all IMUs\n
     """
-    
+
     runSome = 0
     # Helper array to check if the sensors are streaming approx same amount of data
     occurences = [0, 0, 0]
-    #columns = ['SensorId', ' TimeStamp (s)', ' FrameNumber', ' AccX (g)', ' AccY (g)', ' AccZ (g)', ' GyroX (deg/s)', ' GyroY (deg/s)', ' GyroZ (deg/s)',
-               #' MagX (uT)', ' MagY (uT)', ' MagZ (uT)', ' EulerX (deg)', ' EulerY (deg)', ' EulerZ #(deg)', ' QuatW', ' QuatX', 'QuatY', 'QuatZ']
-    #data.append(columns)
+    # columns = ['SensorId', ' TimeStamp (s)', ' FrameNumber', ' AccX (g)', ' AccY (g)', ' AccZ (g)', ' GyroX (deg/s)', ' GyroY (deg/s)', ' GyroZ (deg/s)',
+    # ' MagX (uT)', ' MagY (uT)', ' MagZ (uT)', ' EulerX (deg)', ' EulerY (deg)', ' EulerZ #(deg)', ' QuatW', ' QuatX', 'QuatY', 'QuatZ']
+    # data.append(columns)
 
-    #MAKE THREAD WORK HERE?
+    # MAKE THREAD WORK HERE?
     concat_thread.start()
-
-    
 
     while True:
         dataRow = []
@@ -237,17 +237,18 @@ def collect_data(client, imus):
                 dataRow.append(imu_data.r[i])
             for j in range(4):
                 dataRow.append(imu_data.q[i])
-        #LÅS MUTEX
+        # LÅS MUTEX
         data.append(dataRow)
-        #SLIPPE MUTEX HER 
+        # SLIPPE MUTEX HER
         runSome += 1
         if runSome > 200:
             break
-    
+
     print(occurences)
     done_collecting = True
     print("Streaming of sensor data complete")
-    #return data
+    # return data
+
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
@@ -266,9 +267,9 @@ if __name__ == "__main__":
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
 
     concat_thread = threading.Thread(target=concat_data_thread)
-    
+
     collect_data(client, sync_sensors(client, imus))
 
-    #with open('realtimetest.csv', 'w+', newline='') as file:
+    # with open('realtimetest.csv', 'w+', newline='') as file:
     #    writer = csv.writer(file)
     #    writer.writerows(data_arr)
