@@ -20,7 +20,7 @@ class Pred_Queue(Queue):
         out.append(self.queue[0])
         self.queue = self.queue[1:]
         self.entries[0] -= 1
-        print(out)
+        #print(out)
         return out
     
     def push(self, sensor_id, data):
@@ -43,7 +43,7 @@ class Data_Queue(Queue):
         for i in range(self.n_columns):
             self.queue[i] = self.queue[i][1:]
             self.entries[i] -= 1
-        print(out)
+        #print(out)
         return out
     
     def push(self, sensor_id, data):

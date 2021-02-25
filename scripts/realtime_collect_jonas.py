@@ -9,7 +9,7 @@ import openzen
 import numpy as np
 import threading
 import pandas as pd
-from Queue import *
+from Queue import Pred_Queue, Data_Queue
 
 SAMPLING_RATE = 10
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
@@ -43,7 +43,6 @@ def concat_data_thread(pred_queue):
             data = top_row[0][0][1:]
             for i in range(1,data_queue.n_columns):
                 data += top_row[i][0][2:]
-            print(np.shape(data[1:]))
             pred_queue.push(1, data[1:])
             #df = pd.DataFrame(sensor_data)
             #print(df)
@@ -224,12 +223,16 @@ def collect_data(client, imus):
     done_collecting = True
     #return sensor_data
 
-def pred_task(pred_queue)
+def classification_task(model, pred_queue, predictions_arr):
+    while True:
+        classification = np.argmax(model.predict(pd.DataFrame(pred_queue.shift())))
+        predictions_arr.append(classification)
+        print(classification)
+
 
 
 if __name__ == "__main__":
     model = keras.models.load_model('ANN_model')
-    #pipe = keras.make_pipeline(model)
     
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     pred_queue = Pred_Queue()
@@ -250,8 +253,9 @@ if __name__ == "__main__":
     concat_thread = threading.Thread(target=concat_data_thread, args=[pred_queue], daemon=True)
     
     collect_data(client, sync_sensors(client, imus))
-    print(np.shape(data_queue.queue))
-    print(np.argmax(model.predict(pd.DataFrame(pred_queue.shift()))))
+
+    predictions_arr = []
+    pred_thread = threading.Thread(target=classification_task, args=[model, pred_queue, predictions_arr], daemon=True)
     #pipe.predict(pred_queue.shift())
     
     print("FERDI DA!!!")
