@@ -15,12 +15,11 @@ class Pred_Queue(Queue):
 
     def shift(self):
         out = []
-        if self.queue[0] == None: # Return None if the queue didn't have data for all sensors requested
+        if len(self.queue) < 1: # Return None if the queue didn't have data for all sensors requested
             return None
         out.append(self.queue[0])
         self.queue = self.queue[1:]
         self.entries[0] -= 1
-        #print(out)
         return out
     
     def push(self, sensor_id, data):

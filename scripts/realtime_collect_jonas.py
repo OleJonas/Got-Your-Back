@@ -10,50 +10,17 @@ import numpy as np
 import threading
 import pandas as pd
 from Queue import Pred_Queue, Data_Queue
+import timeit
 
-SAMPLING_RATE = 10
+# REAL_SAMPLING_RATE = 1
+SAMPLING_RATE = 5
+# INTERVAL = REAL_SAMPLING_RATE*SAMPLING_RATE
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 NUM_SENSORS = 3
 SLEEPTIME = 0.5
 sensor_data = []
 done_collecting = False
 data_queue = Data_Queue(3)
-
-def get_model():
-    return keras.models.load_model('../model/saved_model.pb')
-
-def all_found(arr):
-    for i in range(len(arr)):
-        if(arr[i] == False):
-            return False
-    return True
-
-def get_values(dest_arr, src_arr):
-    for i in range(len(src_arr)):
-        dest_arr.append(src_arr[i])
-
-def concat_data_thread(pred_queue):
-    SLEEPTIME = 0.5
-    for i in range(100):
-        if(min(data_queue.entries) == 0):
-            print(f"No work for thread... sleeping for {SLEEPTIME} second(s)")
-            time.sleep(SLEEPTIME)
-        else:
-            top_row = data_queue.shift()
-            data = top_row[0][0][1:]
-            for i in range(1,data_queue.n_columns):
-                data += top_row[i][0][2:]
-            pred_queue.push(1, data[1:])
-            #df = pd.DataFrame(sensor_data)
-            #print(df)
-
-def set_sampling_rate(IMU, sampling_rate):
-    assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
-    IMU.set_int32_property(openzen.ZenImuProperty.SamplingRate, sampling_rate)
-    return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
-
-def get_sampling_rate(IMU):
-    return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
 def scan_for_sensors(client):
     """
@@ -140,11 +107,13 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
     #print("Connected to sensors:\n", [x.name for x in connected_sensors])
     return connected_sensors, imus
 
-def remove_trash_data(client):
-    zenEvent = client.poll_next_event()
-    
-    while(zenEvent != None):
-        zenEvent = client.poll_next_event()
+def set_sampling_rate(IMU, sampling_rate):
+    assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
+    IMU.set_int32_property(openzen.ZenImuProperty.SamplingRate, sampling_rate)
+    return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
+
+def get_sampling_rate(IMU):
+    return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
 def sync_sensors(client, imus):
     # Synchronize
@@ -171,6 +140,12 @@ def sync_sensors(client, imus):
         print(f"Sensor {imu.sensor.handle} is streaming data: {is_streaming}")
     return imus
 
+def remove_unsync_data(client):
+    zenEvent = client.poll_next_event()
+    
+    while(zenEvent != None):
+        zenEvent = client.poll_next_event()
+
 def collect_data(client, imus):
     """
     Method for collecting data from the connected IMUs in given client
@@ -185,15 +160,14 @@ def collect_data(client, imus):
     
     runSome = 0
     occurences = [0, 0, 0]
-    #columns = ['SensorId', ' TimeStamp (s)', ' FrameNumber', ' AccX (g)', ' AccY (g)', ' AccZ (g)', ' GyroX (deg/s)', ' GyroY (deg/s)', ' GyroZ (deg/s)',
-               #' MagX (uT)', ' MagY (uT)', ' MagZ (uT)', ' EulerX (deg)', ' EulerY (deg)', ' EulerZ #(deg)', ' QuatW', ' QuatX', 'QuatY', 'QuatZ']
-    #sensor_data.append(columns)
-
     concat_thread.start()
+    count = 0
 
     while True:
-        dataRow = []
         zenEvent = client.wait_for_next_event()
+    
+        dataRow = []
+
         # Check if it's an IMU sample event
         if zenEvent.event_type == openzen.ZenEventType.ImuData:
             occurences[int(zenEvent.sensor.handle) - 1] += 1
@@ -211,26 +185,36 @@ def collect_data(client, imus):
                 dataRow.append(imu_data.r[i])
             for j in range(4):
                 dataRow.append(imu_data.q[i])
-        #LÅS MUTEX
         data_queue.push(zenEvent.sensor.handle, dataRow)
-        #SLIPPE MUTEX HER 
-        runSome += 1
-        if runSome > 200:
-            break
+        count = 0
+        
     
     print(occurences)
     print("Streaming of sensor data complete")
     done_collecting = True
-    #return sensor_data
+
+def concat_data_task(pred_queue):
+    SLEEPTIME = 0.1
+    while True:
+        if(min(data_queue.entries) == 0):
+            # print(f"No work for thread... sleeping for {SLEEPTIME} second(s)")
+            time.sleep(SLEEPTIME)
+        else:
+            top_row = data_queue.shift()
+            data = top_row[0][0][1:]
+            for i in range(1,data_queue.n_columns):
+                data += top_row[i][0][2:]
+            pred_queue.push(1, data[1:])
 
 def classification_task(model, pred_queue, predictions_arr):
     while True:
-        classification = np.argmax(model.predict(pd.DataFrame(pred_queue.shift())))
-        predictions_arr.append(classification)
-        print(classification)
-
-
-
+        values = pred_queue.shift()
+        if values != None:
+            # start = time.perf_counter()
+            classification = np.argmax(model.predict(pd.DataFrame(values)))
+            # print(time.perf_counter() - start)
+            predictions_arr.append(classification)
+            print(classification)
 if __name__ == "__main__":
     model = keras.models.load_model('ANN_model')
     
@@ -248,17 +232,14 @@ if __name__ == "__main__":
     #user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
 
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
-    remove_trash_data(client)
-
-    concat_thread = threading.Thread(target=concat_data_thread, args=[pred_queue], daemon=True)
+    remove_unsync_data(client)
     
-    collect_data(client, sync_sensors(client, imus))
-
     predictions_arr = []
     pred_thread = threading.Thread(target=classification_task, args=[model, pred_queue, predictions_arr], daemon=True)
-    #pipe.predict(pred_queue.shift())
+    concat_thread = threading.Thread(target=concat_data_task, args=[pred_queue], daemon=True)
     
+    pred_thread.start()
+    collect_data(client, sync_sensors(client, imus))
+    #pipe.predict(pred_queue.shift())
+    print(predictions_arr)
     print("FERDI DA!!!")
-    #with open('realtimetest.csv', 'w+', newline='') as file:
-    #    writer = csv.writer(file)
-    #    writer.writerows(data_arr)
