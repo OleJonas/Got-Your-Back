@@ -154,7 +154,7 @@ def collect_data(sensorInstances: list):
                     for qdata in imu_data.q:
                         data.append(qdata)
 
-                    writer.writerow(data)
+                    #writer.writerow(data)
         # print(time.perf_counter())
         # print(time.perf_counter() - time1)
         # print(runSome)
