@@ -10,17 +10,20 @@ import numpy as np
 import threading
 import pandas as pd
 from Queue import Pred_Queue, Data_Queue
-import timeit
 
-# REAL_SAMPLING_RATE = 1
 SAMPLING_RATE = 5
-# INTERVAL = REAL_SAMPLING_RATE*SAMPLING_RATE
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 NUM_SENSORS = 3
 SLEEPTIME = 0.5
 sensor_data = []
 done_collecting = False
 data_queue = Data_Queue(3)
+
+"""
+Vi må finne en måte å ikke fylle data_queue for mye, eller pred_queue må hente litt lengre ned i data_queue. 
+Nå henger prediction etter, og den henger bare mer og mer etter jo mer data som innhentes. 
+Vi må finne en måte å trashe den dataen vi ikke trenger for å oppleve mer realtime
+"""
 
 def scan_for_sensors(client):
     """
@@ -165,7 +168,6 @@ def collect_data(client, imus):
 
     while True:
         zenEvent = client.wait_for_next_event()
-    
         dataRow = []
 
         # Check if it's an IMU sample event
@@ -210,15 +212,15 @@ def classification_task(model, pred_queue, predictions_arr):
     while True:
         values = pred_queue.shift()
         if values != None:
-            # start = time.perf_counter()
+            start = time.perf_counter()
             classification = np.argmax(model.predict(pd.DataFrame(values)))
-            # print(time.perf_counter() - start)
-            predictions_arr.append(classification)
-            print(classification)
+            print(time.perf_counter() - start)
+            # predictions_arr.append(classification)
+            # print(classification)
+
 if __name__ == "__main__":
-    model = keras.models.load_model('ANN_model')
-    
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
+    model = keras.models.load_model('ANN_model')
     pred_queue = Pred_Queue()
 
     error, client = openzen.make_client()
@@ -234,12 +236,12 @@ if __name__ == "__main__":
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
     remove_unsync_data(client)
     
+    concat_thread = threading.Thread(target=concat_data_task, args=[pred_queue], daemon=True)
     predictions_arr = []
     pred_thread = threading.Thread(target=classification_task, args=[model, pred_queue, predictions_arr], daemon=True)
-    concat_thread = threading.Thread(target=concat_data_task, args=[pred_queue], daemon=True)
-    
     pred_thread.start()
+
     collect_data(client, sync_sensors(client, imus))
-    #pipe.predict(pred_queue.shift())
+
     print(predictions_arr)
     print("FERDI DA!!!")
