@@ -1,10 +1,8 @@
-import csv
 import time
 import sys
 import threading
 import keras
 import time
-import os
 import openzen
 import numpy as np
 import threading
@@ -13,19 +11,13 @@ from Queue import Pred_Queue, Data_Queue
 from datetime import datetime
 
 PREDICTION_INTERVAL = 3
-SAMPLING_RATE = 10
+SAMPLING_RATE = 5
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 NUM_SENSORS = 3
 SLEEPTIME = 0.1
 sensor_data = []
 done_collecting = False
 data_queue = Data_Queue(3)
-
-"""
-Vi må finne en måte å ikke fylle data_queue for mye, eller pred_queue må hente litt lengre ned i data_queue. 
-Nå henger prediction etter, og den henger bare mer og mer etter jo mer data som innhentes. 
-Vi må finne en måte å trashe den dataen vi ikke trenger for å oppleve mer realtime
-"""
 
 
 def scan_for_sensors(client):
@@ -198,8 +190,8 @@ def collect_data(client, imus):
 
 def concat_data_task(pred_queue):
     while True:
+        # If no work for worker thread, sleep
         if(min(data_queue.entries) == 0):
-            # print(f"No work for thread... sleeping for {SLEEPTIME} second(s)")
             time.sleep(SLEEPTIME)
         else:
             top_row = data_queue.shift()
@@ -209,18 +201,15 @@ def concat_data_task(pred_queue):
             pred_queue.push(1, data[1:])
 
 
-def classification_task(model, pred_queue, predictions_arr):
+def classification_task(model, pred_queue):
     while True:
         values = pred_queue.shift()
         if values != None:
-            # pred_queue.flush_unneeded_rows()
             classification = np.argmax(model.predict(pd.DataFrame(values)))
-            a = datetime.now()
-            time_now = f"{a.minute}:{a.second}:{str(a.microsecond)[:2]}"
-            print(f"Time collected and added to pred_queue: {pred_queue.timestamps[0]} and current time: {time_now}")
-            # predictions_arr.append(classification)
-            # print(classification)
-            # time.sleep(PREDICTION_INTERVAL)
+            pred_queue_time = pred_queue.timestamps[0]
+            pred_time = datetime.now() - pred_queue_time
+            print(f"Predicted {classification}! Total seconds since added to pred_queue: {pred_time.total_seconds()}")
+            pred_queue.flush()
 
 
 if __name__ == "__main__":
