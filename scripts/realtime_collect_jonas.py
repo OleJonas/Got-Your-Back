@@ -16,14 +16,16 @@ global data
 data = []
 NUM_SENSORS = 3
 SLEEPTIME = 0.5
+global done_collecting
 done_collecting = False
 
 class Queue:
     def __init__(self, n_sensors):
         self.queue = [[] for i in range(n_sensors)]
         self.n_sensors = n_sensors
+        self.entries = [0, 0, 0]
 
-    def pop(self):
+    def shift(self):
         out = [[] for i in range(self.n_sensors)]
         for i in range(self.n_sensors):
             if len(self.queue[i]) > 0:
@@ -32,12 +34,14 @@ class Queue:
                 out[i].append(self.queue[i][0])
 
         for i in range(self.n_sensors):
-            np.delete(self.queue, i, 0)
+            self.queue[i] = self.queue[i][1:]
+            self.entries[i] -= 1
         
         return out
     
     def push(self, sensor_id, data):
         self.queue[sensor_id-1].append(data)
+        self.entries[sensor_id-1] += 1
 
 
     def sync_queue(self):
@@ -76,44 +80,51 @@ def get_values(dest_arr, src_arr):
     for i in range(len(src_arr)):
         dest_arr.append(src_arr[i])
 
-def concat_data_thread():
-    """
-    data_to_predict = []
-    while(not done_collecting):
-        row = queue.pop()
-        print(row)
-        concatenated = row[0][0]
-        for i in range(1,queue.n_sensors):
-            concatenated.append(row[i][0])
-        df = pd.DataFrame(concatenated)
-        data_to_predict.append(df)
-    print(data_to_predict)
-    """
-    
+"""
+def concat_data_thread_deprecated():
     NUM_SENSORS = 3
-    SLEEPTIME = 0.05
-    finds = [NUM_SENSORS-1]
+    SLEEPTIME = 0.1
+    finds = [False] * (NUM_SENSORS-1)
     data = []
     while(not done_collecting):
+        for i in range(len(finds)):
+            finds[i] = False
         temp_buff = []
-        if(len(queue.queue[0]) == 0):
+        if(min(queue.entries) == 0):
             print("No work for thread... sleeping for {SLEEPTIME} second(s)")
             time.sleep(SLEEPTIME)
         else:
             first_timestamp = queue.queue[0][0][1]
-            print(first_timestamp)
             while(not all_found(finds)):
                 for i in range(1,NUM_SENSORS):
                     if(queue.queue[i][0][1] == first_timestamp):
                         get_values(temp_buff, queue.queue[i][0])
-                        finds[i] = True
-                        print("Found matching timestamp")
+                        finds[i-1] = True
             data.append(temp_buff)
-            # ALL TIMESTAMPS FOUND FOR ALL SENSORS
-            # POP TOP ROW IN DATA HERE
+            print("data: ", data)
+            queue.shift()
     print(np.shape(data))
     print("Thread done...")
-    
+"""
+
+def concat_data_thread():
+    SLEEPTIME = 0.5
+    all_data = []
+    for i in range(100):
+        if(min(queue.entries) == 0):
+            print("No work for thread... sleeping for {SLEEPTIME} second(s)")
+            time.sleep(SLEEPTIME)
+        else:
+            top_row = queue.shift()
+            data = top_row[0][0][1:]
+            for i in range(1,queue.n_sensors):
+                data += top_row[i][0][2:]
+            all_data.append(data)
+            #df = pd.DataFrame(data)
+            #print(df)
+    print("All data:\n", np.shape(all_data))
+
+
 def set_sampling_rate(IMU, sampling_rate):
     assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
     IMU.set_int32_property(openzen.ZenImuProperty.SamplingRate, sampling_rate)
@@ -213,10 +224,6 @@ def remove_trash_data(client):
     
     while(zenEvent != None):
         zenEvent = client.poll_next_event()
-        
-    print("Fuck ye yehaaaaa!!")
-   
-
 
 def sync_sensors(client, imus):
     # Synchronize
@@ -309,23 +316,17 @@ if __name__ == "__main__":
 
     sensors_found = scan_for_sensors(client)
 
-    # user_input = [0, 1, 2]
-    user_input = [int(i) for i in (input(
-        "Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
+    user_input = [0, 1, 2]
+    #user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
 
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
     remove_trash_data(client)
 
-    concat_thread = threading.Thread(target=concat_data_thread)
-    
+    concat_thread = threading.Thread(target=concat_data_thread, args=[] daemon=True)
     
     collect_data(client, sync_sensors(client, imus))
     print(np.shape(queue.queue))
-    #print(queue.queue)
-    for i in range(30):
-        for j in range(3):
-            print(j, ": ", queue.queue[j][i][1])
-
+    print("FERDI DA!!!")
     #with open('realtimetest.csv', 'w+', newline='') as file:
     #    writer = csv.writer(file)
     #    writer.writerows(data_arr)
