@@ -18,6 +18,7 @@ We have to fix the setupprocess for openzen, for Linux and for Windows. Maybe cr
 
 Here we will describe the folderstructure:
 
+```bash
 Got Your Back
 ├── README.md
 ├── assets
@@ -108,6 +109,7 @@ Got Your Back
 │   ├── realtime_collect_jonas.py
 │   └── realtime_jonas.py
 └── setup.cfg
+```
 
 ##### To be continued...
 
