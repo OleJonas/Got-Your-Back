@@ -211,9 +211,9 @@ def classification_task(model, pred_queue, predictions_arr):
     while True:
         values = pred_queue.shift()
         if values != None:
-            start = time.perf_counter()
             classification = np.argmax(model.predict(pd.DataFrame(values)))
-            print(time.perf_counter() - start)
+            print()
+            pred_queue.flush_unneeded_rows()
             # predictions_arr.append(classification)
             # print(classification)
 

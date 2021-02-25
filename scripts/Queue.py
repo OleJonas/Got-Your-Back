@@ -1,3 +1,6 @@
+from collections import deque
+from datetime import datetime
+
 class Queue:
     def __init__(self, n_columns=1):
         if n_columns == 1: self.queue = []
@@ -8,10 +11,23 @@ class Queue:
     def shift(self): pass
     def push(self): pass
     def sync_queue(self): pass
+    def flush_unneeded_rows(self): pass
 
 class Pred_Queue(Queue):
+    """
+    Prediction queue, including concatted rows from data_queue
+    """
+
     def __init__(self):
         super(Pred_Queue, self).__init__()
+        self.timestamps = deque([])
+
+    def flush_unneeded_rows(self):
+        amount_to_flush = min(self.entries)
+        for i in range(self.n_columns):
+            self.queue[i] = self.queue[i][amount_to_flush:]
+            self.entries[i] -= amount_to_flush
+        for _ in range(amount_to_flush): self.timestamps.popleft()
 
     def shift(self):
         out = []
@@ -24,9 +40,14 @@ class Pred_Queue(Queue):
     
     def push(self, sensor_id, data):
         self.queue.append(data)
-        self.entries[0] += 1    
+        self.entries[0] += 1
+        a = datetime.now()
+        self.timestamps.append(f"{a.minute}:{a.second}:{str(a.microsecond)[:2]}")
         
 class Data_Queue(Queue):
+    """
+    All data from sensors divided into columns depending on sensorID
+    """
     def __init__(self, n_columns):
         super(Data_Queue, self).__init__(n_columns)
 
