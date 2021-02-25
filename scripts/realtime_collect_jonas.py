@@ -9,20 +9,18 @@ import openzen
 import numpy as np
 import threading
 import pandas as pd
-from .Queue import Queue
+from Queue import Queue
 
 SAMPLING_RATE = 10
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
-global data
-data = []
 NUM_SENSORS = 3
 SLEEPTIME = 0.5
-global done_collecting
+sensor_data = []
 done_collecting = False
 data_queue = Queue(3)
 
 def get_model():
-    return keras.model.load_model('../model/saved_model.pb')
+    return keras.models.load_model('../model/saved_model.pb')
 
 def all_found(arr):
     for i in range(len(arr)):
@@ -45,8 +43,8 @@ def concat_data_thread(pred_queue):
             data = top_row[0][0][1:]
             for i in range(1,data_queue.n_columns):
                 data += top_row[i][0][2:]
-            pred_queue.append(data)
-            #df = pd.DataFrame(data)
+            pred_queue.append(pd.DataFrame(data))
+            #df = pd.DataFrame(sensor_data)
             #print(df)
 
 def set_sampling_rate(IMU, sampling_rate):
@@ -76,17 +74,17 @@ def scan_for_sensors(client):
         zenEvent = client.wait_for_next_event()
 
         if zenEvent.event_type == openzen.ZenEventType.SensorFound:
-            print("Found sensor {} on IoType {}".format(zenEvent.data.sensor_found.name,
-                                                        zenEvent.data.sensor_found.io_type))
+            print("Found sensor {} on IoType {}".format(zenEvent.sensor_data.sensor_found.name,
+                                                        zenEvent.sensor_data.sensor_found.io_type))
 
             # Check if found device is a bluetooth device
-            if zenEvent.data.sensor_found.io_type == "Bluetooth":
-                sensors.append(zenEvent.data.sensor_found)
+            if zenEvent.sensor_data.sensor_found.io_type == "Bluetooth":
+                sensors.append(zenEvent.sensor_data.sensor_found)
             # if sensor_desc_connect is None:
-                # sensor_desc_connect = zenEvent.data.#sensor_found
+                # sensor_desc_connect = zenEvent.sensor_data.#sensor_found
 
         if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
-            lst_data = zenEvent.data.sensor_listing_progress
+            lst_data = zenEvent.sensor_data.sensor_listing_progress
             print("Sensor listing progress: {} %".format(lst_data.progress * 100))
             if lst_data.complete > 0:
                 break
@@ -127,7 +125,7 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
                 print("Can't connect to sensor")
                 sys.exit(1)
 
-        # Obtain IMU from sensor and prevents it from streaming data yet
+        # Obtain IMU from sensor and prevents it from streaming sensor_data yet
         imu = sensor.get_any_component_of_type(openzen.component_type_imu)
         imu.set_bool_property(openzen.ZenImuProperty.StreamData, False)
         is_streaming = imu.get_bool_property(openzen.ZenImuProperty.StreamData)
@@ -157,11 +155,11 @@ def sync_sensors(client, imus):
     # Back to normal mode
     for imu in imus:
         imu.execute_property(openzen.ZenImuProperty.StopSensorSync)
-    # Start streaming data
+    # Start streaming sensor_data
     for imu in imus:
         imu.set_bool_property(openzen.ZenImuProperty.StreamData, True)
 
-    # Check if sensors stream data and has an IMU
+    # Check if sensors stream sensor_data and has an IMU
     for imu in imus:
         error, is_streaming = imu.get_bool_property(openzen.ZenImuProperty.StreamData)
         if not error == openzen.ZenError.NoError:
@@ -171,40 +169,38 @@ def sync_sensors(client, imus):
         if imu is None:
             print("No IMU found")
             sys.exit(1)
-        print(f"Sensor {imu.sensor.handle} is streaming data: {is_streaming}")
+        print(f"Sensor {imu.sensor.handle} is streaming sensor_data: {is_streaming}")
     return imus
 
 
 def collect_data(client, imus):
     """
-    Method for collecting data from the connected IMUs in given client
+    Method for collecting sensor_data from the connected IMUs in given client
 
     Input:\n
     client - clientobject from the OpenZen-library\n
     imus - list of Inertial Measurement Units in sensors given in client\n
 
     Output:\n
-    data - list of data from all IMUs\n
+    sensor_data - list of sensor_data from all IMUs\n
     """
     
     runSome = 0
-    # Helper array to check if the sensors are streaming approx same amount of data
     occurences = [0, 0, 0]
     #columns = ['SensorId', ' TimeStamp (s)', ' FrameNumber', ' AccX (g)', ' AccY (g)', ' AccZ (g)', ' GyroX (deg/s)', ' GyroY (deg/s)', ' GyroZ (deg/s)',
                #' MagX (uT)', ' MagY (uT)', ' MagZ (uT)', ' EulerX (deg)', ' EulerY (deg)', ' EulerZ #(deg)', ' QuatW', ' QuatX', 'QuatY', 'QuatZ']
-    #data.append(columns)
+    #sensor_data.append(columns)
 
-    #MAKE THREAD WORK HERE?
     concat_thread.start()
 
     while True:
         dataRow = []
         zenEvent = client.wait_for_next_event()
-        # Check if it's an IMU sample event and if it comes from our IMU and sensor component
+        # Check if it's an IMU sample event
         if zenEvent.event_type == openzen.ZenEventType.ImuData:
             occurences[int(zenEvent.sensor.handle) - 1] += 1
 
-            imu_data = zenEvent.data.imu_data
+            imu_data = zenEvent.sensor_data.imu_data
             
             dataRow.append(zenEvent.sensor.handle)
             dataRow.append(imu_data.timestamp)
@@ -225,12 +221,15 @@ def collect_data(client, imus):
             break
     
     print(occurences)
-    print("Streaming of sensor data complete")
+    print("Streaming of sensor sensor_data complete")
     done_collecting = True
-    #return data
+    #return sensor_data
 
 
 if __name__ == "__main__":
+    model = keras.models.load_model('.')
+    pipe = make_pipeline(model)
+    
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     pred_queue = Queue(1)
 
@@ -241,16 +240,18 @@ if __name__ == "__main__":
 
     sensors_found = scan_for_sensors(client)
 
-    user_input = [0, 1, 2]
+    user_input = [0, 1, 2]  
     #user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
 
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
     remove_trash_data(client)
 
-    concat_thread = threading.Thread(target=concat_data_thread, args=[pred_queue] daemon=True)
+    concat_thread = threading.Thread(target=concat_data_thread, args=[pred_queue], daemon=True)
     
     collect_data(client, sync_sensors(client, imus))
     print(np.shape(data_queue.data_queue))
+    pipe.predict(pred_queue.shift())
+    
     print("FERDI DA!!!")
     #with open('realtimetest.csv', 'w+', newline='') as file:
     #    writer = csv.writer(file)
