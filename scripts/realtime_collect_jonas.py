@@ -8,6 +8,7 @@ import os
 import openzen
 import numpy as np
 import threading
+import pandas as pd
 
 SAMPLING_RATE = 10
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
@@ -25,9 +26,10 @@ class Queue:
     def pop(self):
         out = [[] for i in range(self.n_sensors)]
         for i in range(self.n_sensors):
-            if self.queue[i][0] == None: # Return None if the queue didn't have data for all sensors requested
-                return None
-            out[i].append(self.queue[i][0])
+            if len(self.queue[i]) > 0:
+                if self.queue[i][0] == None: # Return None if the queue didn't have data for all sensors requested
+                    return None
+                out[i].append(self.queue[i][0])
 
         for i in range(self.n_sensors):
             np.delete(self.queue, i, 0)
@@ -75,14 +77,19 @@ def get_values(dest_arr, src_arr):
         dest_arr.append(src_arr[i])
 
 def concat_data_thread():
-    while()
-    row = queue.pop()
-    concatenated = row[0][0]
-    for i in range(1,queue.n_sensors):
-        concatenated.append(row[i][0])
-    df = pd.
-
     """
+    data_to_predict = []
+    while(not done_collecting):
+        row = queue.pop()
+        print(row)
+        concatenated = row[0][0]
+        for i in range(1,queue.n_sensors):
+            concatenated.append(row[i][0])
+        df = pd.DataFrame(concatenated)
+        data_to_predict.append(df)
+    print(data_to_predict)
+    """
+    
     NUM_SENSORS = 3
     SLEEPTIME = 0.05
     finds = [NUM_SENSORS-1]
@@ -99,13 +106,14 @@ def concat_data_thread():
                 for i in range(1,NUM_SENSORS):
                     if(queue.queue[i][0][1] == first_timestamp):
                         get_values(temp_buff, queue.queue[i][0])
-                    finds[i] = True
+                        finds[i] = True
+                        print("Found matching timestamp")
             data.append(temp_buff)
             # ALL TIMESTAMPS FOUND FOR ALL SENSORS
             # POP TOP ROW IN DATA HERE
     print(np.shape(data))
     print("Thread done...")
-    """
+    
 def set_sampling_rate(IMU, sampling_rate):
     assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
     IMU.set_int32_property(openzen.ZenImuProperty.SamplingRate, sampling_rate)
@@ -318,9 +326,6 @@ if __name__ == "__main__":
         for j in range(3):
             print(j, ": ", queue.queue[j][i][1])
 
-    time.sleep(10)
-    print("Killing thread")
-    concat_thread.kill()
     #with open('realtimetest.csv', 'w+', newline='') as file:
     #    writer = csv.writer(file)
     #    writer.writerows(data_arr)
