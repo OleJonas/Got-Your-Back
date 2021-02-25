@@ -10,8 +10,10 @@ import numpy as np
 import threading
 import pandas as pd
 from Queue import Pred_Queue, Data_Queue
+from datetime import datetime
 
-SAMPLING_RATE = 5
+PREDICTION_INTERVAL = 3
+SAMPLING_RATE = 10
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 NUM_SENSORS = 3
 SLEEPTIME = 0.1
@@ -211,11 +213,14 @@ def classification_task(model, pred_queue, predictions_arr):
     while True:
         values = pred_queue.shift()
         if values != None:
+            # pred_queue.flush_unneeded_rows()
             classification = np.argmax(model.predict(pd.DataFrame(values)))
-            print()
-            pred_queue.flush_unneeded_rows()
+            a = datetime.now()
+            time_now = f"{a.minute}:{a.second}:{str(a.microsecond)[:2]}"
+            print(f"Time collected and added to pred_queue: {pred_queue.timestamps[0]} and current time: {time_now}")
             # predictions_arr.append(classification)
             # print(classification)
+            # time.sleep(PREDICTION_INTERVAL)
 
 
 if __name__ == "__main__":
