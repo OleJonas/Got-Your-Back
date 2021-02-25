@@ -1,7 +1,7 @@
 import csv
 import time
 import sys
-import threading 
+import threading
 import keras
 import time
 import os
@@ -14,7 +14,7 @@ from Queue import Pred_Queue, Data_Queue
 SAMPLING_RATE = 5
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 NUM_SENSORS = 3
-SLEEPTIME = 0.5
+SLEEPTIME = 0.1
 sensor_data = []
 done_collecting = False
 data_queue = Data_Queue(3)
@@ -24,6 +24,7 @@ Vi må finne en måte å ikke fylle data_queue for mye, eller pred_queue må hen
 Nå henger prediction etter, og den henger bare mer og mer etter jo mer data som innhentes. 
 Vi må finne en måte å trashe den dataen vi ikke trenger for å oppleve mer realtime
 """
+
 
 def scan_for_sensors(client):
     """
@@ -35,10 +36,9 @@ def scan_for_sensors(client):
     Output:\n
     sensors - list of available sensors
     """
-    error = client.list_sensors_async()
+    client.list_sensors_async()
 
     # check for events
-    sensor_desc_connect = None
     sensors = []
     while True:
         zenEvent = client.wait_for_next_event()
@@ -62,6 +62,7 @@ def scan_for_sensors(client):
     print("Listing found sensors in sensors array:\n",
           [sensor.name for sensor in sensors])
     return sensors
+
 
 def connect_and_get_imus(client, sensors, chosen_sensors):
     """
@@ -110,13 +111,16 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
     #print("Connected to sensors:\n", [x.name for x in connected_sensors])
     return connected_sensors, imus
 
+
 def set_sampling_rate(IMU, sampling_rate):
     assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
     IMU.set_int32_property(openzen.ZenImuProperty.SamplingRate, sampling_rate)
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
+
 def get_sampling_rate(IMU):
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
+
 
 def sync_sensors(client, imus):
     # Synchronize
@@ -143,11 +147,13 @@ def sync_sensors(client, imus):
         print(f"Sensor {imu.sensor.handle} is streaming data: {is_streaming}")
     return imus
 
+
 def remove_unsync_data(client):
     zenEvent = client.poll_next_event()
-    
+
     while(zenEvent != None):
         zenEvent = client.poll_next_event()
+
 
 def collect_data(client, imus):
     """
@@ -160,11 +166,9 @@ def collect_data(client, imus):
     Output:\n
     data - list of data from all IMUs\n
     """
-    
-    runSome = 0
+
     occurences = [0, 0, 0]
     concat_thread.start()
-    count = 0
 
     while True:
         zenEvent = client.wait_for_next_event()
@@ -175,10 +179,10 @@ def collect_data(client, imus):
             occurences[int(zenEvent.sensor.handle) - 1] += 1
 
             imu_data = zenEvent.data.imu_data
-            
+
             dataRow.append(zenEvent.sensor.handle)
             dataRow.append(imu_data.timestamp)
-            
+
             # Write to csv file for each sensor
             for i in range(3):
                 dataRow.append(imu_data.a[i])
@@ -188,15 +192,9 @@ def collect_data(client, imus):
             for j in range(4):
                 dataRow.append(imu_data.q[i])
         data_queue.push(zenEvent.sensor.handle, dataRow)
-        count = 0
-        
-    
-    print(occurences)
-    print("Streaming of sensor data complete")
-    done_collecting = True
+
 
 def concat_data_task(pred_queue):
-    SLEEPTIME = 0.1
     while True:
         if(min(data_queue.entries) == 0):
             # print(f"No work for thread... sleeping for {SLEEPTIME} second(s)")
@@ -204,9 +202,10 @@ def concat_data_task(pred_queue):
         else:
             top_row = data_queue.shift()
             data = top_row[0][0][1:]
-            for i in range(1,data_queue.n_columns):
+            for i in range(1, data_queue.n_columns):
                 data += top_row[i][0][2:]
             pred_queue.push(1, data[1:])
+
 
 def classification_task(model, pred_queue, predictions_arr):
     while True:
@@ -217,6 +216,7 @@ def classification_task(model, pred_queue, predictions_arr):
             print(time.perf_counter() - start)
             # predictions_arr.append(classification)
             # print(classification)
+
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
@@ -230,18 +230,15 @@ if __name__ == "__main__":
 
     sensors_found = scan_for_sensors(client)
 
-    user_input = [0, 1, 2]  
+    user_input = [0, 1, 2]
     #user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
 
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
     remove_unsync_data(client)
-    
+
     concat_thread = threading.Thread(target=concat_data_task, args=[pred_queue], daemon=True)
     predictions_arr = []
     pred_thread = threading.Thread(target=classification_task, args=[model, pred_queue, predictions_arr], daemon=True)
     pred_thread.start()
 
     collect_data(client, sync_sensors(client, imus))
-
-    print(predictions_arr)
-    print("FERDI DA!!!")
