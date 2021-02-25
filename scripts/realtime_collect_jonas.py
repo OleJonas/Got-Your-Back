@@ -9,6 +9,7 @@ import openzen
 import numpy as np
 import threading
 import pandas as pd
+from .Queue import Queue
 
 SAMPLING_RATE = 10
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
@@ -18,54 +19,7 @@ NUM_SENSORS = 3
 SLEEPTIME = 0.5
 global done_collecting
 done_collecting = False
-
-class Queue:
-    def __init__(self, n_sensors):
-        self.queue = [[] for i in range(n_sensors)]
-        self.n_sensors = n_sensors
-        self.entries = [0, 0, 0]
-
-    def shift(self):
-        out = [[] for i in range(self.n_sensors)]
-        for i in range(self.n_sensors):
-            if len(self.queue[i]) > 0:
-                if self.queue[i][0] == None: # Return None if the queue didn't have data for all sensors requested
-                    return None
-                out[i].append(self.queue[i][0])
-
-        for i in range(self.n_sensors):
-            self.queue[i] = self.queue[i][1:]
-            self.entries[i] -= 1
-        
-        return out
-    
-    def push(self, sensor_id, data):
-        self.queue[sensor_id-1].append(data)
-        self.entries[sensor_id-1] += 1
-
-
-    def sync_queue(self):
-        sync = False
-        tries = 20
-        indexes = [100,0,0]
-        
-        while not sync:
-            found = 1
-            timestamp = self.queue[0][indexes[0]][1]
-            i = 0
-            while i < tries and found < 3:
-                for j in range(1,self.n_sensors):
-                    if self.queue[j][i][1] == timestamp: 
-                        indexes[j] = indexes[0] + i
-                        found += 1
-                        
-            if found == 3: sync = True
-            else: indexes = [indexes[0]+1, 0, 0]
-
-        for i in range(self.n_sensors):
-            self.queue[i] = self.queue[i][indexes[i]:]
-
-queue = Queue(3)
+data_queue = Queue(3)
 
 def get_model():
     return keras.model.load_model('../model/saved_model.pb')
@@ -80,50 +34,20 @@ def get_values(dest_arr, src_arr):
     for i in range(len(src_arr)):
         dest_arr.append(src_arr[i])
 
-"""
-def concat_data_thread_deprecated():
-    NUM_SENSORS = 3
-    SLEEPTIME = 0.1
-    finds = [False] * (NUM_SENSORS-1)
-    data = []
-    while(not done_collecting):
-        for i in range(len(finds)):
-            finds[i] = False
-        temp_buff = []
-        if(min(queue.entries) == 0):
-            print("No work for thread... sleeping for {SLEEPTIME} second(s)")
-            time.sleep(SLEEPTIME)
-        else:
-            first_timestamp = queue.queue[0][0][1]
-            while(not all_found(finds)):
-                for i in range(1,NUM_SENSORS):
-                    if(queue.queue[i][0][1] == first_timestamp):
-                        get_values(temp_buff, queue.queue[i][0])
-                        finds[i-1] = True
-            data.append(temp_buff)
-            print("data: ", data)
-            queue.shift()
-    print(np.shape(data))
-    print("Thread done...")
-"""
-
-def concat_data_thread():
+def concat_data_thread(pred_queue):
     SLEEPTIME = 0.5
-    all_data = []
     for i in range(100):
-        if(min(queue.entries) == 0):
+        if(min(data_queue.entries) == 0):
             print("No work for thread... sleeping for {SLEEPTIME} second(s)")
             time.sleep(SLEEPTIME)
         else:
-            top_row = queue.shift()
+            top_row = data_queue.shift()
             data = top_row[0][0][1:]
-            for i in range(1,queue.n_sensors):
+            for i in range(1,data_queue.n_columns):
                 data += top_row[i][0][2:]
-            all_data.append(data)
+            pred_queue.append(data)
             #df = pd.DataFrame(data)
             #print(df)
-    print("All data:\n", np.shape(all_data))
-
 
 def set_sampling_rate(IMU, sampling_rate):
     assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
@@ -294,7 +218,7 @@ def collect_data(client, imus):
             for j in range(4):
                 dataRow.append(imu_data.q[i])
         #LÅS MUTEX
-        queue.push(zenEvent.sensor.handle, dataRow)
+        data_queue.push(zenEvent.sensor.handle, dataRow)
         #SLIPPE MUTEX HER 
         runSome += 1
         if runSome > 200:
@@ -308,6 +232,7 @@ def collect_data(client, imus):
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
+    pred_queue = Queue(1)
 
     error, client = openzen.make_client()
     if not error == openzen.ZenError.NoError:
@@ -322,10 +247,10 @@ if __name__ == "__main__":
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
     remove_trash_data(client)
 
-    concat_thread = threading.Thread(target=concat_data_thread, args=[] daemon=True)
+    concat_thread = threading.Thread(target=concat_data_thread, args=[pred_queue] daemon=True)
     
     collect_data(client, sync_sensors(client, imus))
-    print(np.shape(queue.queue))
+    print(np.shape(data_queue.data_queue))
     print("FERDI DA!!!")
     #with open('realtimetest.csv', 'w+', newline='') as file:
     #    writer = csv.writer(file)
