@@ -43,7 +43,7 @@ class Pred_Queue(Queue):
         self.timestamps.popleft()
         return out
 
-    def push(self, sensor_id, data):
+    def push(self, data):
         self.queue.append(data)
         self.entries += 1
         self.timestamps.append(datetime.now())
