@@ -205,10 +205,12 @@ def classification_task(model, pred_queue):
     while True:
         values = pred_queue.shift()
         if values != None:
+            start_time = time.perf_counter()
             classification = np.argmax(model.predict(pd.DataFrame(values)))
+            elapsed_time = time.perf_counter() - start_time
             pred_queue_time = pred_queue.timestamps[0]
             pred_time = datetime.now() - pred_queue_time
-            print(f"Predicted {classification}! Total seconds since added to pred_queue: {pred_time.total_seconds()}")
+            print(f"Predicted {classification}! Seconds since added to pred_queue: {pred_time.total_seconds()} and prediction time: {elapsed_time}")
             pred_queue.flush()
 
 
