@@ -116,7 +116,7 @@ def get_sampling_rate(IMU):
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
 
-def sync_sensors(client, imus):
+def sync_sensors(imus):
     # Synchronize
     for imu in imus:
         imu.execute_property(openzen.ZenImuProperty.StartSensorSync)
@@ -149,7 +149,7 @@ def remove_unsync_data(client):
         zenEvent = client.poll_next_event()
 
 
-def collect_data(client, imus):
+def collect_data(client):
     """
     Method for collecting data from the connected IMUs in given client
 
@@ -234,7 +234,8 @@ if __name__ == "__main__":
 
     concat_thread = threading.Thread(target=concat_data_task, args=[pred_queue], daemon=True)
     predictions_arr = []
-    pred_thread = threading.Thread(target=classification_task, args=[model, pred_queue, predictions_arr], daemon=True)
+    pred_thread = threading.Thread(target=classification_task, args=[model, pred_queue], daemon=True)
     pred_thread.start()
 
-    collect_data(client, sync_sensors(client, imus))
+    sync_sensors(imus)
+    collect_data(client)

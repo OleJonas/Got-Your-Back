@@ -20,7 +20,7 @@ class Queue:
 
 class Pred_Queue(Queue):
     """
-    Prediction queue, including concatted rows from data_queue
+    Prediction queue, consisting of concatted rows from data_queue
     """
 
     def __init__(self):
@@ -28,10 +28,10 @@ class Pred_Queue(Queue):
         self.timestamps = deque([])
 
     def flush(self):
-        for _ in range(self.entries):
-            self.timestamps.popleft()
         self.queue = []
         self.entries = 0
+        for _ in range(self.entries):
+            self.timestamps.popleft()
 
     def shift(self):
         out = []
@@ -40,6 +40,7 @@ class Pred_Queue(Queue):
         out.append(self.queue[0])
         self.queue = self.queue[1:]
         self.entries -= 1
+        self.timestamps.popleft()
         return out
 
     def push(self, sensor_id, data):
