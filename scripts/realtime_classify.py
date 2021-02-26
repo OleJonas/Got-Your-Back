@@ -1,14 +1,11 @@
 import time
 import sys
-import threading
 import keras
 import time
 import openzen
 import numpy as np
 import threading
-import pandas as pd
 from Queue import Pred_Queue, Data_Queue
-from datetime import datetime
 
 PREDICTION_INTERVAL = 1
 SAMPLING_RATE = 100
@@ -222,27 +219,26 @@ if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     model = keras.models.load_model('ANN_model')
     pred_queue = Pred_Queue()
-    predictions_arr = []
-
-    error, client = openzen.make_client()
-    if not error == openzen.ZenError.NoError:
-        print("Error while initializing OpenZen library")
-        sys.exit(1)
-
-    sensors_found = scan_for_sensors(client)
-
     # user_input = [0, 1, 2]
     user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
     data_queue = Data_Queue(len(user_input))
 
+    # Make client
+    error, client = openzen.make_client()
+    if not error == openzen.ZenError.NoError:
+        print("Error while initializing OpenZen library")
+        sys.exit(1)
+    
+    # Scan, connect and syncronize sensors
+    sensors_found = scan_for_sensors(client)
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
     remove_unsync_data(client)
-
     sync_sensors(imus)
+    
+    # Start collecting and concatting data
     concat_thread = threading.Thread(target=concat_data, args=[data_queue, pred_queue], daemon=True)
     collect_data_thread = threading.Thread(target=collect_data, args=[client, data_queue], daemon=True)
     collect_data_thread.start()
-    #pred_thread = threading.Thread(target=classification, args=[model, pred_queue], daemon=True)
-    # pred_thread.start()
 
+    # Run realtime classification
     classification(model, pred_queue)
