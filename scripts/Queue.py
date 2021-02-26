@@ -1,6 +1,3 @@
-from collections import deque
-from datetime import datetime
-
 
 class Queue:
     def __init__(self, n_columns=1):
@@ -25,13 +22,10 @@ class Pred_Queue(Queue):
 
     def __init__(self):
         super(Pred_Queue, self).__init__()
-        self.timestamps = deque([])
 
     def flush(self):
         self.queue = []
         self.entries = 0
-        for _ in range(self.entries):
-            self.timestamps.popleft()
 
     def shift(self):
         out = []
@@ -40,13 +34,11 @@ class Pred_Queue(Queue):
         out.append(self.queue[0])
         self.queue = self.queue[1:]
         self.entries -= 1
-        self.timestamps.popleft()
         return out
 
     def push(self, data):
         self.queue.append(data)
         self.entries += 1
-        self.timestamps.append(datetime.now())
 
 
 class Data_Queue(Queue):

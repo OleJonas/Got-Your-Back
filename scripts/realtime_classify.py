@@ -10,15 +10,13 @@ import pandas as pd
 from Queue import Pred_Queue, Data_Queue
 from datetime import datetime
 
-PREDICTION_INTERVAL = 3
-SAMPLING_RATE = 5
+PREDICTION_INTERVAL = 1
+SAMPLING_RATE = 100
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 NUM_SENSORS = 3
 SLEEPTIME = 0.1
 sensor_data = []
 done_collecting = False
-data_queue = Data_Queue(3)
-
 
 def scan_for_sensors(client):
     """
@@ -32,26 +30,23 @@ def scan_for_sensors(client):
     """
     client.list_sensors_async()
 
-    # check for events
+    # Check for events
     sensors = []
     while True:
         zenEvent = client.wait_for_next_event()
 
         if zenEvent.event_type == openzen.ZenEventType.SensorFound:
-            print("Found sensor {} on IoType {}".format(zenEvent.data.sensor_found.name,
-                                                        zenEvent.data.sensor_found.io_type))
-
+            print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}")
             # Check if found device is a bluetooth device
             if zenEvent.data.sensor_found.io_type == "Bluetooth":
                 sensors.append(zenEvent.data.sensor_found)
-            # if sensor_desc_connect is None:
-                # sensor_desc_connect = zenEvent.data.#sensor_found
 
         if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
             lst_data = zenEvent.data.sensor_listing_progress
-            print("Sensor listing progress: {} %".format(lst_data.progress * 100))
+            print(f"Sensor listing progress: {lst_data.progress * 100}%")
             if lst_data.complete > 0:
                 break
+
     print("Sensor Listing complete, found ", len(sensors))
     print("Listing found sensors in sensors array:\n",
           [sensor.name for sensor in sensors])
@@ -99,7 +94,7 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
 
         imus.append(imu)
 
-        print("Connected to sensor {}!".format(sensors[index].name))
+        print(f"Connected to sensor {sensors[index].name} ({round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%)!")
 
         connected_sensors.append(sensor)
     #print("Connected to sensors:\n", [x.name for x in connected_sensors])
@@ -149,7 +144,7 @@ def remove_unsync_data(client):
         zenEvent = client.poll_next_event()
 
 
-def collect_data(client):
+def collect_data(client, data_queue):
     """
     Method for collecting data from the connected IMUs in given client
 
@@ -188,7 +183,7 @@ def collect_data(client):
         data_queue.push(zenEvent.sensor.handle, dataRow)
 
 
-def concat_data_task(pred_queue):
+def concat_data(data_queue, pred_queue):
     while True:
         # If no work for worker thread, sleep
         if(min(data_queue.entries) == 0):
@@ -198,26 +193,36 @@ def concat_data_task(pred_queue):
             data = top_row[0][0][1:]
             for i in range(1, data_queue.n_columns):
                 data += top_row[i][0][2:]
-            pred_queue.push(1, data[1:])
+            pred_queue.push(data[1:])
 
 
-def classification_task(model, pred_queue):
+def classification(model, pred_queue):
     while True:
         values = pred_queue.shift()
+        values = []
+        rows = 0
+        while rows < SAMPLING_RATE*PREDICTION_INTERVAL:
+            val = pred_queue.shift()
+            if val != None:
+                values.append(val)
+                rows += 1
+        rows = 0
+
         if values != None:
+            v_arr = np.array(values)
             start_time = time.perf_counter()
-            classification = np.argmax(model.predict(pd.DataFrame(values)))
+            classification_res = model.predict(v_arr, batch_size=SAMPLING_RATE*PREDICTION_INTERVAL)
             elapsed_time = time.perf_counter() - start_time
-            pred_queue_time = pred_queue.timestamps[0]
-            pred_time = datetime.now() - pred_queue_time
-            print(f"Predicted {classification}! Seconds since added to pred_queue: {pred_time.total_seconds()} and prediction time: {elapsed_time}")
-            pred_queue.flush()
+            print(f"Predicted {classification_res} in {elapsed_time}s!")
+
+
 
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     model = keras.models.load_model('ANN_model')
     pred_queue = Pred_Queue()
+    predictions_arr = []
 
     error, client = openzen.make_client()
     if not error == openzen.ZenError.NoError:
@@ -226,16 +231,19 @@ if __name__ == "__main__":
 
     sensors_found = scan_for_sensors(client)
 
-    user_input = [0, 1, 2]
-    #user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
+    # user_input = [0, 1, 2]
+    user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
+    data_queue = Data_Queue(len(user_input))
 
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
     remove_unsync_data(client)
 
-    concat_thread = threading.Thread(target=concat_data_task, args=[pred_queue], daemon=True)
-    predictions_arr = []
-    pred_thread = threading.Thread(target=classification_task, args=[model, pred_queue], daemon=True)
-    pred_thread.start()
-
     sync_sensors(imus)
-    collect_data(client)
+    concat_thread = threading.Thread(target=concat_data, args=[data_queue, pred_queue], daemon=True)
+    collect_data_thread = threading.Thread(target=collect_data, args=[client, data_queue], daemon=True)
+    collect_data_thread.start()
+    #pred_thread = threading.Thread(target=classification, args=[model, pred_queue], daemon=True)
+    #pred_thread.start()
+    
+    classification(model, pred_queue)
+
