@@ -18,6 +18,7 @@ SLEEPTIME = 0.1
 sensor_data = []
 done_collecting = False
 
+
 def scan_for_sensors(client):
     """
     Scan for available sensors
@@ -94,7 +95,8 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
 
         imus.append(imu)
 
-        print(f"Connected to sensor {sensors[index].name} ({round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%)!")
+        print(
+            f"Connected to sensor {sensor.sensor.handle} - {sensors[index].name} ({round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%)!")
 
         connected_sensors.append(sensor)
     #print("Connected to sensors:\n", [x.name for x in connected_sensors])
@@ -201,7 +203,7 @@ def classification(model, pred_queue):
         values = pred_queue.shift()
         values = []
         rows = 0
-        while rows < SAMPLING_RATE*PREDICTION_INTERVAL:
+        while rows < SAMPLING_RATE * PREDICTION_INTERVAL:
             val = pred_queue.shift()
             if val != None:
                 values.append(val)
@@ -211,11 +213,9 @@ def classification(model, pred_queue):
         if values != None:
             v_arr = np.array(values)
             start_time = time.perf_counter()
-            classification_res = model.predict(v_arr, batch_size=SAMPLING_RATE*PREDICTION_INTERVAL)
+            classification_res = model.predict(v_arr, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)
             elapsed_time = time.perf_counter() - start_time
-            print(f"Predicted {classification_res} in {elapsed_time}s!")
-
-
+            print(f"Predicted {max(classification_res[0][0])} in {elapsed_time}s!")
 
 
 if __name__ == "__main__":
@@ -243,7 +243,6 @@ if __name__ == "__main__":
     collect_data_thread = threading.Thread(target=collect_data, args=[client, data_queue], daemon=True)
     collect_data_thread.start()
     #pred_thread = threading.Thread(target=classification, args=[model, pred_queue], daemon=True)
-    #pred_thread.start()
-    
-    classification(model, pred_queue)
+    # pred_thread.start()
 
+    classification(model, pred_queue)
