@@ -85,7 +85,6 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
         # Obtain IMU from sensor and prevents it from streaming sensor_data yet
         imu = sensor.get_any_component_of_type(openzen.component_type_imu)
         imu.set_bool_property(openzen.ZenImuProperty.StreamData, False)
-        is_streaming = imu.get_bool_property(openzen.ZenImuProperty.StreamData)
 
         # Set sampling rate
         set_sampling_rate(imu, SAMPLING_RATE)
@@ -197,7 +196,6 @@ def concat_data(data_queue, pred_queue):
 
 def classification(model, pred_queue):
     while True:
-        values = pred_queue.shift()
         values = []
         rows = 0
         while rows < SAMPLING_RATE * PREDICTION_INTERVAL:
@@ -208,11 +206,10 @@ def classification(model, pred_queue):
         rows = 0
 
         if values != None:
-            v_arr = np.array(values)
             start_time = time.perf_counter()
-            classification_res = model.predict(v_arr, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)
-            elapsed_time = time.perf_counter() - start_time
-            print(f"Predicted {max(classification_res[0][0])} in {elapsed_time}s!")
+            classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
+            elapsed_time = round(time.perf_counter() - start_time, 2)
+            print(f"Predicted {classification_res} in {elapsed_time}s!")
 
 
 if __name__ == "__main__":
@@ -228,8 +225,8 @@ if __name__ == "__main__":
 
     # Scan, connect and syncronize sensors
     sensors_found = scan_for_sensors(client)
-    # user_input = [0, 1, 2]
-    user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
+    user_input = [0, 1, 2]
+    # user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
 
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
     remove_unsync_data(client)
