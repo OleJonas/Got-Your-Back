@@ -254,8 +254,11 @@ def classification(model, pred_queue):
             scaler.fit(values)
             values = scaler.transform(values)
             start_time = time.perf_counter()
-            classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
+
+            #classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
+            classification_res = model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)
             elapsed_time = round(time.perf_counter() - start_time, 2)
+            print(classification_res)
             #print(f"Predicted {classification_res} in {elapsed_time}s!")
 
 
