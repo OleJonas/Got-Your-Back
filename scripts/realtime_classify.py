@@ -5,12 +5,12 @@ import time
 import openzen
 import numpy as np
 import threading
+import multiprocessing
 from Queue import Pred_Queue, Data_Queue
 
 PREDICTION_INTERVAL = 1
 SAMPLING_RATE = 100
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
-NUM_SENSORS = 3
 SLEEPTIME = 0.1
 sensor_data = []
 done_collecting = False
@@ -197,7 +197,6 @@ def concat_data(data_queue, pred_queue):
 
 def classification(model, pred_queue):
     while True:
-        values = pred_queue.shift()
         values = []
         rows = 0
         while rows < SAMPLING_RATE * PREDICTION_INTERVAL:
@@ -208,34 +207,34 @@ def classification(model, pred_queue):
         rows = 0
 
         if values != None:
-            v_arr = np.array(values)
             start_time = time.perf_counter()
-            classification_res = model.predict(v_arr, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)
-            elapsed_time = time.perf_counter() - start_time
-            print(f"Predicted {max(classification_res[0][0])} in {elapsed_time}s!")
+            classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
+            elapsed_time = round(time.perf_counter() - start_time, 2)
+            print(f"Predicted {classification_res} in {elapsed_time}s!")
 
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     model = keras.models.load_model('ANN_model')
     pred_queue = Pred_Queue()
-    # user_input = [0, 1, 2]
-    user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
-    data_queue = Data_Queue(len(user_input))
 
     # Make client
     error, client = openzen.make_client()
     if not error == openzen.ZenError.NoError:
         print("Error while initializing OpenZen library")
         sys.exit(1)
-    
+
     # Scan, connect and syncronize sensors
     sensors_found = scan_for_sensors(client)
+    # user_input = [0, 1, 2]
+    user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
+
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
     remove_unsync_data(client)
     sync_sensors(imus)
-    
+
     # Start collecting and concatting data
+    data_queue = Data_Queue(len(user_input))
     concat_thread = threading.Thread(target=concat_data, args=[data_queue, pred_queue], daemon=True)
     collect_data_thread = threading.Thread(target=collect_data, args=[client, data_queue], daemon=True)
     collect_data_thread.start()
