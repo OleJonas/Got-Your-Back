@@ -197,7 +197,6 @@ def concat_data(data_queue, pred_queue):
 
 def classification(model, pred_queue):
     while True:
-        values = pred_queue.shift()
         values = []
         rows = 0
         while rows < SAMPLING_RATE * PREDICTION_INTERVAL:
@@ -208,11 +207,10 @@ def classification(model, pred_queue):
         rows = 0
 
         if values != None:
-            v_arr = np.array(values)
             start_time = time.perf_counter()
-            classification_res = model.predict(v_arr, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)
-            elapsed_time = time.perf_counter() - start_time
-            print(f"Predicted {max(classification_res[0][0])} in {elapsed_time}s!")
+            classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
+            elapsed_time = round(time.perf_counter() - start_time, 2)
+            print(f"Predicted {classification_res} in {elapsed_time}s!")
 
 
 if __name__ == "__main__":
