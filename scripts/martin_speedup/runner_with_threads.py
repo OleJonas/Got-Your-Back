@@ -8,6 +8,7 @@ import openzen
 import numpy as np
 import threading
 from Queue import Pred_Queue, Data_Queue
+import pandas as pd
 
 PREDICTION_INTERVAL = 1
 SAMPLING_RATE = 10
@@ -163,27 +164,29 @@ def collect_data(client, data_queue):
             found = 0
             last_index = 0
             for j, y in enumerate(found_timestamps[i:-1]):
-                print("x: ", x, " y: ", y)
+                #print("x: ", x, " y: ", y)
                 if x == y:
                     found += 1
-                    print(found)
+                    #print(found)
                     last_index = j
             if found == NUM_SENSORS:
-                print("Denne: ", tmp_rows[i])
+                #print("Denne: ", tmp_rows[i])
                 clean_arr = []
-                for row, timestamp in tmp_rows, timestamp:
-                    if timestamp >= x:
-                        clean_arr.append(row)
+                for i in range(len(tmp_rows)):
+                    if found_timestamps[i] >= x:
+                        clean_arr.append(tmp_rows[i])
                 tmp_rows = clean_arr
                 aligned = True
                 break
 
     # print(tmp_rows)
     for row in tmp_rows:
-        print(row[0], " ", row[1])
+        #print(row[0], " ", row[1])
         data_queue.push(row[0], row[1:])
+        data_writer.writerow(row)
 
-    helper = 0
+    print("Done aligning (Morrison)")
+
     while True:
         row = None
         zenEvent = client.wait_for_next_event()
@@ -191,13 +194,16 @@ def collect_data(client, data_queue):
             occurences[int(zenEvent.sensor.handle) - 1] += 1
             imu_data = zenEvent.data.imu_data
             row = _make_row(zenEvent.sensor.handle, imu_data)
+            #print(row[0], " ", row[1])
+            data_queue.push(row[0], row[1:])
+            data_writer.writerow(row)    
         else:
             continue
-        if helper < 15:
-            #print("Handle: ", zenEvent.sensor.handle, "Timestamp: ", row[1])
-            helper += 1
+        """print(row[0], " ", row[1])
         data_queue.push(row[0], row[1:])
+        print(data_queue.queue[i])
         data_writer.writerow(row)
+        i += 1"""
     data_file.close()
     pred_file.close()
 
@@ -209,9 +215,10 @@ def concat_data(data_queue, pred_queue):
             time.sleep(SLEEPTIME)
         else:
             top_row = data_queue.shift()
-            data = top_row[0][0][1:]
+            data = top_row[0][0]
             for i in range(1, data_queue.n_columns):
-                data += top_row[i][0][2:]
+                data += top_row[i][0][1:]
+            #print(data[1:])
             pred_queue.push(data[1:])
 
 
@@ -236,6 +243,7 @@ def classification(model, pred_queue):
         while rows < SAMPLING_RATE * PREDICTION_INTERVAL:
             val = pred_queue.shift()
             if val != None:
+                print(val)
                 values.append(val)
                 rows += 1
         rows = 0
@@ -248,7 +256,7 @@ def classification(model, pred_queue):
             start_time = time.perf_counter()
             classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
             elapsed_time = round(time.perf_counter() - start_time, 2)
-            # print(f"Predicted {classification_res} in {elapsed_time}s!")
+            #print(f"Predicted {classification_res} in {elapsed_time}s!")
 
 
 if __name__ == "__main__":
@@ -276,6 +284,7 @@ if __name__ == "__main__":
     concat_thread = threading.Thread(target=concat_data, args=[data_queue, pred_queue], daemon=True)
     collect_data_thread = threading.Thread(target=collect_data, args=[client, data_queue], daemon=True)
     collect_data_thread.start()
+    concat_thread.start()
 
     # Run realtime classification
     classification(model, pred_queue)
