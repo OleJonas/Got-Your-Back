@@ -241,8 +241,8 @@ def classification(model, pred_queue):
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
-    # model = keras.models.load_model('ANN_model.h5')
-    model = load('rfc.joblib')
+    model = keras.models.load_model('ANN_model.h5')
+    # model = load('rfc.joblib')
     pred_queue = Pred_Queue()
 
     # Make client
