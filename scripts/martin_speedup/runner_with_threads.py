@@ -243,13 +243,21 @@ def classification(model, pred_queue):
         while rows < SAMPLING_RATE * PREDICTION_INTERVAL:
             val = pred_queue.shift()
             if val != None:
-                print(val)
+                #print(val)
                 values.append(val)
                 rows += 1
         rows = 0
 
         if values != None:
             values = np.squeeze(values)
+            start = time.perf_counter()
+            predictions = model.predict(values)
+            print(time.perf_counter() - start)
+            for index in range(len(predictions)):
+                print("Pred: ", predictions[index].argmax())
+
+
+            """values = np.squeeze(values)
             scaler = pp.MinMaxScaler()
             scaler.fit(values)
             values = scaler.transform(values)
@@ -258,13 +266,13 @@ def classification(model, pred_queue):
             #classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
             classification_res = model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)
             elapsed_time = round(time.perf_counter() - start_time, 2)
-            print(classification_res)
-            #print(f"Predicted {classification_res} in {elapsed_time}s!")
+            #print(classification_res)
+            print(f"Predicted {classification_res} in {elapsed_time}s!")"""
 
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
-    model = keras.models.load_model('ANN_model')
+    model = keras.models.load_model('ANN_model.h5')
     pred_queue = Pred_Queue()
 
     # Make client
