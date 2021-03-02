@@ -240,7 +240,7 @@ def classification(model, pred_queue):
     while True:
         values = []
         rows = 0
-        while rows < SAMPLING_RATE * PREDICTION_INTERVAL:
+        while rows < 20:
             val = pred_queue.shift()
             if val != None:
                 #print(val)
@@ -255,7 +255,6 @@ def classification(model, pred_queue):
             print(time.perf_counter() - start)
             for index in range(len(predictions)):
                 print("Pred: ", predictions[index].argmax())
-
 
             """values = np.squeeze(values)
             scaler = pp.MinMaxScaler()
@@ -283,7 +282,7 @@ if __name__ == "__main__":
 
     # Scan, connect and syncronize sensors
     sensors_found = scan_for_sensors(client)
-    user_input = [0, 1, 2]
+    user_input = [0, 1]
     # user_input=[int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
 
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
