@@ -207,11 +207,15 @@ def _make_row(handle, imu_data):
     return row
 
 def classification(model, pred_queue):
-    while True:
+    value_arr = []
+    classifications_arr = []
+    classified = 0
+    while classified < 10000:
         values = []
         rows = 0
         while rows < 20:
             val = pred_queue.shift()
+            value_arr.append(val)
             if val != None:
                 #print(val)
                 values.append(val)
@@ -223,20 +227,34 @@ def classification(model, pred_queue):
             start = time.perf_counter()
             predictions = model.predict(values)
             #print(time.perf_counter() - start)
-            """for index in range(len(predictions)):
+            for index in range(len(predictions)):
                 #print("Pred: ", predictions[index].argmax())
 
-            values = np.squeeze(values)
-            scaler = pp.MinMaxScaler()
-            scaler.fit(values)
-            values = scaler.transform(values)
-            start_time = time.perf_counter()
+                values = np.squeeze(values)
+                scaler = pp.MinMaxScaler()
+                scaler.fit(values)
+                values = scaler.transform(values)
+                start_time = time.perf_counter()
 
-            #classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
-            classification_res = model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)
-            elapsed_time = round(time.perf_counter() - start_time, 2)
-            #print(classification_res)
-            print(f"Predicted {classification_res} in {elapsed_time}s!")"""
+                #classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
+                classification_res = model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)
+                classifications_arr.append(classification_res)
+                elapsed_time = round(time.perf_counter() - start_time, 2)
+                #print(classification_res)
+                print(f"Predicted {classification_res} in {elapsed_time}s!")
+            classified += 20
+    write_results_and_data(value_arr, classifications_arr, "data_used.csv", "classification_results.csv")
+
+def write_results_and_data(data, classifiations, data_file, classification_file):
+    with open(data_file, "w+") as data_f, open(classification_file, "w+") as classification_f:
+        data_writer = csv.writer(data_f, delimiter=",")
+        classification_writer = csv.writer(classification_f, delimiter=",")
+
+        for row in data_f:
+            data_writer.writerow(row)
+        for row in classification_f:
+            classification_writer.writerow(row)
+        print("Done writing results to file")
 
 
 if __name__ == "__main__":
