@@ -23,6 +23,10 @@ class Pred_Queue(Queue):
     def __init__(self):
         super(Pred_Queue, self).__init__()
 
+    def flush(self):
+        self.queue = []
+        self.entries = 0
+
     def shift(self):
         out = []
         if len(self.queue) < 1:  # Return None if the queue didn't have data for all sensors requested
@@ -75,6 +79,7 @@ class Data_Queue(Queue):
                     if self.queue[j][i][1] == timestamp:
                         indexes[j] = indexes[0] + i
                         found += 1
+
             if found == 3:
                 sync = True
             else:
