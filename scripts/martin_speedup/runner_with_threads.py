@@ -11,6 +11,9 @@ import threading
 from Queue import Pred_Queue, Data_Queue
 from joblib import dump, load
 
+test_data = []
+test_pred = []
+
 
 PREDICTION_INTERVAL = 1
 SAMPLING_RATE = 10
@@ -20,6 +23,13 @@ NUM_SENSORS = 3
 sensor_data = []
 done_collecting = False
 
+SENSORS_ID = {
+    "LPMSB2-3036EB": 1,
+    "LPMSB2-4B3326": 2,
+    "LPMSB2-4B31EE": 3
+}
+
+MAP_HANDLE_TO_ID = {}
 
 def scan_for_sensors(client):
     """
@@ -94,9 +104,11 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
         set_sampling_rate(imu, SAMPLING_RATE)
 
         imus.append(imu)
+        
+        MAP_HANDLE_TO_ID[sensor.sensor.handle] = SENSORS_ID[sensors[index].name]
 
         print(
-            f"Connected to sensor {sensor.sensor.handle} - {sensors[index].name} ({round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%)!")
+            f"Connected to sensor {MAP_HANDLE_TO_ID[sensor.sensor.handle]} - {sensors[index].name} ({round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%)!")
 
         connected_sensors.append(sensor)
 
@@ -135,7 +147,7 @@ def sync_sensors(imus):
         if imu is None:
             print("No IMU found")
             sys.exit(1)
-        print(f"Sensor {imu.sensor.handle} is streaming data: {is_streaming}")
+        print(f"Sensor {MAP_HANDLE_TO_ID[imu.sensor.handle]} is streaming data: {is_streaming}")
     return imus
 
 
@@ -150,10 +162,11 @@ def collect_data(client, data_queue):
     tmp_rows = []
     aligned = False
     found_timestamps = []
+    
     while not aligned:
         zenEvent = client.wait_for_next_event()
         imu_data = zenEvent.data.imu_data
-        tmp_rows.append(_make_row(zenEvent.sensor.handle, imu_data))
+        tmp_rows.append(_make_row(MAP_HANDLE_TO_ID[zenEvent.sensor.handle], imu_data))
         found_timestamps.append(imu_data.timestamp)
         for i, x in enumerate(found_timestamps):
             found = 0
@@ -170,6 +183,7 @@ def collect_data(client, data_queue):
                 break
     for row in tmp_rows:
         data_queue.push(row[0], row[1:])
+        test_data.append(row[0:])
 
     while True:
         row = None
@@ -177,23 +191,24 @@ def collect_data(client, data_queue):
         if zenEvent.event_type == openzen.ZenEventType.ImuData:
             occurences[int(zenEvent.sensor.handle) - 1] += 1
             imu_data = zenEvent.data.imu_data
-            row = _make_row(zenEvent.sensor.handle, imu_data)
+            row = _make_row(MAP_HANDLE_TO_ID[zenEvent.sensor.handle], imu_data)
             data_queue.push(row[0], row[1:])
+            test_data.append(row[0:])
         else:
             continue
 
 
 def concat_data(data_queue, pred_queue):
     while True:
-        # If no work for worker thread, sleep
         if(min(data_queue.entries) == 0):
             time.sleep(SLEEPTIME)
         else:
             top_row = data_queue.shift()
             data = top_row[0][0]
-            for i in range(1, data_queue.n_columns):
+            for i in range(1, data_queue.n_sensors):
                 data += top_row[i][0][1:]
             pred_queue.push(data[1:])
+            test_pred.append(data[1:])
 
 def _make_row(handle, imu_data):
     row = []
@@ -204,59 +219,59 @@ def _make_row(handle, imu_data):
     #row += [imu_data.b[i] for i in range(3)]
     row += [imu_data.r[i] for i in range(3)]
     row += [imu_data.q[i] for i in range(4)]
-    #print(row)
     return row
 
 def classification(model, pred_queue):
+
+    """
     value_arr = []
     classifications_arr = []
     classified = 0
-    while classified < 10000:
+    while classified < 200:
         values = []
         rows = 0
         while rows < 20:
             val = pred_queue.shift()
-            value_arr.append(val)
             if val != None:
-                #print(val)
+                value_arr.append(val)
                 values.append(val)
                 rows += 1
         rows = 0
 
         if values != None:
             values = np.squeeze(values)
-            start = time.perf_counter()
-            predictions = model.predict(values)
-            #print(time.perf_counter() - start)
-            for index in range(len(predictions)):
-                #print("Pred: ", predictions[index].argmax())
-
-                values = np.squeeze(values)
-                scaler = pp.MinMaxScaler()
-                scaler.fit(values)
-                values = scaler.transform(values)
-                start_time = time.perf_counter()
-
-                #classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
-                classification_res = model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)
-                classifications_arr.append(classification_res)
-                elapsed_time = round(time.perf_counter() - start_time, 2)
-                #print(classification_res)
-                print(f"Predicted {classification_res} in {elapsed_time}s!")
+            start_time = time.perf_counter()
+            predictions = model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)
+            elapsed_time = round(time.perf_counter() - start_time, 2)
+            print("Predict time: ", elapsed_time)
+            for i in range(len(predictions)):
+                # print(predictions[i].argmax())
+                classifications_arr.append(predictions[i].argmax())
+            #print(f"Predicted {classification_res} in {elapsed_time}s!")
             classified += 20
-    write_results_and_data(value_arr, classifications_arr, "data_used.csv", "classification_results.csv")
+    # write_pred_and_data("data_queue.csv", "pred_queue.csv")
+    """
+    
+    run = 0
+    while(run < 200):
+        val = pred_queue.shift()
+        if val != None:
+            print(np.shape(val))
+            start_time = time.perf_counter()
+            prediction = model.predict(val)[0].argmax()
+            elapsed_time = round(time.perf_counter() - start_time, 2)
+            print(f"Predicted {prediction} in {elapsed_time}s!")
+            run += 1
 
-def write_results_and_data(data, classifiations, data_file, classification_file):
-    with open(data_file, "w+") as data_f, open(classification_file, "w+") as classification_f:
-        data_writer = csv.writer(data_f, delimiter=",")
-        classification_writer = csv.writer(classification_f, delimiter=",")
-
-        for row in data_f:
-            data_writer.writerow(row)
-        for row in classification_f:
-            classification_writer.writerow(row)
-        print("Done writing results to file")
-
+"""
+def write_pred_and_data(data_file, pred_file):
+    data_f = open(data_file, "w+")
+    pred_f = open(pred_file, "w+")
+    data_f.write(str(test_data))
+    pred_f.write(str(test_pred))
+    data_f.close()
+    pred_f.close()
+"""
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)

@@ -1,13 +1,13 @@
 
 class Queue:
-    def __init__(self, n_columns=1):
-        self.n_columns = n_columns
-        if n_columns == 1:
+    def __init__(self, n_sensors=1):
+        self.n_sensors = n_sensors
+        if n_sensors == 1:
             self.queue = []
             self.entries = 0
         else:
-            self.queue = [[] for i in range(n_columns)]
-            self.entries = [0 for i in range(n_columns)]
+            self.queue = [[] for i in range(n_sensors)]
+            self.entries = [0 for i in range(n_sensors)]
 
     def shift(self): pass
     def push(self): pass
@@ -42,17 +42,17 @@ class Data_Queue(Queue):
     All data from sensors divided into columns depending on sensorID
     """
 
-    def __init__(self, n_columns):
-        super(Data_Queue, self).__init__(n_columns)
+    def __init__(self, n_sensors):
+        super(Data_Queue, self).__init__(n_sensors)
 
     def shift(self):
-        out = [[] for i in range(self.n_columns)]
-        for i in range(self.n_columns):
+        out = [[] for i in range(self.n_sensors)]
+        for i in range(self.n_sensors):
             if len(self.queue[i]) > 0:
                 if self.queue[i][0] == None:  # Return None if the queue didn't have data for all sensors requested
                     return None
                 out[i].append(self.queue[i][0])
-        for i in range(self.n_columns):
+        for i in range(self.n_sensors):
             self.queue[i] = self.queue[i][1:]
             self.entries[i] -= 1
         return out
@@ -71,7 +71,7 @@ class Data_Queue(Queue):
             timestamp = self.queue[0][indexes[0]][1]
             i = 0
             while i < tries and found < 3:
-                for j in range(1, self.n_columns):
+                for j in range(1, self.n_sensors):
                     if self.queue[j][i][1] == timestamp:
                         indexes[j] = indexes[0] + i
                         found += 1
@@ -80,5 +80,5 @@ class Data_Queue(Queue):
             else:
                 indexes = [indexes[0] + 1, 0, 0]
 
-        for i in range(self.n_columns):
+        for i in range(self.n_sensors):
             self.queue[i] = self.queue[i][indexes[i]:]
