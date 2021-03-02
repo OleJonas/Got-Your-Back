@@ -138,7 +138,6 @@ def sync_sensors(imus):
 
 def remove_unsync_data(client):
     zenEvent = client.poll_next_event()
-
     while(zenEvent != None):
         zenEvent = client.poll_next_event()
 
@@ -245,6 +244,7 @@ if __name__ == "__main__":
     # Scan, connect and syncronize sensors
     sensors_found = scan_for_sensors(client)
     user_input = [0, 1, 2]
+    NUM_SENSORS = len(user_input)
     # user_input=[int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
 
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
