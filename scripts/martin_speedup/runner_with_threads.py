@@ -220,7 +220,6 @@ def classification(model, pred_queue):
             if val != None:
                 #print(val)
                 values.append(val)
-                print(val)
                 rows += 1
         rows = 0
 
@@ -261,7 +260,7 @@ def write_results_and_data(data, classifiations, data_file, classification_file)
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
-    model = keras.models.load_model('ANN_model.h5')
+    model = keras.models.load_model('ANN_model_3.h5')
     # model = load('rfc.joblib')
     pred_queue = Pred_Queue()
 
