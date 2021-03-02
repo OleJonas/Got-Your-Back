@@ -243,7 +243,7 @@ def classification(model, pred_queue):
         while rows < SAMPLING_RATE * PREDICTION_INTERVAL:
             val = pred_queue.shift()
             if val != None:
-                print(val)
+                #print(val)
                 values.append(val)
                 rows += 1
         rows = 0
@@ -256,8 +256,7 @@ def classification(model, pred_queue):
             start_time = time.perf_counter()
             classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
             elapsed_time = round(time.perf_counter() - start_time, 2)
-            #print(f"Predicted {classification_res} in {elapsed_time}s!")
-
+            print(f"Predicted {classification_res} in {elapsed_time}s!")
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)

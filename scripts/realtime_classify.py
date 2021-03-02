@@ -175,12 +175,11 @@ def collect_data(client, data_queue):
             for i in range(3):
                 dataRow.append(imu_data.a[i])
                 dataRow.append(imu_data.g[i])
-                dataRow.append(imu_data.w[i])
+                dataRow.append(imu_data.b[i])
                 dataRow.append(imu_data.r[i])
             for j in range(4):
                 dataRow.append(imu_data.q[i])
         data_queue.push(zenEvent.sensor.handle, dataRow)
-
 
 def concat_data(data_queue, pred_queue):
     while True:
@@ -211,7 +210,6 @@ def classification(model, pred_queue):
             classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
             elapsed_time = round(time.perf_counter() - start_time, 2)
             print(f"Predicted {classification_res} in {elapsed_time}s!")
-
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
