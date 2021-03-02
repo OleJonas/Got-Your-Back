@@ -8,6 +8,8 @@ import openzen
 import numpy as np
 import threading
 from Queue import Pred_Queue, Data_Queue
+from joblib import dump, load
+
 
 PREDICTION_INTERVAL = 1
 SAMPLING_RATE = 10
@@ -192,20 +194,17 @@ def concat_data(data_queue, pred_queue):
                 data += top_row[i][0][1:]
             pred_queue.push(data[1:])
 
-
 def _make_row(handle, imu_data):
     row = []
     row.append(handle)
     row.append(imu_data.timestamp)
-    for i in range(3):
-        row.append(imu_data.a[i])
-        row.append(imu_data.g[i])
-        row.append(imu_data.w[i])
-        row.append(imu_data.r[i])
-    for j in range(4):
-        row.append(imu_data.q[j])
+    row += [imu_data.a[i] for i in range(3)]
+    row += [imu_data.g[i] for i in range(3)]
+    row += [imu_data.b[i] for i in range(3)]
+    row += [imu_data.r[i] for i in range(3)]
+    row += [imu_data.q[i] for i in range(4)]
+    print(row)
     return row
-
 
 def classification(model, pred_queue):
     while True:
@@ -223,11 +222,11 @@ def classification(model, pred_queue):
             values = np.squeeze(values)
             start = time.perf_counter()
             predictions = model.predict(values)
-            print(time.perf_counter() - start)
-            for index in range(len(predictions)):
-                print("Pred: ", predictions[index].argmax())
+            #print(time.perf_counter() - start)
+            """for index in range(len(predictions)):
+                #print("Pred: ", predictions[index].argmax())
 
-            """values = np.squeeze(values)
+            values = np.squeeze(values)
             scaler = pp.MinMaxScaler()
             scaler.fit(values)
             values = scaler.transform(values)
@@ -242,7 +241,8 @@ def classification(model, pred_queue):
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
-    model = keras.models.load_model('ANN_model.h5')
+    # model = keras.models.load_model('ANN_model.h5')
+    model = load('rfc.joblib')
     pred_queue = Pred_Queue()
 
     # Make client
@@ -253,7 +253,7 @@ if __name__ == "__main__":
 
     # Scan, connect and syncronize sensors
     sensors_found = scan_for_sensors(client)
-    user_input = [0, 1]
+    user_input = [0, 1, 2]
     # user_input=[int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
 
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
