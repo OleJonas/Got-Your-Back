@@ -19,7 +19,7 @@ class df_wrapper:
     def __init__(self, csv_f_name):
         self.csv_f_name = csv_f_name
         csv = pd.read_csv(self.csv_f_name)
-
+        
         self.df = pd.DataFrame(csv)
         self.df_arr = []
 

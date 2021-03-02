@@ -75,7 +75,6 @@ class Data_Queue(Queue):
                     if self.queue[j][i][1] == timestamp:
                         indexes[j] = indexes[0] + i
                         found += 1
-
             if found == 3:
                 sync = True
             else:

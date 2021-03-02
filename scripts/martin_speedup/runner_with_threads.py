@@ -6,9 +6,11 @@ from sklearn import preprocessing as pp
 import time
 import openzen
 import numpy as np
+import pandas
 import threading
 from Queue import Pred_Queue, Data_Queue
-import pandas as pd
+from joblib import dump, load
+
 
 PREDICTION_INTERVAL = 1
 SAMPLING_RATE = 10
@@ -49,8 +51,7 @@ def scan_for_sensors(client):
                 break
 
     print("Sensor Listing complete, found ", len(sensors))
-    print("Listing found sensors in sensors array:\n",
-          [sensor.name for sensor in sensors])
+    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
     return sensors
 
 
@@ -98,7 +99,7 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
             f"Connected to sensor {sensor.sensor.handle} - {sensors[index].name} ({round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%)!")
 
         connected_sensors.append(sensor)
-    # print("Connected to sensors:\n", [x.name for x in connected_sensors])
+
     return connected_sensors, imus
 
 
@@ -140,18 +141,12 @@ def sync_sensors(imus):
 
 def remove_unsync_data(client):
     zenEvent = client.poll_next_event()
-
     while(zenEvent != None):
         zenEvent = client.poll_next_event()
 
 
 def collect_data(client, data_queue):
     occurences = [0, 0, 0]
-    data_file = open("./data_queue.csv", "a+")
-    data_writer = csv.writer(data_file)
-    pred_file = open("./pred_queue.csv", "a+")
-    pred_writer = csv.writer(pred_file)
-
     tmp_rows = []
     aligned = False
     found_timestamps = []
@@ -162,15 +157,10 @@ def collect_data(client, data_queue):
         found_timestamps.append(imu_data.timestamp)
         for i, x in enumerate(found_timestamps):
             found = 0
-            last_index = 0
-            for j, y in enumerate(found_timestamps[i:-1]):
-                #print("x: ", x, " y: ", y)
+            for _, y in enumerate(found_timestamps[i:-1]):
                 if x == y:
                     found += 1
-                    #print(found)
-                    last_index = j
             if found == NUM_SENSORS:
-                #print("Denne: ", tmp_rows[i])
                 clean_arr = []
                 for i in range(len(tmp_rows)):
                     if found_timestamps[i] >= x:
@@ -178,14 +168,8 @@ def collect_data(client, data_queue):
                 tmp_rows = clean_arr
                 aligned = True
                 break
-
-    # print(tmp_rows)
     for row in tmp_rows:
-        #print(row[0], " ", row[1])
         data_queue.push(row[0], row[1:])
-        data_writer.writerow(row)
-
-    print("Done aligning (Morrison)")
 
     while True:
         row = None
@@ -194,18 +178,9 @@ def collect_data(client, data_queue):
             occurences[int(zenEvent.sensor.handle) - 1] += 1
             imu_data = zenEvent.data.imu_data
             row = _make_row(zenEvent.sensor.handle, imu_data)
-            #print(row[0], " ", row[1])
             data_queue.push(row[0], row[1:])
-            data_writer.writerow(row)    
         else:
             continue
-        """print(row[0], " ", row[1])
-        data_queue.push(row[0], row[1:])
-        print(data_queue.queue[i])
-        data_writer.writerow(row)
-        i += 1"""
-    data_file.close()
-    pred_file.close()
 
 
 def concat_data(data_queue, pred_queue):
@@ -218,29 +193,25 @@ def concat_data(data_queue, pred_queue):
             data = top_row[0][0]
             for i in range(1, data_queue.n_columns):
                 data += top_row[i][0][1:]
-            #print(data[1:])
             pred_queue.push(data[1:])
-
 
 def _make_row(handle, imu_data):
     row = []
     row.append(handle)
     row.append(imu_data.timestamp)
-    for i in range(3):
-        row.append(imu_data.a[i])
-        row.append(imu_data.g[i])
-        row.append(imu_data.w[i])
-        row.append(imu_data.r[i])
-    for j in range(4):
-        row.append(imu_data.q[j])
+    row += [imu_data.a[i] for i in range(3)]
+    row += [imu_data.g[i] for i in range(3)]
+    row += [imu_data.b[i] for i in range(3)]
+    row += [imu_data.r[i] for i in range(3)]
+    row += [imu_data.q[i] for i in range(4)]
+    #print(row)
     return row
-
 
 def classification(model, pred_queue):
     while True:
         values = []
         rows = 0
-        while rows < SAMPLING_RATE * PREDICTION_INTERVAL:
+        while rows < 20:
             val = pred_queue.shift()
             if val != None:
                 #print(val)
@@ -250,17 +221,24 @@ def classification(model, pred_queue):
 
         if values != None:
             values = np.squeeze(values)
-            scaler = pp.MinMaxScaler()
-            scaler.fit(values)
-            values = scaler.transform(values)
+            #print(pandas.DataFrame(values))
+            #scaler = pp.MinMaxScaler()
+            #scaler.fit(values)
+            #values = scaler.transform(values)
             start_time = time.perf_counter()
-            classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
+            predictions = model.predict(values)
+            for index in range(len(predictions)):
+                print("Pred: ", predictions[index].argmax())
+            #classification_res = np.argmax(model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)[0])
+            #classification_res = model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)
             elapsed_time = round(time.perf_counter() - start_time, 2)
-            print(f"Predicted {classification_res} in {elapsed_time}s!")
+            print("Elapsed times: ", elapsed_time)
+            #print(f"Predicted {classification_res} in {elapsed_time}s!")
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
-    model = keras.models.load_model('ANN_model')
+    model = keras.models.load_model('ANN_model.h5')
+    # model = load('rfc.joblib')
     pred_queue = Pred_Queue()
 
     # Make client
