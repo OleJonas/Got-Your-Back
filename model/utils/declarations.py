@@ -35,6 +35,10 @@ training_files = {
                             "../../data/annotation/training/emanuel_train_3_110221.txt"),
     "Xiaomeng": training_class("../../data/train_data/xiaomeng_train_3_110221.csv",
                             "../../data/annotation/training/xiaomeng_train_3_110221.txt"),
+    "Joy": training_class("../../data/train_data/joy_train_3_030321.csv",
+                            "../../data/annotation/training/joy_train_3_030321.txt"),
+    "Lea": training_class("../../data/train_data/lea_train_3_030321.csv",
+                            "../../data/annotation/training/lea_train_3_0303021.txt"),
 }
 
 testing_files = {
@@ -45,5 +49,9 @@ testing_files = {
     "Elise": testing_class("../../data/test_data/elise_test_3_090221.csv", 
                             "../../data/annotation/testing/elise_test_3_090221.txt"),
     "Xiaomeng": testing_class("../../data/test_data/xiaomeng_test_3_110221.csv", 
-                            "../../data/annotation/testing/xiaomeng_test_3_110221.txt")
+                            "../../data/annotation/testing/xiaomeng_test_3_110221.txt"),
+    "Joy": testing_class("../../data/test_data/joy_test_3_0303021.csv", 
+                            "../../data/annotation/testing/joy_test_3_0303021.txt"),
+    "Lea": testing_class("../../data/test_data/lea_test_3_0303021.csv", 
+                            "../../data/annotation/testing/lea_test_3_0303021.txt")
 }
