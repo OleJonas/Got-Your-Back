@@ -7,16 +7,14 @@ import time
 import openzen
 import numpy as np
 import pandas
+import tensorflow as tf
+from collections import Counter
 import threading
 from Queue import Pred_Queue, Data_Queue
 from joblib import dump, load
 
-test_data = []
-test_pred = []
-
-
 PREDICTION_INTERVAL = 1
-SAMPLING_RATE = 10
+SAMPLING_RATE = 5
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 SLEEPTIME = 0.1
 NUM_SENSORS = 3
@@ -151,11 +149,21 @@ def sync_sensors(imus):
     return imus
 
 
-def remove_unsync_data(client):
+def _remove_unsync_data(client):
     zenEvent = client.poll_next_event()
     while(zenEvent != None):
         zenEvent = client.poll_next_event()
 
+def _make_row(handle, imu_data):
+    row = []
+    row.append(handle)
+    row.append(imu_data.timestamp)
+    row += [imu_data.a[i] for i in range(3)]
+    row += [imu_data.g[i] for i in range(3)]
+    #row += [imu_data.b[i] for i in range(3)]
+    row += [imu_data.r[i] for i in range(3)]
+    row += [imu_data.q[i] for i in range(4)]
+    return row
 
 def collect_data(client, data_queue):
     occurences = [0, 0, 0]
@@ -183,7 +191,6 @@ def collect_data(client, data_queue):
                 break
     for row in tmp_rows:
         data_queue.push(row[0], row[1:])
-        test_data.append(row[0:])
 
     while True:
         row = None
@@ -193,91 +200,43 @@ def collect_data(client, data_queue):
             imu_data = zenEvent.data.imu_data
             row = _make_row(MAP_HANDLE_TO_ID[zenEvent.sensor.handle], imu_data)
             data_queue.push(row[0], row[1:])
-            test_data.append(row[0:])
         else:
             continue
 
-
-def concat_data(data_queue, pred_queue):
+def classify(model, data_queue):
+    val_arr = []    
     while True:
+        entries = 0
+        
         if(min(data_queue.entries) == 0):
             time.sleep(SLEEPTIME)
         else:
             top_row = data_queue.shift()
-            data = top_row[0][0]
+            data = top_row[0][0][1:]
             for i in range(1, data_queue.n_sensors):
                 data += top_row[i][0][1:]
-            pred_queue.push(data[1:])
-            test_pred.append(data[1:])
-
-def _make_row(handle, imu_data):
-    row = []
-    row.append(handle)
-    row.append(imu_data.timestamp)
-    row += [imu_data.a[i] for i in range(3)]
-    row += [imu_data.g[i] for i in range(3)]
-    #row += [imu_data.b[i] for i in range(3)]
-    row += [imu_data.r[i] for i in range(3)]
-    row += [imu_data.q[i] for i in range(4)]
-    return row
-
-def classification(model, pred_queue):
-
-    """
-    value_arr = []
-    classifications_arr = []
-    classified = 0
-    while classified < 200:
-        values = []
-        rows = 0
-        while rows < 20:
-            val = pred_queue.shift()
-            if val != None:
-                value_arr.append(val)
-                values.append(val)
-                rows += 1
-        rows = 0
-
-        if values != None:
-            values = np.squeeze(values)
-            start_time = time.perf_counter()
-            predictions = model.predict(values, batch_size=SAMPLING_RATE * PREDICTION_INTERVAL)
-            elapsed_time = round(time.perf_counter() - start_time, 2)
-            print("Predict time: ", elapsed_time)
-            for i in range(len(predictions)):
-                # print(predictions[i].argmax())
-                classifications_arr.append(predictions[i].argmax())
-            #print(f"Predicted {classification_res} in {elapsed_time}s!")
-            classified += 20
-    # write_pred_and_data("data_queue.csv", "pred_queue.csv")
-    """
-    
-    run = 0
-    while(run < 200):
-        val = pred_queue.shift()
-        if val != None:
-            print(np.shape(val))
-            start_time = time.perf_counter()
-            prediction = model.predict(val)[0].argmax()
-            elapsed_time = round(time.perf_counter() - start_time, 2)
-            print(f"Predicted {prediction} in {elapsed_time}s!")
-            run += 1
-
-"""
-def write_pred_and_data(data_file, pred_file):
-    data_f = open(data_file, "w+")
-    pred_f = open(pred_file, "w+")
-    data_f.write(str(test_data))
-    pred_f.write(str(test_pred))
-    data_f.close()
-    pred_f.close()
-"""
-
+                
+                
+            #model(data, batch_size=5)
+            #data_input = np.array(data)
+            #data_reshaped = np.reshape(data, (1,39))
+            val_arr.append(data)
+            
+        if(len(val_arr) == SAMPLING_RATE):
+            predictions = []
+            predictions.append(model(val_arr[x]) for x in range(SAMPLING_RATE))
+            print(predictions)
+            """
+            # most_occurred_pred = Counter(predictions).most_common(1)
+            most_occurred_pred = max(predictions,key=predictions.count)
+            print(most_occurred_pred)
+            """
+            val_arr = []
+        
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     model = keras.models.load_model('ANN_model_3.h5')
     # model = load('rfc.joblib')
-    pred_queue = Pred_Queue()
 
     # Make client
     error, client = openzen.make_client()
@@ -289,17 +248,15 @@ if __name__ == "__main__":
     sensors_found = scan_for_sensors(client)
     user_input = [0, 1, 2]
     # user_input=[int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
-
-    connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
-    remove_unsync_data(client)
-    sync_sensors(imus)
-
-    # Start collecting and concatting data
     data_queue = Data_Queue(len(user_input))
-    concat_thread = threading.Thread(target=concat_data, args=[data_queue, pred_queue], daemon=True)
-    collect_data_thread = threading.Thread(target=collect_data, args=[client, data_queue], daemon=True)
-    collect_data_thread.start()
-    concat_thread.start()
+    connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
+    _remove_unsync_data(client)
+    sync_sensors(imus)
+    
+    # Classify 
+    classify_thread = threading.Thread(target=classify, args=[model, data_queue], daemon=True)
+    classify_thread.start()
 
-    # Run realtime classification
-    classification(model, pred_queue)
+    collect_data(client, data_queue)
+    
+
