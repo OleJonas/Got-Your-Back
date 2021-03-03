@@ -1,48 +1,51 @@
 import numpy
 import pandas as pd
 
-POSE_MAP = {
-    "rett": 0,
-    "fram": 1,
-    "fram-hoyre": 2,
-    "hoyre": 3,
-    "bak-hoyre": 4,
-    "bak": 5,
-    "bak-venstre": 6,
-    "venstre": 7,
-    "fram-venstre": 8
-}
-
-
 class df_wrapper:
-
+    """
+    Wrapper class to ease use of dataframes in conjunction with keras and sklearn
+    """
+    
     def __init__(self, csv_f_name):
         self.csv_f_name = csv_f_name
         csv = pd.read_csv(self.csv_f_name)
-        
         self.df = pd.DataFrame(csv)
         self.df_arr = []
 
     def split_mult_sensor_data(self, n_sensors):
+        """
+        Split sensordata into multiple dataframes
+
+        Input\n:
+        n_sensors - amount of sensors the dataframe consist of
+        """
         for id in range(n_sensors):
             sensor_df = self.df[self.df["SensorId"] == (id + 1)]
             self.df_arr.append(sensor_df)
 
     def fix_offsets(self):
+        """
+        Each data-point has a timestamp associated with it that has to be corrected according to the starting time-value of the first data-point.
+        The starting value is assigned randomly and is retrieved from the sensors, making this necessary. The offset is fixed so that the first 
+        time-value in the df_arr is 0.
+        """
+        
         offsets = []
         for i in range(len(self.df_arr)):
             df_time_offset = self.df_arr[i][" TimeStamp (s)"].iloc[0]
             offsets.append(df_time_offset)
             self.df_arr[i][" TimeStamp (s)"] = self.df_arr[i][" TimeStamp (s)"] - \
                 df_time_offset
-
         return offsets
 
     def concat_sensor_data(self, n_sensors):
-        # Fits and drops the columns 'SensorId',' TimeStamp (s)',' FrameNumber',' LinAccX (g)',' LinAccY (g)',
-        # ' LinAccZ (g)',' Pressure (kPa)',' Altitude (m)',' Temperature (degC)',' HeaveMotion (m)'
-        # from all data from the sensors. Timestamps will be kept for the first sensor, while the rest is dropped.
-        # Then concatenates data into a common dataframe.
+        """
+        Concat rows from all sensors based on timestamp, and drops unused columns.
+        Timestamp will only be kept from the first sensor. 
+        
+        Input:\n
+        n_sensors - amount of sensors the dataframe consist of
+        """
 
         if "SensorId" not in self.df.columns:
             self.df['SensorId'] = [1 for i in range(len(self.df.index))]
@@ -61,7 +64,8 @@ class df_wrapper:
             drop_arr = ['SensorId']
         else:
             drop_arr = ['SensorId', ' FrameNumber', ' LinAccX (g)', ' LinAccY (g)', ' LinAccZ (g)',
-                        ' Pressure (kPa)', ' Altitude (m)', ' Temperature (degC)', ' HeaveMotion (m)']
+                        ' Pressure (kPa)', ' Altitude (m)', ' Temperature (degC)', ' HeaveMotion (m)', 
+                        ' MagX (uT)', ' MagY (uT)', ' MagZ (uT)']
 
         self.df_arr[0] = self.df_arr[0].drop(drop_arr, axis=1)
         drop_arr.append(' TimeStamp (s)')
@@ -81,10 +85,22 @@ class df_wrapper:
         # Finally concatenating all the dataframes into one
         self.df = pd.concat([frame for frame in self.df_arr], axis=1)
 
-        return min_len
 
-    def align_poses(self, stamped_poses):
-        df_stamped_poses = []
+    def align_poses(self, annot_f_name, pose_map):
+        """
+        Method for aligning annotated data to the correct rows, and thereby giving the correct row the correct pose.
+        The method drops the rows that are not inside the specified time intervals retrieved from _get_timestamp_and_pose()
+        The df_wrappers object variable df is adjusted after these changes
+
+        Input:\n
+        annot_f_name - name of the annotation file
+        pose_map - a dict containing the poses you want to use
+
+        Output:\n
+        Returns an array of poses 
+        """
+        stamped_poses = _get_timestamp_and_pose(annot_f_name, pose_map)
+        poses = []
         pose_index = 0
         row_index = 0
         drops = 0
@@ -95,7 +111,7 @@ class df_wrapper:
                     pose_index += 1
                 pose_id = stamped_poses[pose_index][2]
                 if stamp >= stamped_poses[pose_index][0]:
-                    df_stamped_poses.append(pose_id)
+                    poses.append(pose_id)
                 else:
                     self.df = self.df.drop(row_index)
                     drops += 1
@@ -104,45 +120,23 @@ class df_wrapper:
                 drops += 1
             row_index += 1
 
-        """
-        print("drops: {}".format(drops))
-        print("length of knn_train.df after drops: {}".format(len(self.df.index)))
-        print(len(df_stamped_poses))
-        """
-        self.df["Pose"] = df_stamped_poses
+        self.df["Pose"] = poses
 
-        return df_stamped_poses
-
-    def align_poses_2(self, df, stamped_poses):
-        df_stamped_poses = []
-        pose_index = 0
-        row_index = 0
-        drops = 0
-        for stamp in df[" TimeStamp (s)"]:
-            pose_id = -1
-            if stamp <= stamped_poses[-1][1] and stamp >= stamped_poses[0][0]:
-                if stamp > stamped_poses[pose_index][1]:
-                    pose_index += 1
-                pose_id = stamped_poses[pose_index][2]
-                if stamp >= stamped_poses[pose_index][0]:
-                    df_stamped_poses.append(pose_id)
-                else:
-                    df = df.drop(row_index)
-                    drops += 1
-            else:
-                df = df.drop(row_index)
-                drops += 1
-            row_index += 1
-
-        print(len(df.index))
-        print("drops: {}".format(drops))
-        print(len(df_stamped_poses))
-        df["Pose"] = df_stamped_poses
-
-        return df, df_stamped_poses
+        return poses
 
 
-def get_timestamp_and_pose(annot_f_name, pose_map):
+def _get_timestamp_and_pose(annot_f_name, pose_map):
+    """
+    Retrieves poses in given time intervals from an annotation file
+    
+    Input:\n
+    annot_f_name - name of the annotation file
+    pose_map - a dict containing the poses you want to use
+
+    Output:\n
+    An array of poses together with their respective timestamps
+    """
+
     rows = []
     with open(annot_f_name, "r") as f:
         lines = f.readlines()
@@ -155,11 +149,6 @@ def get_timestamp_and_pose(annot_f_name, pose_map):
             finished_row.append(pose_map[sep_row[3].lower()])
             rows.append(finished_row)
     return rows
-
-
-def combine_dataframes(dataframes):
-    return pd.concat(dataframes)
-
 
 if __name__ == "__main__":
     pass
