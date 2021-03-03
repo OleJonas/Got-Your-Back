@@ -1,0 +1,2 @@
+Her legges komponenter og komponenttester i egne mapper, der hver mappe er for hver komponent og har komponenten samt komponenttesten
+Navnet burde også være camelCase og hete f.eks "histogram.component.tsx"
