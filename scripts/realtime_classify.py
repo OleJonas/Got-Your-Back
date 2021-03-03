@@ -223,12 +223,8 @@ def classify(model, data_queue):
             predictions = model(np.array(values)).numpy()
             argmax = [pred.argmax() for pred in predictions]
             end_time_predict = time.perf_counter() - start_time_predict
-            
-            start_time_counter = time.perf_counter()
             pred = Counter(argmax).most_common(1)[0][0]
-            end_time_counter = time.perf_counter() - start_time_counter
-            
-            print(f"Predicted {pred}! Time on prediction: {round(end_time_predict,2)}s with count time {end_time_counter}")
+            print(f"Predicted {pred} in {round(end_time_predict,2)}s!")
             values = []
 
 if __name__ == "__main__":
