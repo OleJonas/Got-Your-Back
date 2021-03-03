@@ -1,8 +1,6 @@
 import time
 import sys
-import csv
 import threading
-import pandas
 import tensorflow as tf
 import numpy as np
 import openzen
