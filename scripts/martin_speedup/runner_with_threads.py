@@ -220,22 +220,27 @@ def classify(model, data_queue):
             for i in range(1, data_queue.n_sensors):
                 data += top_row[i][0][1:]
 
-            data_reshaped = np.reshape(data, (1, 39))
+            #data_reshaped = np.reshape(data, (1, 39))
             #print(model(data_reshaped).argmax())
 
-            values.append(data_reshaped)
+            values.append(data)
 
         if(len(values) == SAMPLING_RATE):
-            predictions = [model(values[x]) for x in range(SAMPLING_RATE)]
-            print(predictions)
+            start_time_predict = time.perf_counter()
+            predictions = model(np.array(values)).numpy()
+            argmax = [pred.argmax() for pred in predictions]
+            end_time_predict = time.perf_counter() - start_time_predict
+            start_time_counter = time.perf_counter()
+            pred = Counter(argmax).most_common(1)[0][0]
+            end_time_counter = time.perf_counter() - start_time_counter
+            print(f"Predicted {pred}! Time on prediction {end_time_predict} with count time {end_time_counter}")
             """
             # most_occurred_pred = Counter(predictions).most_common(1)
             most_occurred_pred = max(predictions,key=predictions.count)
             print(most_occurred_pred)
             """
             values = []
-
-
+            
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     model = keras.models.load_model('ANN_model_3.h5')
