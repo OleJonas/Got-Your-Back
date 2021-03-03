@@ -1,5 +1,17 @@
 from dataclasses import dataclass
 
+POSE_MAP = {
+    "rett": 0,
+    "fram": 1,
+    "fram-hoyre": 2,
+    "hoyre": 3,
+    "bak-hoyre": 4,
+    "bak": 5,
+    "bak-venstre": 6,
+    "venstre": 7,
+    "fram-venstre": 8
+}
+
 @dataclass
 class training_class:
     csv_file: str
