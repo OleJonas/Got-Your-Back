@@ -29,6 +29,7 @@ SENSORS_ID = {
 
 MAP_HANDLE_TO_ID = {}
 
+
 def scan_for_sensors(client):
     """
     Scan for available sensors
@@ -102,7 +103,7 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
         set_sampling_rate(imu, SAMPLING_RATE)
 
         imus.append(imu)
-        
+
         MAP_HANDLE_TO_ID[sensor.sensor.handle] = SENSORS_ID[sensors[index].name]
 
         print(
@@ -154,6 +155,7 @@ def _remove_unsync_data(client):
     while(zenEvent != None):
         zenEvent = client.poll_next_event()
 
+
 def _make_row(handle, imu_data):
     row = []
     row.append(handle)
@@ -165,12 +167,13 @@ def _make_row(handle, imu_data):
     row += [imu_data.q[i] for i in range(4)]
     return row
 
+
 def collect_data(client, data_queue):
     occurences = [0, 0, 0]
     tmp_rows = []
     aligned = False
     found_timestamps = []
-    
+
     while not aligned:
         zenEvent = client.wait_for_next_event()
         imu_data = zenEvent.data.imu_data
@@ -203,11 +206,12 @@ def collect_data(client, data_queue):
         else:
             continue
 
+
 def classify(model, data_queue):
-    val_arr = []    
+    values = []
     while True:
         entries = 0
-        
+
         if(min(data_queue.entries) == 0):
             time.sleep(SLEEPTIME)
         else:
@@ -215,24 +219,23 @@ def classify(model, data_queue):
             data = top_row[0][0][1:]
             for i in range(1, data_queue.n_sensors):
                 data += top_row[i][0][1:]
-                
-                
-            #model(data, batch_size=5)
-            #data_input = np.array(data)
-            #data_reshaped = np.reshape(data, (1,39))
-            val_arr.append(data)
-            
-        if(len(val_arr) == SAMPLING_RATE):
-            predictions = []
-            predictions.append(model(val_arr[x]) for x in range(SAMPLING_RATE))
+
+            data_reshaped = np.reshape(data, (1, 39))
+            #print(model(data_reshaped).argmax())
+
+            values.append(data_reshaped)
+
+        if(len(values) == SAMPLING_RATE):
+            predictions = [model(values[x]) for x in range(SAMPLING_RATE)]
             print(predictions)
             """
             # most_occurred_pred = Counter(predictions).most_common(1)
             most_occurred_pred = max(predictions,key=predictions.count)
             print(most_occurred_pred)
             """
-            val_arr = []
-        
+            values = []
+
+
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     model = keras.models.load_model('ANN_model_3.h5')
@@ -252,11 +255,9 @@ if __name__ == "__main__":
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
     _remove_unsync_data(client)
     sync_sensors(imus)
-    
-    # Classify 
+
+    # Classify
     classify_thread = threading.Thread(target=classify, args=[model, data_queue], daemon=True)
     classify_thread.start()
 
     collect_data(client, data_queue)
-    
-
