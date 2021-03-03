@@ -228,12 +228,12 @@ def classify(model, data_queue):
             pred = Counter(argmax).most_common(1)[0][0]
             end_time_counter = time.perf_counter() - start_time_counter
             
-            print(f"Predicted {pred}! Time on prediction {end_time_predict} with count time {end_time_counter}")
+            print(f"Predicted {pred}! Time on prediction: {round(end_time_predict,2)}s with count time {end_time_counter}")
             values = []
-            
+
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
-    model = keras.models.load_model('ANN_model_3.h5')
+    model = keras.models.load_model('model/models/ANN_model_3_um.h5')
     # model = load('rfc.joblib')
 
     # Make client
