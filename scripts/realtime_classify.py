@@ -10,7 +10,7 @@ from joblib import dump, load
 from collections import Counter
 from Data_Queue import Data_Queue
 
-PREDICTION_INTERVAL = 1 # Interval is in seconds
+PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 SLEEPTIME = 0.05
@@ -225,10 +225,9 @@ def classify(model, data_queue):
             print(f"Predicted {pred} in {round(end_time_predict,2)}s!")
             values = []
 
+
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
-    model = keras.models.load_model('model/models/ANN_model_3_um.h5')
-    # model = load('rfc.joblib')
 
     # Make client
     error, client = openzen.make_client()
@@ -247,6 +246,8 @@ if __name__ == "__main__":
     sync_sensors(imus)
 
     # Classify
+    model = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
+    # model = load('RFC_model_3.joblib')
     classify_thread = threading.Thread(target=classify, args=[model, data_queue], daemon=True)
     classify_thread.start()
 
