@@ -2,8 +2,10 @@ import time
 import sys
 import threading
 import tensorflow as tf
+from datetime import datetime
 import numpy as np
 import openzen
+import csv
 import keras
 from sklearn import preprocessing as pp
 from joblib import dump, load
@@ -222,6 +224,14 @@ def classify(model, data_queue):
             argmax = [pred.argmax() for pred in predictions]
             end_time_predict = time.perf_counter() - start_time_predict
             pred = Counter(argmax).most_common(1)[0][0]
+
+            with open('predictions.csv', 'a', newline='') as file:
+                fnames = ['time', 'prediction']
+                writer = csv.DictWriter(file, fieldnames=fnames)
+                current_time = datetime.now().strftime("%H:%M:%S")
+                writer.writerow({'time' : current_time, 'prediction' : pred})
+                
+
             print(f"Predicted {pred} in {round(end_time_predict,2)}s!")
             values = []
 
