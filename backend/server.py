@@ -1,15 +1,18 @@
+import csv
+import sys
 from flask import Flask
 app = Flask(__name__)
-import csv
-from scripts.sensor_bank import Sensor_Bank
-import scripts.realtime_test as realtime_test
+
+#sys.path.insert(0, "../scripts")
+#from sensor_bank import Sensor_Bank
+#import realtime_test as realtime_test
 import openzen
 import sys
 
 client = None
 found_sensors = None
 sensor_bank = None
-
+"""
 @app.before_first_request
 def init():
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
@@ -19,27 +22,24 @@ def init():
         print("Error while initializing OpenZen library")
         sys.exit(1)
 
-    sensor_bank = Sensor_Bank()
+    #sensor_bank = Sensor_Bank()
 
-@app.route("/")
-def hello_world():
-    return 'Hello, World!'
-
+"""
 @app.route("/predictions")
 def get_csv_data():
-    with open('../../../predictions.csv', 'r') as file:
+    with open('../predictions.csv', 'r') as file:
         rows = []
         reader = csv.reader(file, delimiter = '\n')
         for row in reader:
             rows.append(rows)
     return rows
         
-
+"""
 @app.route("/scan")
 def scan_for_sensors():
     found = realtime_test.scan_for_sensors(client)
     return found
-
+"""
 
 @app.route('/sensors')
 def get_sensors():

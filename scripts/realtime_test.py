@@ -9,22 +9,13 @@ from sklearn import preprocessing as pp
 from joblib import dump, load
 from collections import Counter
 from Data_Queue import Data_Queue
-from sensor_bank import Sensor_Bank
+from sensor_bank import Sensor_Bank, Sensor
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 SLEEPTIME = 0.05
 NUM_SENSORS = 3
-
-SENSORS_ID = {
-    "LPMSB2-3036EB": 1,
-    "LPMSB2-4B3326": 2,
-    "LPMSB2-4B31EE": 3
-}
-
-MAP_HANDLE_TO_ID = {}
-
 
 def scan_for_sensors(client):
     """
@@ -106,44 +97,51 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
             f"Connected to sensor {MAP_HANDLE_TO_ID[sensor.sensor.handle]} - {sensors[index].name} ({round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%)!")
 
         connected_sensors.append(sensor)
-
     return connected_sensors, imus
 
 
-def set_sampling_rate(IMU, sampling_rate):
-    assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
-    IMU.set_int32_property(openzen.ZenImuProperty.SamplingRate, sampling_rate)
-    return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
+def connect_to_sensor(client, input_sensor):
+    err, sensor = client.obtain_sensor(input_sensor)
+
+    attempts = 0
+    while not err == openzen.ZenSensorInitError.NoError:
+        attempts += 1
+        print("Error connecting to sensor")
+        print("Trying again...")
+        err, sensor = client.obtain_sensor(input_sensor)
+        if attempts >= 100:
+            print("Can't connect to sensor")
+            sys.exit(1)
+
+    # Obtain IMU from sensor and prevent it from streaming sensor_data until asked to
+    imu = sensor.get_any_component_of_type(openzen.component_type_imu)
+    imu.set_bool_property(openzen.ZenImuProperty.StreamData, False)
+
+    s_name = input_sensor.name
+
+    battery_percent = round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)
+
+    print(
+        f"Connected to sensor {s_name} ({battery_percent}%)!")
+
+    return s_name, sensor, imu, battery_percent
 
 
-def get_sampling_rate(IMU):
-    return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
+def sync_sensors(client, sensor_bank):
+    imu_arr = []
+    for sensor_conn in sensor_bank.sensor_arr:
+        sensor_conn.set_sampling_rate(sensor_bank.sampling_rate)
+        imu_arr.append(sensor_conn.imu_obj)
 
-
-def sync_sensors(imus):
     # Synchronize
-    for imu in imus:
+    for imu in imu_arr:
         imu.execute_property(openzen.ZenImuProperty.StartSensorSync)
     time.sleep(5)
     # Back to normal mode
-    for imu in imus:
+    for imu in imu_arr:
         imu.execute_property(openzen.ZenImuProperty.StopSensorSync)
-    # Start streaming data
-    for imu in imus:
-        imu.set_bool_property(openzen.ZenImuProperty.StreamData, True)
 
-    # Check if sensors stream data and has an IMU
-    for imu in imus:
-        error, is_streaming = imu.get_bool_property(openzen.ZenImuProperty.StreamData)
-        if not error == openzen.ZenError.NoError:
-            print("Can't load streaming settings")
-            sys.exit(1)
-
-        if imu is None:
-            print("No IMU found")
-            sys.exit(1)
-        print(f"Sensor {MAP_HANDLE_TO_ID[imu.sensor.handle]} is streaming data: {is_streaming}")
-    return imus
+    _remove_unsync_data(client)
 
 
 def _remove_unsync_data(client):
@@ -164,16 +162,25 @@ def _make_row(handle, imu_data):
     return row
 
 
-def collect_data(client, data_queue):
+
+
+def collect_data(client, data_queue, sensor_bank):
+
+    _remove_unsync_data(client)
+    print("yo")
     occurences = [0, 0, 0]
     tmp_rows = []
     aligned = False
     found_timestamps = []
 
+    for sensor in sensor_bank.sensor_arr:
+        sensor.start_collect()
+
     while not aligned:
+        print("yas")
         zenEvent = client.wait_for_next_event()
         imu_data = zenEvent.data.imu_data
-        tmp_rows.append(_make_row(MAP_HANDLE_TO_ID[zenEvent.sensor.handle], imu_data))
+        tmp_rows.append(_make_row(sensor_bank.handle_to_id[zenEvent.sensor.handle], imu_data))
         found_timestamps.append(imu_data.timestamp)
         for i, x in enumerate(found_timestamps):
             found = 0
@@ -189,6 +196,7 @@ def collect_data(client, data_queue):
                 aligned = True
                 break
     for row in tmp_rows:
+        print("ya yeet")
         data_queue.push(row[0], row[1:])
 
     while True:
@@ -197,7 +205,7 @@ def collect_data(client, data_queue):
         if zenEvent.event_type == openzen.ZenEventType.ImuData:
             occurences[int(zenEvent.sensor.handle) - 1] += 1
             imu_data = zenEvent.data.imu_data
-            row = _make_row(MAP_HANDLE_TO_ID[zenEvent.sensor.handle], imu_data)
+            row = _make_row(sensor_bank.handle_to_id[zenEvent.sensor.handle], imu_data)
             data_queue.push(row[0], row[1:])
         else:
             continue
@@ -228,38 +236,38 @@ def classify(model, data_queue):
 
 
 def scan_for_sensors(client):
-        """
-        Scan for available sensors
+    """
+    Scan for available sensors
 
-        Input:\n
-        client - clientobject from the OpenZen-library
+    Input:\n
+    client - clientobject from the OpenZen-library
 
-        Output:\n
-        sensors - list of available sensors
-        """
-        self.client.list_sensors_async()
+    Output:\n
+    sensors - list of available sensors
+    """
+    client.list_sensors_async()
 
-        # Check for events
-        sensors = []
-        while True:
-            zenEvent = client.wait_for_next_event()
+    # Check for events
+    sensors = []
+    while True:
+        zenEvent = client.wait_for_next_event()
 
-            if zenEvent.event_type == openzen.ZenEventType.SensorFound:
-                print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}")
-                # Check if found device is a bluetooth device
-                if zenEvent.data.sensor_found.io_type == "Bluetooth":
-                    sensors.append(zenEvent.data.sensor_found)
+        if zenEvent.event_type == openzen.ZenEventType.SensorFound:
+            print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}")
+            # Check if found device is a bluetooth device
+            if zenEvent.data.sensor_found.io_type == "Bluetooth":
+                sensors.append(zenEvent.data.sensor_found)
 
-            if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
-                lst_data = zenEvent.data.sensor_listing_progress
-                print(f"Sensor listing progress: {lst_data.progress * 100}%")
-                if lst_data.complete > 0:
-                    break
+        if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
+            lst_data = zenEvent.data.sensor_listing_progress
+            print(f"Sensor listing progress: {lst_data.progress * 100}%")
+            if lst_data.complete > 0:
+                break
 
-        print("Sensor Listing complete, found ", len(sensors))
-        print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
-        
-        return sensors
+    print("Sensor Listing complete, found ", len(sensors))
+    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
+    
+    return sensors
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
@@ -272,9 +280,28 @@ if __name__ == "__main__":
 
     # Scan, connect and syncronize sensors
     sensors_found = scan_for_sensors(client)
-    user_input = [0, 1, 2]
+    #name, s, imu, b = connect_to_sensor(client, sensors_found[0])
+    
+    sensor_bank = Sensor_Bank()
+    for sensor in sensors_found:
+        name, s, imu, b = connect_to_sensor(client, sensor)
+        sensor_bank.add_sensor(name, s, imu)
+    print(len(sensor_bank.sensor_arr))
+    data_queue = Data_Queue(len(sensor_bank.sensor_arr))
+
+    
+    print("Sensor bank: ", [s.name for s in sensor_bank.sensor_arr])
+
+    sync_sensors(client, sensor_bank)
+    model = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
+    # model = load('RFC_model_3.joblib')
+    classify_thread = threading.Thread(target=classify, args=[model, data_queue], daemon=True)
+    classify_thread.start()
+
+    collect_data(client, data_queue, sensor_bank)
+    """
+
     # user_input=[int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
-    data_queue = Data_Queue(len(user_input))
     NUM_SENSORS = len(user_input)
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
     _remove_unsync_data(client)
@@ -287,3 +314,4 @@ if __name__ == "__main__":
     classify_thread.start()
 
     collect_data(client, data_queue)
+    """
