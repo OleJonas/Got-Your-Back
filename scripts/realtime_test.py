@@ -8,8 +8,8 @@ import keras
 from sklearn import preprocessing as pp
 from joblib import dump, load
 from collections import Counter
-from Data_Queue import Data_Queue
-from sensor_bank import Sensor_Bank, Sensor
+from scripts.Data_Queue import Data_Queue
+from scripts.sensor_bank import Sensor_Bank, Sensor
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
@@ -119,12 +119,12 @@ def connect_to_sensor(client, input_sensor):
 
     s_name = input_sensor.name
 
-    battery_percent = round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)
+    battery_percent = f"{round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
 
     print(
         f"Connected to sensor {s_name} ({battery_percent}%)!")
 
-    return s_name, sensor, imu, battery_percent
+    return s_name, sensor, imu
 
 
 def sync_sensors(client, sensor_bank):
