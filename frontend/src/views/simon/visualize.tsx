@@ -1,13 +1,28 @@
 import * as React from "react";
+import {useState, useEffect} from 'react';
 import * as ReactDOM from "react-dom";
 import CanvasJSReact from "../../canvasjs.react"
+
+const fs = require('fs');
+const papa = require('papaparse');
 var Component = React.Component;
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-var CanvasJSChart = CanvasJSReact.CanvasJSChart;
+export const Visualizer = () => {
 
-export const visualizer = () => {
+    const [datapoints, addDatapoint] = useState([])
+    
+    function readCSV(){
+        
+    }
+
+    function print(){
+        console.log("hey")
+    }
+
+    //useEffect(() => {setInterval(readCSV, 1000)})
+
     const options = {
         animationEnabled: true,
         exportEnabled: true,
