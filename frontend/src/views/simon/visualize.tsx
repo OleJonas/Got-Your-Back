@@ -14,14 +14,14 @@ export const Visualizer = () => {
     const [datapoints, addDatapoint] = useState([])
     
     function readCSV(){
-        
+        fetch('10.22.147.115:5000/predictions').then(res => res.json()).then(data => console.log(data))
     }
 
     function print(){
         console.log("hey")
     }
 
-    //useEffect(() => {setInterval(readCSV, 1000)})
+    useEffect(() => {setInterval(readCSV, 1000)})
 
     const options = {
         animationEnabled: true,
