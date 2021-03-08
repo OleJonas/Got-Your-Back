@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles/App.scss';
+import './styles/App.css';
 import Routing from './Routing';
 
 const App = () => {
