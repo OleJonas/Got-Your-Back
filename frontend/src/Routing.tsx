@@ -8,8 +8,8 @@ const Routing = () => {
     return (
         <BrowserRouter>
             <Switch>
-                <Route component={Visualizer}/>
-                {/*<Route exact path="/dashboard" render={(props) => (<PrivateRoute path="/dashboard" component={DashboardView} />)} />*/}
+                {/*<Route component={Visualizer}/>*/}
+                <Route component={LandingView}/>
             </Switch>
         </BrowserRouter>
     )
