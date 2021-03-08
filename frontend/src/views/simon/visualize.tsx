@@ -1,6 +1,7 @@
 import * as React from "react";
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import * as ReactDOM from "react-dom";
+import { setConstantValue } from "typescript";
 import CanvasJSReact from "../../canvasjs.react"
 
 const fs = require('fs');
@@ -9,58 +10,106 @@ var Component = React.Component;
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
+
 export const Visualizer = () => {
 
-    const [datapoints, addDatapoint] = useState([])
+    const [datapoints, setDatapoint] = useState<Array<Object>>([])
     
     function readCSV(){
-        fetch('10.22.147.115:5000/predictions').then(res => res.json()).then(data => console.log(data))
+        fetch('http://localhost:5000/predictions', {
+            headers : {
+                'Content-Type': 'application/text',
+                'Accept': 'application/text',
+                'mode' : 'cors'
+            }
+        }).then(res => res.json()).then(data => {
+            return data
+        })
     }
 
-    function print(){
-        console.log("hey")
-    }
+    useEffect(() => {
 
-    useEffect(() => {setInterval(readCSV, 1000)})
+    }, [])
+    
+    useEffect(() => {
+
+        let id = setInterval(() => {
+            fetch('http://localhost:5000/predictions', {
+            headers : {
+                'Content-Type': 'application/text',
+                'Accept': 'application/text',
+            }
+            }).then(res => res.json()).then(data => {
+                console.log(data['x'])
+                data['x'] = new Date(data['x'])
+                setDatapoint((datapoints) => {return [...datapoints,data]})
+            })
+        },3000);
+        //return () => clearInterval(id);
+    }, []);
+    
+    useEffect(() => {
+        console.log(datapoints)
+    },[datapoints])
+
+    let y_labels = ["Upright", "Forward", "Forward-right", "Right", "Back-right", "Back", "Back-left", "Left", "Forward-left"]
 
     const options = {
-        animationEnabled: true,
+        animationEnabled: false,
         exportEnabled: true,
+        interactive: false,
         theme: "light2", // "light1", "dark1", "dark2"
+        backgroundColor: '#0f3762',
+        axisY:{
+            labelFormatter: function(e:any) {
+                if(e.value == 0 || e.value == 9){
+                    return ""
+                }
+                return y_labels[e.value]
+            },
+            viewportMinimum: 0,
+            viewportMaximum: 9,
+            margin: 30,
+            labelFontColor: "#EDB93C",
+            gridColor: "#EDB93C",
+            tickColor: "#EDB93C" ,
+            gridThickness: 0,
+            lineColor: "#EDB93C",
+            labelFontWeight: "Bold",
+            labelFontSize: "16",
+            lineThickness: 1
+        },
+        axisX:{
+            labelFormatter: function(e:any) {
+                return CanvasJS.formatDate(e.value, "HH:mm:ss")
+            },
+            viewportMinimum: datapoints[0],
+            xValueType: 'dateTime',
+            labelFontColor: "#EDB93C",
+            tickColor: "#EDB93C",
+            lineColor: "#EDB93C",
+            labelFontWeight: "Bold",
+            labelFontSize: "16"
+        },
         title:{
-            text: "Bounce Rate by Week of Year"
-        },
-        axisY: {
-            title: "Bounce Rate",
-            suffix: "%"
-        },
-        axisX: {
-            title: "Week of Year",
-            prefix: "W",
-            interval: 2
+            text: "My predictions",
+            fontColor: "#EDB93C",
         },
         data: [{
             type: "line",
-            toolTipContent: "Week {x}: {y}%",
-            dataPoints: [
-                { x: 1, y: 1 },
-                { x: 2, y: 1 },
-                { x: 3, y: 1 },
-                { x: 4, y: 2 },
-                { x: 5, y: 2 },
-                { x: 6, y: 3 },
-                { x: 7, y: 3 },
-                { x: 8, y: 7 },
-                { x: 9, y: 7 },
-                { x: 10, y: 5 },
-                { x: 11, y: 5 },
-            ]
+            xValueType: "dateTime",
+            dataPoints : datapoints,
+            color: "#EDB93C",
+            markerColor: "#EDB93C"
         }]
     }
 
     return(
         <div>
-            <CanvasJSChart options={options}></CanvasJSChart>
+            <CanvasJSChart key={datapoints.toString()} options={options}></CanvasJSChart>
         </div>
     )
 }
+
+
+
