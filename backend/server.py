@@ -1,30 +1,21 @@
-from flask import Flask
-from flask import Flask, jsonify, request, render_template
-from flask_cors import CORS
-app = Flask(__name__)
-import csv
-#from scripts.sensor_bank import Sensor_Bank
-#import scripts.realtime_test as realtime_test
-from datetime import datetime
-import time
-import datetime
-import csv
+import os
 import sys
+import csv
+import datetime
 import openzen
+import keras
 import threading
 import scripts.realtime_test as rt
+from multiprocessing import Process,Queue,Pipe
 from scripts.sensor_bank import Sensor, Sensor_Bank 
 from flask import Flask, request, jsonify
-import keras
-import os
+from flask_cors import CORS
 app = Flask(__name__)
-from multiprocessing import Process,Queue,Pipe
 
 client = None
 found_sensors = None
 sensor_bank = None
 data_queue = None
-
 
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
 app.config['CORS_ALLOW_HEADERS'] = "Content-Type"
