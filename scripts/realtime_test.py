@@ -5,17 +5,22 @@ import tensorflow as tf
 import numpy as np
 import openzen
 import keras
+import os
 from sklearn import preprocessing as pp
 from joblib import dump, load
 from collections import Counter
 from scripts.Data_Queue import Data_Queue
 from scripts.sensor_bank import Sensor_Bank, Sensor
+from multiprocessing import Process,Pipe
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 SLEEPTIME = 0.05
 NUM_SENSORS = 3
+pipe_r, pipe_w = None, None
+data_queue = None
+
 
 def scan_for_sensors(client):
     """
@@ -164,7 +169,11 @@ def _make_row(handle, imu_data):
 
 
 
-def collect_data(client, data_queue, sensor_bank):
+def collect_data(client, sensor_bank):
+    global data_queue
+    global pipe_w
+    print(len(sensor_bank.sensor_arr))
+    data_queue = Data_Queue(len(sensor_bank.sensor_arr))
 
     _remove_unsync_data(client)
     print("yo")
@@ -211,7 +220,9 @@ def collect_data(client, data_queue, sensor_bank):
             continue
 
 
-def classify(model, data_queue):
+def classify(model):
+    global data_queue
+    global pipe_w
     values = []
     while True:
 
@@ -231,7 +242,8 @@ def classify(model, data_queue):
             argmax = [pred.argmax() for pred in predictions]
             end_time_predict = time.perf_counter() - start_time_predict
             pred = Counter(argmax).most_common(1)[0][0]
-            print(f"Predicted {pred} in {round(end_time_predict,2)}s!")
+            #print(f"Predicted {pred} in {round(end_time_predict,2)}s!")
+            child_conn.send(str(pred))
             values = []
 
 
@@ -268,6 +280,12 @@ def scan_for_sensors(client):
     print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
     
     return sensors
+
+def get_pipe_r():
+    global pipe_r
+    global pipe_w
+    pipe_r, pipe_w = os.pipe()
+    return pipe_r
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
