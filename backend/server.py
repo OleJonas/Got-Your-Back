@@ -44,8 +44,6 @@ def init():
         sys.exit(1)
     sensor_bank = Sensor_Bank()
 
-
-
 @app.route("/")
 def hello_world():
     return 'Hello, World!'

@@ -15,25 +15,8 @@ export const Visualizer = () => {
 
     const [datapoints, setDatapoint] = useState<Array<Object>>([])
     
-    function readCSV(){
-        fetch('http://localhost:5000/predictions', {
-            headers : {
-                'Content-Type': 'application/text',
-                'Accept': 'application/text',
-                'mode' : 'cors'
-            }
-        }).then(res => res.json()).then(data => {
-            return data
-        })
-    }
-
     useEffect(() => {
-
-    }, [])
-    
-    useEffect(() => {
-
-        let id = setInterval(() => {
+        setInterval(() => {
             fetch('http://localhost:5000/predictions', {
             headers : {
                 'Content-Type': 'application/text',
@@ -45,12 +28,7 @@ export const Visualizer = () => {
                 setDatapoint((datapoints) => {return [...datapoints,data]})
             })
         },3000);
-        //return () => clearInterval(id);
     }, []);
-    
-    useEffect(() => {
-        console.log(datapoints)
-    },[datapoints])
 
     let y_labels = ["Upright", "Forward", "Forward-right", "Right", "Back-right", "Back", "Back-left", "Left", "Forward-left"]
 
