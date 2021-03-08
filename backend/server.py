@@ -7,7 +7,7 @@ import keras
 import threading
 import scripts.realtime_test as rt
 from multiprocessing import Process,Queue,Pipe
-from scripts.sensor_bank import Sensor, Sensor_Bank 
+from scripts.sensor_bank import Sensor, Sensor_Bank
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 app = Flask(__name__)
