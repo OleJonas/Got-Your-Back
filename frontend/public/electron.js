@@ -5,11 +5,6 @@ const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
 const isDev = require('electron-is-dev');
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling
-if (require("electron-squirrel-startup")) {
-  app.quit();
-}
-
 let mainWindow;
 
 function createWindow() {
