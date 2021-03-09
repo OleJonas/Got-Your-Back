@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Box } from '@material-ui/core';
+import { Grid, Box, makeStyles } from '@material-ui/core';
 import Logo from '../../assets/Logo.svg';
-import '../../styles/LandingView.css'
 
 import { NavBar } from '../../components/NavBar/NavBar.component'
 
-export const LandingView = () => {
+export const AboutView = () => {
+    const classes = useStyles();
     return (
         <div className='container'>
             <Grid container justify="center" className='grid'>
@@ -13,8 +13,17 @@ export const LandingView = () => {
                     <NavBar></NavBar>
                 </Grid>
                 <Grid item xs={10} lg={11}>
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <h3>About</h3>
+                        </Grid>  
+                    </Grid>
                 </Grid>
             </Grid>
         </div>
     )
 }
+
+const useStyles = makeStyles({
+
+  });

@@ -27,6 +27,7 @@ const useStyles = makeStyles({
     root: {
         background: "rgba(0,0,0,0.5)",
         minHeight: "100vh",
+        textAlign: "center"
     },
     icon: {
         margin: "10px"
