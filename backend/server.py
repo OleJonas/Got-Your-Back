@@ -1,19 +1,27 @@
-import csv
+import os
 import sys
+import csv
+import datetime
 import openzen
+import keras
 import threading
 import scripts.realtime_test as rt
-from scripts.sensor_bank import Sensor, Sensor_Bank 
-from flask import Flask, request, jsonify
-import keras
-import os
-app = Flask(__name__)
 from multiprocessing import Process,Queue,Pipe
+from scripts.sensor_bank import Sensor, Sensor_Bank
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+app = Flask(__name__)
 
 client = None
 found_sensors = None
 sensor_bank = None
 data_queue = None
+
+app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
+app.config['CORS_ALLOW_HEADERS'] = "Content-Type"
+
+cors = CORS(app, resources={r"/predictions": {"origins": "*"},
+                            r"/all_predictions": {"origins": "*"}})
 
 @app.before_first_request
 def init():
@@ -26,6 +34,31 @@ def init():
         print("Error while initializing OpenZen library")
         sys.exit(1)
     sensor_bank = Sensor_Bank()
+
+@app.route("/")
+def hello_world():
+    return 'Hello, World!'
+
+@app.route("/all_predictions")
+def get_all_csv_data():
+    arr = []
+    with open('../predictions.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            arr.append(jsonify({'x': row[0], 'y': int(row[1])}))
+    return arr
+
+
+@app.route("/predictions")
+def get_csv_data():
+    arr = []
+    with open('../predictions.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            arr.append(jsonify({'x': row[0], 'y': int(row[1])}))
+    return arr[-1]
+    
+    #return "predictions"
 
 @app.route("/setup/scan")
 def scan():
