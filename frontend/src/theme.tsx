@@ -21,23 +21,33 @@ export const theme = createMuiTheme({
       paper: '#EADEF4',
     },
     text: {
-      primary: '#FFF',
-      secondary: '#F2F2F2',
-      disabled: '#6A6A6A',
+      primary: '#FFF', // white
+      secondary: '#EDB93C', // yellow
+      disabled: '#000', // This will be our black used only at login
     },
   },
   typography: {
+    fontFamily: [
+        'Nunito'
+    ].join(','),
     h1: {
-      fontSize: '2.75rem',
+        fontSize: '2.75rem',
+        fontWeight: 'bold'
     },
     h2: {
-      fontSize: '1.75rem',
+        fontSize: '1.75rem',
+        fontWeight: 'bold'
+    },
+    h3: {
+        fontSize: '1.25rem',
+        fontWeight: 'bold'
     },
     body1: {
-      fontSize: '1.25rem',
+        fontSize: '1.25rem',
     },
     body2: {
-      fontSize: '0.75rem',
+        fontSize: '0.75rem',
     },
+    
   },
 });

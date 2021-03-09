@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
-import { Grid, Box, Typography } from '@material-ui/core';
+import { Grid, Box, Typography, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Logo from '../../assets/Logo.svg';
 import ProfilePicture from '../../assets/profile_picture.png'
@@ -9,15 +9,15 @@ export const NavBar: FC = () => {
     return (
         <Box className={classes.root}>
             <Grid container justify="center" className='grid'>
-                <Grid item xs={10} >
-                    <img src={Logo} className={classes.icon} alt="logo" />
-                </Grid>
-                <Grid item xs={10}>
-                    <img src={ProfilePicture} className={classes.profilePic} alt="PP"/>
-                </Grid>
-                <Grid item xs={10} style={{marginTop: "30px"}}><a href="/"><h3 className={classes.link}>Home</h3></a></Grid>
-                <Grid item xs={10}><a href="/"><h3 className={classes.link}>History</h3></a></Grid>
-                <Grid item xs={10}><a href="/"><h3 className={classes.link}>About</h3></a></Grid>
+                
+                <Grid item xs={10} ><Box m={1}><img src={Logo} alt="logo" /></Box></Grid>
+                
+                <Grid item xs={10}><Box my={2} mb={4}><img src={ProfilePicture} className={classes.profilePic} alt="PP"/></Box></Grid>
+
+                <Grid item xs={10}><Link href="#/home"><Box m={1.2}><Typography variant="h3" color={window.location.href.includes('home') ? "textSecondary" : "textPrimary"}>Home</Typography></Box></Link></Grid>
+                <Grid item xs={10}><Link href="#/history"><Box m={1.2}><Typography variant="h3" color={window.location.href.includes('history') ? "textSecondary" : "textPrimary"}>History</Typography></Box></Link></Grid>
+                <Grid item xs={10}><Link href="#/about"><Box m={1.2}><Typography variant="h3" color={window.location.href.includes('about') ? "textSecondary" : "textPrimary"}>About</Typography></Box></Link></Grid>
+
             </Grid>
         </Box>
     )
@@ -29,15 +29,9 @@ const useStyles = makeStyles({
         minHeight: "100vh",
         textAlign: "center"
     },
-    icon: {
-        margin: "10px"
-    },
     profilePic: {
-        height: "80%",
-        width: "80%",
-        marginBottom: "20px"
-    },
-    link: {
-        color: "white"
+        height: "65%",
+        width: "65%",
+        borderRadius: '50%'
     }
   });
