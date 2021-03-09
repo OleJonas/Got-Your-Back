@@ -3,3 +3,6 @@ model/__pycache__/
 model/__pycache__
 data/*/*_labels.txt
 .vscode
+__pycache__
+__pycache__*
+__pycache__/
