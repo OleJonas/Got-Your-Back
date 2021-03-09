@@ -9,17 +9,14 @@ import os
 from sklearn import preprocessing as pp
 from joblib import dump, load
 from collections import Counter
-from scripts.Data_Queue import Data_Queue
-from scripts.sensor_bank import Sensor_Bank, Sensor
-from multiprocessing import Process,Pipe
+from Data_Queue import Data_Queue
+from sensor_bank import Sensor_Bank, Sensor
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 SLEEPTIME = 0.05
 NUM_SENSORS = 3
-pipe_r, pipe_w = None, None
-data_queue = None
 
 
 def scan_for_sensors(client):
@@ -40,7 +37,7 @@ def scan_for_sensors(client):
         zenEvent = client.wait_for_next_event()
 
         if zenEvent.event_type == openzen.ZenEventType.SensorFound:
-            print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}")
+            print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}", flush=True, end='')
             # Check if found device is a bluetooth device
             if zenEvent.data.sensor_found.io_type == "Bluetooth":
                 sensors.append(zenEvent.data.sensor_found)
@@ -51,8 +48,8 @@ def scan_for_sensors(client):
             if lst_data.complete > 0:
                 break
 
-    print("Sensor Listing complete, found ", len(sensors))
-    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
+    print("Sensor Listing complete, found ", len(sensors), flush=True, end='')
+    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors], flush=True, end='')
     return sensors
 
 
@@ -80,11 +77,11 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
         attempts = 0
         while not error == openzen.ZenSensorInitError.NoError:
             attempts += 1
-            print("Error connecting to sensor")
-            print("Trying again...")
+            print("Error connecting to sensor", flush=True, end='')
+            print("Trying again...", flush=True, end='')
             error, sensor = client.obtain_sensor(sensors[index])
             if attempts >= 100:
-                print("Can't connect to sensor")
+                print("Can't connect to sensor", flush=True, end='')
                 sys.exit(1)
 
         # Obtain IMU from sensor and prevents it from streaming sensor_data yet
@@ -127,7 +124,7 @@ def connect_to_sensor(client, input_sensor):
     battery_percent = f"{round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
 
     print(
-        f"Connected to sensor {s_name} ({battery_percent}%)!")
+        f"Connected to sensor {s_name} ({battery_percent}%)!", flush=True, end='')
 
     return s_name, sensor, imu
 
@@ -169,14 +166,10 @@ def _make_row(handle, imu_data):
 
 
 
-def collect_data(client, sensor_bank):
-    global data_queue
-    global pipe_w
-    print(len(sensor_bank.sensor_arr))
-    data_queue = Data_Queue(len(sensor_bank.sensor_arr))
+def collect_data(client, data_queue, sensor_bank):
+    print(len(sensor_bank.sensor_arr), flush=True, end='')
 
     _remove_unsync_data(client)
-    print("yo")
     occurences = [0, 0, 0]
     tmp_rows = []
     aligned = False
@@ -186,7 +179,6 @@ def collect_data(client, sensor_bank):
         sensor.start_collect()
 
     while not aligned:
-        print("yas")
         zenEvent = client.wait_for_next_event()
         imu_data = zenEvent.data.imu_data
         tmp_rows.append(_make_row(sensor_bank.handle_to_id[zenEvent.sensor.handle], imu_data))
@@ -205,7 +197,6 @@ def collect_data(client, sensor_bank):
                 aligned = True
                 break
     for row in tmp_rows:
-        print("ya yeet")
         data_queue.push(row[0], row[1:])
 
     while True:
@@ -220,9 +211,7 @@ def collect_data(client, sensor_bank):
             continue
 
 
-def classify(model):
-    global data_queue
-    global pipe_w
+def classify(model, data_queue):
     values = []
     while True:
 
@@ -242,8 +231,8 @@ def classify(model):
             argmax = [pred.argmax() for pred in predictions]
             end_time_predict = time.perf_counter() - start_time_predict
             pred = Counter(argmax).most_common(1)[0][0]
+            print(pred, flush=True, end='')
             #print(f"Predicted {pred} in {round(end_time_predict,2)}s!")
-            child_conn.send(str(pred))
             values = []
 
 
@@ -265,35 +254,30 @@ def scan_for_sensors(client):
         zenEvent = client.wait_for_next_event()
 
         if zenEvent.event_type == openzen.ZenEventType.SensorFound:
-            print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}")
+            print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}", flush=True, end='')
             # Check if found device is a bluetooth device
             if zenEvent.data.sensor_found.io_type == "Bluetooth":
                 sensors.append(zenEvent.data.sensor_found)
 
         if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
             lst_data = zenEvent.data.sensor_listing_progress
-            print(f"Sensor listing progress: {lst_data.progress * 100}%")
+            print(f"Sensor listing progress: {lst_data.progress * 100}%", flush=True, end='')
             if lst_data.complete > 0:
                 break
 
-    print("Sensor Listing complete, found ", len(sensors))
-    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
+    print("Sensor Listing complete, found ", len(sensors), flush=True, end='')
+    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors], flush=True, end='')
     
     return sensors
 
-def get_pipe_r():
-    global pipe_r
-    global pipe_w
-    pipe_r, pipe_w = os.pipe()
-    return pipe_r
 
 if __name__ == "__main__":
-    openzen.set_log_level(openzen.ZenLogLevel.Warning)
+    openzen.set_log_level(openzen.ZenLogLevel.Off)
 
     # Make client
     error, client = openzen.make_client()
     if not error == openzen.ZenError.NoError:
-        print("Error while initializing OpenZen library")
+        print("Error while initializing OpenZen library", flush=True, end='')
         sys.exit(1)
 
     # Scan, connect and syncronize sensors
@@ -302,17 +286,19 @@ if __name__ == "__main__":
     
     sensor_bank = Sensor_Bank()
     for sensor in sensors_found:
-        name, s, imu, b = connect_to_sensor(client, sensor)
+        name, s, imu = connect_to_sensor(client, sensor)
         sensor_bank.add_sensor(name, s, imu)
-    print(len(sensor_bank.sensor_arr))
+    #print(len(sensor_bank.sensor_arr))
     data_queue = Data_Queue(len(sensor_bank.sensor_arr))
 
     
-    print("Sensor bank: ", [s.name for s in sensor_bank.sensor_arr])
+    #print("Sensor bank: ", [s.name for s in sensor_bank.sensor_arr])
 
     sync_sensors(client, sensor_bank)
-    model = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
     # model = load('RFC_model_3.joblib')
+    print("yoooooo")
+    model = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
+    print("etter")
     classify_thread = threading.Thread(target=classify, args=[model, data_queue], daemon=True)
     classify_thread.start()
 
