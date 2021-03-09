@@ -33,22 +33,31 @@ export const theme = createMuiTheme({
         fontWeight: 600
     },
     h2: {
-        fontSize: '1.25rem',
-        fontWeight: 300
+        fontSize: '1.75rem',
+        fontWeight: 400
     },
     h3: {
-        fontSize: '1.25rem',
+      fontSize: '1.25rem',
+      fontWeight: 300
     },
     caption: { // NavBar links
       fontSize: '1.1rem',
       fontWeight: 600
   },
     body1: {
-        fontSize: '1.25rem',
+        fontSize: '1rem',
+        fontWeight: 300
     },
     body2: {
         fontSize: '0.75rem',
+        fontWeight: 200
     },
+    overline: {
+        fontSize: '1rem',
+        fontWeight: 400,
+        fontStyle: "italic",
+        textTransform: "none"
+    }
     
   },
 });

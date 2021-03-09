@@ -19,22 +19,22 @@ export const HomeView = () => {
                             <Grid item xs={12}><Typography variant="h1" color="textPrimary">Welcome Back, Ole Jonas!</Typography></Grid>    
 
                             <Grid item xs={12} md={5} className={classes.components}>
-                                <Box mb={0.6}><Typography variant="h2" color="textPrimary">Connected devices</Typography></Box>
+                                <Box mb={0.6}><Typography variant="h3" color="textPrimary">Connected devices</Typography></Box>
                                 <TemplateBox />
                             </Grid>
                             
                             <Grid item xs={12} md={7} className={classes.components}>
-                                <Box mb={0.6}><Typography variant="h2" color="textPrimary">Classification</Typography></Box>
+                                <Box mb={0.6}><Typography variant="h3" color="textPrimary">Classification</Typography></Box>
                                 <TemplateBox />
                             </Grid>
                             
                             <Grid item xs={12} md={7} className={classes.components}>
-                                <Box mb={0.6}><Typography variant="h2" color="textPrimary">My day</Typography></Box>
+                                <Box mb={0.6}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
                                 <TemplateBox />
                             </Grid>
                             
                             <Grid item xs={12} md={5} className={classes.components}>
-                                <Box mb={0.6}><Typography variant="h2" color="textPrimary">Distribution</Typography></Box>
+                                <Box mb={0.6}><Typography variant="h3" color="textPrimary">Distribution</Typography></Box>
                                 <TemplateBox />
                             </Grid>
                             

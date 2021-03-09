@@ -1,6 +1,12 @@
 body {
-  margin: 0;
-  background: linear-gradient(180deg, #0F3762 0%, rgba(64, 98, 128, 0.9) 100%), #1C355B;
+	margin: 0;
+	background: linear-gradient(180deg, #0f3762 0%, rgba(64, 98, 128, 0.9) 100%),
+		#1c355b;
 }
 
-
+/* Hide scrollbar for all browsers */
+body::-webkit-scrollbar {
+	display: none; /* Chrome, Safari and Opera*/
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
