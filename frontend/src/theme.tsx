@@ -4,7 +4,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 export const theme = createMuiTheme({
   palette: {
     primary: {
-      main: '#260A3F',
+      main: '#EDB93C',
     },
     secondary: {
       main: '#23BFC1',
@@ -45,18 +45,24 @@ export const theme = createMuiTheme({
       fontWeight: 600
   },
     body1: {
-        fontSize: '1rem',
-        fontWeight: 300
+      fontSize: '1rem',
+      fontWeight: 300
     },
     body2: {
-        fontSize: '0.75rem',
-        fontWeight: 200
+      fontSize: '0.75rem',
+      fontWeight: 200
     },
     overline: {
-        fontSize: '1rem',
-        fontWeight: 400,
-        fontStyle: "italic",
-        textTransform: "none"
+      fontSize: '1rem',
+      fontWeight: 400,
+      fontStyle: "italic",
+      textTransform: "none"
+    },
+    button: {
+      fontSize: '1rem',
+      fontWeight: 700,
+      padding: "10px",
+      textTransform: "none"
     }
     
   },

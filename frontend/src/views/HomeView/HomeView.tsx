@@ -4,6 +4,7 @@ import { Grid, Box, makeStyles, Typography } from '@material-ui/core';
 // Components
 import { NavBar } from '../../components/NavBar/NavBar.component'
 import { TemplateBox } from '../../components/TemplateBox/TemplateBox.component'
+import { ConnectedSensorsBox } from '../../components/ConnectedSensorsBox/ConnectedSensorsBox.component'
 
 export const HomeView = () => {
     const classes = useStyles();
@@ -19,8 +20,8 @@ export const HomeView = () => {
                             <Grid item xs={12}><Typography variant="h1" color="textPrimary">Welcome Back, Ole Jonas!</Typography></Grid>    
 
                             <Grid item xs={12} md={5} className={classes.components}>
-                                <Box mb={0.6}><Typography variant="h3" color="textPrimary">Connected devices</Typography></Box>
-                                <TemplateBox />
+                                <Box mb={0.6}><Typography variant="h3" color="textPrimary">Connected sensors</Typography></Box>
+                                <ConnectedSensorsBox />
                             </Grid>
                             
                             <Grid item xs={12} md={7} className={classes.components}>
