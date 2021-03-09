@@ -24,17 +24,17 @@ export const HomeView = () => {
                             </Grid>
                             
                             <Grid item xs={12} md={7} className={classes.components}>
-                                <Box mb={0.6}><Typography variant="h2" color="textPrimary">Connected devices</Typography></Box>
+                                <Box mb={0.6}><Typography variant="h2" color="textPrimary">Classification</Typography></Box>
                                 <TemplateBox />
                             </Grid>
                             
                             <Grid item xs={12} md={7} className={classes.components}>
-                                <Box mb={0.6} mt={4}><Typography variant="h2" color="textPrimary">Connected devices</Typography></Box>
+                                <Box mb={0.6}><Typography variant="h2" color="textPrimary">My day</Typography></Box>
                                 <TemplateBox />
                             </Grid>
                             
                             <Grid item xs={12} md={5} className={classes.components}>
-                                <Box mb={0.6} mt={4}><Typography variant="h2" color="textPrimary">Connected devices</Typography></Box>
+                                <Box mb={0.6}><Typography variant="h2" color="textPrimary">Distribution</Typography></Box>
                                 <TemplateBox />
                             </Grid>
                             
@@ -51,7 +51,6 @@ const useStyles = makeStyles({
         minHeight: "100vh"
     },
     components: {
-        minHeight: "40vh",
-        borderRadius: "25px"
+        height: "45vh"
     }
   });

@@ -3,7 +3,7 @@ import { Grid, Box, makeStyles, Typography } from '@material-ui/core';
 
 // Components
 import { NavBar } from '../../components/NavBar/NavBar.component'
-import { TemplateBox } from '../../components/TemplateBox/TemplateBox.component';
+import { TemplateBox } from '../../components/TemplateBox/TemplateBox.component'
 
 export const HistoryView = () => {
     const classes = useStyles();
@@ -18,11 +18,21 @@ export const HistoryView = () => {
                         <Grid container spacing={2}>
                             <Grid item xs={12}><Typography variant="h1" color="textPrimary">History</Typography></Grid>    
 
-                            <Grid item xs={12} md={5} className={classes.components}><TemplateBox /></Grid>
-                            <Grid item xs={12} md={7} className={classes.components}><TemplateBox /></Grid>
-
-                            <Grid item xs={12} md={7} className={classes.components}><TemplateBox /></Grid>
-                            <Grid item xs={12} md={5} className={classes.components}><TemplateBox /></Grid>
+                            <Grid item xs={12} className={classes.components}>
+                                <Box mb={0.6}><Typography variant="h2" color="textPrimary">This week</Typography></Box>
+                                <TemplateBox />
+                            </Grid>
+                            
+                            <Grid item xs={12} md={7} className={classes.components}>
+                                <Box mb={0.6}><Typography variant="h2" color="textPrimary">Most common posture today</Typography></Box>
+                                <TemplateBox />
+                            </Grid>
+                            
+                            <Grid item xs={12} md={5} className={classes.components}>
+                                <Box mb={0.6}><Typography variant="h2" color="textPrimary">Distribution last 30 days</Typography></Box>
+                                <TemplateBox />
+                            </Grid>
+                            
                         </Grid>
                     </Box>
                 </Grid>
@@ -36,7 +46,6 @@ const useStyles = makeStyles({
         minHeight: "100vh"
     },
     components: {
-        minHeight: "40vh",
-        borderRadius: "25px"
+        height: "45vh"
     }
   });

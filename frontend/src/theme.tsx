@@ -30,11 +30,11 @@ export const theme = createMuiTheme({
     fontFamily: 'Nunito',
     h1: {
         fontSize: '2.5rem',
-        fontWeight: 700
+        fontWeight: 600
     },
     h2: {
         fontSize: '1.25rem',
-        fontWeight: 500
+        fontWeight: 300
     },
     h3: {
         fontSize: '1.25rem',

@@ -1,2 +1,0 @@
-Her legges hver eneste side vi har, i egne mapper med siden og en egen testfil
-Navn i camelCase og f.eks dashboardView slik at vi vet det er et dashboardView
