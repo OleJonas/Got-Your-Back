@@ -1,17 +1,17 @@
 import React from 'react';
-import { Route, BrowserRouter, Switch, Redirect } from 'react-router-dom';
+import { Route, HashRouter, Switch, Redirect } from 'react-router-dom';
 
 import {LandingView} from './views/landingView/LandingView'
 import {Visualizer} from './views/simon/visualize'
 
 const Routing = () => {
     return (
-        <BrowserRouter>
+        <HashRouter>
             <Switch>
                 {/*<Route component={Visualizer}/>*/}
                 <Route component={LandingView}/>
             </Switch>
-        </BrowserRouter>
+        </HashRouter>
     )
 }
 
