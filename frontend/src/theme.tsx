@@ -27,21 +27,22 @@ export const theme = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: [
-        'Nunito'
-    ].join(','),
+    fontFamily: 'Nunito',
     h1: {
-        fontSize: '2.75rem',
-        fontWeight: 'bold'
+        fontSize: '2.5rem',
+        fontWeight: 700
     },
     h2: {
-        fontSize: '1.75rem',
-        fontWeight: 'bold'
+        fontSize: '1.25rem',
+        fontWeight: 500
     },
     h3: {
         fontSize: '1.25rem',
-        fontWeight: 'bold'
     },
+    caption: { // NavBar links
+      fontSize: '1.1rem',
+      fontWeight: 600
+  },
     body1: {
         fontSize: '1.25rem',
     },
