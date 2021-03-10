@@ -48,7 +48,7 @@ const useStyles = makeStyles({
         overflow: "auto"
     },
     components: {
-        minHeight: "45vh"
+        height: "400px"
     },
     height: {
         height: "100%"
