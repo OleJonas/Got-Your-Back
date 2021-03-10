@@ -4,7 +4,6 @@ import CanvasJSReact from "../../canvasjs.react"
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-
 export const LineGraph = () => {
 
     const [datapoints, setDatapoint] = useState<Array<JSON>>([])

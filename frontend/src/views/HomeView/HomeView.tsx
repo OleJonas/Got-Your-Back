@@ -28,7 +28,6 @@ export const HomeView = () => {
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Classification</Typography></Box>
                                 <TemplateBox><h1>bruh</h1><LineGraph/></TemplateBox>
                             </Grid>
-                            
                             <Grid item xs={12} md={7} className={classes.components}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
                                 <TemplateBox />
