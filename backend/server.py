@@ -22,17 +22,13 @@ data_queue = None
 classify = False
 t_pool = []
 
-
-app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
 
-cors = CORS(app, resources={r"/predictions": {"origins": "*"}, r"/all_predictions": {"origins": "*"}, r"/setup/scan": {"origins": "*"}})
+cors = CORS(app)
 
-#app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
-#app.config['CORS_ALLOW_HEADERS'] = "Content-Type"
-
-#cors = CORS(app, resources={r"/predictions": {"origins": "*"},
+# cors = CORS(app, resources={r"/predictions": {"origins": "*"},
 #                            r"/all_predictions": {"origins": "*"}})
+
 
 @app.before_first_request
 def init():
@@ -40,17 +36,17 @@ def init():
     global sensor_bank
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     # Make client
-    print("yeeeeee", file=sys.stdout)
     error, client = openzen.make_client()
     if not error == openzen.ZenError.NoError:
         print("Error while initializing OpenZen library")
         sys.exit(1)
     sensor_bank = Sensor_Bank()
-    print("YOOOOOOOOOO")
+
 
 @app.route("/")
 def hello_world():
     return 'Hello, World!'
+
 
 @app.route("/all_predictions")
 def get_all_csv_data():
@@ -70,17 +66,19 @@ def get_csv_data():
         for row in reader:
             arr.append(jsonify({'x': row[0], 'y': int(row[1])}))
     return arr[-1]
-    
-    #return "predictions"
+
+    # return "predictions"
+
 
 @app.route("/setup/scan")
 def scan():
-    print("haaa")
     global found_sensors
     found_sensors = rt.scan_for_sensors(client)
     res = dict()
-    for i, sensor in enumerate(found_sensors): res[str(i)] = sensor.name
+    for i, sensor in enumerate(found_sensors):
+        res[str(i)] = sensor.name
     return res
+
 
 @app.route('/setup/connect')
 def connect():
@@ -103,10 +101,12 @@ def get_csv_data():
     return rows
 """
 
+
 @app.route("/setup/sync")
 def sync_sensors():
     rt.sync_sensors(client, sensor_bank)
     return("All sensors are synced!")
+
 
 @app.route("/classify/start")
 def classification_pipe():
@@ -127,6 +127,7 @@ def classification_pipe():
 
     return "started classification..."
 
+
 def check_classify():
     return classify
 
@@ -141,6 +142,7 @@ def stop_classify():
         t.join()
     return str(sensor_bank.run)
 
+
 @app.route("/setup/connect_all")
 def connect_all():
     global sensor_bank
@@ -153,10 +155,20 @@ def connect_all():
 
 #print('', flush=True)
 
-@app.route('/sensors')
-def get_sensors():
-    return {"list": [
-                {"name": "LPMSB2 - 3036EB", "id": "1", "battery": "85,3%"}, 
-                {"name": "LPMSB2 - 4B3326", "id": "2", "battery": "76,6%"},
-                {"name": "LPMSB2 - 4B31EE", "id": "3", "battery": "54,26%"}
-            ]}
+
+@app.route('/connected_sensors')
+def get_dummy_connected_sensors():
+    return {"sensors": [
+        {"name": "LPMSB2 - 3036EB", "id": "1", "battery": "85,3%"},
+        {"name": "LPMSB2 - 4B3326", "id": "2", "battery": "76,6%"},
+        {"name": "LPMSB2 - 4B31EE", "id": "3", "battery": "54,26%"}
+    ]}
+
+
+@app.route('/found_sensors')
+def get_dummy_found_sensors():
+    return {
+        0: "LPMSB2 - 3036EB",
+        1: "LPMSB2 - 4B3326",
+        2: "LPMSB2 - 4B31EE",
+    }

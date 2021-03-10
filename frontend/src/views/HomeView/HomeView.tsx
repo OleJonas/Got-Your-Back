@@ -31,7 +31,7 @@ export const HomeView = () => {
                         </Grid>
                         <Grid item xs={12} md={7} className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
-                            <ContentBox><LineGraph/></ContentBox>
+                            <ContentBox>{/*<LineGraph/>*/}</ContentBox>
                         </Grid>
                         <Grid item xs={12} md={5} className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">Distribution</Typography></Box>
