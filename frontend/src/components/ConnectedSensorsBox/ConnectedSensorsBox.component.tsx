@@ -1,5 +1,5 @@
-import React, { FC, useState, useEffect } from 'react';
-import { Grid, Box, Typography, Link } from '@material-ui/core';
+import { FC } from 'react';
+import { Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 // Components

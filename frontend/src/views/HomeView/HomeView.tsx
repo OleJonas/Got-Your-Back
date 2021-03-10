@@ -1,4 +1,3 @@
-import React from 'react';
 import { Grid, Box, makeStyles, Typography } from '@material-ui/core';
 
 // Components

@@ -1,6 +1,8 @@
-import React, { FC, useState, useEffect } from 'react';
+import { FC } from 'react';
 import { Grid, Box, Typography, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+
+// Components
 import Logo from '../../assets/Logo.svg';
 import ProfilePicture from '../../assets/AgurkPB.png'
 
