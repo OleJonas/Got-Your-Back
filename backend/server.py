@@ -18,10 +18,9 @@ sensor_bank = None
 data_queue = None
 
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
-app.config['CORS_ALLOW_HEADERS'] = "Content-Type"
+app.config['CORS_ALLOW_HEADERS'] = ["*"]
 
-cors = CORS(app, resources={r"/predictions": {"origins": "*"},
-                            r"/all_predictions": {"origins": "*"}})
+cors = CORS(app, resources={r"/predictions": {"origins": "*"}, r"/all_predictions": {"origins": "*"}, r"/setup/scan": {"origins": "*"}})
 
 @app.before_first_request
 def init():

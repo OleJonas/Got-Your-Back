@@ -9,8 +9,10 @@ import os
 from sklearn import preprocessing as pp
 from joblib import dump, load
 from collections import Counter
-from Data_Queue import Data_Queue
-from sensor_bank import Sensor_Bank, Sensor
+
+sys.path.append("/scripts")
+from scripts.Data_Queue import Data_Queue
+from scripts.sensor_bank import Sensor_Bank, Sensor
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5

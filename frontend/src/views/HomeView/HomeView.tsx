@@ -4,6 +4,8 @@ import { Grid, Box, makeStyles, Typography } from '@material-ui/core';
 import { NavBar } from '../../components/NavBar/NavBar.component'
 import { ContentBox } from '../../components/ContentBox/ContentBox.component'
 import { LineGraph } from '../../components/LineGraph/LineGraph'
+import { SensorModal } from '../../components/SensorModal/SensorModal.component';
+import { GoogleGraph } from '../../components/GoogleGraph/GoogleGraph.jsx';
 
 export const HomeView = () => {
     const classes = useStyles();
@@ -20,7 +22,7 @@ export const HomeView = () => {
 
                             <Grid item xs={12} md={5} className={classes.components}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Connected sensors</Typography></Box>
-                                <ContentBox></ContentBox>
+                                <ContentBox><SensorModal /></ContentBox>
                             </Grid>
                             
                             <Grid item xs={12} md={7} className={classes.components}>
@@ -30,7 +32,7 @@ export const HomeView = () => {
                             
                             <Grid item xs={12} md={7} className={classes.components}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
-                                <ContentBox></ContentBox>
+                                <ContentBox><GoogleGraph /></ContentBox>
                             </Grid>
                             
                             <Grid item xs={12} md={5} className={classes.components}>
@@ -48,7 +50,7 @@ export const HomeView = () => {
 
 const useStyles = makeStyles({
     root: {
-        minHeight: "100vh"
+        height: "100%"
     },
     components: {
         height: "45vh"
