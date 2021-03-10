@@ -35,7 +35,7 @@ export const LineGraph = () => {
     
     const options = {
         animationEnabled: false,
-        exportEnabled: true,
+        exportEnabled: false,
         responsive: true,
         maintainAspectRatio: true,
         backgroundColor: 'rgba(0,0,0,0)',
@@ -67,10 +67,6 @@ export const LineGraph = () => {
             tickColor: "#EDB93C",
             lineColor: "#EDB93C",
             labelFontWeight: "Bold",
-        },
-        title:{
-            text: "My predictions",
-            fontColor: "#EDB93C",
         },
         data: [{
             type: "line",

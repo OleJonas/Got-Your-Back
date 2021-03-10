@@ -6,6 +6,7 @@ import { ContentBox } from '../../components/ContentBox/ContentBox.component'
 import { LineGraph } from '../../components/LineGraph/LineGraph'
 import { SensorModal } from '../../components/SensorModal/SensorModal.component';
 import { GoogleGraph } from '../../components/GoogleGraph/GoogleGraph.jsx';
+import { ClassificationBox } from '../../components/ClassificationContent/ClassificationBox'
 
 export const HomeView = () => {
     const classes = useStyles();
@@ -26,7 +27,7 @@ export const HomeView = () => {
                         
                         <Grid item xs={12} md={7} className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">Classification</Typography></Box>
-                            <ContentBox></ContentBox>
+                            <ContentBox><ClassificationBox></ClassificationBox></ContentBox>
                         </Grid>
                         <Grid item xs={12} md={7} className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
