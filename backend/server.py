@@ -54,13 +54,13 @@ def hello_world():
 
 @app.route("/all_predictions")
 def get_all_csv_data():
-    arr = []
-    with open('../predictions.csv', 'r') as file:
+    string = ""
+    with open('predictions.csv', 'r') as file:
         reader = csv.reader(file)
+        string = ""
         for row in reader:
-            arr.append(jsonify({'x': row[0], 'y': int(row[1])}))
-    return arr
-
+            string += '{"x": ' + '"' + row[0] + '", "y": "' + row[1] + '"}' + '\n'
+    return string
 
 @app.route("/predictions")
 def get_csv_data():
