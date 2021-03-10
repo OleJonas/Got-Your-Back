@@ -15,7 +15,7 @@ export const TemplateBox: FC = () => {
 const useStyles = makeStyles({
     root: {
         background: "rgba(0,0,0,0.5)",
-        height: "90%",
+        
         borderRadius: "5px"
     }
   });
