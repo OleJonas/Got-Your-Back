@@ -12,9 +12,8 @@ export const HistoryView = () => {
                 <Grid item xs={2} md={1}>
                     <NavBar></NavBar>
                 </Grid>
-                <Grid item xs={10} md={11}>
-                    <Box m={2}>
-                        <Grid container spacing={2}>
+                <Grid item xs={10} md={11} className={classes.height}>
+                        <Grid container spacing={2} className={classes.grid}>
                             <Grid item xs={12}><Typography variant="h1" color="textPrimary">History</Typography></Grid>    
 
                             <Grid item xs={12} className={classes.components}>
@@ -33,7 +32,6 @@ export const HistoryView = () => {
                             </Grid>
                             
                         </Grid>
-                    </Box>
                 </Grid>
             </Grid>
         </>
@@ -42,9 +40,18 @@ export const HistoryView = () => {
 
 const useStyles = makeStyles({
     root: {
-        height: "100vh"
+        height: "100%"
+    },
+    grid: {
+        height: "100%",
+        padding: "20px",
+        overflow: "auto"
     },
     components: {
-        height: "45vh"
+        minHeight: "300px",
+        height: "40vh"
+    },
+    height: {
+        height: "100%"
     }
   });
