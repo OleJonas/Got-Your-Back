@@ -1,16 +1,12 @@
-import { FC } from 'react';
+import * as React from 'react';
 import { Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-// Components
-import { Button } from '../Button/Button.component'
-
-
-export const ConnectedSensorsBox: FC = () => {
+export const ContentBox: React.FC = (props) => {
     const classes = useStyles();
     return (
-        <Box className={classes.root} >
-            <Button text="Scan for devices" onclick={() => {return "hei"}}/>
+        <Box className={classes.root}>
+            {props.children}
         </Box>
     )
 }

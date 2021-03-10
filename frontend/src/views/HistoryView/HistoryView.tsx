@@ -2,7 +2,7 @@ import { Grid, Box, makeStyles, Typography } from '@material-ui/core';
 
 // Components
 import { NavBar } from '../../components/NavBar/NavBar.component'
-import { TemplateBox } from '../../components/TemplateBox/TemplateBox.component'
+import { ContentBox } from '../../components/ContentBox/ContentBox.component'
 
 export const HistoryView = () => {
     const classes = useStyles();
@@ -19,17 +19,17 @@ export const HistoryView = () => {
 
                             <Grid item xs={12} className={classes.components}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">This week</Typography></Box>
-                                <TemplateBox />
+                                <ContentBox />
                             </Grid>
                             
                             <Grid item xs={12} md={7} className={classes.components}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Most common posture today</Typography></Box>
-                                <TemplateBox />
+                                <ContentBox />
                             </Grid>
                             
                             <Grid item xs={12} md={5} className={classes.components}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Distribution last 30 days</Typography></Box>
-                                <TemplateBox />
+                                <ContentBox />
                             </Grid>
                             
                         </Grid>

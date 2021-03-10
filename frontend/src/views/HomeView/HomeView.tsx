@@ -2,8 +2,7 @@ import { Grid, Box, makeStyles, Typography } from '@material-ui/core';
 
 // Components
 import { NavBar } from '../../components/NavBar/NavBar.component'
-import { TemplateBox } from '../../components/TemplateBox/TemplateBox.component'
-import { ConnectedSensorsBox } from '../../components/ConnectedSensorsBox/ConnectedSensorsBox.component'
+import { ContentBox } from '../../components/ContentBox/ContentBox.component'
 import { LineGraph } from '../../components/LineGraph/LineGraph'
 
 export const HomeView = () => {
@@ -21,22 +20,22 @@ export const HomeView = () => {
 
                             <Grid item xs={12} md={5} className={classes.components}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Connected sensors</Typography></Box>
-                                <ConnectedSensorsBox />
+                                <ContentBox></ContentBox>
                             </Grid>
                             
                             <Grid item xs={12} md={7} className={classes.components}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Classification</Typography></Box>
-                                <TemplateBox><h1>bruh</h1><LineGraph/></TemplateBox>
+                                <ContentBox></ContentBox>
                             </Grid>
                             
                             <Grid item xs={12} md={7} className={classes.components}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
-                                <TemplateBox></TemplateBox>
+                                <ContentBox></ContentBox>
                             </Grid>
                             
                             <Grid item xs={12} md={5} className={classes.components}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Distribution</Typography></Box>
-                                <TemplateBox />
+                                <ContentBox></ContentBox>
                             </Grid>
                             
                         </Grid>
