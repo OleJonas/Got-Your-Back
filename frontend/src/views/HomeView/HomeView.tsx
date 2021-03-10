@@ -50,7 +50,7 @@ const useStyles = makeStyles({
     grid: {
         height: "100%",
         padding: "20px",
-        overflowY: "auto"
+        overflow: "auto"
     },
     components: {
         minHeight: "40vh"

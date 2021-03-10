@@ -45,13 +45,7 @@ const useStyles = makeStyles({
     grid: {
         height: "100%",
         padding: "20px",
-        overflowX: "hidden",
-        overflowY: "auto",
-        '-webkit-scrollbar': {
-            display: "none",
-            "-ms-overflow-style": "none",
-            scrollbarWidth: "none"
-        }
+        overflow: "auto"
     },
     components: {
         minHeight: "45vh"
