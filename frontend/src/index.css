@@ -4,6 +4,20 @@ body {
 		#1c355b;
 }
 
+html, body{
+    height: 100%;
+    margin: 0;
+}
+
+/* define height for wrapper's parent div */
+div#root {
+    height: 100%;
+}
+
+div#root > div {
+	height: 100%;
+}
+
 /* Hide scrollbar for all browsers */
 body::-webkit-scrollbar {
 	display: none; /* Chrome, Safari and Opera*/

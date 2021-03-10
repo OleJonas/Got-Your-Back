@@ -29,6 +29,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
+    "@material-ui/styles": "^4.11.3",
     "canvasjs": "^1.8.3",
     "csv-loader": "^3.0.3",
     "csv-manager": "^1.1.0",
