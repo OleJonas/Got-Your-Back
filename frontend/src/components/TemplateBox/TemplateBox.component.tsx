@@ -7,7 +7,6 @@ export const TemplateBox: FC = () => {
     const classes = useStyles();
     return (
         <Box className={classes.root}>
-            
         </Box>
     )
 }
