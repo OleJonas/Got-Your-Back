@@ -11,35 +11,32 @@ export const HomeView = () => {
     const classes = useStyles();
     return (
         <>
-            <Grid container justify="center" className={classes.root}>
-                <Grid item xs={2} md={1}>
+            <Grid container justify="center" className={classes.rootGrid}>
+                <Grid item xs={2} md={1} className={classes.rootGrid}>
                     <NavBar></NavBar>
                 </Grid>
-                <Grid item xs={10} md={11}>
-                    <Box m={2}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}><Typography variant="h1" color="textPrimary">Welcome Back, Ole Jonas!</Typography></Grid>    
+                <Grid item container xs={10} md={11} direction="column" className={classes.rootGrid}>
+                    <Box m={2} className={classes.contentBox}>
+                        <Grid container spacing={2} className={classes.rootGrid}>
+                            <Grid className={classes.titleGrid} item xs={12}><Typography variant="h1" color="textPrimary">Welcome Back, Ole Jonas!</Typography></Grid>    
 
-                            <Grid item xs={12} md={5} className={classes.components}>
+                            <Grid item xs={12} md={5} className={classes.contentGrid}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Connected sensors</Typography></Box>
                                 <ContentBox><SensorModal /></ContentBox>
                             </Grid>
                             
-                            <Grid item xs={12} md={7} className={classes.components}>
+                            <Grid item xs={12} md={7} className={classes.contentGrid}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Classification</Typography></Box>
                                 <ContentBox></ContentBox>
                             </Grid>
-                            
-                            <Grid item xs={12} md={7} className={classes.components}>
-                                <Box mb={0.6}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
-                                <ContentBox><GoogleGraph /></ContentBox>
+                            <Grid item xs={12} md={7} className={classes.contentGrid}>
+                                <Box mb={0.6} className={classes.components}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
+                                <ContentBox><GoogleGraph/></ContentBox>
                             </Grid>
-                            
-                            <Grid item xs={12} md={5} className={classes.components}>
+                            <Grid item xs={12} md={5} className={classes.contentGrid}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Distribution</Typography></Box>
                                 <ContentBox></ContentBox>
                             </Grid>
-                            
                         </Grid>
                     </Box>
                 </Grid>
@@ -50,9 +47,24 @@ export const HomeView = () => {
 
 const useStyles = makeStyles({
     root: {
-        height: "100%"
+        height: "100vh",
+        width: "100%",
+    },
+    contentBox : {
+        width: "95%",
+        height: "100%",
+    },
+    titleGrid : {
+        height: "10vh"
+    },
+    rootGrid: {
+        height: "100%",
+        width: "100%",
+    },
+    contentGrid : {
+        height: "45vh",
     },
     components: {
-        height: "45vh"
+        height: "100%",
     },
   });

@@ -32,6 +32,7 @@ class Sensor_Bank:
         self.n_sensors = len(sensor_arr)
         self.sampling_rate = sampling_rate
         self.sleep_time = sleep_time
+        self.run = False
 
         self.sensor_id_dict = {
             "LPMSB2-3036EB": 1,

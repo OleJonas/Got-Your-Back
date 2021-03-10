@@ -1,13 +1,20 @@
 import * as React from "react";
 import {useState, useEffect} from 'react';
 import CanvasJSReact from "../../canvasjs.react"
+import { makeStyles } from '@material-ui/core/styles';
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
-
 
 export const LineGraph = () => {
 
     const [datapoints, setDatapoint] = useState<Array<JSON>>([])
+
+    const useStyles = makeStyles({
+        root: {
+            height: '100%',
+            width: '100%',
+        },
+    })
     
     useEffect(() => {
         setInterval(() => {
@@ -29,9 +36,9 @@ export const LineGraph = () => {
     const options = {
         animationEnabled: false,
         exportEnabled: true,
-        interactive: false,
-        theme: "light2", // "light1", "dark1", "dark2"
-        backgroundColor: '#0f3762',
+        responsive: true,
+        maintainAspectRatio: true,
+        backgroundColor: 'rgba(0,0,0,0)',
         axisY:{
             labelFormatter: function(e:any) {
                 if(e.value == 0 || e.value == 9){
@@ -41,15 +48,14 @@ export const LineGraph = () => {
             },
             viewportMinimum: 0,
             viewportMaximum: 9,
-            margin: 30,
             labelFontColor: "#EDB93C",
             gridColor: "#EDB93C",
             tickColor: "#EDB93C" ,
             gridThickness: 0,
             lineColor: "#EDB93C",
             labelFontWeight: "Bold",
-            labelFontSize: "16",
-            lineThickness: 1
+            lineThickness: 1,
+            interval: 1
         },
         axisX:{
             labelFormatter: function(e:any) {
@@ -61,7 +67,6 @@ export const LineGraph = () => {
             tickColor: "#EDB93C",
             lineColor: "#EDB93C",
             labelFontWeight: "Bold",
-            labelFontSize: "16"
         },
         title:{
             text: "My predictions",
@@ -75,10 +80,15 @@ export const LineGraph = () => {
             markerColor: "#EDB93C"
         }]
     }
+    const classes = useStyles();
+
+    const containerProps = {
+        height: "100%"
+    };
 
     return(
-        <div>
-            <CanvasJSChart key={datapoints.toString()} options={options}></CanvasJSChart>
+        <div className={classes.root}>
+            <CanvasJSChart containerProps={containerProps} key={datapoints.toString()} options={options}></CanvasJSChart>
         </div>
     )
 }
