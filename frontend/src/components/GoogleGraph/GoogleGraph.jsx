@@ -6,8 +6,8 @@ export const GoogleGraph = () => {
     const classes = useStyles;
     return (
         <Chart
-            width={'100%'}
-            height={'100%'}
+            width={'95%'}
+            height={'95%'}
             chartType="Timeline"
             loader={<Typography variant="body1" color="textSecondary">Loading Chart</Typography>}
             data={[

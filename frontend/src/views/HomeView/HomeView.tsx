@@ -18,7 +18,7 @@ export const HomeView = () => {
                 <Grid item container xs={10} md={11} direction="column" className={classes.rootGrid}>
                     <Box m={2} className={classes.contentBox}>
                         <Grid container spacing={2} className={classes.rootGrid}>
-                            <Grid className={classes.titleGrid} item xs={12}><Typography variant="h1" color="textPrimary">Welcome Back, Ole Jonas!</Typography></Grid>    
+                            <Grid item xs={12}><Typography variant="h1" color="textPrimary">Welcome Back, Ole Jonas!</Typography></Grid>    
 
                             <Grid item xs={12} md={5} className={classes.contentGrid}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Connected sensors</Typography></Box>
@@ -30,8 +30,8 @@ export const HomeView = () => {
                                 <ContentBox></ContentBox>
                             </Grid>
                             <Grid item xs={12} md={7} className={classes.contentGrid}>
-                                <Box mb={0.6} className={classes.components}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
-                                <ContentBox><GoogleGraph/></ContentBox>
+                                <Box mb={0.6}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
+                                <ContentBox><LineGraph/></ContentBox>
                             </Grid>
                             <Grid item xs={12} md={5} className={classes.contentGrid}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Distribution</Typography></Box>
@@ -47,22 +47,19 @@ export const HomeView = () => {
 
 const useStyles = makeStyles({
     root: {
-        height: "100vh",
+        height: "100%",
         width: "100%",
     },
     contentBox : {
         width: "95%",
         height: "100%",
     },
-    titleGrid : {
-        height: "10vh"
-    },
     rootGrid: {
         height: "100%",
         width: "100%",
     },
     contentGrid : {
-        height: "45vh",
+        height: "45%",
     },
     components: {
         height: "100%",
