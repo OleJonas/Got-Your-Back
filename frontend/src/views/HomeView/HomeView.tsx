@@ -4,6 +4,8 @@ import { Grid, Box, makeStyles, Typography } from '@material-ui/core';
 import { NavBar } from '../../components/NavBar/NavBar.component'
 import { ContentBox } from '../../components/ContentBox/ContentBox.component'
 import { LineGraph } from '../../components/LineGraph/LineGraph'
+import { SensorModal } from '../../components/SensorModal/SensorModal.component';
+import { GoogleGraph } from '../../components/GoogleGraph/GoogleGraph.jsx';
 
 export const HomeView = () => {
     const classes = useStyles();
@@ -20,7 +22,7 @@ export const HomeView = () => {
 
                             <Grid item xs={12} md={5} className={classes.contentGrid}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Connected sensors</Typography></Box>
-                                <ContentBox></ContentBox>
+                                <ContentBox><SensorModal /></ContentBox>
                             </Grid>
                             
                             <Grid item xs={12} md={7} className={classes.contentGrid}>
@@ -28,8 +30,8 @@ export const HomeView = () => {
                                 <ContentBox></ContentBox>
                             </Grid>
                             <Grid item xs={12} md={7} className={classes.contentGrid}>
-                                <Box mb={0.6} className={classes.components}><Typography variant="h3" color="textPrimary">My day</Typography>
-                                <ContentBox><LineGraph/></ContentBox></Box>
+                                <Box mb={0.6} className={classes.components}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
+                                <ContentBox><GoogleGraph/></ContentBox>
                             </Grid>
                             <Grid item xs={12} md={5} className={classes.contentGrid}>
                                 <Box mb={0.6}><Typography variant="h3" color="textPrimary">Distribution</Typography></Box>
@@ -45,7 +47,7 @@ export const HomeView = () => {
 
 const useStyles = makeStyles({
     root: {
-        height: "100%",
+        height: "100vh",
         width: "100%",
     },
     contentBox : {
@@ -53,14 +55,14 @@ const useStyles = makeStyles({
         height: "100%",
     },
     titleGrid : {
-        height: "10%"
+        height: "10vh"
     },
     rootGrid: {
         height: "100%",
         width: "100%",
     },
     contentGrid : {
-        height: "45%",
+        height: "45vh",
     },
     components: {
         height: "100%",

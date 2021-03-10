@@ -42,7 +42,7 @@ export const HistoryView = () => {
 
 const useStyles = makeStyles({
     root: {
-        minHeight: "100vh"
+        height: "100vh"
     },
     components: {
         height: "45vh"

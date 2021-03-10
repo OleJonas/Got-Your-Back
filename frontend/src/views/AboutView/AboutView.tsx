@@ -34,7 +34,7 @@ export const AboutView = () => {
 
 const useStyles = makeStyles({
     root: {
-        minHeight: "100vh"
+        height: "100vh"
     },
     components: {
         minHeight: "40vh",
