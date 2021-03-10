@@ -1,19 +1,12 @@
 import * as React from "react";
-import {useState, useEffect, useRef} from 'react';
-import * as ReactDOM from "react-dom";
-import { setConstantValue } from "typescript";
+import {useState, useEffect} from 'react';
 import CanvasJSReact from "../../canvasjs.react"
-
-const fs = require('fs');
-const papa = require('papaparse');
-var Component = React.Component;
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
+export const LineGraph = () => {
 
-export const Visualizer = () => {
-
-    const [datapoints, setDatapoint] = useState<Array<Object>>([])
+    const [datapoints, setDatapoint] = useState<Array<JSON>>([])
     
     useEffect(() => {
         setInterval(() => {
@@ -31,7 +24,7 @@ export const Visualizer = () => {
     }, []);
 
     let y_labels = ["Upright", "Forward", "Forward-right", "Right", "Back-right", "Back", "Back-left", "Left", "Forward-left"]
-
+    
     const options = {
         animationEnabled: false,
         exportEnabled: true,

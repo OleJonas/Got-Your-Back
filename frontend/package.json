@@ -1,7 +1,10 @@
 {
   "name": "got-your-back",
-  "author": "Got Your Back",
+  "productName": "Got Your Back",
+  "author": "NTNU - Bachelor's group 66",
+  "description": "An application for classifying variety in sitting posture using machine learning.",
   "version": "0.1.0",
+  "private": true,
   "main": "public/electron.js",
   "homepage": "./",
   "build": {
@@ -14,9 +17,30 @@
       "buildResources": "assets"
     }
   },
-  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "dev": "concurrently -k \"npm start\" \"wait-on tcp:3000 && electron .\"",
+    "premake": "npm run build",
+    "make": "electron-builder -mw"
+  },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
+    "canvasjs": "^1.8.3",
+    "csv-loader": "^3.0.3",
+    "csv-manager": "^1.1.0",
+    "electron-is-dev": "^2.0.0",
+    "papaparse": "^5.3.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "web-vitals": "^1.1.0"
+  },
+  "devDependencies": {
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.8.1",
@@ -25,31 +49,11 @@
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
     "@types/react-router-dom": "^5.1.7",
-    "canvasjs": "^1.8.3",
     "concurrently": "^6.0.0",
-    "csv-loader": "^3.0.3",
-    "csv-manager": "^1.1.0",
-    "electron-icon-maker": "0.0.5",
-    "electron-is-dev": "^2.0.0",
-    "electron-squirrel-startup": "^1.0.0",
-    "papaparse": "^5.3.0",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
+    "electron": "^12.0.0",
+    "electron-builder": "^22.10.5",
     "typescript": "^4.2.2",
-    "wait-on": "^5.2.1",
-    "web-vitals": "^1.1.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "electron": "wait-on tcp:3000 && electron-forge start",
-    "dev": "concurrently -k \"npm start\" \"npm:electron\"",
-    "package": "react-scripts build && electron-forge package",
-    "make": "react-scripts build && electron-forge make"
+    "wait-on": "^5.2.1"
   },
   "eslintConfig": {
     "extends": [
@@ -68,44 +72,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.54",
-    "@electron-forge/maker-deb": "^6.0.0-beta.54",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.54",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
-    "@electron-forge/maker-zip": "^6.0.0-beta.54",
-    "electron": "^12.0.0",
-    "electron-devtools-installer": "^3.1.1"
-  },
-  "config": {
-    "forge": {
-      "packagerConfig": {
-        "icon": "src/icons/mac/icon.icns",
-        "name": "Got Your Back"
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "got_your_back"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
-    }
   }
 }
