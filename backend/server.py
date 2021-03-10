@@ -7,7 +7,7 @@ import keras
 import threading
 import time
 from flask import Flask, request, jsonify
-#from flask_cors import CORS
+from flask_cors import CORS
 sys.path.append("scripts/")
 from sensor_bank import Sensor, Sensor_Bank
 import realtime_test as rt
@@ -23,11 +23,11 @@ classify = False
 t_pool = []
 
 
-#app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
-#app.config['CORS_ALLOW_HEADERS'] = "Content-Type"
+app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
+app.config['CORS_ALLOW_HEADERS'] = "Content-Type"
 
-#cors = CORS(app, resources={r"/predictions": {"origins": "*"},
-#                            r"/all_predictions": {"origins": "*"}})
+cors = CORS(app, resources={r"/predictions": {"origins": "*"},
+                            r"/all_predictions": {"origins": "*"}})
 
 @app.before_first_request
 def init():
@@ -60,7 +60,7 @@ def get_all_csv_data():
 @app.route("/predictions")
 def get_csv_data():
     arr = []
-    with open('../predictions.csv', 'r') as file:
+    with open('predictions.csv', 'r') as file:
         reader = csv.reader(file)
         for row in reader:
             arr.append(jsonify({'x': row[0], 'y': int(row[1])}))
