@@ -16,9 +16,9 @@ export const NavBar: FC = () => {
                 
                 <Grid item xs={10}><Box my={2} mb={4}><img src={ProfilePicture} className={classes.profilePic} alt="PP"/></Box></Grid>
 
-                <Grid item xs={10}><Link href="#/home"><Box m={1.2}><Typography variant="caption" color={window.location.href.includes('home') ? "textSecondary" : "textPrimary"}>Home</Typography></Box></Link></Grid>
-                <Grid item xs={10}><Link href="#/history"><Box m={1.2}><Typography variant="caption" color={window.location.href.includes('history') ? "textSecondary" : "textPrimary"}>History</Typography></Box></Link></Grid>
-                <Grid item xs={10}><Link href="#/about"><Box m={1.2}><Typography variant="caption" color={window.location.href.includes('about') ? "textSecondary" : "textPrimary"}>About</Typography></Box></Link></Grid>
+                <Grid item xs={10}><Link href="#/home"><Box m={1.2}><Typography variant="caption" color={window.location.href.includes('home') ? "primary" : "textPrimary"}>Home</Typography></Box></Link></Grid>
+                <Grid item xs={10}><Link href="#/history"><Box m={1.2}><Typography variant="caption" color={window.location.href.includes('history') ? "primary" : "textPrimary"}>History</Typography></Box></Link></Grid>
+                <Grid item xs={10}><Link href="#/about"><Box m={1.2}><Typography variant="caption" color={window.location.href.includes('about') ? "primary" : "textPrimary"}>About</Typography></Box></Link></Grid>
 
             </Grid>
         </Box>

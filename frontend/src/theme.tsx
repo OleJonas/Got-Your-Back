@@ -18,12 +18,11 @@ export const theme = createMuiTheme({
     },
     background: {
       default: '#FFFFFF',
-      paper: '#EADEF4',
+      paper: '#0a2339',
     },
     text: {
       primary: '#FFF', // white
-      secondary: '#EDB93C', // yellow
-      disabled: '#000', // This will be our black used only at login
+      secondary: '#000', // black
     },
   },
   typography: {
