@@ -1,6 +1,5 @@
-import React, { FC, useState, useEffect } from 'react';
-import { Grid, Box, Typography, Link, Fab } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { FC } from 'react';
+import { Typography, Fab } from '@material-ui/core';
 
 export type ButtonProps = {
     text: string,

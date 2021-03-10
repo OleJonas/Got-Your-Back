@@ -53,5 +53,5 @@ const useStyles = makeStyles({
     },
     components: {
         height: "45vh"
-    }
+    },
   });
