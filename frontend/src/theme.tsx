@@ -29,7 +29,8 @@ export const theme = createMuiTheme({
     fontFamily: 'Nunito',
     h1: {
         fontSize: '2.5rem',
-        fontWeight: 600
+        fontWeight: 600,
+        lineHeight: '2em'
     },
     h2: {
         fontSize: '1.75rem',
@@ -43,7 +44,7 @@ export const theme = createMuiTheme({
     subtitle1: {
       fontSize: '7.5rem',
       fontWeight: 600,
-      lineHeight: '1.2em'
+      lineHeight: '1em'
     },
     
     caption: { // NavBar links

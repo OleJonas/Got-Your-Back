@@ -7,6 +7,7 @@ import { LineGraph } from '../../components/LineGraph/LineGraph'
 import { SensorModal } from '../../components/SensorModal/SensorModal.component';
 import { GoogleGraph } from '../../components/GoogleGraph/GoogleGraph.jsx';
 import { ClassificationBox } from '../../components/ClassificationContent/ClassificationBox'
+import { SamplingRateContent } from '../../components/SamplingRateContent/SamplingRateContent'
 
 export const HomeView = () => {
     const classes = useStyles();
@@ -25,13 +26,17 @@ export const HomeView = () => {
                             <ContentBox><SensorModal /></ContentBox>
                         </Grid>
                         
-                        <Grid item xs={12} md={7} className={classes.components}>
+                        <Grid item xs={12} md={4} className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">Classification</Typography></Box>
                             <ContentBox><ClassificationBox></ClassificationBox></ContentBox>
                         </Grid>
+                        <Grid item xs={12} md={3} justify="center" alignItems="center" className={classes.components}>
+                            <Box mb={0.6}><Typography variant="h3" color="textPrimary">Sample rate</Typography></Box>
+                            <ContentBox><SamplingRateContent></SamplingRateContent></ContentBox>
+                        </Grid>
                         <Grid item xs={12} md={7} className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
-                            <ContentBox>{/*<LineGraph/>*/}</ContentBox>
+                            <ContentBox>{<LineGraph/>}</ContentBox>
                         </Grid>
                         <Grid item xs={12} md={5} className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">Distribution</Typography></Box>

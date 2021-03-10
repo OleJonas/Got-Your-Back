@@ -30,6 +30,7 @@ export const LineGraph = () => {
                     if(data !== ""){
                         let jsonobject = JSON.parse(data)
                         jsonobject['x'] = new Date(jsonobject['x'])
+                        jsonobject['y'] = parseInt(jsonobject['y'],10)
                         data_array.push(jsonobject)
                     }
                     
