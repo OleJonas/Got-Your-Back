@@ -1,9 +1,7 @@
-import React from 'react';
 import { Grid, Box, makeStyles, Typography } from '@material-ui/core';
 
 // Components
 import { NavBar } from '../../components/NavBar/NavBar.component'
-import { TemplateBox } from '../../components/TemplateBox/TemplateBox.component';
 import TeamPortrait from "../../assets/Portrait1.jpg";
 
 export const AboutView = () => {
