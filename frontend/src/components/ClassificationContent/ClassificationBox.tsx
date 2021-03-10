@@ -15,14 +15,14 @@ export const ClassificationBox = () => {
                     <Box>
                         <Typography variant="subtitle1" color="textPrimary">{posture}</Typography>
                         <Typography variant="h1" color="textPrimary">{postureArray[posture]}</Typography>
-                        <Button text="Start"></Button>
+                        <Button>Start</Button>
                     </Box>
                 </Grid>
                 <Grid className={classes.grid} justify="center" alignItems="center" container item xs={6}>
                     <Box>
                         <Typography variant="subtitle1" color="textPrimary">{5}</Typography>
                         <Typography variant="h1" color="textPrimary">{"Hz"}</Typography>
-                        <Button text="Start"></Button>
+                        <Button>Start</Button>
                     </Box>
                 </Grid>
             </Grid>
