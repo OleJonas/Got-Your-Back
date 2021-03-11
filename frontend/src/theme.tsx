@@ -34,11 +34,18 @@ export const theme = createMuiTheme({
     },
     h2: {
         fontSize: '1.75rem',
-        fontWeight: 400
+        fontWeight: 400,
+        color: 'white'
     },
     h3: {
       fontSize: '1.25rem',
       fontWeight: 300
+    },
+
+    h6: {
+      fontSize: '1rem',
+      fontWeight: 700,
+      color: 'black'
     },
 
     subtitle1: {
@@ -52,7 +59,7 @@ export const theme = createMuiTheme({
       fontWeight: 600
   },
     body1: {
-      fontSize: '1rem',
+      fontSize: '0.9rem',
       fontWeight: 300
     },
     body2: {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Box, Typography } from '@material-ui/core';
-import { Button } from '../Button/Button.component'
+import { Button } from '../Buttons/Button.component'
 
 export const SamplingRateContent = () => {
 
