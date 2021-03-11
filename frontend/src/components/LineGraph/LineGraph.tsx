@@ -1,71 +1,31 @@
-import * as React from "react";
-import {useState, useEffect} from 'react';
+import {FC, useState, useEffect} from 'react';
 import CanvasJSReact from "../../canvasjs.react"
 import { makeStyles } from '@material-ui/core/styles';
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-export const LineGraph = () => {
+interface MyProps {
+    data : Array<JSON>
+}
 
-    const [datapoints, setDatapoint] = useState<Array<JSON>>([])
-
-    const useStyles = makeStyles({
-        root: {
-            height: '100%',
-            width: '100%',
-        },
-    })
+export const LineGraph: FC<MyProps> = (props: MyProps) => {
+    const classes = useStyles();
+    const [datapoints, setDatapoint] = useState<Array<JSON>>(props.data)
 
     useEffect(() => {
-        let data_array:Array<JSON> = []
-        fetch('http://localhost:5000/all_predictions', {
-            headers : {
-                'Content-Type': 'application/text',
-                'Accept': 'application/text',
-            }
-            }).then(res => res.text()).then(text => {
-                let array = text.split("\n")
-                
-                array.forEach(data => {
-                    if(data !== ""){
-                        let jsonobject = JSON.parse(data)
-                        jsonobject['x'] = new Date(jsonobject['x'])
-                        jsonobject['y'] = parseInt(jsonobject['y'],10)
-                        data_array.push(jsonobject)
-                    }
-                    
-                });
+        setDatapoint(props.data)
+    },[props.data])
 
-                }).then(() => {console.log(data_array);
-                               setDatapoint(() => {return data_array})});
-                
-                //data['x'] = new Date(data['x'])
-                //setDatapoint((datapoints) => {return [...datapoints,data]})
-            
-    },[])
-
-    useEffect(() => {
-        console.log("datapoints: ", datapoints)
-    },[datapoints])
-    /*
-    useEffect(() => {
-        setInterval(() => {
-            fetch('http://localhost:5000/predictions', {
-            headers : {
-                'Content-Type': 'application/text',
-                'Accept': 'application/text',
-            }
-            }).then(res => res.json()).then(data => {
-                console.log(data['x'])
-                data['x'] = new Date(data['x'])
-                setDatapoint((datapoints) => {return [...datapoints,data]})
-            })
-        },3000);
-    }, []);
-*/
     let y_labels = ["Upright", "Forward", "Forward-right", "Right", "Back-right", "Back", "Back-left", "Left", "Forward-left"]
     
     const options = {
+    
+        toolTip : {
+            contentFormatter: function(e:any) {
+                let time = CanvasJS.formatDate(e.entries[0].dataPoint.x, "HH:mm:ss")
+                return time + ": " + e.entries[0].dataPoint.y
+            }
+        },
         animationEnabled: false,
         exportEnabled: false,
         responsive: true,
@@ -87,7 +47,8 @@ export const LineGraph = () => {
             lineColor: "#EDB93C",
             labelFontWeight: "Bold",
             lineThickness: 1,
-            interval: 1
+            interval: 1,
+            margin: 15
         },
         axisX:{
             labelFormatter: function(e:any) {
@@ -96,6 +57,7 @@ export const LineGraph = () => {
             viewportMinimum: datapoints[0],
             xValueType: 'dateTime',
             labelFontColor: "#EDB93C",
+            margin: 15,
             tickColor: "#EDB93C",
             lineColor: "#EDB93C",
             labelFontWeight: "Bold",
@@ -108,7 +70,6 @@ export const LineGraph = () => {
             markerColor: "#EDB93C"
         }]
     }
-    const classes = useStyles();
 
     const containerProps = {
         height: "100%"
@@ -116,10 +77,17 @@ export const LineGraph = () => {
 
     return(
         <div className={classes.root}>
-            <CanvasJSChart containerProps={containerProps} key={datapoints.toString()} options={options}></CanvasJSChart>
+            <CanvasJSChart containerProps={containerProps} options={options}></CanvasJSChart>
         </div>
     )
 }
+
+const useStyles = makeStyles({
+    root: {
+        height: '100%',
+        width: '100%',
+    },
+})
 
 
 
