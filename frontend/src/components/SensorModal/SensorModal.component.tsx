@@ -26,7 +26,7 @@ export const SensorModal: FC = () => {
             }
             }).then(res => res.json()).then(data => {
                 console.log(data);
-                setSensorsFound(data);
+                if(data.length > 0) setSensorsFound(data);
                 console.log(typeof sensorsFound)
                 setIsFetching(false)
                 setOpen(true)
@@ -36,12 +36,14 @@ export const SensorModal: FC = () => {
     const handleClose = () => {
         let connected:any = [];
         console.log(sensorsFound)
-        for(let i=0; i < sensorsFound["sensors"].length; i++){
-            console.log(sensorsFound["sensors"][i].props.connected);
-            if(sensorsFound["sensors"][i].props.connected) connected.push(sensorsFound["sensors"][i]);
+        if(sensorsFound){
+            for(let i=0; i < sensorsFound["sensors"].length; i++){
+                console.log(sensorsFound["sensors"][i].props.connected);
+                if(sensorsFound["sensors"][i].props.connected) connected.push(sensorsFound["sensors"][i]);
+            }
+            setConnectedSensors(connected)
+            console.log(connectedSensors)
         }
-        setConnectedSensors(connected)
-        console.log(connectedSensors)
         setOpen(false);
     };
 
