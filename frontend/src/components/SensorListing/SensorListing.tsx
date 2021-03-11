@@ -1,46 +1,56 @@
 import { FC, useState, useEffect, useCallback } from 'react';
-import { Box, Modal } from '@material-ui/core';
+import { Box, Divider, Modal, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { theme } from "../../theme"
 
 // Components
 import { Button } from '../Button/Button.component'
 
-export const SensorDetails: FC = () => {
-    const classes = useStyles();
-    
+export type SensorProps = {
+    id?: number,
+    name: string,
 }
 
-export const SensorListing: FC = () => {
-    const classes = useStyles();
+export const SensorListing: FC<SensorProps> = (props) => {
+    const [name, setName] = useState<string>("")
+    const [batteryPercent, setBatteryPercent] = useState<number>(0)
+    const [isFetching, setIsFetching] = useState<boolean>(false)
+    const [connected, setConnected] = useState<boolean>(false)
 
-    const [sensorsFound, setSensorsFound] = useState<Array<JSON>>([]);
-    const [isFetching, setIsFetching] = useState(false);
-
-    const scanForSensors = useCallback(async () => {
+    const connect = useCallback(async (index) => {
         if(isFetching) return;
         setIsFetching(true);
 
-        await fetch('http://localhost:5000/setup/scan', {
+        await fetch('http://localhost:5000/setup/connect', {
+            method: "post",
             headers : {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            }
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                handle: index
+            })
             }).then(res => res.json()).then(data => {
                 console.log(data);
-                setSensorsFound(data);
+                setConnected(true);
                 setIsFetching(false)
             });
     }, [isFetching]);
 
+    const sensorString = () =>{
+        let out: string = ""
+        if(props.id) out += props.id + "  ";
+        out += props.name + "  ";
+        out += (connected? "Tilkoblet" : "Frakoblet");
+        return out;
+    }
+
     return (
         <Box>
-            <Button text="Scan" id="ScanButton" disabled={isFetching} func={scanForSensors} />
+            <Typography variant="button" color="textPrimary">{sensorString()}</Typography>
+            <Button text={connected? ">":"||"} func={connect} id="connectButton" disabled={isFetching} />
         </Box>
     )
-}
-
-function scan(){
-    
 }
 
 const useStyles = makeStyles({

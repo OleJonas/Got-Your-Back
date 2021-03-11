@@ -6,14 +6,15 @@ import openzen
 import keras
 import threading
 import time
-from flask import Flask, request, jsonify
-#from flask_cors import CORS
+from flask import Flask, request, jsonify, request_started, Response
+from flask_cors import CORS
 sys.path.append("scripts/")
 from sensor_bank import Sensor, Sensor_Bank
 import realtime_test as rt
 from multiprocessing import Process
 
 app = Flask(__name__)
+CORS(app)
 
 client = None
 found_sensors = None
@@ -22,88 +23,83 @@ data_queue = None
 classify = False
 t_pool = []
 
-
-<<<<<<< HEAD
-app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
-app.config['CORS_ALLOW_HEADERS'] = ["*"]
-
-cors = CORS(app, resources={r"/predictions": {"origins": "*"}, r"/all_predictions": {"origins": "*"}, r"/setup/scan": {"origins": "*"}})
-=======
-#app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
-#app.config['CORS_ALLOW_HEADERS'] = "Content-Type"
-
-#cors = CORS(app, resources={r"/predictions": {"origins": "*"},
-#                            r"/all_predictions": {"origins": "*"}})
->>>>>>> cf23d926532a2628a09e615810426f71aaef2b73
-
 @app.before_first_request
 def init():
     global client
     global sensor_bank
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     # Make client
-    print("yeeeeee", file=sys.stdout)
     error, client = openzen.make_client()
     if not error == openzen.ZenError.NoError:
         print("Error while initializing OpenZen library")
         sys.exit(1)
     sensor_bank = Sensor_Bank()
-    print("YOOOOOOOOOO")
+
+
+@app.before_request
+def before_request():
+    if request.method == "OPTIONS":
+        print("hmmmmm")
+        res = Response("ye")
+        res.headers["Access-Control-Allow-Origin"] = "*"
+        res.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+        res.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
+        return res
+    else:
+        pass
+
+
+
+
+
 
 @app.route("/")
 def hello_world():
-    return 'Hello, World!'
+    return "Hello, World!"
 
 @app.route("/all_predictions")
 def get_all_csv_data():
     arr = []
-    with open('../predictions.csv', 'r') as file:
+    with open("../predictions.csv", "r") as file:
         reader = csv.reader(file)
         for row in reader:
-            arr.append(jsonify({'x': row[0], 'y': int(row[1])}))
+            arr.append(jsonify({"x": row[0], "y": int(row[1])}))
     return arr
 
 
 @app.route("/predictions")
 def get_csv_data():
     arr = []
-    with open('../predictions.csv', 'r') as file:
+    with open("../predictions.csv", "r") as file:
         reader = csv.reader(file)
         for row in reader:
-            arr.append(jsonify({'x': row[0], 'y': int(row[1])}))
+            arr.append(jsonify({"x": row[0], "y": int(row[1])}))
     return arr[-1]
     
     #return "predictions"
 
 @app.route("/setup/scan")
 def scan():
-    print("haaa")
     global found_sensors
     found_sensors = rt.scan_for_sensors(client)
     res = dict()
-    for i, sensor in enumerate(found_sensors): res[str(i)] = sensor.name
+    res["sensors"] = [sensor.name for sensor in found_sensors]
     return res
 
-@app.route('/setup/connect')
+@app.route("/setup/connect", methods=["POST"])
 def connect():
     global sensor_bank
     content = request.json
-    s_name, sensor, imu = rt.connect_to_sensor(client, found_sensors[content["user_input"]])
+    s_name, sensor, imu = rt.connect_to_sensor(client, found_sensors[content["handle"]])
     sensor_bank.add_sensor(s_name, sensor, imu)
     s_id = sensor_bank.handle_to_id[sensor_bank.sensor_arr[-1].handle]
+    res = {
+        "name": s_name,
+        "id": s_id,
+        "battery_percent": sensor_bank.sensor_arr[-1].get_battery_percentage()
+    }
 
-    return f"id: {s_id}\nname: {sensor_bank.sensor_arr[-1].name}\nbattery percent: {sensor_bank.sensor_arr[-1].get_battery_percentage()}"
-
-
-"""@app.route("/predictions")
-def get_csv_data():
-    with open('../predictions.csv', 'r') as file:
-        rows = []
-        reader = csv.reader(file, delimiter =  '\n')
-        for row in reader:
-            rows.append(rows)
-    return rows
-"""
+    return res
 
 @app.route("/setup/sync")
 def sync_sensors():
@@ -116,7 +112,7 @@ def classification_pipe():
     global sensor_bank
     sensor_bank.run = True
     rt.sync_sensors(client, sensor_bank)
-    model = keras.models.load_model(f'model/models/ANN_model_{len(sensor_bank.sensor_arr)}.h5')
+    model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_arr)}.h5")
 
     classify_thread = threading.Thread(target=rt.classify, args=[client, model, sensor_bank], daemon=True)
     collect_thread = threading.Thread(target=rt.collect_data, args=[client, sensor_bank], daemon=True)
@@ -153,9 +149,8 @@ def connect_all():
 
     return "All connected"
 
-#print('', flush=True)
 
-@app.route('/sensors')
+@app.route("/sensors")
 def get_sensors():
     return {"list": [
                 {"name": "LPMSB2 - 3036EB", "id": "1", "battery": "85,3%"}, 
