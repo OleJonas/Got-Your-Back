@@ -29,6 +29,11 @@ export const PieChart = (props) => {
 			data={processedData()}
 			options={{
 				backgroundColor: "transparent",
+				pieSliceBorderColor: "transparent", //"#0a2339"
+				// pieSliceText: "label",
+				// slices: { 4: { offset: 0.1 }},
+				// pieHole: 0.4,
+				// tooltip: {ignoreBounds: false},
 				chartArea: {
 					top: 20,
 					left: 20,
@@ -36,11 +41,12 @@ export const PieChart = (props) => {
 					width: "100%",
 					height: "100%",
 				},
+				tooltip: { showColorCode: true },
 				colors: ["#EDB93C", "#ad519e", "5662AC", "#2d5aad", "#2dabad", "#2dad73", "#b30707", "#dc3912", "#d1660f"],
 				legend: {
-                    position: "center",
 					textStyle: { color: "#FFF" },
-				}
+					alignment: "center",
+				},
 			}}
 			rootProps={{ "data-testid": "1" }}
 			className={classes.root}

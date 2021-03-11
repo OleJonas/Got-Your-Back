@@ -81,7 +81,7 @@ export const HomeView = () => {
                   Classification
                 </Typography>
               </Box>
-              <ContentBox>{/*<ClassificationBox datapoint={datapoints[datapoints.length-1]}></ClassificationBox>*/}</ContentBox>
+              <ContentBox><ClassificationBox datapoint={datapoints[datapoints.length-1]}></ClassificationBox></ContentBox>
             </Grid>
             <Grid item xs={6} md={3} justify="center" alignItems="center" className={classes.infoContainer}>
               <Box mb={0.6}>
