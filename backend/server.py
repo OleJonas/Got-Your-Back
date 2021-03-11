@@ -58,6 +58,7 @@ def get_all_csv_data():
             string += '{"x": ' + '"' + row[0] + '", "y": "' + row[1] + '"}' + '\n'
     return string
 
+
 @app.route("/predictions")
 def get_csv_data():
     arr = []
@@ -167,8 +168,4 @@ def get_dummy_connected_sensors():
 
 @app.route('/found_sensors')
 def get_dummy_found_sensors():
-    return {
-        0: "LPMSB2 - 3036EB",
-        1: "LPMSB2 - 4B3326",
-        2: "LPMSB2 - 4B31EE",
-    }
+    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
