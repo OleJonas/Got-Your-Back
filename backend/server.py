@@ -24,6 +24,11 @@ data_queue = None
 classify = False
 t_pool = []
 
+app.config['CORS_ALLOW_HEADERS'] = ["*"]
+
+cors = CORS(app)
+
+
 @app.before_first_request
 def init():
     global client
@@ -40,7 +45,6 @@ def init():
 @app.before_request
 def before_request():
     if request.method == "OPTIONS":
-        print("hmmmmm")
         res = Response("ye")
         res.headers["Access-Control-Allow-Origin"] = "*"
         res.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
@@ -48,13 +52,7 @@ def before_request():
         return res
     else:
         return
-"""
-@app.after_request
-def after_request(response):
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
-    response.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
-    return response"""
+
 
 @app.route("/")
 def hello_world():
@@ -63,25 +61,22 @@ def hello_world():
 
 @app.route("/all_predictions")
 def get_all_csv_data():
-    string = ""
+    res = dict()
     with open('predictions.csv', 'r') as file:
         reader = csv.reader(file)
-        string = ""
         for row in reader:
-            string += '{"x": ' + '"' + row[0] + '", "y": "' + row[1] + '"}' + '\n'
-    return string
+            res[row[0]] = row[1]
+    return res
 
 
-@app.route("/predictions")
+@app.route("/prediction")
 def get_csv_data():
-    arr = []
+    rows = []
     with open('predictions.csv', 'r') as file:
         reader = csv.reader(file)
         for row in reader:
-            arr.append(jsonify({"x": row[0], "y": int(row[1])}))
-    return arr[-1]
-
-    # return "predictions"
+            rows.append([row[0], row[1]])
+    return {rows[-1][0]: rows[-1][1]}
 
 
 @app.route("/setup/scan")
@@ -106,7 +101,6 @@ def connect():
         "id": s_id,
         "battery_percent": sensor_bank.sensor_arr[-1].get_battery_percentage()
     }
-
     return res
 
 
@@ -157,8 +151,6 @@ def connect_all():
     for sensor in found_sensors:
         s_name, sensor, imu = rt.connect_to_sensor(client, sensor)
         sensor_bank.add_sensor(s_name, sensor, imu)
-        s_id = sensor_bank.handle_to_id[sensor_bank.sensor_arr[-1].handle]
-
     return "All connected"
 
 
@@ -166,12 +158,14 @@ def connect_all():
 @app.route('/connected_sensors')
 def get_dummy_connected_sensors():
     return {"sensors": [
-        {"name": "LPMSB2 - 3036EB", "id": "1", "battery": "85,3%"},
-        {"name": "LPMSB2 - 4B3326", "id": "2", "battery": "76,6%"},
-        {"name": "LPMSB2 - 4B31EE", "id": "3", "battery": "54,26%"}
+        {"name": "LPMSB2 - 3036EB", "id": "1", "battery_percent": "85,3%"},
+        {"name": "LPMSB2 - 4B3326", "id": "2", "battery_percent": "76,6%"},
+        {"name": "LPMSB2 - 4B31EE", "id": "3", "battery_percent": "54,26%"}
     ]}
 
 
 @app.route('/found_sensors')
 def get_dummy_found_sensors():
     return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
+
+
