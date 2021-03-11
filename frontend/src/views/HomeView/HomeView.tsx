@@ -1,4 +1,5 @@
 import { Grid, Box, makeStyles, Typography } from '@material-ui/core';
+import { useState, useEffect } from 'react';
 
 // Components
 import { NavBar } from '../../components/NavBar/NavBar.component'
@@ -10,6 +11,57 @@ import { ClassificationBox } from '../../components/ClassificationContent/Classi
 import { SamplingRateContent } from '../../components/SamplingRateContent/SamplingRateContent'
 
 export const HomeView = () => {
+
+    const [datapoints, setDatapoint] = useState<Array<JSON>>([])
+ 
+    useEffect(() => {
+        let data_array:Array<JSON> = []
+        fetch('http://localhost:5000/all_predictions', {
+            headers : {
+                'Content-Type': 'application/text',
+                'Accept': 'application/text',
+            }
+            }).then(res => res.text()).then(text => {
+                let array = text.split("\n")
+                
+                array.forEach(data => {
+                    if(data !== ""){
+                        let jsonobject = JSON.parse(data)
+                        jsonobject['x'] = new Date(jsonobject['x'])
+                        jsonobject['y'] = parseInt(jsonobject['y'],10)
+                        data_array.push(jsonobject)
+                    }
+                });
+
+                }).then(() => {console.log(data_array);
+                               setDatapoint(() => {return data_array})});
+                
+                //data['x'] = new Date(data['x'])
+                //setDatapoint((datapoints) => {return [...datapoints,data]})
+            
+    },[])
+
+
+    useEffect(() => {
+        setInterval(() => {
+            fetch('http://localhost:5000/predictions', {
+            headers : {
+                'Content-Type': 'application/text',
+                'Accept': 'application/text',
+            }
+            }).then(res => res.json()).then(data => {
+                console.log(data['x'])
+                data['x'] = new Date(data['x'])
+                setDatapoint((datapoints) => {return [...datapoints,data]})
+            })
+        },3000);
+    }, [])
+
+    useEffect(() => {
+        console.log("datapoints: ", datapoints)
+    },[datapoints])
+
+
     const classes = useStyles();
     return (
         <>
@@ -28,7 +80,7 @@ export const HomeView = () => {
                         
                         <Grid item xs={12} md={4} className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">Classification</Typography></Box>
-                            <ContentBox><ClassificationBox></ClassificationBox></ContentBox>
+                            <ContentBox><ClassificationBox datapoint={datapoints[datapoints.length-1]}></ClassificationBox></ContentBox>
                         </Grid>
                         <Grid item xs={12} md={3} justify="center" alignItems="center" className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">Sample rate</Typography></Box>
@@ -36,7 +88,7 @@ export const HomeView = () => {
                         </Grid>
                         <Grid item xs={12} md={7} className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">My day</Typography></Box>
-                            <ContentBox>{<LineGraph/>}</ContentBox>
+                            <ContentBox>{<LineGraph data={datapoints}></LineGraph>}</ContentBox>
                         </Grid>
                         <Grid item xs={12} md={5} className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">Distribution</Typography></Box>

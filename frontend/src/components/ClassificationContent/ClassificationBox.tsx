@@ -1,13 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Box, Typography } from '@material-ui/core';
 import { Button } from '../Button/Button.component'
 
-export const ClassificationBox = () => {
+interface MyProps{
+    datapoint: JSON
+}
+
+export const ClassificationBox: React.FC<MyProps> = (props: MyProps) => {
     const classes = useStyles();
     const [posture, setPosture] = useState(1)
     let postureArray = ["Upright", "Forward", "Forward right", "Right", "Back right", "Back", "Back left", "Left", "Forward left"]
-    
+
+    let postures = [1,2,3,4,5]
+
+    useEffect(() =>  {
+        setPosture(() => {
+            if(posture === 8){
+                return 0
+            }
+            return posture + 1})
+    }, [props.datapoint])
+
     return (
         <div className={classes.root}>
             <Grid className={classes.grid} justify="center" alignItems="center" container item xs={12}>
@@ -20,6 +34,8 @@ export const ClassificationBox = () => {
         </div>
     )   
 }
+
+
 
 const useStyles = makeStyles({
     root : {
