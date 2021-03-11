@@ -1,6 +1,7 @@
 import { FC, useState, useEffect, useCallback } from "react";
 import { Box, Divider, Modal, Typography, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { Check } from "@material-ui/icons";
 import { theme } from "../../theme";
 import { ConnectBtn } from "../Buttons/ConnectBtn";
 
@@ -58,7 +59,7 @@ export const SensorListing: FC<SensorProps> = (props) => {
 				</Typography>
 			</Grid>
 			<Grid className={classes.grid} container justify="center" item xs={3}>
-				<ConnectBtn func={connect} id="connectButton" disabled={isFetching}>
+				<ConnectBtn status={connected} func={connect} id="connectButton" disabled={isFetching}>
 					{connected ? ">" : "||"}
 				</ConnectBtn>
 			</Grid>
