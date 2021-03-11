@@ -14,7 +14,8 @@ import realtime_test as rt
 from multiprocessing import Process
 
 app = Flask(__name__)
-CORS(app)
+#CORS(app)
+CORS(app, support_credentials=True)
 
 client = None
 found_sensors = None
@@ -46,12 +47,14 @@ def before_request():
         res.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
         return res
     else:
-        pass
-
-
-
-
-
+        return
+"""
+@app.after_request
+def after_request(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
+    return response"""
 
 @app.route("/")
 def hello_world():
@@ -89,10 +92,12 @@ def scan():
     res["sensors"] = [sensor.name for sensor in found_sensors]
     return res
 
-@app.route("/setup/connect", methods=["POST"])
+
+@app.route("/setup/connect", methods=["OPTIONS", "POST"])
 def connect():
     global sensor_bank
     content = request.json
+    print(content)
     s_name, sensor, imu = rt.connect_to_sensor(client, found_sensors[content["handle"]])
     sensor_bank.add_sensor(s_name, sensor, imu)
     s_id = sensor_bank.handle_to_id[sensor_bank.sensor_arr[-1].handle]

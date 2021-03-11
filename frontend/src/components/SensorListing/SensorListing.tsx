@@ -1,14 +1,15 @@
 import { FC, useState, useEffect, useCallback } from 'react';
-import { Box, Divider, Modal, Typography } from '@material-ui/core';
+import { Box, Divider, Modal, Typography, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { theme } from "../../theme"
 
 // Components
 import { Button } from '../Button/Button.component'
 
-export type SensorProps = {
+type SensorProps = {
     id?: number,
     name: string,
+    index: number
 }
 
 export const SensorListing: FC<SensorProps> = (props) => {
@@ -17,18 +18,18 @@ export const SensorListing: FC<SensorProps> = (props) => {
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [connected, setConnected] = useState<boolean>(false)
 
-    const connect = useCallback(async (index) => {
+    const connect = useCallback(async () => {
         if(isFetching) return;
         setIsFetching(true);
 
         await fetch('http://localhost:5000/setup/connect', {
-            method: "post",
+            method: "POST",
             headers : {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
-                handle: index
+                "handle": props.index
             })
             }).then(res => res.json()).then(data => {
                 console.log(data);
@@ -46,10 +47,20 @@ export const SensorListing: FC<SensorProps> = (props) => {
     }
 
     return (
-        <Box>
-            <Typography variant="body1" color="textSecondary">{sensorString()}</Typography>
-            <Button func={connect} id="connectButton" disabled={isFetching}>{connected? ">":"||"}</Button>
-        </Box>
+        <Grid container justify="center">
+            <Grid item xs={9}>
+                <Typography variant="body1" color="textSecondary">{sensorString()}</Typography>
+            </Grid>
+            <Grid item xs={3}>
+                <Button func={connect} id="connectButton" disabled={isFetching}>{connected? ">":"||"}</Button>
+            </Grid>
+        </Grid>
+    )
+}
+
+const AddButton = () => {
+    return (
+        <></>
     )
 }
 

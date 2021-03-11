@@ -11,6 +11,7 @@ export const SensorModal: FC = () => {
     const classes = useStyles();
 
     const [sensorsFound, setSensorsFound] = useState<any>();
+    const [connectedSensors, setConnectedSensors] = useState<any>();
     const [isFetching, setIsFetching] = useState(false);
     const [open, setOpen] = useState(false);
 
@@ -32,20 +33,30 @@ export const SensorModal: FC = () => {
             });
     }, [isFetching]);
 
-
     const handleClose = () => {
+        let connected:any = [];
+        console.log(sensorsFound)
+        for(let i=0; i < sensorsFound["sensors"].length; i++){
+            console.log(sensorsFound["sensors"][i].props.connected);
+            if(sensorsFound["sensors"][i].props.connected) connected.push(sensorsFound["sensors"][i]);
+        }
+        setConnectedSensors(connected)
+        console.log(connectedSensors)
         setOpen(false);
     };
 
     return (
         <Box>
+            {connectedSensors ? connectedSensors["sensors"].map((sensor:string, index:number) => (
+                            <SensorListing index={index} name={sensor} />
+                        )) : <></>}
             <Button id="ScanButton" disabled={isFetching} func={scanForSensors}>Scan</Button>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} className={classes.root}>
                 <DialogTitle id="customized-dialog-title"><Typography variant="h2">Sensors found</Typography></DialogTitle>
                 <DialogContent dividers>
-                    <Box className="sensorBox">
-                        {sensorsFound ? sensorsFound["sensors"].map((sensor:string) => (
-                            <SensorListing name={sensor} />
+                    <Box className={classes.sensorBox}>
+                        {sensorsFound ? sensorsFound["sensors"].map((sensor:string, index:number) => (
+                            <SensorListing index={index} name={sensor} />
                         )) : <></>}
                     </Box>
                 </DialogContent>
@@ -71,6 +82,7 @@ const useStyles = makeStyles({
     },
     sensorBox: {
         minWidth: "400px",
+        backgroundColor: "white",
         borderRadius: "5px"
     },
     btnGrid: {
