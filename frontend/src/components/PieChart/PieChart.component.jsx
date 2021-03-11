@@ -29,19 +29,23 @@ export const PieChart = (props) => {
 			data={processedData()}
 			options={{
 				backgroundColor: "transparent",
+				pieSliceBorderColor: "transparent", //"#0a2339"
+				// pieSliceText: "label",
+				// slices: { 4: { offset: 0.1 }},
+				// pieHole: 0.4,
+				// tooltip: {ignoreBounds: false},
 				chartArea: {
 					top: 20,
 					left: 20,
 					bottom: 20,
-					right: 20,
 					width: "100%",
 					height: "100%",
 				},
-				colors: ["#EDB93C", "5662AC", "79BA5A", "#348A99"],
+				tooltip: { showColorCode: true },
+				colors: ["#EDB93C", "#ad519e", "5662AC", "#2d5aad", "#2dabad", "#2dad73", "#b30707", "#dc3912", "#d1660f"],
 				legend: {
-					position: "right",
-					top: 30,
 					textStyle: { color: "#FFF" },
+					alignment: "center",
 				},
 			}}
 			rootProps={{ "data-testid": "1" }}

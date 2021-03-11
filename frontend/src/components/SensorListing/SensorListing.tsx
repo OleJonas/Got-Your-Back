@@ -3,7 +3,7 @@ import { Box, Divider, Modal, Typography, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Check } from "@material-ui/icons";
 import { theme } from "../../theme";
-import { ConnectBtn } from "../Buttons/ConnectBtn";
+import { ConnectBtn } from "../Buttons/ConnectButton.component";
 
 // Components
 import { Button } from "../Buttons/Button.component";
