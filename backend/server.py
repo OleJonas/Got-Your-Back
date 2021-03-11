@@ -26,9 +26,6 @@ app.config['CORS_ALLOW_HEADERS'] = ["*"]
 
 cors = CORS(app)
 
-# cors = CORS(app, resources={r"/predictions": {"origins": "*"},
-#                            r"/all_predictions": {"origins": "*"}})
-
 
 @app.before_first_request
 def init():
@@ -50,25 +47,22 @@ def hello_world():
 
 @app.route("/all_predictions")
 def get_all_csv_data():
-    string = ""
+    res = dict()
     with open('predictions.csv', 'r') as file:
         reader = csv.reader(file)
-        string = ""
         for row in reader:
-            string += '{"x": ' + '"' + row[0] + '", "y": "' + row[1] + '"}' + '\n'
-    return string
+            res[row[0]] = row[1]
+    return res
 
 
-@app.route("/predictions")
+@app.route("/prediction")
 def get_csv_data():
-    arr = []
+    rows = []
     with open('predictions.csv', 'r') as file:
         reader = csv.reader(file)
         for row in reader:
-            arr.append(jsonify({'x': row[0], 'y': int(row[1])}))
-    return arr[-1]
-
-    # return "predictions"
+            rows.append([row[0], row[1]])
+    return {rows[-1][0]: rows[-1][1]}
 
 
 @app.route("/setup/scan")
@@ -91,16 +85,6 @@ def connect():
 
     return f"id: {s_id}\nname: {sensor_bank.sensor_arr[-1].name}\nbattery percent: {sensor_bank.sensor_arr[-1].get_battery_percentage()}"
 
-
-"""@app.route("/predictions")
-def get_csv_data():
-    with open('../predictions.csv', 'r') as file:
-        rows = []
-        reader = csv.reader(file, delimiter =  '\n')
-        for row in reader:
-            rows.append(rows)
-    return rows
-"""
 
 
 @app.route("/setup/sync")
@@ -150,11 +134,8 @@ def connect_all():
     for sensor in found_sensors:
         s_name, sensor, imu = rt.connect_to_sensor(client, sensor)
         sensor_bank.add_sensor(s_name, sensor, imu)
-        s_id = sensor_bank.handle_to_id[sensor_bank.sensor_arr[-1].handle]
-
     return "All connected"
 
-#print('', flush=True)
 
 
 @app.route('/connected_sensors')
@@ -169,3 +150,5 @@ def get_dummy_connected_sensors():
 @app.route('/found_sensors')
 def get_dummy_found_sensors():
     return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
+
+
