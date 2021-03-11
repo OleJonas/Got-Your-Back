@@ -78,7 +78,7 @@ export const SensorModal: FC = () => {
 const useStyles = makeStyles({
     root: {
         background: "rgba(0,0,0,0.5)",
-        textAlign: "center"
+        textAlign: "center",
     },
     sensorBox: {
         minWidth: "400px",
