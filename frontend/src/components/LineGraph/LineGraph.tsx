@@ -1,10 +1,10 @@
 import {FC, useState, useEffect} from 'react';
-import CanvasJSReact from "../../canvasjs.react"
 import { makeStyles } from '@material-ui/core/styles';
+import CanvasJSReact from "../../canvasjs.react"
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-interface MyProps {
+type MyProps = {
     data : Array<JSON>
 }
 
@@ -19,7 +19,6 @@ export const LineGraph: FC<MyProps> = (props: MyProps) => {
     let y_labels = ["Upright", "Forward", "Forward-right", "Right", "Back-right", "Back", "Back-left", "Left", "Forward-left"]
     
     const options = {
-    
         toolTip : {
             contentFormatter: function(e:any) {
                 let time = CanvasJS.formatDate(e.entries[0].dataPoint.x, "HH:mm:ss")
