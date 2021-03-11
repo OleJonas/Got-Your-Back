@@ -6,32 +6,27 @@ export const PieChart = (props) => {
 
 	const processedData = () => {
 		const predictions = Object.values(props.data);
-        let posture_occurences = [0,0,0,0,0,0,0,0,0]
+		let posture_occurences = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-        let posture_names = {
-            0: "Straight",
-            1: "Forward",
-            2: "Forward-right",
-            3: "Right",
-            4: "Backward-right",
-            5: "Backward",
-            6: "Backward-left",
-            7: "Left",
-            8: "Forward-left"
-        }
+		let posture_names = {
+			0: "Straight",
+			1: "Forward",
+			2: "Forward-right",
+			3: "Right",
+			4: "Backward-right",
+			5: "Backward",
+			6: "Backward-left",
+			7: "Left",
+			8: "Forward-left",
+		};
 
-        predictions.forEach(pred => posture_occurences[pred] += 1);
+		predictions.forEach((pred) => (posture_occurences[pred] += 1));
 
-
-		const chartData = [
-			[
-				{ type: "date", label: "Timestamp" },
-				{ type: "number", label: "Value" },
-			],
-		];
-		for (let i = 0; i < posture_occurences; i += 1) {
+		let chartData = [["Posture", "Total amount of predicions"]];
+		for (let i = 0; i < posture_occurences.length; i += 1) {
 			chartData.push([posture_names[i], posture_occurences[i]]);
 		}
+		console.log(chartData);
 		return chartData;
 	};
 
@@ -40,23 +35,20 @@ export const PieChart = (props) => {
 			width={"100%"}
 			height={"100%"}
 			chartType="PieChart"
-			loader={<Typography variant="body1" color="primary">Loading Chart</Typography>}
+			loader={
+				<Typography variant="body1" color="primary">
+					Loading Chart
+				</Typography>
+			}
 			data={processedData()}
 			options={{
-				hAxis: {
-					title: "Timestamps",
-					textStyle: { color: "#FFF" },
-					titleTextStyle: { color: "#FFF" },
-					gridlines: { color: "transparent" },
-				},
-				vAxis: {
-					title: "Positions",
-					maxValue: 8,
-					textStyle: { color: "#FFF" },
-					titleTextStyle: { color: "#FFF" },
-				},
 				backgroundColor: "transparent",
-				colors: ["#EDB93C"],
+				chartArea: { 
+                    left: 10, 
+                    top: 20, 
+                    width: "100%", 
+                    height: "100%" },
+				colors: ["#EDB93C", "5662AC", "79BA5A", "#348A99"],
 				legend: {
 					textStyle: { color: "#FFF" },
 				},

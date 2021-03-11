@@ -1,7 +1,7 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
 
-export const LineGraph = (props) => {
+export const LineChart = (props) => {
 	const classes = useStyles;
 
 	const processedData = () => {
