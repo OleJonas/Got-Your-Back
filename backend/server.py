@@ -6,7 +6,7 @@ import openzen
 import keras
 import threading
 import time
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, request_started, Response
 from flask_cors import CORS
 sys.path.append("scripts/")
 from sensor_bank import Sensor, Sensor_Bank
@@ -14,6 +14,8 @@ import realtime_test as rt
 from multiprocessing import Process
 
 app = Flask(__name__)
+#CORS(app)
+CORS(app, support_credentials=True)
 
 client = None
 found_sensors = None
@@ -22,11 +24,14 @@ data_queue = None
 classify = False
 t_pool = []
 
+<<<<<<< HEAD
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
 
 cors = CORS(app)
 
 
+=======
+>>>>>>> 3e347a5602512cb38546b8145738ddbe19365228
 @app.before_first_request
 def init():
     global client
@@ -40,9 +45,28 @@ def init():
     sensor_bank = Sensor_Bank()
 
 
+@app.before_request
+def before_request():
+    if request.method == "OPTIONS":
+        print("hmmmmm")
+        res = Response("ye")
+        res.headers["Access-Control-Allow-Origin"] = "*"
+        res.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+        res.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
+        return res
+    else:
+        return
+"""
+@app.after_request
+def after_request(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
+    return response"""
+
 @app.route("/")
 def hello_world():
-    return 'Hello, World!'
+    return "Hello, World!"
 
 
 @app.route("/all_predictions")
@@ -61,8 +85,15 @@ def get_csv_data():
     with open('predictions.csv', 'r') as file:
         reader = csv.reader(file)
         for row in reader:
+<<<<<<< HEAD
             rows.append([row[0], row[1]])
     return {rows[-1][0]: rows[-1][1]}
+=======
+            arr.append(jsonify({"x": row[0], "y": int(row[1])}))
+    return arr[-1]
+
+    # return "predictions"
+>>>>>>> 3e347a5602512cb38546b8145738ddbe19365228
 
 
 @app.route("/setup/scan")
@@ -70,21 +101,30 @@ def scan():
     global found_sensors
     found_sensors = rt.scan_for_sensors(client)
     res = dict()
-    for i, sensor in enumerate(found_sensors):
-        res[str(i)] = sensor.name
+    res["sensors"] = [sensor.name for sensor in found_sensors]
     return res
 
 
-@app.route('/setup/connect')
+@app.route("/setup/connect", methods=["OPTIONS", "POST"])
 def connect():
     global sensor_bank
     content = request.json
-    s_name, sensor, imu = rt.connect_to_sensor(client, found_sensors[content["user_input"]])
+    print(content)
+    s_name, sensor, imu = rt.connect_to_sensor(client, found_sensors[content["handle"]])
     sensor_bank.add_sensor(s_name, sensor, imu)
     s_id = sensor_bank.handle_to_id[sensor_bank.sensor_arr[-1].handle]
+    res = {
+        "name": s_name,
+        "id": s_id,
+        "battery_percent": sensor_bank.sensor_arr[-1].get_battery_percentage()
+    }
 
+<<<<<<< HEAD
     return f"id: {s_id}\nname: {sensor_bank.sensor_arr[-1].name}\nbattery percent: {sensor_bank.sensor_arr[-1].get_battery_percentage()}"
 
+=======
+    return res
+>>>>>>> 3e347a5602512cb38546b8145738ddbe19365228
 
 
 @app.route("/setup/sync")
@@ -99,7 +139,7 @@ def classification_pipe():
     global sensor_bank
     sensor_bank.run = True
     rt.sync_sensors(client, sensor_bank)
-    model = keras.models.load_model(f'model/models/ANN_model_{len(sensor_bank.sensor_arr)}.h5')
+    model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_arr)}.h5")
 
     classify_thread = threading.Thread(target=rt.classify, args=[client, model, sensor_bank], daemon=True)
     collect_thread = threading.Thread(target=rt.collect_data, args=[client, sensor_bank], daemon=True)

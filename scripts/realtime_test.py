@@ -50,8 +50,8 @@ def scan_for_sensors(client):
             if lst_data.complete > 0:
                 break
 
-    print("Sensor Listing complete, found ", len(sensors), flush=True, end='')
-    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors], flush=True, end='')
+    print("Sensor Listing complete, found ", len(sensors))
+    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
     return sensors
 
 
@@ -352,7 +352,7 @@ if __name__ == "__main__":
     classify_thread = threading.Thread(target=classify_pipe, args=[model, data_queue], daemon=True)
     classify_thread.start()
 
-    collect_data(client, data_queue, sensor_bank)
+    #collect_data(client, data_queue, sensor_bank)
     """
 
     # user_input=[int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
