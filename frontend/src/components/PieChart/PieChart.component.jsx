@@ -33,16 +33,14 @@ export const PieChart = (props) => {
 					top: 20,
 					left: 20,
 					bottom: 20,
-					right: 20,
 					width: "100%",
 					height: "100%",
 				},
-				colors: ["#EDB93C", "5662AC", "79BA5A", "#348A99"],
+				colors: ["#EDB93C", "#ad519e", "5662AC", "#2d5aad", "#2dabad", "#2dad73", "#b30707", "#dc3912", "#d1660f"],
 				legend: {
-					position: "right",
-					top: 30,
+                    position: "center",
 					textStyle: { color: "#FFF" },
-				},
+				}
 			}}
 			rootProps={{ "data-testid": "1" }}
 			className={classes.root}
