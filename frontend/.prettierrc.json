@@ -3,7 +3,8 @@
     {
       "files": ["src/**/*.tsx", "src/**/*.jsx"],
       "options": {
-        "printWidth": 140
+        "printWidth": 140,
+        "useTabs": true
       }
     }
   ]

@@ -1,5 +1,6 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
+import { posture_names } from "../../utils/posture_names";
 
 export const PieChart = (props) => {
 	const classes = useStyles;
@@ -7,26 +8,11 @@ export const PieChart = (props) => {
 	const processedData = () => {
 		const predictions = Object.values(props.data);
 		let posture_occurences = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-		let posture_names = {
-			0: "Straight",
-			1: "Forward",
-			2: "Forward-right",
-			3: "Right",
-			4: "Backward-right",
-			5: "Backward",
-			6: "Backward-left",
-			7: "Left",
-			8: "Forward-left",
-		};
-
 		predictions.forEach((pred) => (posture_occurences[pred] += 1));
-
 		let chartData = [["Posture", "Total amount of predicions"]];
 		for (let i = 0; i < posture_occurences.length; i += 1) {
 			chartData.push([posture_names[i], posture_occurences[i]]);
 		}
-		console.log(chartData);
 		return chartData;
 	};
 
@@ -43,13 +29,18 @@ export const PieChart = (props) => {
 			data={processedData()}
 			options={{
 				backgroundColor: "transparent",
-				chartArea: { 
-                    left: 10, 
-                    top: 20, 
-                    width: "100%", 
-                    height: "100%" },
+				chartArea: {
+					top: 20,
+					left: 20,
+					bottom: 20,
+					right: 20,
+					width: "100%",
+					height: "100%",
+				},
 				colors: ["#EDB93C", "5662AC", "79BA5A", "#348A99"],
 				legend: {
+					position: "right",
+					top: 30,
 					textStyle: { color: "#FFF" },
 				},
 			}}
