@@ -80,9 +80,9 @@ const useStyles = makeStyles({
         textAlign: "center"
     },
     sensorGrid: {
+        backgroundColor: "white",
         minWidth: "400px",
-        borderRadius: "5px",
-        backgroundColor: "white"
+        borderRadius: "5px"
     },
     btnGrid: {
         width: "100%"

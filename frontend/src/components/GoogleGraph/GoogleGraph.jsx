@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { Chart } from "react-google-charts";
 
