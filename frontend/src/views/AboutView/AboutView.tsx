@@ -21,7 +21,7 @@ export const AboutView = () => {
                                 <Box><img src={TeamPortrait} className={classes.img} alt="Portrait" /></Box>
                                 <Box mt={3} textAlign="center"><Typography variant="h2" color="textPrimary">The story behind GYB</Typography></Box>
                                 <Box mt={2} ><Typography variant="body1" color="textPrimary">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</Typography></Box>
-                                <Box mt={1} textAlign="right"><Typography variant="overline" color="textPrimary"> - Simon, Jonas & Martin </Typography></Box>
+                                <Box mt={1} textAlign="right"><Typography variant="overline" color="textPrimary"> - Pedo Martin, chad Jonas & derp Simon </Typography></Box>
                             </Grid>
 
                         </Grid>

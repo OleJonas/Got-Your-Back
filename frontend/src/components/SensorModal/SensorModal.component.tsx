@@ -71,8 +71,7 @@ const useStyles = makeStyles({
     },
     sensorBox: {
         minWidth: "400px",
-        borderRadius: "5px",
-        backgroundColor: "white"
+        borderRadius: "5px"
     },
     btnGrid: {
         width: "100%"
