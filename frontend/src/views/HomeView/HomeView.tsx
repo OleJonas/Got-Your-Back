@@ -14,10 +14,10 @@ export const HomeView = () => {
     return (
         <>
             <Grid container justify="center" className={classes.root} >
-                <Grid item xs={2} md={1} >
+                <Grid item xs={2} md={1} lg={1} >
                     <NavBar></NavBar>
                 </Grid>
-                <Grid item xs={10} md={11} className={classes.height}>
+                <Grid item xs={10} md={11} lg={11} className={classes.height}>
                     <Grid container spacing={2} className={classes.grid}>
                         <Grid item xs={12}><Typography variant="h1" color="textPrimary">Welcome Back, Ole Jonas!</Typography></Grid>    
 
@@ -26,11 +26,11 @@ export const HomeView = () => {
                             <ContentBox><SensorModal /></ContentBox>
                         </Grid>
                         
-                        <Grid item xs={12} md={4} className={classes.components}>
+                        <Grid item xs={6} md={4} className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">Classification</Typography></Box>
                             <ContentBox><ClassificationBox></ClassificationBox></ContentBox>
                         </Grid>
-                        <Grid item xs={12} md={3} justify="center" alignItems="center" className={classes.components}>
+                        <Grid item xs={6} md={3} justify="center" alignItems="center" className={classes.components}>
                             <Box mb={0.6}><Typography variant="h3" color="textPrimary">Sample rate</Typography></Box>
                             <ContentBox><SamplingRateContent></SamplingRateContent></ContentBox>
                         </Grid>
