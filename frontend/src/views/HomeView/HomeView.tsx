@@ -5,10 +5,10 @@ import { useState, useEffect } from "react";
 import { NavBar } from "../../components/NavBar/NavBar.component";
 import { ContentBox } from "../../components/ContentBox/ContentBox.component";
 import { SensorModal } from "../../components/SensorModal/SensorModal.component";
-import { ClassificationBox } from "../../components/ClassificationContent/ClassificationBox";
+import { ClassificationBox } from "../../components/ClassificationContent/ClassificationContent.component";
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
-import { SamplingRateContent } from "../../components/SamplingRateContent/SamplingRateContent";
+import { SamplingRateContent } from "../../components/SamplingRateContent/SamplingRateContent.component";
 
 export const HomeView = () => {
   const classes = useStyles();
