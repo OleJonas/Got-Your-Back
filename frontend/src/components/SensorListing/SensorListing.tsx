@@ -2,9 +2,10 @@ import { FC, useState, useEffect, useCallback } from 'react';
 import { Box, Divider, Modal, Typography, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { theme } from "../../theme"
+import { ConnectBtn } from "../Buttons/ConnectBtn"
 
 // Components
-import { Button } from '../Button/Button.component'
+import { Button } from '../Buttons/Button.component'
 
 type SensorProps = {
     id?: number,
@@ -17,7 +18,8 @@ export const SensorListing: FC<SensorProps> = (props) => {
     const [batteryPercent, setBatteryPercent] = useState<number>(0)
     const [isFetching, setIsFetching] = useState<boolean>(false)
     const [connected, setConnected] = useState<boolean>(false)
-
+    const classes = useStyles();
+    
     const connect = useCallback(async () => {
         if(isFetching) return;
         setIsFetching(true);
@@ -47,12 +49,18 @@ export const SensorListing: FC<SensorProps> = (props) => {
     }
 
     return (
-        <Grid container justify="center">
-            <Grid item xs={9}>
+        <Grid container className={classes.root}>
+            <Grid container item className={classes.grid} direction="row" justify="center"  xs={5}>
                 <Typography variant="body1" color="textSecondary">{sensorString()}</Typography>
             </Grid>
-            <Grid item xs={3}>
-                <Button func={connect} id="connectButton" disabled={isFetching}>{connected? ">":"||"}</Button>
+            <Grid container item className={classes.grid} direction="row" justify="center"  xs={2}>
+                <Typography variant="body1" color="textSecondary">{2}</Typography>
+            </Grid>
+            <Grid container item className={classes.grid} direction="row" justify="center"  xs={2}>
+                <Typography variant="body1" color="textSecondary">{'34,7%'}</Typography>
+            </Grid>
+            <Grid className={classes.grid} container justify="center" item xs={3}>
+                <ConnectBtn func={connect} id="connectButton" disabled={isFetching}>{connected? ">":"||"}</ConnectBtn>
             </Grid>
         </Grid>
     )
@@ -66,7 +74,12 @@ const AddButton = () => {
 
 const useStyles = makeStyles({
     root: {
-        background: "rgba(0,0,0,0.5)",
-        borderRadius: "5px"
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    grid : {
+        height: "50px",
+        alignItems: 'center',
     }
   });
