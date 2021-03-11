@@ -57,26 +57,29 @@ def before_request():
 def hello_world():
     return "Hello, World!"
 
+
 @app.route("/all_predictions")
 def get_all_csv_data():
-    arr = []
-    with open("../predictions.csv", "r") as file:
+    string = ""
+    with open('predictions.csv', 'r') as file:
         reader = csv.reader(file)
+        string = ""
         for row in reader:
-            arr.append(jsonify({"x": row[0], "y": int(row[1])}))
-    return arr
+            string += '{"x": ' + '"' + row[0] + '", "y": "' + row[1] + '"}' + '\n'
+    return string
 
 
 @app.route("/predictions")
 def get_csv_data():
     arr = []
-    with open("../predictions.csv", "r") as file:
+    with open('predictions.csv', 'r') as file:
         reader = csv.reader(file)
         for row in reader:
             arr.append(jsonify({"x": row[0], "y": int(row[1])}))
     return arr[-1]
-    
-    #return "predictions"
+
+    # return "predictions"
+
 
 @app.route("/setup/scan")
 def scan():
@@ -101,10 +104,12 @@ def connect():
 
     return res
 
+
 @app.route("/setup/sync")
 def sync_sensors():
     rt.sync_sensors(client, sensor_bank)
     return("All sensors are synced!")
+
 
 @app.route("/classify/start")
 def classification_pipe():
@@ -125,6 +130,7 @@ def classification_pipe():
 
     return "started classification..."
 
+
 def check_classify():
     return classify
 
@@ -139,6 +145,7 @@ def stop_classify():
         t.join()
     return str(sensor_bank.run)
 
+
 @app.route("/setup/connect_all")
 def connect_all():
     global sensor_bank
@@ -150,10 +157,16 @@ def connect_all():
     return "All connected"
 
 
-@app.route("/sensors")
-def get_sensors():
-    return {"list": [
-                {"name": "LPMSB2 - 3036EB", "id": "1", "battery": "85,3%"}, 
-                {"name": "LPMSB2 - 4B3326", "id": "2", "battery": "76,6%"},
-                {"name": "LPMSB2 - 4B31EE", "id": "3", "battery": "54,26%"}
-            ]}
+
+@app.route('/connected_sensors')
+def get_dummy_connected_sensors():
+    return {"sensors": [
+        {"name": "LPMSB2 - 3036EB", "id": "1", "battery": "85,3%"},
+        {"name": "LPMSB2 - 4B3326", "id": "2", "battery": "76,6%"},
+        {"name": "LPMSB2 - 4B31EE", "id": "3", "battery": "54,26%"}
+    ]}
+
+
+@app.route('/found_sensors')
+def get_dummy_found_sensors():
+    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}

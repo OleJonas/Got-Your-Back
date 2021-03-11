@@ -15,7 +15,39 @@ export const LineGraph = () => {
             width: '100%',
         },
     })
-    
+
+    useEffect(() => {
+        let data_array:Array<JSON> = []
+        fetch('http://localhost:5000/all_predictions', {
+            headers : {
+                'Content-Type': 'application/text',
+                'Accept': 'application/text',
+            }
+            }).then(res => res.text()).then(text => {
+                let array = text.split("\n")
+                
+                array.forEach(data => {
+                    if(data !== ""){
+                        let jsonobject = JSON.parse(data)
+                        jsonobject['x'] = new Date(jsonobject['x'])
+                        jsonobject['y'] = parseInt(jsonobject['y'],10)
+                        data_array.push(jsonobject)
+                    }
+                    
+                });
+
+                }).then(() => {console.log(data_array);
+                               setDatapoint(() => {return data_array})});
+                
+                //data['x'] = new Date(data['x'])
+                //setDatapoint((datapoints) => {return [...datapoints,data]})
+            
+    },[])
+
+    useEffect(() => {
+        console.log("datapoints: ", datapoints)
+    },[datapoints])
+    /*
     useEffect(() => {
         setInterval(() => {
             fetch('http://localhost:5000/predictions', {
@@ -30,12 +62,12 @@ export const LineGraph = () => {
             })
         },3000);
     }, []);
-
+*/
     let y_labels = ["Upright", "Forward", "Forward-right", "Right", "Back-right", "Back", "Back-left", "Left", "Forward-left"]
     
     const options = {
         animationEnabled: false,
-        exportEnabled: true,
+        exportEnabled: false,
         responsive: true,
         maintainAspectRatio: true,
         backgroundColor: 'rgba(0,0,0,0)',
@@ -67,10 +99,6 @@ export const LineGraph = () => {
             tickColor: "#EDB93C",
             lineColor: "#EDB93C",
             labelFontWeight: "Bold",
-        },
-        title:{
-            text: "My predictions",
-            fontColor: "#EDB93C",
         },
         data: [{
             type: "line",

@@ -1,5 +1,5 @@
 import { FC, useState, useEffect, useCallback } from 'react';
-import { Box, Modal } from '@material-ui/core';
+import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography, DialogActions } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 // Components
@@ -10,8 +10,9 @@ import { AnyAaaaRecord } from 'node:dns';
 export const SensorModal: FC = () => {
     const classes = useStyles();
 
-    const [sensorsFound, setSensorsFound] = useState<any>([]);
+    const [sensorsFound, setSensorsFound] = useState<any>();
     const [isFetching, setIsFetching] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const scanForSensors = useCallback(async () => {
         if(isFetching) return;
@@ -25,26 +26,40 @@ export const SensorModal: FC = () => {
             }).then(res => res.json()).then(data => {
                 console.log(data);
                 setSensorsFound(data);
+                console.log(typeof sensorsFound)
                 setIsFetching(false)
+                setOpen(true)
             });
     }, [isFetching]);
 
-    const renderSensors: any = () =>{
-        console.log(sensorsFound);
-        if(sensorsFound.length < 1) return {}
-        else{
-            return sensorsFound.sensors.map((sensor: any) => {
-                <SensorListing name={sensor} />
-            });
-        }
-    }
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     return (
         <Box>
-            <Button text="Scan" id="ScanButton" disabled={isFetching} func={scanForSensors} />
-            {(sensorsFound.sensors !== undefined)? sensorsFound.sensors.map((sensor: string) => (
-                <SensorListing name={sensor} />
-            )) : <></>}
+            <Button id="ScanButton" disabled={isFetching} func={scanForSensors}>Scan</Button>
+            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} className={classes.root}>
+                <DialogTitle id="customized-dialog-title"><Typography variant="h2">Sensors found</Typography></DialogTitle>
+                <DialogContent dividers>
+                    <Box className="sensorBox">
+                        {sensorsFound ? sensorsFound["sensors"].map((sensor:string) => (
+                            <SensorListing name={sensor} />
+                        )) : <></>}
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Grid container justify="center" className={classes.btnGrid}>
+                        <Grid item xs={4}>
+                            <Button disabled={isFetching} func={scanForSensors}>Refresh</Button>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Button func={handleClose}>Close</Button>
+                        </Grid>
+                    </Grid>
+                </DialogActions>
+            </Dialog>
         </Box>
     )
 }
@@ -52,6 +67,14 @@ export const SensorModal: FC = () => {
 const useStyles = makeStyles({
     root: {
         background: "rgba(0,0,0,0.5)",
-        borderRadius: "5px"
+        textAlign: "center"
+    },
+    sensorBox: {
+        minWidth: "400px",
+        borderRadius: "5px",
+        backgroundColor: "white"
+    },
+    btnGrid: {
+        width: "100%"
     }
   });

@@ -47,8 +47,8 @@ export const SensorListing: FC<SensorProps> = (props) => {
 
     return (
         <Box>
-            <Typography variant="button" color="textPrimary">{sensorString()}</Typography>
-            <Button text={connected? ">":"||"} func={connect} id="connectButton" disabled={isFetching} />
+            <Typography variant="body1" color="textSecondary">{sensorString()}</Typography>
+            <Button func={connect} id="connectButton" disabled={isFetching}>{connected? ">":"||"}</Button>
         </Box>
     )
 }

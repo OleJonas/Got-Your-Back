@@ -18,19 +18,19 @@ export const theme = createMuiTheme({
     },
     background: {
       default: '#FFFFFF',
-      paper: '#EADEF4',
+      paper: '#0a2339',
     },
     text: {
       primary: '#FFF', // white
-      secondary: '#EDB93C', // yellow
-      disabled: '#000', // This will be our black used only at login
+      secondary: '#000', // black
     },
   },
   typography: {
     fontFamily: 'Nunito',
     h1: {
         fontSize: '2.5rem',
-        fontWeight: 600
+        fontWeight: 600,
+        lineHeight: '2em'
     },
     h2: {
         fontSize: '1.75rem',
@@ -40,6 +40,13 @@ export const theme = createMuiTheme({
       fontSize: '1.25rem',
       fontWeight: 300
     },
+
+    subtitle1: {
+      fontSize: '7.5rem',
+      fontWeight: 600,
+      lineHeight: '1em'
+    },
+    
     caption: { // NavBar links
       fontSize: '1.1rem',
       fontWeight: 600

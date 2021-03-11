@@ -10,7 +10,7 @@ from sklearn import preprocessing as pp
 from joblib import dump, load
 from collections import Counter
 
-sys.path.append("/scripts")
+sys.path.append("scripts/")
 from Data_Queue import Data_Queue
 from sensor_bank import Sensor_Bank, Sensor
 
@@ -352,7 +352,7 @@ if __name__ == "__main__":
     classify_thread = threading.Thread(target=classify_pipe, args=[model, data_queue], daemon=True)
     classify_thread.start()
 
-    collect_data(client, data_queue, sensor_bank)
+    #collect_data(client, data_queue, sensor_bank)
     """
 
     # user_input=[int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
