@@ -24,14 +24,11 @@ data_queue = None
 classify = False
 t_pool = []
 
-<<<<<<< HEAD
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
 
 cors = CORS(app)
 
 
-=======
->>>>>>> 3e347a5602512cb38546b8145738ddbe19365228
 @app.before_first_request
 def init():
     global client
@@ -48,7 +45,6 @@ def init():
 @app.before_request
 def before_request():
     if request.method == "OPTIONS":
-        print("hmmmmm")
         res = Response("ye")
         res.headers["Access-Control-Allow-Origin"] = "*"
         res.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
@@ -56,13 +52,7 @@ def before_request():
         return res
     else:
         return
-"""
-@app.after_request
-def after_request(response):
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
-    response.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
-    return response"""
+
 
 @app.route("/")
 def hello_world():
@@ -85,15 +75,8 @@ def get_csv_data():
     with open('predictions.csv', 'r') as file:
         reader = csv.reader(file)
         for row in reader:
-<<<<<<< HEAD
             rows.append([row[0], row[1]])
     return {rows[-1][0]: rows[-1][1]}
-=======
-            arr.append(jsonify({"x": row[0], "y": int(row[1])}))
-    return arr[-1]
-
-    # return "predictions"
->>>>>>> 3e347a5602512cb38546b8145738ddbe19365228
 
 
 @app.route("/setup/scan")
@@ -118,13 +101,7 @@ def connect():
         "id": s_id,
         "battery_percent": sensor_bank.sensor_arr[-1].get_battery_percentage()
     }
-
-<<<<<<< HEAD
-    return f"id: {s_id}\nname: {sensor_bank.sensor_arr[-1].name}\nbattery percent: {sensor_bank.sensor_arr[-1].get_battery_percentage()}"
-
-=======
     return res
->>>>>>> 3e347a5602512cb38546b8145738ddbe19365228
 
 
 @app.route("/setup/sync")
@@ -181,9 +158,9 @@ def connect_all():
 @app.route('/connected_sensors')
 def get_dummy_connected_sensors():
     return {"sensors": [
-        {"name": "LPMSB2 - 3036EB", "id": "1", "battery": "85,3%"},
-        {"name": "LPMSB2 - 4B3326", "id": "2", "battery": "76,6%"},
-        {"name": "LPMSB2 - 4B31EE", "id": "3", "battery": "54,26%"}
+        {"name": "LPMSB2 - 3036EB", "id": "1", "battery_percent": "85,3%"},
+        {"name": "LPMSB2 - 4B3326", "id": "2", "battery_percent": "76,6%"},
+        {"name": "LPMSB2 - 4B31EE", "id": "3", "battery_percent": "54,26%"}
     ]}
 
 

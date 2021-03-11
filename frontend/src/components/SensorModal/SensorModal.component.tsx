@@ -13,7 +13,6 @@ import { makeStyles } from "@material-ui/core/styles";
 // Components
 import { Button } from '../Button/Button.component'
 import { SensorListing } from "../SensorListing/SensorListing"
-import { AnyAaaaRecord } from 'node:dns';
 
 export const SensorModal: FC = () => {
 	const classes = useStyles();

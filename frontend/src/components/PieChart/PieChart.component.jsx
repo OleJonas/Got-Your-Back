@@ -1,23 +1,36 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
 
-export const LineGraph = (props) => {
+export const PieChart = (props) => {
 	const classes = useStyles;
 
 	const processedData = () => {
-		const timestamps = Object.keys(props.data);
 		const predictions = Object.values(props.data);
+        let posture_occurences = [0,0,0,0,0,0,0,0,0]
+
+        let posture_names = {
+            0: "Straight",
+            1: "Forward",
+            2: "Forward-right",
+            3: "Right",
+            4: "Backward-right",
+            5: "Backward",
+            6: "Backward-left",
+            7: "Left",
+            8: "Forward-left"
+        }
+
+        predictions.forEach(pred => posture_occurences[pred] += 1);
+
+
 		const chartData = [
 			[
 				{ type: "date", label: "Timestamp" },
 				{ type: "number", label: "Value" },
 			],
 		];
-		for (let i = 0; i < timestamps.length; i += 1) {
-			chartData.push([
-				new Date(timestamps[i].replace(" ", "T")),
-				predictions[i],
-			]);
+		for (let i = 0; i < posture_occurences; i += 1) {
+			chartData.push([posture_names[i], posture_occurences[i]]);
 		}
 		return chartData;
 	};
@@ -26,7 +39,7 @@ export const LineGraph = (props) => {
 		<Chart
 			width={"100%"}
 			height={"100%"}
-			chartType="LineChart"
+			chartType="PieChart"
 			loader={<Typography variant="body1" color="primary">Loading Chart</Typography>}
 			data={processedData()}
 			options={{
@@ -38,7 +51,6 @@ export const LineGraph = (props) => {
 				},
 				vAxis: {
 					title: "Positions",
-					minValue: 0,
 					maxValue: 8,
 					textStyle: { color: "#FFF" },
 					titleTextStyle: { color: "#FFF" },
