@@ -2,7 +2,7 @@ import { FC, useState, useEffect, useCallback } from "react";
 import { Box, Divider, Modal, Typography, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { theme } from "../../theme";
-import { ConnectBtn } from "../Buttons/ConnectBtn";
+import { ConnectBtn } from "../Buttons/ConnectButton.component";
 
 // Components
 import { Button } from "../Buttons/Button.component";

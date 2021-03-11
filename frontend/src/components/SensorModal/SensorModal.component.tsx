@@ -3,7 +3,7 @@ import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography, DialogAction
 import { makeStyles } from "@material-ui/core/styles";
 
 // Components
-import { Button } from "../Button/Button.component";
+import { Button } from "../Buttons/Button.component";
 import { SensorListing } from "../SensorListing/SensorListing";
 
 export const SensorModal: FC = () => {
@@ -26,9 +26,7 @@ export const SensorModal: FC = () => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data);
 				setSensorsFound(data);
-				console.log(typeof sensorsFound);
 				setIsFetching(false);
 				setOpen(true);
 			});
@@ -55,7 +53,7 @@ export const SensorModal: FC = () => {
 			) : (
 				<></>
 			)}
-			<Button id="ScanButton" disabled={isFetching} func={scanForSensors}>
+			<Button disabled={isFetching} func={scanForSensors}>
 				Scan
 			</Button>
 			<Dialog
