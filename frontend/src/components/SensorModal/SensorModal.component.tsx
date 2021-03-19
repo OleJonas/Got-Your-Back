@@ -1,10 +1,11 @@
 import { FC, useState, useEffect, useCallback } from "react";
 import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography, DialogActions } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import loader from "../../assets/loader.gif";
 // Components
 import { Button } from "../Buttons/Button.component";
 import { SensorListing } from "../SensorListing/SensorListing";
+import loader from "../../assets/loader.svg";
+import "./loader.css";
 
 type modalProps = {
 	open: boolean;
@@ -83,7 +84,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 					<Box className={classes.sensorBox}>
 						{isFetching ? (
 							<Box>
-								<img src={loader}></img>
+								<img src={loader} className="loading-wrapper"></img>
 							</Box>
 						) : (
 							<Box>
