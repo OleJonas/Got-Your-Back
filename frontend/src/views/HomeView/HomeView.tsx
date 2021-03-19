@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
 import { ContentBox } from "../../components/ContentBox/ContentBox.component";
-import { SensorModal } from "../../components/SensorModal/SensorModal.component";
+
 import { ClassificationBox } from "../../components/ClassificationContent/ClassificationContent.component";
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 import { SamplingRateContent } from "../../components/SamplingRateContent/SamplingRateContent.component";
 import { Button } from "../../components/Buttons/Button.component";
-
+import { SensorListingContent } from "../../components/SensorListingContent/SensorListingContent.tsx";
 export const HomeView = () => {
 	const classes = useStyles();
 	const [datapoints, setDatapoints] = useState<any>({
@@ -72,7 +72,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<Button>Scan</Button>
+								<SensorListingContent></SensorListingContent>
 							</ContentBox>
 						</Grid>
 
