@@ -17,9 +17,9 @@ export const NavBar: FC = () => {
 				</Grid>
 
 				<Grid item xs={10}>
-					<Link href="#/home">
+					<Link href="#/">
 						<Box m={1.2}>
-							<Typography variant="caption" color={window.location.href.includes("home") ? "primary" : "textPrimary"}>
+							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/" ? "primary" : "textPrimary"}>
 								Home
 							</Typography>
 						</Box>
@@ -28,7 +28,7 @@ export const NavBar: FC = () => {
 				<Grid item xs={10}>
 					<Link href="#/history">
 						<Box m={1.2}>
-							<Typography variant="caption" color={window.location.href.includes("history") ? "primary" : "textPrimary"}>
+							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/history" ? "primary" : "textPrimary"}>
 								History
 							</Typography>
 						</Box>
@@ -37,7 +37,7 @@ export const NavBar: FC = () => {
 				<Grid item xs={10}>
 					<Link href="#/about">
 						<Box m={1.2}>
-							<Typography variant="caption" color={window.location.href.includes("about") ? "primary" : "textPrimary"}>
+							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/about" ? "primary" : "textPrimary"}>
 								About
 							</Typography>
 						</Box>
