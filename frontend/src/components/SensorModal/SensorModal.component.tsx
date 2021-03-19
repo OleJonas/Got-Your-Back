@@ -5,9 +5,11 @@ import loader from "../../assets/loader.gif";
 // Components
 import { Button } from "../Buttons/Button.component";
 import { SensorListing } from "../SensorListing/SensorListing";
+import {SensorList} from "../SensorList/SensorList";
 
 type modalProps = {
 	open: boolean;
+    func: any
 };
 
 export const SensorModal: FC<modalProps> = (props) => {
@@ -34,7 +36,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				setSensorsFound(data);
+				setSensorsFound(data["sensors"]);
 				setIsFetching(false);
 				setOpen(true);
 			});
@@ -62,12 +64,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 
 	return (
 		<Box>
-			{connectedSensors ? (
-				connectedSensors["sensors"].map((sensor: string, index: number) => <SensorListing index={index} name={sensor} />)
-			) : (
-				<></>
-			)}
-
 			<Dialog
 				classes={{ paper: classes.paper }}
 				onClose={handleClose}
@@ -98,11 +94,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 									</Grid>
 								</Grid>
 
-								{sensorsFound ? (
-									sensorsFound["sensors"].map((sensor: string, index: number) => <SensorListing index={index} name={sensor} />)
-								) : (
-									<></>
-								)}
+                                {sensorsFound ? <SensorList connected={false} color="white" sensors={sensorsFound} /> : <></>}
 							</Box>
 						)}
 					</Box>
