@@ -60,7 +60,7 @@ export const HomeView = () => {
           <Grid container spacing={2} className={classes.grid}>
             <Grid item xs={12}>
               <Typography variant="h1" color="textPrimary">
-                Welcome Back, Ole Jonas!
+                Welcome Back!
               </Typography>
             </Grid>
 
