@@ -11,9 +11,11 @@ export const NavBar: FC = () => {
 		<Box className={classes.root}>
 			<Grid container justify="center" className="grid">
 				<Grid item xs={10}>
-					<Box mt={1}>
-						<img src={Logo} alt="logo" />
-					</Box>
+					<Link href="#/">
+						<Box mt={1}>
+							<img src={Logo} alt="logo" />
+						</Box>
+					</Link>
 				</Grid>
 
 				<Grid item xs={10}>
