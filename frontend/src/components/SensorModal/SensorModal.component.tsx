@@ -10,6 +10,7 @@ import {SensorList} from "../SensorList/SensorList";
 type modalProps = {
 	open: boolean;
     func: any
+	close?: any;
 };
 
 export const SensorModal: FC<modalProps> = (props) => {
@@ -19,10 +20,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 	const [connectedSensors, setConnectedSensors] = useState<any>();
 	const [isFetching, setIsFetching] = useState(false);
 	const [open, setOpen] = useState(false);
-
-	useEffect(() => {
-		scanForSensors();
-	}, []);
 
 	const scanForSensors = useCallback(async () => {
 		if (isFetching) return;
@@ -43,7 +40,10 @@ export const SensorModal: FC<modalProps> = (props) => {
 	}, [isFetching]);
 
 	useEffect(() => {
-		setOpen(props.open);
+		if (props.open === true) {
+			setOpen(props.open);
+			scanForSensors();
+		}
 	}, [props.open]);
 
 	const handleClose = () => {
@@ -59,6 +59,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 			console.log(connectedSensors);
 		}
 		*/
+		props.close();
 		setOpen(false);
 	};
 
@@ -72,7 +73,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 				className={classes.root}
 			>
 				<DialogTitle className={classes.title} id="customized-dialog-title">
-					<Typography variant="h2">Sensors found</Typography>
+					<Typography variant="h2">{isFetching ? "Searching for sensors..." : "Sensors found"}</Typography>
 				</DialogTitle>
 				<DialogContent className={classes.dialogContent} dividers>
 					<Box className={classes.sensorBox}>

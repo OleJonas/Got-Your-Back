@@ -2,8 +2,8 @@ import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Box, Typography } from "@material-ui/core";
 import { Button } from "../Buttons/Button.component";
-import { SensorModal } from "../../components/SensorModal/SensorModal.component";
 import { SensorList } from "../SensorList/SensorList"
+import { SensorModal } from "../SensorModal/SensorModal.component";
 
 export const SensorListingContent = () => {
 	const classes = useStyles();
@@ -12,15 +12,18 @@ export const SensorListingContent = () => {
 	const [sensors, setSensors] = useState();
 
 	const openModal = () => {
-		if (open) setOpen(false);
-		else setOpen(true);
+		console.log(open);
+		setOpen(true);
 	};
+
+	const closeModal = () => {
+		setOpen(false)
+	}
 
 	return (
 		<Box>
-			{sensors? <SensorList connected={true} color="blue" sensors={sensors} /> : <></>}
-			<Button func={() => {openModal()}}> Scan{" "} </Button>
-			<SensorModal open={open} func={setSensors}></SensorModal>
+			<Button func={openModal}>Scan </Button>
+			<SensorModal close={closeModal} open={open}></SensorModal>
 		</Box>
 	);
 };

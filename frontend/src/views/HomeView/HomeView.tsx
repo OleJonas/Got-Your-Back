@@ -10,7 +10,7 @@ import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 import { SamplingRateContent } from "../../components/SamplingRateContent/SamplingRateContent.component";
 import { Button } from "../../components/Buttons/Button.component";
-import { SensorListingContent } from "../../components/SensorListingContent/SensorListingContent.tsx";
+import { SensorListingContent } from "../../components/SensorListingContent/SensorListingContent.component";
 export const HomeView = () => {
 	const classes = useStyles();
 	const [datapoints, setDatapoints] = useState<any>({
