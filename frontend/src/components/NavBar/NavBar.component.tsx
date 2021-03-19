@@ -4,7 +4,6 @@ import { makeStyles } from "@material-ui/core/styles";
 
 // Components
 import Logo from "../../assets/Logo.svg";
-import ProfilePicture from "../../assets/AgurkPB.png";
 
 export const NavBar: FC = () => {
 	const classes = useStyles();
@@ -18,15 +17,9 @@ export const NavBar: FC = () => {
 				</Grid>
 
 				<Grid item xs={10}>
-					<Box my={2} mb={4}>
-						<img src={ProfilePicture} className={classes.profilePic} alt="PP" />
-					</Box>
-				</Grid>
-
-				<Grid item xs={10}>
-					<Link href="#/home">
+					<Link href="#/">
 						<Box m={1.2}>
-							<Typography variant="caption" color={window.location.href.includes("home") ? "primary" : "textPrimary"}>
+							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/" ? "primary" : "textPrimary"}>
 								Home
 							</Typography>
 						</Box>
@@ -35,7 +28,7 @@ export const NavBar: FC = () => {
 				<Grid item xs={10}>
 					<Link href="#/history">
 						<Box m={1.2}>
-							<Typography variant="caption" color={window.location.href.includes("history") ? "primary" : "textPrimary"}>
+							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/history" ? "primary" : "textPrimary"}>
 								History
 							</Typography>
 						</Box>
@@ -44,7 +37,7 @@ export const NavBar: FC = () => {
 				<Grid item xs={10}>
 					<Link href="#/about">
 						<Box m={1.2}>
-							<Typography variant="caption" color={window.location.href.includes("about") ? "primary" : "textPrimary"}>
+							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/about" ? "primary" : "textPrimary"}>
 								About
 							</Typography>
 						</Box>

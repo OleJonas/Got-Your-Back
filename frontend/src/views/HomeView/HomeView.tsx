@@ -51,10 +51,6 @@ export const HomeView = () => {
 	}, []);
     */
 
-  const openModal = () => {
-    
-  }
-
 	return (
 		<>
 			<Grid container justify="center" className={classes.root}>
@@ -65,7 +61,7 @@ export const HomeView = () => {
 					<Grid container spacing={2} className={classes.grid}>
 						<Grid item xs={12}>
 							<Typography variant="h1" color="textPrimary">
-								Welcome Back, Ole Jonas!
+								Welcome Back!
 							</Typography>
 						</Grid>
 
@@ -76,9 +72,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<Button func={openModal()}>
-									Scan
-								</Button>
+								<Button>Scan</Button>
 							</ContentBox>
 						</Grid>
 

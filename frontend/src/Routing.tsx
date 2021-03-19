@@ -10,7 +10,6 @@ const Routing = () => {
     return (
         <HashRouter>
             <Switch>
-                <Route exact path="/home" component={HomeView}/>
                 <Route exact path="/" component={HomeView}/>
                 <Route exact path="/history" component={HistoryView}/>
                 <Route exact path="/about" component={AboutView}/>
