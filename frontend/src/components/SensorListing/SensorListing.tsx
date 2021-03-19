@@ -43,22 +43,30 @@ export const SensorListing: FC<SensorProps> = (props) => {
 			});
 	}, [isFetching]);
 
-	const sensorString = () => {
+	const getName = () => {
+		return props.name;
+	};
+
+	const getStatus = () => {
 		let out: string = "";
 		if (props.id) out += props.id + "  ";
-		out += props.name + "  ";
 		out += connected ? "Tilkoblet" : "Frakoblet";
 		return out;
 	};
 
 	return (
 		<Grid container className={classes.root}>
-			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={9}>
+			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={5}>
 				<Typography variant="body1" color="textSecondary">
-					{sensorString()}
+					{getName()}
 				</Typography>
 			</Grid>
-			<Grid className={classes.grid} container justify="center" item xs={3}>
+			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={4}>
+				<Typography variant="body1" color="textSecondary">
+					{getStatus()}
+				</Typography>
+			</Grid>
+			<Grid className={classes.grid} container justify="flex-start" item xs={3}>
 				<ConnectBtn status={connected} func={connect} id="connectButton" disabled={isFetching}>
 					{connected ? ">" : "||"}
 				</ConnectBtn>

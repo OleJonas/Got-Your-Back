@@ -51,5 +51,4 @@ export const ConnectBtn: FC<ButtonProps> = (props) => {
 			</ButtonBase>
 		</Box>
 	);
-	6;
 };

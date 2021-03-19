@@ -53,9 +53,7 @@ export const SensorModal: FC = () => {
 			) : (
 				<></>
 			)}
-			<Button disabled={isFetching} func={scanForSensors}>
-				Scan
-			</Button>
+			
 			<Dialog
 				classes={{ paper: classes.paper }}
 				onClose={handleClose}
@@ -69,8 +67,11 @@ export const SensorModal: FC = () => {
 				<DialogContent className={classes.dialogContent} dividers>
 					<Box className={classes.sensorBox}>
 						<Grid className={classes.columns} container lg={12}>
-							<Grid container className={classes.grid} justify="flex-start" item lg={9}>
+							<Grid container className={classes.grid} justify="flex-start" item lg={5}>
 								<Typography variant="h6">Sensor name</Typography>
+							</Grid>
+							<Grid container className={classes.grid} justify="flex-start" item lg={4}>
+								<Typography variant="h6">Status</Typography>
 							</Grid>
 							<Grid container className={classes.grid} justify="center" item lg={3}>
 								<Typography variant="h6"></Typography>
