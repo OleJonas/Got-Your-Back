@@ -4,13 +4,12 @@ import { useState, useEffect } from "react";
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
 import { ContentBox } from "../../components/ContentBox/ContentBox.component";
-
 import { ClassificationBox } from "../../components/ClassificationContent/ClassificationContent.component";
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 import { SamplingRateContent } from "../../components/SamplingRateContent/SamplingRateContent.component";
-import { Button } from "../../components/Buttons/Button.component";
 import { SensorListingContent } from "../../components/SensorListingContent/SensorListingContent.component";
+
 export const HomeView = () => {
 	const classes = useStyles();
 	const [datapoints, setDatapoints] = useState<any>({
@@ -55,7 +54,7 @@ export const HomeView = () => {
 		<>
 			<Grid container justify="center" className={classes.root}>
 				<Grid item xs={2} md={1} lg={1}>
-					<NavBar></NavBar>
+					<NavBar />
 				</Grid>
 				<Grid item xs={10} md={11} lg={11} className={classes.height}>
 					<Grid container spacing={2} className={classes.grid}>

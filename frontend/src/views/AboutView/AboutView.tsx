@@ -10,7 +10,7 @@ export const AboutView = () => {
 		<>
 			<Grid container justify="center" className={classes.root}>
 				<Grid item xs={2} md={1}>
-					<NavBar></NavBar>
+					<NavBar />
 				</Grid>
 				<Grid item xs={10} md={11}>
 					<Box m={2}>

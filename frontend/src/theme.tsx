@@ -10,20 +10,21 @@ export const theme = createMuiTheme({
       main: '#23BFC1',
       light: '#A5C8D1',
     },
-    error: {
-      main: '#EA526F',
-    },
-    success: {
-      main: '#50C878',
-    },
     background: {
-      default: '#FFFFFF',
       paper: '#0a2339',
     },
     text: {
       primary: '#FFF', // white
       secondary: '#000', // black
     },
+    /*
+    error: {
+      main: '#EA526F',
+    },
+    success: {
+      main: '#50C878',
+    },
+    */
   },
   typography: {
     fontFamily: 'Nunito',
@@ -41,13 +42,19 @@ export const theme = createMuiTheme({
       fontSize: '1.25rem',
       fontWeight: 300
     },
-
+    h4: {
+      fontSize: '1rem',
+      fontWeight: 300
+    },
+    h5: {
+      fontSize: '1.25rem',
+      fontWeight: 300
+    },
     h6: {
       fontSize: '1rem',
       fontWeight: 700,
       color: 'black'
     },
-
     subtitle1: {
       fontSize: '7.5rem',
       fontWeight: 600,

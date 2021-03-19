@@ -37,6 +37,15 @@ export const NavBar: FC = () => {
 					</Link>
 				</Grid>
 				<Grid item xs={10}>
+					<Link href="#/help">
+						<Box m={1.2}>
+							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/help" ? "primary" : "textPrimary"}>
+								Help
+							</Typography>
+						</Box>
+					</Link>
+				</Grid>
+				<Grid item xs={10}>
 					<Link href="#/about">
 						<Box m={1.2}>
 							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/about" ? "primary" : "textPrimary"}>
