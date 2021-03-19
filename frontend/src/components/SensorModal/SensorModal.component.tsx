@@ -84,7 +84,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 					<Box className={classes.sensorBox}>
 						{isFetching ? (
 							<Box>
-								<img src={loader} className="loading-wrapper"></img>
+								<img src={loader} className="loading"></img>
 							</Box>
 						) : (
 							<Box>
