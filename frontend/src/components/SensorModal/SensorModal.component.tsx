@@ -1,12 +1,17 @@
 import { FC, useState, useEffect, useCallback } from "react";
 import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography, DialogActions } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-
+import loader from "../../assets/loader.gif";
 // Components
 import { Button } from "../Buttons/Button.component";
 import { SensorListing } from "../SensorListing/SensorListing";
 
-export const SensorModal: FC = () => {
+type modalProps = {
+	open: boolean;
+	close?: any;
+};
+
+export const SensorModal: FC<modalProps> = (props) => {
 	const classes = useStyles();
 
 	const [sensorsFound, setSensorsFound] = useState<any>();
@@ -32,7 +37,15 @@ export const SensorModal: FC = () => {
 			});
 	}, [isFetching]);
 
+	useEffect(() => {
+		if (props.open === true) {
+			setOpen(props.open);
+			scanForSensors();
+		}
+	}, [props.open]);
+
 	const handleClose = () => {
+		/*
 		let connected: any = [];
 		console.log(sensorsFound);
 		if (sensorsFound) {
@@ -43,6 +56,8 @@ export const SensorModal: FC = () => {
 			setConnectedSensors(connected);
 			console.log(connectedSensors);
 		}
+		*/
+		props.close();
 		setOpen(false);
 	};
 
@@ -53,9 +68,7 @@ export const SensorModal: FC = () => {
 			) : (
 				<></>
 			)}
-			<Button disabled={isFetching} func={scanForSensors}>
-				Scan
-			</Button>
+
 			<Dialog
 				classes={{ paper: classes.paper }}
 				onClose={handleClose}
@@ -64,26 +77,36 @@ export const SensorModal: FC = () => {
 				className={classes.root}
 			>
 				<DialogTitle className={classes.title} id="customized-dialog-title">
-					<Typography variant="h2">Sensors found</Typography>
+					<Typography variant="h2">{isFetching ? "Searching for sensors..." : "Sensors found"}</Typography>
 				</DialogTitle>
 				<DialogContent className={classes.dialogContent} dividers>
 					<Box className={classes.sensorBox}>
-						<Grid className={classes.columns} container lg={12}>
-							<Grid container className={classes.grid} justify="flex-start" item lg={9}>
-								<Typography variant="h6">Sensor name</Typography>
-							</Grid>
-							<Grid container className={classes.grid} justify="center" item lg={3}>
-								<Typography variant="h6"></Typography>
-							</Grid>
-						</Grid>
-
-						{sensorsFound ? (
-							sensorsFound["sensors"].map((sensor: string, index: number) => <SensorListing index={index} name={sensor} />)
+						{isFetching ? (
+							<Box>
+								<img src={loader}></img>
+							</Box>
 						) : (
-							<></>
+							<Box>
+								<Grid className={classes.columns} container lg={12}>
+									<Grid container className={classes.grid} justify="flex-start" item lg={5}>
+										<Typography variant="h6">Sensor name</Typography>
+									</Grid>
+									<Grid container className={classes.grid} justify="flex-start" item lg={4}>
+										<Typography variant="h6">Status</Typography>
+									</Grid>
+									<Grid container className={classes.grid} justify="center" item lg={3}>
+										<Typography variant="h6"></Typography>
+									</Grid>
+								</Grid>
+
+								{sensorsFound ? (
+									sensorsFound["sensors"].map((sensor: string, index: number) => <SensorListing index={index} name={sensor} />)
+								) : (
+									<></>
+								)}
+							</Box>
 						)}
 					</Box>
-
 					<Grid container justify="center" className={classes.btnGrid}>
 						<Grid item xs={6}>
 							<Button disabled={isFetching} func={scanForSensors}>
