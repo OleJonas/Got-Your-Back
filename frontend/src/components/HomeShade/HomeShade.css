@@ -1,0 +1,14 @@
+@keyframes out {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(0, -100vh);
+  }
+}
+
+.out {
+  animation: out 1.5s;
+  animation-direction: alternate;
+  animation-fill-mode: forwards;
+}

@@ -11,9 +11,11 @@ export const NavBar: FC = () => {
 		<Box className={classes.root}>
 			<Grid container justify="center" className="grid">
 				<Grid item xs={10}>
-					<Box mt={1}>
-						<img src={Logo} alt="logo" />
-					</Box>
+					<Link href="#/">
+						<Box mt={1}>
+							<img src={Logo} alt="logo" />
+						</Box>
+					</Link>
 				</Grid>
 
 				<Grid item xs={10}>
@@ -30,6 +32,15 @@ export const NavBar: FC = () => {
 						<Box m={1.2}>
 							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/history" ? "primary" : "textPrimary"}>
 								History
+							</Typography>
+						</Box>
+					</Link>
+				</Grid>
+				<Grid item xs={10}>
+					<Link href="#/help">
+						<Box m={1.2}>
+							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/help" ? "primary" : "textPrimary"}>
+								Help
 							</Typography>
 						</Box>
 					</Link>

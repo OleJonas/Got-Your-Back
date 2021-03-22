@@ -1,7 +1,6 @@
-import { Typography, Fab } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { FC, useState, useEffect, useCallback } from "react";
-import { Button } from "@material-ui/core";
+import { FC, useState, useEffect } from "react";
 import { Check } from "@material-ui/icons";
 import { Add } from "@material-ui/icons";
 import { Box } from "@material-ui/core";
@@ -29,7 +28,7 @@ export const ConnectBtn: FC<ButtonProps> = (props) => {
 	});
 
 	useEffect(() => {
-		if (props.status == true) {
+		if (props.status === true) {
 			setStatus(true);
 		} else {
 			setStatus(false);

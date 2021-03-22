@@ -4,13 +4,12 @@ import { useState, useEffect } from "react";
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
 import { ContentBox } from "../../components/ContentBox/ContentBox.component";
-
 import { ClassificationBox } from "../../components/ClassificationContent/ClassificationContent.component";
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 import { SamplingRateContent } from "../../components/SamplingRateContent/SamplingRateContent.component";
-import { Button } from "../../components/Buttons/Button.component";
 import { SensorListingContent } from "../../components/SensorListingContent/SensorListingContent.component";
+
 export const HomeView = () => {
 	const classes = useStyles();
 	const [datapoints, setDatapoints] = useState<any>({
@@ -55,10 +54,10 @@ export const HomeView = () => {
 		<>
 			<Grid container justify="center" className={classes.root}>
 				<Grid item xs={2} md={1} lg={1}>
-					<NavBar></NavBar>
+					<NavBar />
 				</Grid>
 				<Grid item xs={10} md={11} lg={11} className={classes.height}>
-					<Grid container spacing={2} className={classes.grid}>
+					<Grid container spacing={2} className={classes.container}>
 						<Grid item xs={12}>
 							<Typography variant="h1" color="textPrimary">
 								Welcome Back!
@@ -76,7 +75,7 @@ export const HomeView = () => {
 							</ContentBox>
 						</Grid>
 
-						<Grid item xs={6} md={4} className={classes.infoContainer}>
+						<Grid item xs={12} md={7} className={classes.infoContainer}>
 							<Box mb={0.6}>
 								<Typography variant="h3" color="textPrimary">
 									Classification
@@ -86,16 +85,7 @@ export const HomeView = () => {
 								<ClassificationBox datapoint={datapoints[datapoints.length - 1]}></ClassificationBox>
 							</ContentBox>
 						</Grid>
-						<Grid item xs={6} md={3} justify="center" alignItems="center" className={classes.infoContainer}>
-							<Box mb={0.6}>
-								<Typography variant="h3" color="textPrimary">
-									Sample rate
-								</Typography>
-							</Box>
-							<ContentBox>
-								<SamplingRateContent></SamplingRateContent>
-							</ContentBox>
-						</Grid>
+
 						<Grid item xs={12} md={7} className={classes.graphContainer}>
 							<Box mb={0.6}>
 								<Typography variant="h3" color="textPrimary">
@@ -106,6 +96,7 @@ export const HomeView = () => {
 								<LineChart data={datapoints} />
 							</ContentBox>
 						</Grid>
+
 						<Grid item xs={12} md={5} className={classes.graphContainer}>
 							<Box mb={0.6}>
 								<Typography variant="h3" color="textPrimary">
@@ -116,6 +107,7 @@ export const HomeView = () => {
 								<PieChart data={datapoints} />
 							</ContentBox>
 						</Grid>
+						
 					</Grid>
 				</Grid>
 			</Grid>
@@ -127,7 +119,7 @@ const useStyles = makeStyles({
 	root: {
 		height: "100%",
 	},
-	grid: {
+	container: {
 		height: "100%",
 		padding: "20px",
 		overflow: "auto",
