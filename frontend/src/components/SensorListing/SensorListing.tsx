@@ -81,6 +81,7 @@ export const SensorListing: FC<SensorProps> = (props) => {
 	};
 
 	const getBatteryPercent = useCallback(async () => {
+		/*
 		await fetch("http://localhost:5000/sensor/battery?id=" + props.index, {
 			method: "GET",
 			headers: {
@@ -96,6 +97,7 @@ export const SensorListing: FC<SensorProps> = (props) => {
 				console.log(data);
 				setBatteryPercent(data);
 			});
+		*/
 	}, [batteryPercent]);
 
 	useEffect(() => {
@@ -106,26 +108,22 @@ export const SensorListing: FC<SensorProps> = (props) => {
 	const renderConnected = () => {
 		return (
 			<Grid container className={classes.root}>
-				<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={5}>
-					<Typography variant="body1" color="textSecondary">
+				<Grid container item className={classes.gridConnected} direction="row" justify="flex-start" xs={3}>
+					<Typography variant="body1" color="textPrimary">
 						{props.name}
 					</Typography>
 				</Grid>
-				<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={4}>
-					<Typography variant="body1" color="textSecondary">
+				<Grid container item className={classes.gridConnected} direction="row" justify="flex-start" xs={3}>
+					<Typography variant="body1" color="textPrimary">
 						{props.index}
 					</Typography>
 				</Grid>
-				{props.battery === true ? (
-					<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={4}>
-						<Typography variant="body1" color="textSecondary">
-							{batteryPercent}
-						</Typography>
-					</Grid>
-				) : (
-					<></>
-				)}
-				<Grid className={classes.grid} container justify="flex-start" item xs={3}>
+				<Grid container item className={classes.gridConnected} direction="row" justify="flex-start" xs={3}>
+					<Typography variant="body1" color="textPrimary">
+						{batteryPercent}
+					</Typography>
+				</Grid>
+				<Grid className={classes.gridConnected} container justify="flex-start" item xs={3}>
 					<ConnectBtn status={connected} func={connect} id="connectButton" disabled={isFetching}>
 						{connected ? ">" : "||"}
 					</ConnectBtn>
@@ -173,5 +171,8 @@ const useStyles = makeStyles({
 		paddingLeft: "30px",
 		height: "50px",
 		alignItems: "center",
+	},
+	gridConnected: {
+		border: "2px solid red",
 	},
 });
