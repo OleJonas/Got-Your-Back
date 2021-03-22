@@ -49,25 +49,25 @@ export const SensorModal: FC<modalProps> = (props) => {
 	}, [props.open]);
 
 	const handleClose = () => {
-		/*
+
 		console.log("Yo fra handleClose");
 		if (connectedSensors) {
 			console.log("Yo fra inni if ye!");
-			let inboundSensors = [];
-			for (let i = 0; i < connectedSensors.length; i++) {
-				let s = {
+			let inboundSensors: any[] = [];
+            connectedSensors.forEach(i => {
+                let s = {
 					index: i,
 					connected: true,
-					name: sensorsFound[i],
+					name: sensorsFound[""+i],
 				};
 				inboundSensors.push(s);
-			}
+            })
 			props.sendSensors(inboundSensors);
 		}
 		props.close();
 		setOpen(false);
 		console.log("Yo fra handleClose");
-		*/
+		/*
 
 		// DUMMY DATA
 		console.log("Yo fra inni if ye!");
@@ -83,6 +83,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 		props.sendSensors(inboundSensors);
 		props.close();
 		setOpen(false);
+        */
 	};
 
 	const addConnected = (index: number, isConnected: boolean) => {
