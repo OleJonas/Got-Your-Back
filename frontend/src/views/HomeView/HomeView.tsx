@@ -7,7 +7,6 @@ import { ContentBox } from "../../components/ContentBox/ContentBox.component";
 import { ClassificationBox } from "../../components/ClassificationContent/ClassificationContent.component";
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
-import { SamplingRateContent } from "../../components/SamplingRateContent/SamplingRateContent.component";
 import { SensorListingContent } from "../../components/SensorListingContent/SensorListingContent.component";
 
 export const HomeView = () => {
@@ -15,6 +14,8 @@ export const HomeView = () => {
 	const [datapoints, setDatapoints] = useState<any>({
 		"1998-09-10 08:25:50": "1",
 	});
+	const lastPosture: number = Object.values(datapoints).pop();
+	const samplingRate: number = 5
 
 	useEffect(() => {
 		fetch("http://localhost:5000/all_predictions", {
@@ -71,7 +72,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<SensorListingContent></SensorListingContent>
+								<SensorListingContent />
 							</ContentBox>
 						</Grid>
 
@@ -82,7 +83,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<ClassificationBox datapoint={datapoints[datapoints.length - 1]}></ClassificationBox>
+								<ClassificationBox posture={lastPosture} samplingRate={samplingRate} recording={false}></ClassificationBox>
 							</ContentBox>
 						</Grid>
 
@@ -107,7 +108,7 @@ export const HomeView = () => {
 								<PieChart data={datapoints} />
 							</ContentBox>
 						</Grid>
-						
+
 					</Grid>
 				</Grid>
 			</Grid>
@@ -128,7 +129,7 @@ const useStyles = makeStyles({
 		minHeight: "300px",
 	},
 	graphContainer: {
-		height: "400px",
+		height: "300px",
 	},
 	height: {
 		height: "100%",
