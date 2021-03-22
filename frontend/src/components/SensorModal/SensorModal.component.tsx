@@ -9,15 +9,15 @@ import {SensorList} from "../SensorList/SensorList";
 
 type modalProps = {
 	open: boolean;
-    func: any
 	close?: any;
+    sendSensors: any;
 };
 
 export const SensorModal: FC<modalProps> = (props) => {
 	const classes = useStyles();
 
 	const [sensorsFound, setSensorsFound] = useState<any>();
-	const [connectedSensors, setConnectedSensors] = useState<any>();
+	const [connectedSensors, setConnectedSensors] = useState<number[]>([]);
 	const [isFetching, setIsFetching] = useState(false);
 	const [open, setOpen] = useState(false);
 
@@ -59,9 +59,51 @@ export const SensorModal: FC<modalProps> = (props) => {
 			console.log(connectedSensors);
 		}
 		*/
+        /*console.log("Yo fra handleClose");
+        if(connectedSensors){
+            console.log("Yo fra inni if ye!");
+            let inboundSensors = []
+            for(let i = 0; i < connectedSensors.length; i++){
+                let s = {
+                    "index": i,
+                    "connected": true,
+                    "name": sensorsFound[i][0]
+                }
+                inboundSensors.push(s);
+            }
+            props.sendSensors(inboundSensors);
+        }
+		props.close();
+		setOpen(false);*/
+        console.log("Yo fra handleClose");
+    
+        console.log("Yo fra inni if ye!");
+        let inboundSensors = []
+        for(let i = 0; i < 3; i++){
+            let s = {
+                "index": i,
+                "connected": true,
+                "name": ("SENSOR" + i)
+            }
+            inboundSensors.push(s);
+        }
+        props.sendSensors(inboundSensors);
 		props.close();
 		setOpen(false);
 	};
+
+    const addConnected = (index: number, isConnected: boolean) => {
+        console.log("addConnected")
+        let helper = connectedSensors;
+        console.log(isConnected)
+        if(helper){
+            if(isConnected){
+                console.log("isConnected = true")
+                helper.push(index);
+            }
+        }
+        setConnectedSensors(helper);
+    }
 
 	return (
 		<Box>
@@ -95,7 +137,11 @@ export const SensorModal: FC<modalProps> = (props) => {
 									</Grid>
 								</Grid>
 
-                                {sensorsFound ? <SensorList connected={false} color="white" sensors={sensorsFound} /> : <></>}
+                                {sensorsFound ? (
+                                    sensorsFound.map((sensor: string, index: number) => <SensorListing clickConnect={addConnected} connected={false} index={index} name={sensor} battery={false} />)
+                                ) : (
+                                    <></>
+                                )}
 							</Box>
 						)}
 					</Box>

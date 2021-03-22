@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { FC, useState, useEffect, useCallback } from "react";
 import { Button } from "@material-ui/core";
 import { Check } from "@material-ui/icons";
+import { Add } from "@material-ui/icons";
 import { Box } from "@material-ui/core";
 import { ButtonBase } from "@material-ui/core";
 
@@ -45,8 +46,8 @@ export const ConnectBtn: FC<ButtonProps> = (props) => {
 				onClick={props.func === undefined ? () => {} : props.func}
 				disabled={props.disabled ? true : false}
 			>
-				<Typography variant="button" color="textPrimary">
-					{status ? <Check></Check> : "+"}
+				<Typography variant="button" color="textSecondary">
+					{status ? <Check/> : <Add/>}
 				</Typography>
 			</ButtonBase>
 		</Box>
