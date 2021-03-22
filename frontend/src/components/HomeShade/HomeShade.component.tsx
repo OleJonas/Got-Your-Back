@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Box, Grid, IconButton, makeStyles } from "@material-ui/core";
+import KeyboardEventHandler from "react-keyboard-event-handler";
 import "./HomeShade.css";
 
 // Components
@@ -9,8 +10,10 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 export const HomeShade: React.FC = (props) => {
 	const classes = useStyles();
 	const [isVisible, setIsVisible] = useState(true);
+
 	return (
-		<Box className={`${classes.root} ${isVisible ? "" : "out"}`}>
+		<Box className={`${classes.root} ${isVisible ? "" : "out"}`} onClick={() => setIsVisible(false)}>
+			<KeyboardEventHandler handleKeys={["enter", "space"]} onKeyEvent={() => setIsVisible(false)} />
 			<Grid container justify="center" className={classes.container}>
 				<Grid item xs={10} className={classes.gridLogo}>
 					<img src={Logo} alt="logo" className={classes.logo} />
@@ -53,8 +56,8 @@ const useStyles = makeStyles({
 		height: "20%",
 	},
 	icon: {
-        height: "5rem",
-        width: "5rem",
+		height: "5rem",
+		width: "5rem",
 		color: "white",
 	},
 });

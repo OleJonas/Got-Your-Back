@@ -4,19 +4,21 @@ import { makeStyles } from "@material-ui/core/styles";
 // Components
 import { Button } from "../Buttons/Button.component";
 import { SensorListing } from "../SensorListing/SensorListing";
+import {SensorList} from "../SensorList/SensorList";
 import loader from "../../assets/loader.svg";
 import "./loader.css";
 
 type modalProps = {
 	open: boolean;
 	close?: any;
+    sendSensors: any;
 };
 
 export const SensorModal: FC<modalProps> = (props) => {
 	const classes = useStyles();
 
 	const [sensorsFound, setSensorsFound] = useState<any>();
-	const [connectedSensors, setConnectedSensors] = useState<any>();
+	const [connectedSensors, setConnectedSensors] = useState<number[]>([]);
 	const [isFetching, setIsFetching] = useState(false);
 	const [open, setOpen] = useState(false);
 
@@ -32,7 +34,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				setSensorsFound(data);
+				setSensorsFound(data["sensors"]);
 				setIsFetching(false);
 				setOpen(true);
 			});
@@ -58,18 +60,54 @@ export const SensorModal: FC<modalProps> = (props) => {
 			console.log(connectedSensors);
 		}
 		*/
+        /*console.log("Yo fra handleClose");
+        if(connectedSensors){
+            console.log("Yo fra inni if ye!");
+            let inboundSensors = []
+            for(let i = 0; i < connectedSensors.length; i++){
+                let s = {
+                    "index": i,
+                    "connected": true,
+                    "name": sensorsFound[i][0]
+                }
+                inboundSensors.push(s);
+            }
+            props.sendSensors(inboundSensors);
+        }
+		props.close();
+		setOpen(false);*/
+        console.log("Yo fra handleClose");
+    
+        console.log("Yo fra inni if ye!");
+        let inboundSensors = []
+        for(let i = 0; i < 3; i++){
+            let s = {
+                "index": i,
+                "connected": true,
+                "name": ("SENSOR" + i)
+            }
+            inboundSensors.push(s);
+        }
+        props.sendSensors(inboundSensors);
 		props.close();
 		setOpen(false);
 	};
 
+    const addConnected = (index: number, isConnected: boolean) => {
+        console.log("addConnected")
+        let helper = connectedSensors;
+        console.log(isConnected)
+        if(helper){
+            if(isConnected){
+                console.log("isConnected = true")
+                helper.push(index);
+            }
+        }
+        setConnectedSensors(helper);
+    }
+
 	return (
 		<Box>
-			{connectedSensors ? (
-				connectedSensors["sensors"].map((sensor: string, index: number) => <SensorListing index={index} name={sensor} />)
-			) : (
-				<></>
-			)}
-
 			<Dialog
 				classes={{ paper: classes.paper }}
 				onClose={handleClose}
@@ -100,11 +138,11 @@ export const SensorModal: FC<modalProps> = (props) => {
 									</Grid>
 								</Grid>
 
-								{sensorsFound ? (
-									sensorsFound["sensors"].map((sensor: string, index: number) => <SensorListing index={index} name={sensor} />)
-								) : (
-									<></>
-								)}
+                                {sensorsFound ? (
+                                    sensorsFound.map((sensor: string, index: number) => <SensorListing clickConnect={addConnected} connected={false} index={index} name={sensor} battery={false} />)
+                                ) : (
+                                    <></>
+                                )}
 							</Box>
 						)}
 					</Box>
