@@ -16,6 +16,7 @@ export const HomeView = () => {
 	});
 	const lastPosture: number = Object.values(datapoints).pop();
 	const samplingRate: number = 5
+	const [isRecording, setIsRecording] = useState<boolean>(true)
 
 	useEffect(() => {
 		fetch("http://localhost:5000/all_predictions", {
@@ -83,7 +84,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<ClassificationBox posture={lastPosture} samplingRate={samplingRate} recording={false}></ClassificationBox>
+								<ClassificationBox posture={lastPosture} samplingRate={samplingRate} recording={isRecording}></ClassificationBox>
 							</ContentBox>
 						</Grid>
 
