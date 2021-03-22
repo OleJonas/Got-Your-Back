@@ -7,7 +7,6 @@ import { ContentBox } from "../../components/ContentBox/ContentBox.component";
 import { ClassificationBox } from "../../components/ClassificationContent/ClassificationContent.component";
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
-import { SamplingRateContent } from "../../components/SamplingRateContent/SamplingRateContent.component";
 import { SensorListingContent } from "../../components/SensorListingContent/SensorListingContent.component";
 
 export const HomeView = () => {
@@ -17,7 +16,7 @@ export const HomeView = () => {
 	});
 	const lastPosture: number = Object.values(datapoints).pop();
 	const samplingRate: number = 5
-	
+
 	useEffect(() => {
 		fetch("http://localhost:5000/all_predictions", {
 			headers: {
