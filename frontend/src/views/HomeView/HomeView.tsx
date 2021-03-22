@@ -75,7 +75,7 @@ export const HomeView = () => {
 							</ContentBox>
 						</Grid>
 
-						<Grid item xs={6} md={4} className={classes.infoContainer}>
+						<Grid item xs={12} md={7} className={classes.infoContainer}>
 							<Box mb={0.6}>
 								<Typography variant="h3" color="textPrimary">
 									Classification
@@ -85,16 +85,7 @@ export const HomeView = () => {
 								<ClassificationBox datapoint={datapoints[datapoints.length - 1]}></ClassificationBox>
 							</ContentBox>
 						</Grid>
-						<Grid item xs={6} md={3} justify="center" alignItems="center" className={classes.infoContainer}>
-							<Box mb={0.6}>
-								<Typography variant="h3" color="textPrimary">
-									Sample rate
-								</Typography>
-							</Box>
-							<ContentBox>
-								<SamplingRateContent></SamplingRateContent>
-							</ContentBox>
-						</Grid>
+
 						<Grid item xs={12} md={7} className={classes.graphContainer}>
 							<Box mb={0.6}>
 								<Typography variant="h3" color="textPrimary">
@@ -105,6 +96,7 @@ export const HomeView = () => {
 								<LineChart data={datapoints} />
 							</ContentBox>
 						</Grid>
+
 						<Grid item xs={12} md={5} className={classes.graphContainer}>
 							<Box mb={0.6}>
 								<Typography variant="h3" color="textPrimary">
@@ -115,6 +107,7 @@ export const HomeView = () => {
 								<PieChart data={datapoints} />
 							</ContentBox>
 						</Grid>
+						
 					</Grid>
 				</Grid>
 			</Grid>
