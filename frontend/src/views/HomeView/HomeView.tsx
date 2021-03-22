@@ -15,7 +15,9 @@ export const HomeView = () => {
 	const [datapoints, setDatapoints] = useState<any>({
 		"1998-09-10 08:25:50": "1",
 	});
-
+	const lastPosture: number = Object.values(datapoints).pop();
+	const samplingRate: number = 5
+	
 	useEffect(() => {
 		fetch("http://localhost:5000/all_predictions", {
 			headers: {
@@ -82,7 +84,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<ClassificationBox datapoint={datapoints[datapoints.length - 1]}></ClassificationBox>
+								<ClassificationBox posture={lastPosture} samplingRate={samplingRate} recording={true}></ClassificationBox>
 							</ContentBox>
 						</Grid>
 
@@ -107,7 +109,7 @@ export const HomeView = () => {
 								<PieChart data={datapoints} />
 							</ContentBox>
 						</Grid>
-						
+
 					</Grid>
 				</Grid>
 			</Grid>
@@ -128,7 +130,7 @@ const useStyles = makeStyles({
 		minHeight: "300px",
 	},
 	graphContainer: {
-		height: "400px",
+		height: "300px",
 	},
 	height: {
 		height: "100%",

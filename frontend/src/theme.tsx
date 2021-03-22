@@ -60,7 +60,11 @@ export const theme = createMuiTheme({
       fontWeight: 600,
       lineHeight: '1em'
     },
-    
+    subtitle2: {
+      fontSize: '5rem',
+      fontWeight: 600,
+      lineHeight: '1em'
+    },
     caption: { // NavBar links
       fontSize: '1.1rem',
       fontWeight: 600
