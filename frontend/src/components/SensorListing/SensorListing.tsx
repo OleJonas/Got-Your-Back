@@ -10,8 +10,11 @@ import { Button } from "../Buttons/Button.component";
 
 type SensorProps = {
 	id?: number;
+    connected: boolean;
 	name: string;
 	index: number;
+    clickConnect?: any;
+    battery: boolean;
 };
 
 export const SensorListing: FC<SensorProps> = (props) => {
@@ -43,6 +46,29 @@ export const SensorListing: FC<SensorProps> = (props) => {
 			});
 	}, [isFetching]);
 
+    useEffect(() => {
+        if(!props.clickConnect) return;
+        props.clickConnect(props.index, connected)
+    }, [connected])
+
+    const disconnect = useCallback(async () => {
+        await fetch("http://localhost:5000/setup/disconnect", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify({
+                handle: props.index,
+            }),
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log(data);
+            setConnected(false);
+        });
+    },[connected]);
+
 	const getName = () => {
 		return props.name;
 	};
@@ -50,29 +76,87 @@ export const SensorListing: FC<SensorProps> = (props) => {
 	const getStatus = () => {
 		let out: string = "";
 		if (props.id) out += props.id + "  ";
-		out += connected ? "Tilkoblet" : "Frakoblet";
+		out += connected ? "Connected" : "Disconnected";
 		return out;
 	};
 
+    const getBatteryPercent = useCallback(async () => {
+        await fetch("http://localhost:5000/dummy/battery?id=" + props.index, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log(data);
+            setBatteryPercent(parseInt(data));
+        });
+    },[batteryPercent]);
+    
+    useEffect(() => {
+        if(!props.connected) return;
+		setInterval(getBatteryPercent, 5000);
+    },[]);
+
+    const renderConnected = () => {
+        return(
+            <Grid container className={classes.root}>
+                <Grid container item className={classes.grid} direction="row" justify="flex-start" xs={5}>
+                    <Typography variant="body1" color="textSecondary">
+                        {props.name}
+                    </Typography>
+                </Grid>
+                <Grid container item className={classes.grid} direction="row" justify="flex-start" xs={4}>
+                    <Typography variant="body1" color="textSecondary">
+                        {batteryPercent}
+                    </Typography>
+                </Grid>
+                {(props.battery === true) ?
+                    (<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={4}>
+                        <Typography variant="body1" color="textSecondary">
+                            {batteryPercent}
+                        </Typography>
+                    </Grid>) : 
+                    (<></>)
+                }
+                <Grid className={classes.grid} container justify="flex-start" item xs={3}>
+                    <ConnectBtn status={connected} func={connect} id="connectButton" disabled={isFetching}>
+                        {connected ? ">" : "||"}
+                    </ConnectBtn>
+                </Grid>
+            </Grid>
+        )
+    }
+
+    const renderNotConnected = () => {
+        return(
+            <Grid container className={classes.root}>
+                <Grid container item className={classes.grid} direction="row" justify="flex-start" xs={5}>
+                    <Typography variant="body1" color="textSecondary">
+                        {props.name}
+                    </Typography>
+                </Grid>
+                <Grid container item className={classes.grid} direction="row" justify="flex-start" xs={4}>
+                    <Typography variant="body1" color="textSecondary">
+                        {getStatus()}
+                    </Typography>
+                </Grid>
+                <Grid className={classes.grid} container justify="flex-start" item xs={3}>
+                    <ConnectBtn status={connected} func={connect} id="connectButton" disabled={isFetching}>
+                        {connected ? ">" : "||"}
+                    </ConnectBtn>
+                </Grid>
+            </Grid>
+        )
+    }
+
 	return (
-		<Grid container className={classes.root}>
-			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={5}>
-				<Typography variant="body1" color="textSecondary">
-					{getName()}
-				</Typography>
-			</Grid>
-			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={4}>
-				<Typography variant="body1" color="textSecondary">
-					{getStatus()}
-				</Typography>
-			</Grid>
-			<Grid className={classes.grid} container justify="flex-start" item xs={3}>
-				<ConnectBtn status={connected} func={connect} id="connectButton" disabled={isFetching}>
-					{connected ? ">" : "||"}
-				</ConnectBtn>
-			</Grid>
-		</Grid>
-	);
+        <Box>
+		    {props.connected ? renderConnected() : renderNotConnected()}
+        </Box>
+    );
 };
 
 const AddButton = () => {
