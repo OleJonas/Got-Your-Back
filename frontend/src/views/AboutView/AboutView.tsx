@@ -12,7 +12,7 @@ export const AboutView = () => {
 				<Grid item xs={2} md={1}>
 					<NavBar />
 				</Grid>
-				<Grid item xs={10} md={11}>
+				<Grid item xs={10} md={11} className={classes.container}>
 					<Box m={2}>
 						<Grid container justify="center" spacing={4}>
 							<Grid item xs={12}>
@@ -55,6 +55,10 @@ export const AboutView = () => {
 const useStyles = makeStyles({
 	root: {
 		height: "100vh",
+	},
+	container: {
+		height: "100%",
+		overflow: "auto",
 	},
 	components: {
 		minHeight: "40vh",

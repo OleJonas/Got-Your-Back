@@ -54,7 +54,7 @@ export const HistoryView = () => {
 					<NavBar />
 				</Grid>
 				<Grid item xs={10} md={11} className={classes.height}>
-					<Grid container spacing={2} className={classes.grid}>
+					<Grid container spacing={2} className={classes.container}>
 						<Grid item xs={12}>
 							<Typography variant="h1" color="textPrimary">
 								History
@@ -102,7 +102,7 @@ const useStyles = makeStyles({
 	root: {
 		height: "100%",
 	},
-	grid: {
+	container: {
 		height: "100%",
 		padding: "20px",
 		overflow: "auto",
