@@ -34,8 +34,7 @@ export const SensorListing: FC<SensorProps> = (props) => {
 			body: JSON.stringify({
 				handle: props.index,
 			}),
-		})
-			.then((res) => res.json())
+		}).then((res) => res.json())
 			.then((data) => {
 				console.log(data);
 				setConnected(true);
@@ -50,7 +49,7 @@ export const SensorListing: FC<SensorProps> = (props) => {
 	const getStatus = () => {
 		let out: string = "";
 		if (props.id) out += props.id + "  ";
-		out += connected ? "Tilkoblet" : "Frakoblet";
+		out += connected ? "Connected" : "Disconnected";
 		return out;
 	};
 
