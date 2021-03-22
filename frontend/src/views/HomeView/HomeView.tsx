@@ -72,7 +72,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<SensorListingContent></SensorListingContent>
+								<SensorListingContent />
 							</ContentBox>
 						</Grid>
 
@@ -83,7 +83,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<ClassificationBox posture={lastPosture} samplingRate={samplingRate} recording={true}></ClassificationBox>
+								<ClassificationBox posture={lastPosture} samplingRate={samplingRate} recording={false}></ClassificationBox>
 							</ContentBox>
 						</Grid>
 
