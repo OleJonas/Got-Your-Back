@@ -114,15 +114,14 @@ def get_battery_fresh():
     id = int(request.args.get("id"))
     return str(10 + id)
 
-
 @app.route("/sensor/battery")
 def get_battery():
     global sensor_bank
-    handle = request.json["handle"]
+    handle = int(request.args.get("id"))
     print(handle)
     percent = sensor_bank.sensor_arr[handle].get_battery_percentage()
+    percent.replace('%','')
     return percent
-
 
 @app.route("/classify/start")
 def classification_pipe():
@@ -142,7 +141,6 @@ def classification_pipe():
     print("classification started")
 
     return "started classification..."
-
 
 def check_classify():
     return classify
