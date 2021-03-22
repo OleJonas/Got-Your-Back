@@ -4,6 +4,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Check } from "@material-ui/icons";
 import { theme } from "../../theme";
 import { ConnectBtn } from "../Buttons/ConnectButton.component";
+import sensor_icon from "../../assets/SENSOR_FARGET.png";
+import { DisconnectButton } from "../../components/Buttons/DisconnectButton.component";
 
 // Components
 import { Button } from "../Buttons/Button.component";
@@ -17,7 +19,7 @@ type SensorProps = {
 	battery: boolean;
 };
 
-export const SensorListing: FC<SensorProps> = (props) => {
+export const SensorListingHome: FC<SensorProps> = (props) => {
 	const [name, setName] = useState<string>("");
 	const [batteryPercent, setBatteryPercent] = useState<string>("");
 	const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -52,6 +54,8 @@ export const SensorListing: FC<SensorProps> = (props) => {
 	}, [connected]);
 
 	const disconnect = useCallback(async () => {
+		console.log("Disconnected!");
+		/*
 		await fetch("http://localhost:5000/setup/disconnect", {
 			method: "POST",
 			headers: {
@@ -67,21 +71,12 @@ export const SensorListing: FC<SensorProps> = (props) => {
 				console.log(data);
 				setConnected(false);
 			});
+        */
 	}, [connected]);
 
-	const getName = () => {
-		return props.name;
-	};
-
-	const getStatus = () => {
-		let out: string = "";
-		if (props.id) out += props.id + "  ";
-		out += connected ? "Connected" : "Disconnected";
-		return out;
-	};
-
+	/*
 	const getBatteryPercent = useCallback(async () => {
-		/*
+		
 		await fetch("http://localhost:5000/sensor/battery?id=" + props.index, {
 			method: "GET",
 			headers: {
@@ -97,73 +92,43 @@ export const SensorListing: FC<SensorProps> = (props) => {
 				console.log(data);
 				setBatteryPercent(data);
 			});
-		*/
+		
 	}, [batteryPercent]);
 
 	useEffect(() => {
 		if (!props.connected) return;
 		setInterval(getBatteryPercent, 5000);
 	}, []);
-
-	const renderConnected = () => {
-		return (
-			<Grid container className={classes.root}>
-				<Grid container item className={classes.gridConnected} direction="row" justify="flex-start" xs={2}>
-					<Typography variant="body1" color="textPrimary">
-						{props.name}
-					</Typography>
-				</Grid>
-				<Grid container item className={classes.gridConnected} direction="row" justify="flex-start" xs={4}>
-					<Typography variant="body1" color="textPrimary">
-						{props.name}
-					</Typography>
-				</Grid>
-				<Grid container item className={classes.gridConnected} direction="row" justify="flex-start" xs={2}>
-					<Typography variant="body1" color="textPrimary">
-						{props.index}
-					</Typography>
-				</Grid>
-				<Grid container item className={classes.gridConnected} direction="row" justify="flex-start" xs={2}>
-					<Typography variant="body1" color="textPrimary">
-						{3}
-					</Typography>
-				</Grid>
-				<Grid className={classes.gridConnected} container justify="flex-start" item xs={2}>
-					<ConnectBtn status={connected} func={connect} id="connectButton" disabled={isFetching}>
-						{connected ? ">" : "||"}
-					</ConnectBtn>
-				</Grid>
+    */
+	return (
+		<Grid container className={classes.root}>
+			<Grid container item className={classes.grid} direction="row" justify="center" xs={2}>
+				<Typography variant="body1" color="textPrimary">
+					<img className={classes.img} src={sensor_icon}></img>
+				</Typography>
 			</Grid>
-		);
-	};
-
-	const renderNotConnected = () => {
-		return (
-			<Grid container className={classes.root}>
-				<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={5}>
-					<Typography variant="body1" color="textSecondary">
-						{props.name}
-					</Typography>
-				</Grid>
-				<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={4}>
-					<Typography variant="body1" color="textSecondary">
-						{getStatus()}
-					</Typography>
-				</Grid>
-				<Grid className={classes.grid} container justify="flex-start" item xs={3}>
-					<ConnectBtn status={connected} func={connect} id="connectButton" disabled={isFetching}>
-						{connected ? ">" : "||"}
-					</ConnectBtn>
-				</Grid>
+			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={3}>
+				<Typography variant="body1" color="textPrimary">
+					{props.name}
+				</Typography>
 			</Grid>
-		);
-	};
-
-	return <Box>{props.connected ? renderConnected() : renderNotConnected()}</Box>;
-};
-
-const AddButton = () => {
-	return <></>;
+			<Grid container item className={classes.grid} direction="row" justify="center" xs={2}>
+				<Typography variant="body1" color="textPrimary">
+					{props.index}
+				</Typography>
+			</Grid>
+			<Grid container item className={classes.grid} direction="row" justify="center" xs={2}>
+				<Typography variant="body1" color="textPrimary">
+					{"3,7%"}
+				</Typography>
+			</Grid>
+			<Grid className={classes.grid} container justify="center" item xs={3}>
+				<DisconnectButton status={connected} func={disconnect} id="connectButton" disabled={isFetching}>
+					{connected ? ">" : "||"}
+				</DisconnectButton>
+			</Grid>
+		</Grid>
+	);
 };
 
 const useStyles = makeStyles({
@@ -173,11 +138,10 @@ const useStyles = makeStyles({
 		alignItems: "center",
 	},
 	grid: {
-		paddingLeft: "30px",
-		height: "50px",
-		alignItems: "center",
+		marginTop: "10px",
 	},
-	gridConnected: {
-		border: "2px solid red",
+	img: {
+		width: "40px",
+		height: "40px",
 	},
 });
