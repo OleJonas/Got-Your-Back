@@ -2,10 +2,9 @@ import { FC, useState, useEffect, useCallback } from "react";
 import { Typography, Grid, makeStyles } from "@material-ui/core";
 
 // Components
-import sensor_icon from "../../assets/SENSOR_FARGET.png";
-import SensorButton from "../../components/Buttons/SensorButton.component";
+import SensorButton from "../Buttons/SensorButton.component";
 import BluetoothConnectedIcon from "@material-ui/icons/BluetoothConnected";
-import { theme } from "../../theme";
+import sensor_icon from "../../assets/SENSOR_FARGET.png";
 
 type SensorProps = {
 	id?: number;
@@ -13,12 +12,11 @@ type SensorProps = {
 	name: string;
 	index: number;
 	clickConnect?: any;
-	battery: boolean;
+	battery: number;
 };
 
-export const SensorListingHome: FC<SensorProps> = (props) => {
-	const [name, setName] = useState<string>("");
-	const [batteryPercent, setBatteryPercent] = useState<string>("");
+export const SensorRowHome: FC<SensorProps> = (props) => {
+	const [batteryPercent, setBatteryPercent] = useState<string>(props.battery);
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
@@ -51,31 +49,27 @@ export const SensorListingHome: FC<SensorProps> = (props) => {
 	const getBatteryPercent = useCallback(async () => {
 		if (!props.connected) return;
 		await fetch("http://localhost:5000/sensor/battery?id=" + props.index, {
-			method: "GET",
 			headers: {
 				Accept: "application/json",
 			},
-		}).then((res) => {
-			res.json();
-			console.log(res);
+		})
+		.then(res => res.json())
+		.then(data => {
+			if(data !== undefined) setBatteryPercent(data.battery);
 		});
-		/*
-			.then(data => {
-				if(data !== undefined) setBatteryPercent(data.battery);
-			});
-			*/
 	}, [batteryPercent]);
 
 	useEffect(() => {
 		if (!props.connected) return;
-		setInterval(getBatteryPercent, 5000);
+		setInterval(getBatteryPercent, 30000);
 	}, []);
 
 	return (
 		<Grid container className={classes.root}>
 			<Grid container item className={classes.grid} direction="row" justify="center" xs={2}>
 				<Typography variant="body1" color="textPrimary">
-					<img className={classes.img} src={BluetoothConnectedIcon}></img>
+					{/* <img className={classes.img} src={sensor_icon} /> */}
+					<BluetoothConnectedIcon className={classes.img}/>
 				</Typography>
 			</Grid>
 			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={3}>
@@ -99,6 +93,7 @@ export const SensorListingHome: FC<SensorProps> = (props) => {
 		</Grid>
 	);
 };
+export default SensorRowHome;
 
 const useStyles = makeStyles({
 	root: {

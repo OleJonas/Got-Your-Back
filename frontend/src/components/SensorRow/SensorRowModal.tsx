@@ -3,7 +3,6 @@ import { Box, Typography, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 // Components
-import Button from "../Buttons/Button.component";
 import SensorButton from "../Buttons/SensorButton.component";
 
 type SensorProps = {
@@ -15,11 +14,12 @@ type SensorProps = {
 	battery: boolean;
 };
 
-export const SensorListing: FC<SensorProps> = (props) => {
+export const SensorRowModal: FC<SensorProps> = (props) => {
 	const [name, setName] = useState<string>("");
 	const [batteryPercent, setBatteryPercent] = useState<string>("");
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
+	const [sensorData, setSensorData] = useState<any>();
 	const classes = useStyles();
 
 	const connect = useCallback(async () => {
@@ -39,6 +39,7 @@ export const SensorListing: FC<SensorProps> = (props) => {
 			.then((res) => res.json())
 			.then((data) => {
 				console.log(data);
+				setSensorData(data);
 				setConnected(true);
 				setIsFetching(false);
 			});
@@ -46,30 +47,9 @@ export const SensorListing: FC<SensorProps> = (props) => {
 
 	useEffect(() => {
 		if (!props.clickConnect) return;
-		props.clickConnect(props.index, connected);
+		props.clickConnect(sensorData, connected);
 	}, [connected]);
 
-	const disconnect = useCallback(async () => {
-		await fetch("http://localhost:5000/setup/disconnect", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json",
-			},
-			body: JSON.stringify({
-				handle: props.index,
-			}),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				console.log(data);
-				setConnected(false);
-			});
-	}, [connected]);
-
-	const getName = () => {
-		return props.name;
-	};
 
 	const getStatus = () => {
 		let out: string = "";
@@ -77,26 +57,6 @@ export const SensorListing: FC<SensorProps> = (props) => {
 		out += connected ? "Connected" : "Disconnected";
 		return out;
 	};
-
-	const getBatteryPercent = useCallback(async () => {
-		/*
-		await fetch("http://localhost:5000/sensor/battery?id=" + props.index, {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json",
-			},
-		})
-			.then((res) => {
-				console.log(res.text());
-				//res.json();
-			})
-			.then((data) => {
-				console.log(data);
-				setBatteryPercent(data);
-			});
-		*/
-	}, [batteryPercent]);
 
 	useEffect(() => {
 		if (!props.connected) return;
@@ -155,10 +115,7 @@ export const SensorListing: FC<SensorProps> = (props) => {
 
 	return <Box>{props.connected ? renderConnected() : renderNotConnected()}</Box>;
 };
-
-const AddButton = () => {
-	return <></>;
-};
+export default SensorRowModal;
 
 const useStyles = makeStyles({
 	root: {

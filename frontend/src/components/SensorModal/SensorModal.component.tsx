@@ -3,8 +3,7 @@ import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography, DialogAction
 import { makeStyles } from "@material-ui/core/styles";
 // Components
 import { Button } from "../Buttons/Button.component";
-import { SensorListing } from "../SensorListing/SensorListing";
-import { SensorList } from "../SensorList/SensorList";
+import { SensorRowModal } from "../SensorRow/SensorRowModal";
 import loader from "../../assets/loader.svg";
 import "./loader.css";
 
@@ -16,9 +15,8 @@ type modalProps = {
 
 export const SensorModal: FC<modalProps> = (props) => {
 	const classes = useStyles();
-
 	const [sensorsFound, setSensorsFound] = useState<any>();
-	const [connectedSensors, setConnectedSensors] = useState<number[]>([]);
+	const [connectedSensors, setConnectedSensors] = useState<any[]>([]);
 	const [isFetching, setIsFetching] = useState(false);
 	const [open, setOpen] = useState(false);
 
@@ -51,11 +49,12 @@ export const SensorModal: FC<modalProps> = (props) => {
 	const handleClose = () => {
 		if (connectedSensors) {
 			let inboundSensors: any[] = [];
-            connectedSensors.forEach(i => {
+            connectedSensors.forEach((sensor: any) => {
                 let s = {
-					index: i,
+					index: sensor.id,
 					connected: true,
-					name: sensorsFound[""+i],
+					name: sensor.name,
+                    battery: sensor.battery_percent,
 				};
 				inboundSensors.push(s);
             })
@@ -82,14 +81,14 @@ export const SensorModal: FC<modalProps> = (props) => {
         */
 	};
 
-	const addConnected = (index: number, isConnected: boolean) => {
+	const addConnected = (data: any, isConnected: boolean) => {
 		console.log("addConnected");
 		let helper = connectedSensors;
 		console.log(isConnected);
 		if (helper) {
 			if (isConnected) {
 				console.log("isConnected = true");
-				helper.push(index);
+				helper.push(data);
 			}
 		}
 		setConnectedSensors(helper);
@@ -129,7 +128,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 
 								{sensorsFound ? (
 									sensorsFound.map((sensor: string, index: number) => (
-										<SensorListing clickConnect={addConnected} connected={false} index={index} name={sensor} battery={false} />
+										<SensorRowModal clickConnect={addConnected} connected={false} index={index} name={sensor} battery={false} />
 									))
 								) : (
 									<></>

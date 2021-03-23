@@ -19,7 +19,9 @@ export const ClassificationBox: React.FC<ClassificationProps> = (props) => {
 	const [startRecordRequested, setStartRecordRequested] = useState<any>(false);
 
 	const onStartPressed = () => {
-		setStartRecordRequested(true);
+		if (!props.recording){
+			setStartRecordRequested(true);
+		}
 		//Send request til server
 	};
 
