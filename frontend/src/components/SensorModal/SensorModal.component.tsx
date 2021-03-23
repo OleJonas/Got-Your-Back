@@ -26,7 +26,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 		if (isFetching) return;
 		setIsFetching(true);
 
-		await fetch("http://localhost:5000/setup/scan", {
+		await fetch("http://localhost:5000/found_sensors", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -34,7 +34,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log("Data: ", data);
+				//console.log("Data: ", data);
 				setSensorsFound(data["sensors"]);
 				setIsFetching(false);
 				setOpen(true);
@@ -49,10 +49,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 	}, [props.open]);
 
 	const handleClose = () => {
-
-		console.log("Yo fra handleClose");
 		if (connectedSensors) {
-			console.log("Yo fra inni if ye!");
 			let inboundSensors: any[] = [];
             connectedSensors.forEach(i => {
                 let s = {
@@ -66,7 +63,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 		}
 		props.close();
 		setOpen(false);
-		console.log("Yo fra handleClose");
 		/*
 
 		// DUMMY DATA

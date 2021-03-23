@@ -1,14 +1,11 @@
 import { FC, useState, useEffect, useCallback } from "react";
-import { Box, Divider, Modal, Typography, Grid } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
-import { Check } from "@material-ui/icons";
-import { theme } from "../../theme";
-import { ConnectBtn } from "../Buttons/ConnectButton.component";
-import sensor_icon from "../../assets/SENSOR_FARGET.png";
-import { DisconnectButton } from "../../components/Buttons/DisconnectButton.component";
+import { Typography, Grid, makeStyles } from "@material-ui/core";
 
 // Components
-import { Button } from "../Buttons/Button.component";
+import sensor_icon from "../../assets/SENSOR_FARGET.png";
+import SensorButton from "../../components/Buttons/SensorButton.component";
+import BluetoothConnectedIcon from "@material-ui/icons/BluetoothConnected";
+import { theme } from "../../theme";
 
 type SensorProps = {
 	id?: number;
@@ -33,7 +30,7 @@ export const SensorListingHome: FC<SensorProps> = (props) => {
 
 	const disconnect = useCallback(async () => {
 		console.log("Disconnected!");
-		
+
 		await fetch("http://localhost:5000/setup/disconnect", {
 			method: "POST",
 			headers: {
@@ -51,19 +48,18 @@ export const SensorListingHome: FC<SensorProps> = (props) => {
 			});
 	}, [connected]);
 
-	
 	const getBatteryPercent = useCallback(async () => {
-		if(!props.connected) return;
+		if (!props.connected) return;
 		await fetch("http://localhost:5000/sensor/battery?id=" + props.index, {
 			method: "GET",
 			headers: {
 				Accept: "application/json",
 			},
-		})
-			.then(res => {
-				res.json()
-				console.log(res)})
-			/*
+		}).then((res) => {
+			res.json();
+			console.log(res);
+		});
+		/*
 			.then(data => {
 				if(data !== undefined) setBatteryPercent(data.battery);
 			});
@@ -79,7 +75,7 @@ export const SensorListingHome: FC<SensorProps> = (props) => {
 		<Grid container className={classes.root}>
 			<Grid container item className={classes.grid} direction="row" justify="center" xs={2}>
 				<Typography variant="body1" color="textPrimary">
-					<img className={classes.img} src={sensor_icon}></img>
+					<img className={classes.img} src={BluetoothConnectedIcon}></img>
 				</Typography>
 			</Grid>
 			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={3}>
@@ -98,9 +94,7 @@ export const SensorListingHome: FC<SensorProps> = (props) => {
 				</Typography>
 			</Grid>
 			<Grid className={classes.grid} container justify="center" item xs={3}>
-				<DisconnectButton status={connected} func={disconnect} id="connectButton" disabled={isFetching}>
-					{connected ? ">" : "||"}
-				</DisconnectButton>
+				<SensorButton type="disconnect" status={connected} func={disconnect} id="connectButton" disabled={isFetching} />
 			</Grid>
 		</Grid>
 	);
@@ -118,5 +112,6 @@ const useStyles = makeStyles({
 	img: {
 		width: "40px",
 		height: "40px",
+		color: "#EDB93C",
 	},
 });

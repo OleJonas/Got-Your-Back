@@ -15,8 +15,8 @@ export const HomeView = () => {
 		"1998-09-10 08:25:50": "1",
 	});
 	const lastPosture: number = Object.values(datapoints).pop();
-	const samplingRate: number = 5
-	const [isRecording, setIsRecording] = useState<boolean>(true)
+	const samplingRate: number = 5;
+	const [isRecording, setIsRecording] = useState<boolean>(true);
 
 	useEffect(() => {
 		fetch("http://localhost:5000/all_predictions", {
@@ -109,13 +109,13 @@ export const HomeView = () => {
 								<PieChart data={datapoints} />
 							</ContentBox>
 						</Grid>
-
 					</Grid>
 				</Grid>
 			</Grid>
 		</>
 	);
 };
+export default HomeView;
 
 const useStyles = makeStyles({
 	root: {

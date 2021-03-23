@@ -20,3 +20,4 @@ export const Button: FC<ButtonProps> = (props) => {
 		</Fab>
 	);
 };
+export default Button;
