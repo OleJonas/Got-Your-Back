@@ -29,14 +29,14 @@ export const SensorListContent = () => {
 		setSensors(sensorArr);
 	};
 
-	const mapSensors = sensors.map((sensor: Sensor) => {
-		return <SensorRowHome connected={true} index={sensor.index} name={sensor.name} battery={true} />;
+	const mapSensors = sensors.map((sensor) => {
+		return <SensorRowHome connected={true} index={sensor.index} name={sensor.name} battery={sensor.battery} />;
 	});
 
 	return (
 		<Box className={classes.root}>
 			<Grid className={classes.grid1} item container lg={12}>
-				<Grid className={classes.columns} justify="center" alignItems="center" container lg={12}>
+				<Grid className={classes.columns} justify="center" alignItems="center" item container lg={12}>
 					<Grid container justify="flex-start" item lg={2}>
 						<Typography variant="h5" color="textPrimary"></Typography>
 					</Grid>
@@ -61,7 +61,7 @@ export const SensorListContent = () => {
 				</Grid>
 				{mapSensors}
 			</Grid>
-			<Grid lg={12} container className={classes.grid2}>
+			<Grid lg={12} item container className={classes.grid2}>
 				<Button func={openModal}>Scan </Button>
 				<SensorModal sendSensors={sendSensors} close={closeModal} open={open}></SensorModal>
 			</Grid>

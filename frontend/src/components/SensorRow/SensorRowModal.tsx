@@ -17,6 +17,7 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 	const [batteryPercent, setBatteryPercent] = useState<string>("");
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
+	const [sensorData, setSensorData] = useState<any>();
 	const classes = useStyles();
 
 	const connect = useCallback(async () => {
@@ -36,6 +37,7 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 			.then((res) => res.json())
 			.then((data) => {
 				console.log(data);
+				setSensorData(data);
 				setConnected(true);
 				setIsFetching(false);
 			});
@@ -43,26 +45,9 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 
 	useEffect(() => {
 		if (!props.clickConnect) return;
-		props.clickConnect(props.index, connected);
+		props.clickConnect(sensorData, connected);
 	}, [connected]);
 
-	const disconnect = useCallback(async () => {
-		await fetch("http://localhost:5000/setup/disconnect", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json",
-			},
-			body: JSON.stringify({
-				handle: props.index,
-			}),
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				console.log(data);
-				setConnected(false);
-			});
-	}, [connected]);
 
 	const getStatus = () => {
 		let out: string = "";
@@ -70,26 +55,6 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 		out += connected ? "Connected" : "Disconnected";
 		return out;
 	};
-
-	const getBatteryPercent = useCallback(async () => {
-		/*
-		await fetch("http://localhost:5000/sensor/battery?id=" + props.index, {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json",
-			},
-		})
-			.then((res) => {
-				console.log(res.text());
-				//res.json();
-			})
-			.then((data) => {
-				console.log(data);
-				setBatteryPercent(data);
-			});
-		*/
-	}, [batteryPercent]);
 
 	useEffect(() => {
 		if (!props.connected) return;
