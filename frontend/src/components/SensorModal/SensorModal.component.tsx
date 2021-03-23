@@ -4,14 +4,14 @@ import { makeStyles } from "@material-ui/core/styles";
 // Components
 import { Button } from "../Buttons/Button.component";
 import { SensorListing } from "../SensorListing/SensorListing";
-import {SensorList} from "../SensorList/SensorList";
+import { SensorList } from "../SensorList/SensorList";
 import loader from "../../assets/loader.svg";
 import "./loader.css";
 
 type modalProps = {
 	open: boolean;
 	close?: any;
-    sendSensors: any;
+	sendSensors: any;
 };
 
 export const SensorModal: FC<modalProps> = (props) => {
@@ -34,6 +34,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
+				console.log("Data: ", data);
 				setSensorsFound(data["sensors"]);
 				setIsFetching(false);
 				setOpen(true);
@@ -48,63 +49,55 @@ export const SensorModal: FC<modalProps> = (props) => {
 	}, [props.open]);
 
 	const handleClose = () => {
-		/*
-		let connected: any = [];
-		console.log(sensorsFound);
-		if (sensorsFound) {
-			for (let i = 0; i < sensorsFound["sensors"].length; i++) {
-				console.log(sensorsFound["sensors"][i].props.connected);
-				if (sensorsFound["sensors"][i].props.connected) connected.push(sensorsFound["sensors"][i]);
-			}
-			setConnectedSensors(connected);
-			console.log(connectedSensors);
-		}
-		*/
-        /*console.log("Yo fra handleClose");
-        if(connectedSensors){
-            console.log("Yo fra inni if ye!");
-            let inboundSensors = []
-            for(let i = 0; i < connectedSensors.length; i++){
+
+		console.log("Yo fra handleClose");
+		if (connectedSensors) {
+			console.log("Yo fra inni if ye!");
+			let inboundSensors: any[] = [];
+            connectedSensors.forEach(i => {
                 let s = {
-                    "index": i,
-                    "connected": true,
-                    "name": sensorsFound[i][0]
-                }
-                inboundSensors.push(s);
-            }
-            props.sendSensors(inboundSensors);
-        }
-		props.close();
-		setOpen(false);*/
-        console.log("Yo fra handleClose");
-    
-        console.log("Yo fra inni if ye!");
-        let inboundSensors = []
-        for(let i = 0; i < 3; i++){
-            let s = {
-                "index": i,
-                "connected": true,
-                "name": ("SENSOR" + i)
-            }
-            inboundSensors.push(s);
-        }
-        props.sendSensors(inboundSensors);
+					index: i,
+					connected: true,
+					name: sensorsFound[""+i],
+				};
+				inboundSensors.push(s);
+            })
+			props.sendSensors(inboundSensors);
+		}
 		props.close();
 		setOpen(false);
+		console.log("Yo fra handleClose");
+		/*
+
+		// DUMMY DATA
+		console.log("Yo fra inni if ye!");
+		let inboundSensors = [];
+		for (let i = 0; i < 3; i++) {
+			let s = {
+				index: i,
+				connected: true,
+				name: "SENSOR" + i,
+			};
+			inboundSensors.push(s);
+		}
+		props.sendSensors(inboundSensors);
+		props.close();
+		setOpen(false);
+        */
 	};
 
-    const addConnected = (index: number, isConnected: boolean) => {
-        console.log("addConnected")
-        let helper = connectedSensors;
-        console.log(isConnected)
-        if(helper){
-            if(isConnected){
-                console.log("isConnected = true")
-                helper.push(index);
-            }
-        }
-        setConnectedSensors(helper);
-    }
+	const addConnected = (index: number, isConnected: boolean) => {
+		console.log("addConnected");
+		let helper = connectedSensors;
+		console.log(isConnected);
+		if (helper) {
+			if (isConnected) {
+				console.log("isConnected = true");
+				helper.push(index);
+			}
+		}
+		setConnectedSensors(helper);
+	};
 
 	return (
 		<Box>
@@ -138,11 +131,13 @@ export const SensorModal: FC<modalProps> = (props) => {
 									</Grid>
 								</Grid>
 
-                                {sensorsFound ? (
-                                    sensorsFound.map((sensor: string, index: number) => <SensorListing clickConnect={addConnected} connected={false} index={index} name={sensor} battery={false} />)
-                                ) : (
-                                    <></>
-                                )}
+								{sensorsFound ? (
+									sensorsFound.map((sensor: string, index: number) => (
+										<SensorListing clickConnect={addConnected} connected={false} index={index} name={sensor} battery={false} />
+									))
+								) : (
+									<></>
+								)}
 							</Box>
 						)}
 					</Box>
