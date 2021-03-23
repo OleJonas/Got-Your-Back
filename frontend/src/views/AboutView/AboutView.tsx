@@ -51,6 +51,7 @@ export const AboutView = () => {
 		</>
 	);
 };
+export default AboutView;
 
 const useStyles = makeStyles({
 	root: {

@@ -80,6 +80,7 @@ export const LineChart = (props) => {
 		/>
 	);
 };
+export default LineChart;
 
 const useStyles = makeStyles({
 	root: {

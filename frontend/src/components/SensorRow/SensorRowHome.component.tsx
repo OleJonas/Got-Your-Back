@@ -27,8 +27,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	// eslint-disable-next-line
 	}, [connected]);
 
-	const disconnect = async (index:number) => {
-
+	const disconnect = async (index: number) => {
 		await fetch("http://localhost:5000/setup/disconnect", {
 			method: "POST",
 			headers: {
@@ -36,7 +35,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 				Accept: "application/json",
 			},
 			body: JSON.stringify({
-				"handles": [index]
+				handles: [index],
 			}),
 		})
 			.then((res) => res.json())
@@ -45,7 +44,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 				setConnected(false);
 				props.disconnectFunc(index);
 			});
-	}
+	};
 
 	const getBatteryPercent = useCallback(async () => {
 		if (!props.connected) return;
@@ -87,8 +86,8 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 					{batteryPercent + "%"}
 				</Typography>
 			</Grid>
-			<Grid className={classes.grid} container justify="center" item xs={3}>
-				<SensorButton type="disconnect" status={connected} func={()=>disconnect(props.index)} id="connectButton" disabled={isFetching} />
+			<Grid container justify="center" item xs={2}>
+				<SensorButton type="disconnect" status={connected} func={() => disconnect(props.index)} id="connectButton" disabled={isFetching} />
 			</Grid>
 		</Grid>
 	);

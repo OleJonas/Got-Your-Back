@@ -1,20 +1,15 @@
-import * as React from 'react';
-import { Box } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { Box, makeStyles } from "@material-ui/core";
 
 export const ContentBox: React.FC = (props) => {
-    const classes = useStyles();
-    return (
-        <Box className={classes.root}>
-            {props.children}
-        </Box>
-    )
-}
+	const classes = useStyles();
+	return <Box className={classes.root}>{props.children}</Box>;
+};
+export default ContentBox;
 
 const useStyles = makeStyles({
-    root: {
-        background: "rgba(0,0,0,0.5)",
-        height: "90%",
-        borderRadius: "5px"
-    }
-  });
+	root: {
+		background: "rgba(0,0,0,0.5)",
+		height: "90%",
+		borderRadius: "5px",
+	},
+});

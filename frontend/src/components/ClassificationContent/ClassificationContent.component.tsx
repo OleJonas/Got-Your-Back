@@ -10,14 +10,6 @@ type ClassificationProps = {
 
 export const ClassificationContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles();
-	//const [startRecordRequested, setStartRecordRequested] = useState<any>(false);
-
-	/*const onStartPressed = () => {
-		if (!props.recording) {
-			setStartRecordRequested(true);
-		}
-		//Send request til server
-	};*/
 
 	return (
 		<Box className={classes.root}>
@@ -45,12 +37,5 @@ const useStyles = makeStyles({
 	grid: {
 		height: "100%",
 		textAlign: "center",
-	},
-	btn: {
-		margin: "auto",
-	},
-	recordIcon: {
-		color: "white",
-		fontSize: "50px",
 	},
 });
