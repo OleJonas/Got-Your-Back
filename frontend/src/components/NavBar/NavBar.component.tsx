@@ -1,6 +1,5 @@
 import { FC } from "react";
-import { Grid, Box, Typography, Link } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Grid, Box, Typography, Link, makeStyles } from "@material-ui/core";
 
 // Components
 import Logo from "../../assets/Logo.svg";
@@ -58,6 +57,7 @@ export const NavBar: FC = () => {
 		</Box>
 	);
 };
+export default NavBar;
 
 const useStyles = makeStyles({
 	root: {

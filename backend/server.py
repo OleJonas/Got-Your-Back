@@ -6,6 +6,8 @@ import openzen
 import keras
 import threading
 import time
+import atexit
+import json
 from flask import Flask, request, jsonify, request_started, Response
 from flask_cors import CORS
 sys.path.append("scripts/")
@@ -13,8 +15,19 @@ from sensor_bank import Sensor, Sensor_Bank
 import realtime_test as rt
 from multiprocessing import Process
 
+def shutdown():
+    global client
+    global sensor_bank
+
+    for sensor in sensor_bank.sensor_arr:
+        sensor_bank.disconnect_sensor(sensor.handle)
+    
+    client.close()
+
+atexit.register(shutdown)
+
 app = Flask(__name__)
-#CORS(app)
+# CORS(app)
 CORS(app, support_credentials=True)
 
 client = None
@@ -117,9 +130,29 @@ def connect():
     res = {
         "name": s_name,
         "id": s_id,
-        "battery_percent": sensor_bank.sensor_arr[-1].get_battery_percentage()
+        "battery": sensor_bank.sensor_arr[-1].get_battery_percentage().split("%")[0]
     }
     return res
+
+
+@app.route("/setup/disconnect", methods=["OPTIONS", "POST"])
+def disconnect():
+    # Takes a JSON object as argument. Should be on the form:
+    # {
+    #   handles: [0,1,2,...]
+    # }
+    global sensor_bank
+    sensor_handles = request.json["handles"]
+    print(sensor_handles)
+    for handle in sensor_handles:
+        sensor_bank.disconnect_sensor(handle)
+
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
+
+
+@app.route("/debug/get_sensors")
+def get_sensors():
+    return str(sensor_bank.sensor_arr)
 
 
 @app.route("/setup/sync")
@@ -127,10 +160,12 @@ def sync_sensors():
     rt.sync_sensors(client, sensor_bank)
     return("All sensors are synced!")
 
+
 @app.route("/dummy/battery")
 def get_battery_fresh():
     id = int(request.args.get("id"))
     return str(10 + id)
+
 
 @app.route("/sensor/battery")
 def get_battery():
@@ -138,8 +173,8 @@ def get_battery():
     handle = int(request.args.get("id"))
     print(handle)
     percent = sensor_bank.sensor_arr[handle].get_battery_percentage()
-    percent.replace('%','')
-    return percent
+    return {"battery": str(percent).split("%")[0]}
+
 
 @app.route("/classify/start")
 def classification_pipe():
@@ -159,6 +194,7 @@ def classification_pipe():
     print("classification started")
 
     return "started classification..."
+
 
 def check_classify():
     return classify
@@ -184,13 +220,12 @@ def connect_all():
     return "All connected"
 
 
-
 @app.route('/connected_sensors')
 def get_dummy_connected_sensors():
     return {"sensors": [
-        {"name": "LPMSB2 - 3036EB", "id": "1", "battery_percent": "85,3%"},
-        {"name": "LPMSB2 - 4B3326", "id": "2", "battery_percent": "76,6%"},
-        {"name": "LPMSB2 - 4B31EE", "id": "3", "battery_percent": "54,26%"}
+        {"name": "LPMSB2 - 3036EB", "id": 1, "battery": 85.2},
+        {"name": "LPMSB2 - 4B3326", "id": 2, "battery": 76.6},
+        {"name": "LPMSB2 - 4B31EE", "id": 3, "battery": 54.26},
     ]}
 
 
@@ -198,4 +233,11 @@ def get_dummy_connected_sensors():
 def get_dummy_found_sensors():
     return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
 
+def shutdown():
+    global client
+    global sensor_bank
 
+    for sensor in sensor_bank.sensor_arr:
+        sensor_bank.disconnect_sensor(sensor.handle)
+    
+    client.close()

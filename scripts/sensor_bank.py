@@ -52,6 +52,20 @@ class Sensor_Bank:
             sensor.set_sampling_rate(sampling_rate)
         self.sampling_rate = sampling_rate
         print(f"Sampling rates set to: {sampling_rate}")
+    
+    def get_sensor(self, handle):
+        for sensor in self.sensor_arr:
+            if handle == sensor.handle:
+                return sensor
+        return None
+    
+    def disconnect_sensor(self, handle):
+        for i, sensor in enumerate(self.sensor_arr):
+            found_id = self.handle_to_id[handle]
+            if found_id == sensor.handle:
+                sensor.sensor_obj.release()
+                self.sensor_arr.pop(i)
+            print(self.sensor_arr)
 
     def set_sleep_time(self, sleep_time):
         self.sleep_time = sleep_time

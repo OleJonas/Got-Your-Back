@@ -1,4 +1,3 @@
-import React from "react";
 import { Route, HashRouter, Switch } from "react-router-dom";
 
 // Views

@@ -1,8 +1,8 @@
 import { makeStyles, Typography } from "@material-ui/core";
-import { FC } from "react";
 import { Chart } from "react-google-charts";
 import { posture_names } from "../../utils/posture_names";
 
+// eslint-disable-next-line
 type LineChartProps = {
 	data: JSON,
 	hAxisFormat: "HH:mm:ss" | "HH:mm" | "dd.mm",
@@ -80,6 +80,7 @@ export const LineChart = (props) => {
 		/>
 	);
 };
+export default LineChart;
 
 const useStyles = makeStyles({
 	root: {

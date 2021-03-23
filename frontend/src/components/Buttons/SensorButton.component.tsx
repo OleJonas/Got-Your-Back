@@ -15,6 +15,7 @@ type ButtonProps = {
 };
 
 export const SensorButton: FC<ButtonProps> = (props) => {
+	const classes = useStyles();
 	const [status, setStatus] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -24,8 +25,6 @@ export const SensorButton: FC<ButtonProps> = (props) => {
 			setStatus(false);
 		}
 	}, [props.status]);
-
-	const classes = useStyles();
 
 	return (
 		<Box>
@@ -42,7 +41,7 @@ export const SensorButton: FC<ButtonProps> = (props) => {
 						) : (
 							<AddIcon className={classes.icon} />
 						)
-					) : status ? (
+					) : !status ? (
 						<ClearIcon className={classes.icon} />
 					) : (
 						<AddIcon className={classes.icon} />
@@ -59,8 +58,8 @@ const useStyles = makeStyles({
 		width: "10px",
 	},
 	btn: {
-		height: "30px",
-		width: "30px",
+		height: "25px",
+		width: "25px",
 		borderRadius: "5px",
 		backgroundColor: "#EDB93C",
 	},

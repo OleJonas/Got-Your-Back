@@ -1,4 +1,8 @@
-export const posture_names = {
+type postureProps = {
+	[key in 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8]: string;
+};
+
+export const posture_names: postureProps = {
 	0: "Straight",
 	1: "Forward",
 	2: "Forward-right",

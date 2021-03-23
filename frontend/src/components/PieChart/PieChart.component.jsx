@@ -1,4 +1,6 @@
 import { makeStyles, Typography } from "@material-ui/core";
+
+// Components
 import { Chart } from "react-google-charts";
 import { posture_names } from "../../utils/posture_names";
 
@@ -53,6 +55,7 @@ export const PieChart = (props) => {
 		/>
 	);
 };
+export default PieChart;
 
 const useStyles = makeStyles({
 	root: {

@@ -1,9 +1,10 @@
 import { FC, useState, useEffect, useCallback } from "react";
-import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography, DialogActions } from "@material-ui/core";
+import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+
 // Components
 import { Button } from "../Buttons/Button.component";
-import { SensorRowModal } from "../SensorRow/SensorRowModal";
+import { SensorRowModal } from "../SensorRow/SensorRowModal.component";
 import loader from "../../assets/loader.svg";
 import "./loader.css";
 
@@ -32,7 +33,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				//console.log("Data: ", data);
 				setSensorsFound(data["sensors"]);
 				setIsFetching(false);
 				setOpen(true);
@@ -44,20 +44,21 @@ export const SensorModal: FC<modalProps> = (props) => {
 			setOpen(props.open);
 			scanForSensors();
 		}
+    // eslint-disable-next-line
 	}, [props.open]);
 
 	const handleClose = () => {
 		if (connectedSensors) {
 			let inboundSensors: any[] = [];
-            connectedSensors.forEach((sensor: any) => {
-                let s = {
+			connectedSensors.forEach((sensor: any) => {
+				let s = {
 					index: sensor.id,
 					connected: true,
 					name: sensor.name,
-                    battery: sensor.battery_percent,
+					battery: sensor.battery,
 				};
 				inboundSensors.push(s);
-            })
+			});
 			props.sendSensors(inboundSensors);
 		}
 		props.close();
@@ -110,18 +111,18 @@ export const SensorModal: FC<modalProps> = (props) => {
 					<Box className={classes.sensorBox}>
 						{isFetching ? (
 							<Box>
-								<img src={loader} className="loading"></img>
+								<img src={loader} className="loading" alt="Rotating loading icon"></img>
 							</Box>
 						) : (
 							<Box>
-								<Grid className={classes.columns} container lg={12}>
-									<Grid container className={classes.grid} justify="flex-start" item lg={5}>
+								<Grid className={classes.columns} container xs={12}>
+									<Grid container className={classes.grid} justify="flex-start" item xs={5}>
 										<Typography variant="h6">Sensor name</Typography>
 									</Grid>
-									<Grid container className={classes.grid} justify="flex-start" item lg={4}>
+									<Grid container className={classes.grid} justify="flex-start" item xs={4}>
 										<Typography variant="h6">Status</Typography>
 									</Grid>
-									<Grid container className={classes.grid} justify="center" item lg={3}>
+									<Grid container className={classes.grid} justify="center" item xs={3}>
 										<Typography variant="h6"></Typography>
 									</Grid>
 								</Grid>
@@ -151,6 +152,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 		</Box>
 	);
 };
+export default SensorModal;
 
 const useStyles = makeStyles({
 	root: {
@@ -158,17 +160,14 @@ const useStyles = makeStyles({
 		textAlign: "center",
 		borderRadius: "0",
 	},
-
 	dialogContent: {
 		height: "1000px",
 	},
-
 	grid: {
 		justify: "center",
 		alignItems: "center",
 		paddingLeft: "30px",
 	},
-
 	columns: {
 		maxWidth: "100%",
 		justifyContent: "space-between",
@@ -180,7 +179,7 @@ const useStyles = makeStyles({
 		borderBottom: "1px solid black",
 	},
 	title: {
-		marginTop: "30px",
+		marginTop: "20px",
 	},
 	paper: {
 		height: "80%",
@@ -188,13 +187,12 @@ const useStyles = makeStyles({
 	},
 	sensorBox: {
 		height: "60%",
-		marginTop: "30px",
 		backgroundColor: "rgba(255,255,255,0.9)",
 		width: "95%",
 		margin: "auto",
+		overflow: "auto",
 	},
 	btnGrid: {
-		marginTop: "50px",
-		width: "100%",
+		marginTop: "15%",
 	},
 });
