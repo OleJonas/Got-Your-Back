@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Grid, Box, Typography, makeStyles } from "@material-ui/core";
+import { Grid, Typography, makeStyles } from "@material-ui/core";
 
 // Componentes
 import { Button } from "../Buttons/Button.component";
@@ -28,7 +28,6 @@ export const SensorListContent = () => {
 
 	const removeSensor = (id: number) => {
 		console.log("Removing sensor...  " + id);
-		for (let i = 0; i < sensors.length; i++) console.log(sensors[i].index);
 		const helper = sensors.filter((sensor: Sensor) => sensor.index !== id);
 		setSensors(helper);
 	};

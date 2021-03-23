@@ -15,8 +15,8 @@ type SensorProps = {
 	disconnectFunc: (id: number) => void;
 };
 
-export const SensorRowHome: FC<SensorProps> = (props) => {
-	const [batteryPercent, setBatteryPercent] = useState<string>(props.battery);
+export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
+	const [batteryPercent, setBatteryPercent] = useState<number>(props.battery);
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
@@ -36,7 +36,7 @@ export const SensorRowHome: FC<SensorProps> = (props) => {
 				Accept: "application/json",
 			},
 			body: JSON.stringify({
-				"handles": [props.index]
+				handles: [props.index],
 			}),
 		})
 			.then((res) => res.json())
