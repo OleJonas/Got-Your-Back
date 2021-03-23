@@ -1,5 +1,5 @@
 import { FC, useState, useEffect, useCallback } from "react";
-import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography, DialogActions } from "@material-ui/core";
+import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 // Components
 import { Button } from "../Buttons/Button.component";
@@ -49,14 +49,14 @@ export const SensorModal: FC<modalProps> = (props) => {
 	const handleClose = () => {
 		if (connectedSensors) {
 			let inboundSensors: any[] = [];
-            connectedSensors.forEach(i => {
-                let s = {
+			connectedSensors.forEach((i) => {
+				let s = {
 					index: i,
 					connected: true,
-					name: sensorsFound[""+i],
+					name: sensorsFound["" + i],
 				};
 				inboundSensors.push(s);
-            })
+			});
 			props.sendSensors(inboundSensors);
 		}
 		props.close();
@@ -109,7 +109,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 					<Box className={classes.sensorBox}>
 						{isFetching ? (
 							<Box>
-								<img src={loader} className="loading"></img>
+								<img src={loader} className="loading" alt="Rotating loading icon"></img>
 							</Box>
 						) : (
 							<Box>

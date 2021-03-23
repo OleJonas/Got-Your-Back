@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Grid, Box, Typography, makeStyles } from "@material-ui/core";
+import { Grid, Box, makeStyles } from "@material-ui/core";
 
 // Components
 import { Button } from "../Buttons/Button.component";
-import { posture_names } from "../../utils/posture_names";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 
@@ -13,7 +12,7 @@ type ClassificationProps = {
 	recording: boolean;
 };
 
-export const ClassificationContent: React.FC<ClassificationProps> = (props) => {
+export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles();
 	const [startRecordRequested, setStartRecordRequested] = useState<any>(false);
 
@@ -28,20 +27,18 @@ export const ClassificationContent: React.FC<ClassificationProps> = (props) => {
 		<Box className={classes.root}>
 			<Grid className={classes.grid} justify="center" alignItems="center" container item xs={12}>
 				<Grid item xs={12}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Typography variant="subtitle1" color="textPrimary">
-							{props.posture}
-						</Typography>
-					</Box>
-					<Typography variant="h2" color="textPrimary">
-						{posture_names[props.posture]}
-					</Typography>
+					{props.recording ? <PlayArrowIcon className={classes.recordIcon} /> : <PauseIcon className={classes.recordIcon} />}
+				</Grid>
+				<Grid item xs={12}>
+					<Button func={() => onStartPressed()} disabled={startRecordRequested ? true : false}>
+						{startRecordRequested ? "Starting up ..." : props.recording ? "Stop recording" : "Start recording"}
+					</Button>
 				</Grid>
 			</Grid>
 		</Box>
 	);
 };
-export default ClassificationContent;
+export default RecordContent;
 
 const useStyles = makeStyles({
 	root: {
@@ -52,10 +49,10 @@ const useStyles = makeStyles({
 		textAlign: "center",
 	},
 	btn: {
-		margin: "auto",
+		marginTop: "0px",
 	},
 	recordIcon: {
 		color: "white",
-		fontSize: "50px",
+		fontSize: "200px",
 	},
 });

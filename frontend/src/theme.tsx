@@ -56,9 +56,9 @@ export const theme = createMuiTheme({
 			color: "black",
 		},
 		subtitle1: {
-			fontSize: "7.5rem",
+			fontSize: "8.5rem",
 			fontWeight: 600,
-			lineHeight: "1em",
+			lineHeight: "1.2em",
 		},
 		subtitle2: {
 			fontSize: "5rem",

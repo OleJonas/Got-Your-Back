@@ -1,7 +1,9 @@
 import { FC, useState, useEffect, useCallback } from "react";
-import { Box, Typography, Grid, makeStyles } from "@material-ui/core";
+import { Box, Typography, Grid } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 
 // Components
+import Button from "../Buttons/Button.component";
 import SensorButton from "../Buttons/SensorButton.component";
 
 type SensorProps = {
@@ -13,7 +15,8 @@ type SensorProps = {
 	battery: boolean;
 };
 
-export const SensorRowModal: FC<SensorProps> = (props) => {
+export const SensorListing: FC<SensorProps> = (props) => {
+	const [name, setName] = useState<string>("");
 	const [batteryPercent, setBatteryPercent] = useState<string>("");
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
@@ -63,6 +66,10 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 				setConnected(false);
 			});
 	}, [connected]);
+
+	const getName = () => {
+		return props.name;
+	};
 
 	const getStatus = () => {
 		let out: string = "";
@@ -148,7 +155,6 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 
 	return <Box>{props.connected ? renderConnected() : renderNotConnected()}</Box>;
 };
-export default SensorRowModal;
 
 const useStyles = makeStyles({
 	root: {

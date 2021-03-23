@@ -5,13 +5,17 @@ import { Button } from "../Buttons/Button.component";
 import { SensorRowHome } from "../SensorRow/SensorRowHome.component";
 import { SensorModal } from "../SensorModal/SensorModal.component";
 
+type Sensor = {
+	index: number;
+	name: string;
+};
+
 export const SensorListContent = () => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 	const [sensors, setSensors] = useState([]);
 
 	const openModal = () => {
-		console.log(open);
 		setOpen(true);
 	};
 
@@ -25,7 +29,7 @@ export const SensorListContent = () => {
 		setSensors(sensorArr);
 	};
 
-	const mapSensors = sensors.map((sensor) => {
+	const mapSensors = sensors.map((sensor: Sensor) => {
 		return <SensorRowHome connected={true} index={sensor.index} name={sensor.name} battery={true} />;
 	});
 
