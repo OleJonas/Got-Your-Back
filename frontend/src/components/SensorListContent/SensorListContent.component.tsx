@@ -16,7 +16,7 @@ type Sensor = {
 export const SensorListContent = () => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
-	const [sensors, setSensors] = useState([]);
+	const [sensors, setSensors] = useState<Sensor[]>([]);
 
 	const openModal = () => {
 		setOpen(true);

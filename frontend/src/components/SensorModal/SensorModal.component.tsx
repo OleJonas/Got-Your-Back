@@ -33,7 +33,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				//console.log("Data: ", data);
 				setSensorsFound(data["sensors"]);
 				setIsFetching(false);
 				setOpen(true);
@@ -45,6 +44,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 			setOpen(props.open);
 			scanForSensors();
 		}
+    // eslint-disable-next-line
 	}, [props.open]);
 
 	const handleClose = () => {

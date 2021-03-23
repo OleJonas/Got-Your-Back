@@ -1,5 +1,4 @@
 import { Grid, Box, Typography, makeStyles } from "@material-ui/core";
-
 // Components
 import { posture_names } from "../../utils/posture_names";
 
