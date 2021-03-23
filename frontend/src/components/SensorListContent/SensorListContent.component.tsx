@@ -5,13 +5,17 @@ import { Button } from "../Buttons/Button.component";
 import { SensorRowHome } from "../SensorRow/SensorRowHome.component";
 import { SensorModal } from "../SensorModal/SensorModal.component";
 
+type Sensor = {
+	index: number;
+	name: string;
+};
+
 export const SensorListContent = () => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 	const [sensors, setSensors] = useState([]);
 
 	const openModal = () => {
-		console.log(open);
 		setOpen(true);
 	};
 
@@ -42,7 +46,7 @@ export const SensorListContent = () => {
 	return (
 		<Box className={classes.root}>
 			<Grid className={classes.grid1} item container lg={12}>
-				<Grid className={classes.columns} justify="center" alignItems="center" container lg={12}>
+				<Grid className={classes.columns} justify="center" alignItems="center" item container lg={12}>
 					<Grid container justify="flex-start" item lg={2}>
 						<Typography variant="h5" color="textPrimary"></Typography>
 					</Grid>
@@ -67,7 +71,7 @@ export const SensorListContent = () => {
 				</Grid>
 				{mapSensors}
 			</Grid>
-			<Grid lg={12} container className={classes.grid2}>
+			<Grid lg={12} item container className={classes.grid2}>
 				<Button func={openModal}>Scan </Button>
 				<SensorModal sendSensors={sendSensors} close={closeModal} open={open}></SensorModal>
 			</Grid>

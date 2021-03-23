@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
 import { ContentBox } from "../../components/ContentBox/ContentBox.component";
-import { ClassificationBox } from "../../components/ClassificationContent/ClassificationContent.component";
+import { ClassificationContent } from "../../components/ClassificationContent/ClassificationContent.component";
+import { RecordContent } from "../../components/RecordContent/RecordContent.component";
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 import { SensorListContent } from "../../components/SensorListContent/SensorListContent.component";
@@ -66,7 +67,7 @@ export const HomeView = () => {
 							</Typography>
 						</Grid>
 
-						<Grid item xs={12} md={5} className={classes.infoContainer}>
+						<Grid item xs={12} md={6} className={classes.infoContainer}>
 							<Box mb={0.6}>
 								<Typography variant="h3" color="textPrimary">
 									Connected sensors
@@ -77,14 +78,25 @@ export const HomeView = () => {
 							</ContentBox>
 						</Grid>
 
-						<Grid item xs={12} md={7} className={classes.infoContainer}>
+						<Grid item xs={6} md={3} className={classes.infoContainer}>
+							<Box mb={0.6}>
+								<Typography variant="h3" color="textPrimary">
+									Record
+								</Typography>
+							</Box>
+							<ContentBox>
+								<RecordContent posture={lastPosture} samplingRate={samplingRate} recording={isRecording}></RecordContent>
+							</ContentBox>
+						</Grid>
+
+						<Grid item xs={6} md={3} className={classes.infoContainer}>
 							<Box mb={0.6}>
 								<Typography variant="h3" color="textPrimary">
 									Classification
 								</Typography>
 							</Box>
 							<ContentBox>
-								<ClassificationBox posture={lastPosture} samplingRate={samplingRate} recording={isRecording}></ClassificationBox>
+								<ClassificationContent posture={lastPosture} samplingRate={samplingRate} recording={isRecording}></ClassificationContent>
 							</ContentBox>
 						</Grid>
 

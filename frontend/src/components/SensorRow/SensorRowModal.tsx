@@ -1,6 +1,5 @@
 import { FC, useState, useEffect, useCallback } from "react";
-import { Box, Typography, Grid } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Box, Typography, Grid, makeStyles } from "@material-ui/core";
 
 // Components
 import SensorButton from "../Buttons/SensorButton.component";
@@ -15,7 +14,6 @@ type SensorProps = {
 };
 
 export const SensorRowModal: FC<SensorProps> = (props) => {
-	const [name, setName] = useState<string>("");
 	const [batteryPercent, setBatteryPercent] = useState<string>("");
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
