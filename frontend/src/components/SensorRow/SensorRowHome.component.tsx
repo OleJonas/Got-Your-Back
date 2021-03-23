@@ -13,12 +13,11 @@ type SensorProps = {
 	name: string;
 	index: number;
 	clickConnect?: any;
-	battery: boolean;
+	battery: number;
 };
 
 export const SensorRowHome: FC<SensorProps> = (props) => {
-	const [name, setName] = useState<string>("");
-	const [batteryPercent, setBatteryPercent] = useState<string>("");
+	const [batteryPercent, setBatteryPercent] = useState<string>(props.battery);
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
@@ -51,24 +50,19 @@ export const SensorRowHome: FC<SensorProps> = (props) => {
 	const getBatteryPercent = useCallback(async () => {
 		if (!props.connected) return;
 		await fetch("http://localhost:5000/sensor/battery?id=" + props.index, {
-			method: "GET",
 			headers: {
 				Accept: "application/json",
 			},
-		}).then((res) => {
-			res.json();
-			console.log(res);
+		})
+		.then(res => res.json())
+		.then(data => {
+			if(data !== undefined) setBatteryPercent(data.battery);
 		});
-		/*
-			.then(data => {
-				if(data !== undefined) setBatteryPercent(data.battery);
-			});
-			*/
 	}, [batteryPercent]);
 
 	useEffect(() => {
 		if (!props.connected) return;
-		setInterval(getBatteryPercent, 5000);
+		setInterval(getBatteryPercent, 30000);
 	}, []);
 
 	return (

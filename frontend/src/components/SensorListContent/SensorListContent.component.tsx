@@ -26,7 +26,7 @@ export const SensorListContent = () => {
 	};
 
 	const mapSensors = sensors.map((sensor) => {
-		return <SensorRowHome connected={true} index={sensor.index} name={sensor.name} battery={true} />;
+		return <SensorRowHome connected={true} index={sensor.index} name={sensor.name} battery={sensor.battery} />;
 	});
 
 	return (
