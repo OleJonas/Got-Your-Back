@@ -1,5 +1,4 @@
 import { Grid, Box, makeStyles, Typography, AccordionSummary, Accordion, AccordionDetails } from "@material-ui/core";
-import React from "react";
 
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
@@ -140,6 +139,7 @@ export const HelpView = () => {
 		</>
 	);
 };
+export default HelpView;
 
 const useStyles = makeStyles({
 	root: {

@@ -35,7 +35,6 @@ export const SensorListContent = () => {
 		const helper = sensors.filter((sensor) => {
 			return sensor.index !== id;
 		});
-		console.log(helper);
 		setSensors(helper);
 	};
 
@@ -45,7 +44,7 @@ export const SensorListContent = () => {
 		setSensors(sensorArr);
 	};
 
-	const mapSensors = sensors.map((sensor: Sensor) => {
+	const mapSensors = sensors.map((sensor) => {
 		return (
 			<SensorRowHome connected={true} index={sensor.index} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />
 		);

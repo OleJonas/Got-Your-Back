@@ -1,5 +1,5 @@
-import { Grid, Box, makeStyles, Typography } from "@material-ui/core";
 import { useState, useEffect } from "react";
+import { Grid, Box, makeStyles, Typography } from "@material-ui/core";
 
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";

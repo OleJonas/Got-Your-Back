@@ -1,6 +1,7 @@
 import { FC, useState, useEffect, useCallback } from "react";
 import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+
 // Components
 import { Button } from "../Buttons/Button.component";
 import { SensorRowModal } from "../SensorRow/SensorRowModal";
@@ -49,12 +50,12 @@ export const SensorModal: FC<modalProps> = (props) => {
 	const handleClose = () => {
 		if (connectedSensors) {
 			let inboundSensors: any[] = [];
-            connectedSensors.forEach((sensor: any) => {
-                let s = {
+			connectedSensors.forEach((sensor: any) => {
+				let s = {
 					index: sensor.id,
 					connected: true,
 					name: sensor.name,
-                    battery: sensor.battery_percent,
+					battery: sensor.battery_percent,
 				};
 				inboundSensors.push(s);
 			});
@@ -151,6 +152,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 		</Box>
 	);
 };
+export default SensorModal;
 
 const useStyles = makeStyles({
 	root: {
@@ -158,17 +160,14 @@ const useStyles = makeStyles({
 		textAlign: "center",
 		borderRadius: "0",
 	},
-
 	dialogContent: {
 		height: "1000px",
 	},
-
 	grid: {
 		justify: "center",
 		alignItems: "center",
 		paddingLeft: "30px",
 	},
-
 	columns: {
 		maxWidth: "100%",
 		justifyContent: "space-between",

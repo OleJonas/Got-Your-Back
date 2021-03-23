@@ -97,6 +97,7 @@ export const HistoryView = () => {
 		</>
 	);
 };
+export default HistoryView;
 
 const useStyles = makeStyles({
 	root: {

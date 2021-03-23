@@ -1,5 +1,5 @@
 import { FC, useState, useEffect, useCallback } from "react";
-import { Box, Typography, Grid, makeStyles } from "@material-ui/core";
+import { Typography, Grid, makeStyles } from "@material-ui/core";
 
 // Components
 import SensorButton from "../Buttons/SensorButton.component";

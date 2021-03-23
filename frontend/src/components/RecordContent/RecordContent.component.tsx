@@ -29,7 +29,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 				<Grid item xs={12}>
 					{props.recording ? <PlayArrowIcon className={classes.recordIcon} /> : <PauseIcon className={classes.recordIcon} />}
 				</Grid>
-				<Grid item xs={12}>
+				<Grid item xs={12} className={classes.btn}>
 					<Button func={() => onStartPressed()} disabled={startRecordRequested ? true : false}>
 						{startRecordRequested ? "Starting up ..." : props.recording ? "Stop recording" : "Start recording"}
 					</Button>
@@ -49,7 +49,7 @@ const useStyles = makeStyles({
 		textAlign: "center",
 	},
 	btn: {
-		marginTop: "0px",
+		marginTop: "-40px",
 	},
 	recordIcon: {
 		color: "white",
