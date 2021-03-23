@@ -61,8 +61,10 @@ export const SensorListingHome: FC<SensorProps> = (props) => {
 			},
 		})
 			.then(res => {
-				res.json()
-				console.log(res)})
+				console.log(res.json())})
+			.then(d => {
+				if(d) console.log(d)
+			})
 			/*
 			.then(data => {
 				if(data !== undefined) setBatteryPercent(data.battery);
