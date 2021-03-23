@@ -15,6 +15,7 @@ type ButtonProps = {
 };
 
 export const SensorButton: FC<ButtonProps> = (props) => {
+	const classes = useStyles();
 	const [status, setStatus] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -24,8 +25,6 @@ export const SensorButton: FC<ButtonProps> = (props) => {
 			setStatus(false);
 		}
 	}, [props.status]);
-
-	const classes = useStyles();
 
 	return (
 		<Box>

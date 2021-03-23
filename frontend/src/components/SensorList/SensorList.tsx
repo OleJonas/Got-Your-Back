@@ -1,38 +1,36 @@
-import { useState, FC } from "react";
+import { FC } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Box, Typography } from "@material-ui/core";
-import {SensorListing} from "../SensorRow/SensorRowModal"
+
+// Components
+import { SensorRowModal } from "../SensorRow/SensorRowModal";
 
 type SensorListProps = {
-    connected: boolean,
-    color: string,
-	sensors?: any[]
+	connected: boolean;
+	color: string;
+	sensors?: any[];
 };
 
 export const SensorList: FC<SensorListProps> = (props: SensorListProps) => {
 	const classes = useStyles();
 
-	return( 
+	return (
 		<Box>
-			<Box className={props.color === "white"? classes.whiteSensorBox : classes.sensorBox}>
-                <Grid className={classes.columns} container lg={12}>
-                    <Grid container className={classes.grid} justify="flex-start" item lg={5}>
-                        <Typography variant="h6">Sensor name</Typography>
-                    </Grid>
-                    <Grid container className={classes.grid} justify="flex-start" item lg={4}>
-                        <Typography variant="h6">Status</Typography>
-                    </Grid>
-                    <Grid container className={classes.grid} justify="center" item lg={3}>
-                        <Typography variant="h6"></Typography>
-                    </Grid>
-                </Grid>
+			<Box className={props.color === "white" ? classes.whiteSensorBox : classes.sensorBox}>
+				<Grid className={classes.columns} container lg={12}>
+					<Grid container className={classes.grid} justify="flex-start" item lg={5}>
+						<Typography variant="h6">Sensor name</Typography>
+					</Grid>
+					<Grid container className={classes.grid} justify="flex-start" item lg={4}>
+						<Typography variant="h6">Status</Typography>
+					</Grid>
+					<Grid container className={classes.grid} justify="center" item lg={3}>
+						<Typography variant="h6"></Typography>
+					</Grid>
+				</Grid>
 
-                {props.sensors ? (
-                    props.sensors.map((sensor: string, index: number) => <SensorListing index={index} name={sensor} />)
-                ) : (
-                    <></>
-                )}
-            </Box>
+				{props.sensors ? props.sensors.map((sensor: string, index: number) => <SensorRowModal index={index} name={sensor} />) : <></>}
+			</Box>
 		</Box>
 	);
 };
@@ -72,20 +70,20 @@ const useStyles = makeStyles({
 		width: "70%",
 	},
 
-    whiteSensorBox: {
-        height: "60%",
+	whiteSensorBox: {
+		height: "60%",
 		marginTop: "30px",
 		backgroundColor: "rgba(255,255,255,0.9)",
 		width: "95%",
 		margin: "auto",
-    },
+	},
 
-    sensorBox: {
-        height: "60%",
+	sensorBox: {
+		height: "60%",
 		marginTop: "30px",
 		width: "95%",
 		margin: "auto",
-    },
+	},
 
 	btnGrid: {
 		marginTop: "50px",

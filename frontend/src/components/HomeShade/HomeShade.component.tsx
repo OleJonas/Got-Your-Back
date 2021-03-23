@@ -7,7 +7,7 @@ import "./HomeShade.css";
 import Logo from "../../assets/Logo.svg";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
-export const HomeShade: React.FC = (props) => {
+export const HomeShade: React.FC = () => {
 	const classes = useStyles();
 	const [isVisible, setIsVisible] = useState(true);
 

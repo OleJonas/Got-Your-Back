@@ -100,7 +100,6 @@ const useStyles = makeStyles({
 	icon: {
 		width: "30px",
 		height: "30px",
-		margin: "0 0 0 30px",
 		color: "#EDB93C",
 	},
 });
