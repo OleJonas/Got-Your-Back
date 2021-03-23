@@ -3,7 +3,6 @@ import { Box, Typography, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 // Components
-import Button from "../Buttons/Button.component";
 import SensorButton from "../Buttons/SensorButton.component";
 
 type SensorProps = {

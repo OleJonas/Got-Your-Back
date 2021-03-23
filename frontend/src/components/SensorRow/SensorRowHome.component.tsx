@@ -16,7 +16,6 @@ type SensorProps = {
 };
 
 export const SensorRowHome: FC<SensorProps> = (props) => {
-	const [name, setName] = useState<string>("");
 	const [batteryPercent, setBatteryPercent] = useState<string>("");
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
