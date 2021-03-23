@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 // Components
 import { Button } from "../Buttons/Button.component";
-import { SensorRowModal } from "../SensorRow/SensorRowModal";
+import { SensorRowModal } from "../SensorRow/SensorRowModal.component";
 import loader from "../../assets/loader.svg";
 import "./loader.css";
 
