@@ -32,7 +32,7 @@ export const SensorListingContent = () => {
 	return (
 		<Box className={classes.root}>
 			<Grid className={classes.grid1} item container lg={12}>
-				<Grid className={classes.columns} justify="center" alignItems="center" container lg={12}>
+				<Grid className={classes.columns} justify="center" alignItems="center" item container lg={12}>
 					<Grid container justify="flex-start" item lg={2}>
 						<Typography variant="h5" color="textPrimary"></Typography>
 					</Grid>
@@ -51,13 +51,13 @@ export const SensorListingContent = () => {
 							Battery
 						</Typography>
 					</Grid>
-					<Grid containerjustify="center" item lg={3}>
+					<Grid container justify="center" item lg={3}>
 						<Typography variant="h5" color="textPrimary"></Typography>
 					</Grid>
 				</Grid>
 				{mapSensors}
 			</Grid>
-			<Grid lg={12} container className={classes.grid2}>
+			<Grid lg={12} item container className={classes.grid2}>
 				<Button func={openModal}>Scan </Button>
 				<SensorModal sendSensors={sendSensors} close={closeModal} open={open}></SensorModal>
 			</Grid>
