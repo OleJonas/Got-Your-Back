@@ -27,7 +27,7 @@ def shutdown():
 atexit.register(shutdown)
 
 app = Flask(__name__)
-#CORS(app)
+# CORS(app)
 CORS(app, support_credentials=True)
 
 client = None
@@ -142,10 +142,12 @@ def sync_sensors():
     rt.sync_sensors(client, sensor_bank)
     return("All sensors are synced!")
 
+
 @app.route("/dummy/battery")
 def get_battery_fresh():
     id = int(request.args.get("id"))
     return str(10 + id)
+
 
 @app.route("/sensor/battery")
 def get_battery():
@@ -154,6 +156,7 @@ def get_battery():
     print(handle)
     percent = sensor_bank.sensor_arr[handle].get_battery_percentage()
     return {"battery": str(percent).split("%")[0]}
+
 
 @app.route("/classify/start")
 def classification_pipe():
@@ -173,6 +176,7 @@ def classification_pipe():
     print("classification started")
 
     return "started classification..."
+
 
 def check_classify():
     return classify
@@ -198,20 +202,18 @@ def connect_all():
     return "All connected"
 
 
-
 @app.route('/connected_sensors')
 def get_dummy_connected_sensors():
     return {"sensors": [
-        {"name": "LPMSB2 - 3036EB", "id": "1", "battery_percent": "85,3%"},
-        {"name": "LPMSB2 - 4B3326", "id": "2", "battery_percent": "76,6%"},
-        {"name": "LPMSB2 - 4B31EE", "id": "3", "battery_percent": "54,26%"}
+        {"name": "LPMSB2 - 3036EB", "id": 1, "battery": 85.2},
+        {"name": "LPMSB2 - 4B3326", "id": 2, "battery": 76.6},
+        {"name": "LPMSB2 - 4B31EE", "id": 3, "battery": 54.26},
     ]}
 
 
 @app.route('/found_sensors')
 def get_dummy_found_sensors():
     return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
-
 
 def shutdown():
     global client
