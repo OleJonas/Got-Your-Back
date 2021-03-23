@@ -4,7 +4,6 @@ import { makeStyles } from "@material-ui/core/styles";
 // Components
 import { Button } from "../Buttons/Button.component";
 import { SensorRowModal } from "../SensorRow/SensorRowModal";
-import { SensorList } from "../SensorList/SensorList";
 import loader from "../../assets/loader.svg";
 import "./loader.css";
 
@@ -16,7 +15,6 @@ type modalProps = {
 
 export const SensorModal: FC<modalProps> = (props) => {
 	const classes = useStyles();
-
 	const [sensorsFound, setSensorsFound] = useState<any>();
 	const [connectedSensors, setConnectedSensors] = useState<any[]>([]);
 	const [isFetching, setIsFetching] = useState(false);

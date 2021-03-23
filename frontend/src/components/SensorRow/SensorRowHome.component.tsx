@@ -2,10 +2,9 @@ import { FC, useState, useEffect, useCallback } from "react";
 import { Typography, Grid, makeStyles } from "@material-ui/core";
 
 // Components
-import sensor_icon from "../../assets/SENSOR_FARGET.png";
 import SensorButton from "../Buttons/SensorButton.component";
 import BluetoothConnectedIcon from "@material-ui/icons/BluetoothConnected";
-import { theme } from "../../theme";
+import sensor_icon from "../../assets/SENSOR_FARGET.png";
 
 type SensorProps = {
 	id?: number;
@@ -69,7 +68,8 @@ export const SensorRowHome: FC<SensorProps> = (props) => {
 		<Grid container className={classes.root}>
 			<Grid container item className={classes.grid} direction="row" justify="center" xs={2}>
 				<Typography variant="body1" color="textPrimary">
-					<img className={classes.img} src={BluetoothConnectedIcon}></img>
+					{/* <img className={classes.img} src={sensor_icon} /> */}
+					<BluetoothConnectedIcon className={classes.img}/>
 				</Typography>
 			</Grid>
 			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={3}>
