@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import { Grid, Box, makeStyles, Typography } from "@material-ui/core";
+import Select from "@material-ui/core/Select";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@material-ui/core/FormControl";
+import MenuItem from "@material-ui/core/MenuItem";
 
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
@@ -8,13 +13,15 @@ import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 
 export const HistoryView = () => {
+	const [durationLine, setDurationLine] = useState<number>(7);
+	const [durationColumn, setDurationColumn] = useState<number>(7);
 	const classes = useStyles();
 	const [datapoints, setDatapoints] = useState<any>({
 		"1998-09-10 08:25:50": "1",
 	});
 
 	useEffect(() => {
-		fetch("http://localhost:5000/all_predictions", {
+		fetch("http://localhost:5000/7_days", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -22,30 +29,18 @@ export const HistoryView = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
+				console.log(data);
 				setDatapoints(data);
 			});
 	}, []);
 
-	/*
-	useEffect(() => {
-		setInterval(() => {
-			fetch("http://localhost:5000/prediction", {
-				headers: {
-					"Content-Type": "application/json",
-					Accept: "application/json",
-				},
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					let key = Object.keys(data)[0];
-					let val = Object.values(data)[0];
-					let tmp = datapoints;
-					tmp[key] = val;
-					setDatapoints(tmp);
-				});
-		}, 3000);
-	}, []);
-    */
+	const handleChangeLine = (event: any) => {
+		setDurationLine(event.target.value);
+	};
+
+	const handleChangeColumn = (event: any) => {
+		setDurationColumn(event.target.value);
+	};
 
 	return (
 		<>
@@ -62,34 +57,44 @@ export const HistoryView = () => {
 						</Grid>
 
 						<Grid item xs={12} className={classes.components}>
-							<Box mb={0.6}>
-								<Typography variant="h3" color="textPrimary">
-									This week
-								</Typography>
+							<Box mb={0.6} className={classes.box}>
+								<FormControl className={classes.dropdown}>
+									<InputLabel id="durationLine-controlled-open-select-label">Distribution</InputLabel>
+									<Select
+										labelId="durationLine-controlled-open-select-label"
+										id="durationLine-controlled-open-select"
+										value={durationLine}
+										onChange={handleChangeLine}
+									>
+										<MenuItem value={7}>7 days</MenuItem>
+										<MenuItem value={14}>14 days</MenuItem>
+										<MenuItem value={30}>30 days</MenuItem>
+									</Select>
+								</FormControl>
+								<Typography variant="h3" color="textPrimary"></Typography>
+
+								<ContentBox>
+									<LineChart data={datapoints} />
+								</ContentBox>
 							</Box>
-							<ContentBox>
-								<LineChart data={datapoints} />
-							</ContentBox>
 						</Grid>
 
-						<Grid item xs={12} md={7} className={classes.components}>
-							<Box mb={0.6}>
-								<Typography variant="h3" color="textPrimary">
-									Most common posture today
-								</Typography>
-							</Box>
+						<Grid item xs={12} md={12} className={classes.components}>
+							<FormControl className={classes.dropdown}>
+								<InputLabel id="durationColumn-controlled-open-select-label">Distribution</InputLabel>
+								<Select
+									labelId="durationColumn-controlled-open-select-label"
+									id="durationColumn-controlled-open-select"
+									value={durationColumn}
+									onChange={handleChangeColumn}
+								>
+									<MenuItem value={7}>7 days</MenuItem>
+									<MenuItem value={14}>14 days</MenuItem>
+									<MenuItem value={30}>30 days</MenuItem>
+								</Select>
+							</FormControl>
+
 							<ContentBox />
-						</Grid>
-
-						<Grid item xs={12} md={5} className={classes.components}>
-							<Box mb={0.6}>
-								<Typography variant="h3" color="textPrimary">
-									Distribution last 30 days
-								</Typography>
-							</Box>
-							<ContentBox>
-								<PieChart data={datapoints} />
-							</ContentBox>
 						</Grid>
 					</Grid>
 				</Grid>
@@ -101,6 +106,13 @@ export const HistoryView = () => {
 const useStyles = makeStyles({
 	root: {
 		height: "100%",
+	},
+	box: {
+		height: "100%",
+	},
+
+	dropdown: {
+		minWidth: 120,
 	},
 	container: {
 		height: "100%",

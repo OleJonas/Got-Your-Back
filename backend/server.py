@@ -68,6 +68,24 @@ def get_all_csv_data():
             res[row[0]] = row[1]
     return res
 
+@app.route("/7_days")
+def get_7_days_predictions():
+    res = dict()
+    filearray = os.listdir("./predictions/dummydata")
+    startDate = filearray[0].split(".")[0]
+    today = datetime.datetime.strptime(startDate, '%Y-%m-%d')
+    for i in range(0,7):
+        dayAfter = today + datetime.timedelta(days=i)
+        dayAfterStr = dayAfter.strftime("%Y-%m-%d")
+        print(dayAfterStr)
+        if((dayAfterStr + ".csv") in filearray):
+            print("yeye")
+            with open("./predictions/dummydata/" + str(dayAfterStr + ".csv"), 'r') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    res[row[0]] = row[1]
+        startDate = dayAfterStr
+    return res
 
 @app.route("/prediction")
 def get_csv_data():
