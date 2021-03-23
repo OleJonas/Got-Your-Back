@@ -112,7 +112,7 @@ def connect():
     res = {
         "name": s_name,
         "id": s_id,
-        "battery_percent": sensor_bank.sensor_arr[-1].get_battery_percentage()
+        "battery": sensor_bank.sensor_arr[-1].get_battery_percentage().split("%")[0]
     }
     return res
 

@@ -55,7 +55,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 					index: sensor.id,
 					connected: true,
 					name: sensor.name,
-					battery: sensor.battery_percent,
+					battery: sensor.battery,
 				};
 				inboundSensors.push(s);
 			});
@@ -115,14 +115,14 @@ export const SensorModal: FC<modalProps> = (props) => {
 							</Box>
 						) : (
 							<Box>
-								<Grid className={classes.columns} container lg={12}>
-									<Grid container className={classes.grid} justify="flex-start" item lg={5}>
+								<Grid className={classes.columns} container xs={12}>
+									<Grid container className={classes.grid} justify="flex-start" item xs={5}>
 										<Typography variant="h6">Sensor name</Typography>
 									</Grid>
-									<Grid container className={classes.grid} justify="flex-start" item lg={4}>
+									<Grid container className={classes.grid} justify="flex-start" item xs={4}>
 										<Typography variant="h6">Status</Typography>
 									</Grid>
-									<Grid container className={classes.grid} justify="center" item lg={3}>
+									<Grid container className={classes.grid} justify="center" item xs={3}>
 										<Typography variant="h6"></Typography>
 									</Grid>
 								</Grid>
@@ -179,7 +179,7 @@ const useStyles = makeStyles({
 		borderBottom: "1px solid black",
 	},
 	title: {
-		marginTop: "30px",
+		marginTop: "20px",
 	},
 	paper: {
 		height: "80%",
@@ -187,13 +187,12 @@ const useStyles = makeStyles({
 	},
 	sensorBox: {
 		height: "60%",
-		marginTop: "30px",
 		backgroundColor: "rgba(255,255,255,0.9)",
 		width: "95%",
 		margin: "auto",
+		overflow: "auto",
 	},
 	btnGrid: {
-		marginTop: "50px",
-		width: "100%",
+		marginTop: "15%",
 	},
 });

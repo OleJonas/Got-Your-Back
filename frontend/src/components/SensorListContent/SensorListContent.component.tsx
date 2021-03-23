@@ -16,11 +16,7 @@ type Sensor = {
 export const SensorListContent = () => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
-	const [sensors, setSensors] = useState([
-		{ name: "LPMSB2 - 3036EB", id: 1, battery: 85.2 },
-		{ name: "LPMSB2 - 4B3326", id: 2, battery: 76.6 },
-		{ name: "LPMSB2 - 4B31EE", id: 3, battery: 54.26 },
-	]);
+	const [sensors, setSensors] = useState([]);
 
 	const openModal = () => {
 		setOpen(true);
@@ -32,19 +28,17 @@ export const SensorListContent = () => {
 
 	const removeSensor = (id: number) => {
 		console.log("Removing sensor...  " + id);
-		const helper = sensors.filter((sensor) => {
+		const helper = sensors.filter((sensor: Sensor) => {
 			return sensor.index !== id;
 		});
 		setSensors(helper);
 	};
 
 	const sendSensors = (sensorArr: any) => {
-		console.log("Send sensors yes" + sensorArr);
-		console.log(sensorArr[0].name);
 		setSensors(sensorArr);
 	};
 
-	const mapSensors = sensors.map((sensor) => {
+	const mapSensors = sensors.map((sensor: Sensor) => {
 		return (
 			<SensorRowHome connected={true} index={sensor.index} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />
 		);
