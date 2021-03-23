@@ -26,7 +26,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 		if (isFetching) return;
 		setIsFetching(true);
 
-		await fetch("http://localhost:5000/found_sensors", {
+		await fetch("http://localhost:5000/setup/scan", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
