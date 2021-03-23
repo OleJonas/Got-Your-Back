@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Box, Typography } from "@material-ui/core";
+import { Grid, Box, Typography, makeStyles } from "@material-ui/core";
+
+// Componentes
 import { Button } from "../Buttons/Button.component";
 import { SensorRowHome } from "../SensorRow/SensorRowHome.component";
 import { SensorModal } from "../SensorModal/SensorModal.component";
@@ -15,11 +16,7 @@ type Sensor = {
 export const SensorListContent = () => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
-	const [sensors, setSensors] = useState([
-		{ name: "LPMSB2 - 3036EB", id: 1, battery: 85.2 },
-		{ name: "LPMSB2 - 4B3326", id: 2, battery: 76.6 },
-		{ name: "LPMSB2 - 4B31EE", id: 3, battery: 54.26 },
-	]);
+	const [sensors, setSensors] = useState([]);
 
 	const openModal = () => {
 		setOpen(true);
@@ -29,15 +26,12 @@ export const SensorListContent = () => {
 		setOpen(false);
 	};
 
-
 	const removeSensor = (id: number) => {
 		console.log("Removing sensor...  " + id);
-		for(let i = 0; i < sensors.length; i++) console.log(sensors[i].index)
-		const helper = sensors.filter(sensor => sensor.index != id);
-		console.log(helper)
+		for (let i = 0; i < sensors.length; i++) console.log(sensors[i].index);
+		const helper = sensors.filter((sensor: Sensor) => sensor.index !== id);
 		setSensors(helper);
-	}
-	
+	};
 
 	const sendSensors = (sensorArr: any) => {
 		console.log("Send sensors yes" + sensorArr);
@@ -45,8 +39,10 @@ export const SensorListContent = () => {
 		setSensors(sensorArr);
 	};
 
-	const mapSensors = sensors.map((sensor) => {
-		return <SensorRowHome connected={true} index={sensor.index} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />;
+	const mapSensors = sensors.map((sensor: Sensor) => {
+		return (
+			<SensorRowHome connected={true} index={sensor.index} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />
+		);
 	});
 
 	return (
