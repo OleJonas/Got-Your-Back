@@ -14,7 +14,6 @@ type SensorProps = {
 };
 
 export const SensorRowModal: FC<SensorProps> = (props) => {
-	const [batteryPercent, setBatteryPercent] = useState<string>("");
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
 	const [sensorData, setSensorData] = useState<any>();
@@ -41,11 +40,13 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 				setConnected(true);
 				setIsFetching(false);
 			});
+	// eslint-disable-next-line
 	}, [isFetching]);
 
 	useEffect(() => {
 		if (!props.clickConnect) return;
 		props.clickConnect(sensorData, connected);
+	// eslint-disable-next-line
 	}, [connected]);
 
 
@@ -55,11 +56,6 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 		out += connected ? "Connected" : "Disconnected";
 		return out;
 	};
-
-	useEffect(() => {
-		if (!props.connected) return;
-		setInterval(getBatteryPercent, 5000);
-	}, []);
 
 	const renderConnected = () => {
 		return (

@@ -10,20 +10,21 @@ type SensorProps = {
 	connected: boolean;
 	name: string;
 	index: number;
-	clickConnect?: any;
+	clickConnect: any;
 	battery: number;
 	disconnectFunc: (id: number) => void;
 };
 
 export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	const [batteryPercent, setBatteryPercent] = useState<number>(props.battery);
-	const [isFetching, setIsFetching] = useState<boolean>(false);
+	const [isFetching, ] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
 
 	useEffect(() => {
 		if (!props.clickConnect) return;
 		props.clickConnect(props.index, connected);
+	// eslint-disable-next-line
 	}, [connected]);
 
 	const disconnect = async (index:number) => {
@@ -53,15 +54,17 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 				Accept: "application/json",
 			},
 		})
-			.then((res) => res.json())
-			.then((data) => {
-				if (data !== undefined) setBatteryPercent(data.battery);
-			});
+		.then((res) => res.json())
+		.then((data) => {
+			if (data !== undefined) setBatteryPercent(data.battery);
+		});
+		// eslint-disable-next-line
 	}, [batteryPercent]);
 
 	useEffect(() => {
 		if (!props.connected) return;
 		setInterval(getBatteryPercent, 30000);
+		// eslint-disable-next-line
 	}, []);
 
 	return (
@@ -99,7 +102,6 @@ const useStyles = makeStyles({
 	icon: {
 		width: "30px",
 		height: "30px",
-		margin: "0 0 0 30px",
 		color: "#EDB93C",
 	},
 });

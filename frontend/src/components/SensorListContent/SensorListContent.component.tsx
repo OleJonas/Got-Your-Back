@@ -16,7 +16,7 @@ type Sensor = {
 export const SensorListContent = () => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
-	const [sensors, setSensors] = useState([]);
+	const [sensors, setSensors] = useState<Sensor[]>([]);
 
 	const openModal = () => {
 		setOpen(true);
@@ -28,14 +28,14 @@ export const SensorListContent = () => {
 
 	const removeSensor = (id: number) => {
 		console.log("Removing sensor...  " + id);
-		const helper = sensors.filter(sensor => {return sensor.index !== id});
+		const helper: Sensor[] = sensors.filter((sensor: Sensor) => {return sensor.index !== id});
 		console.log(helper)
 		setSensors(helper);
 	};
 
-	const sendSensors = (sensorArr: any) => {
+	const sendSensors = (sensorArr: Sensor[]) => {
 		console.log("Send sensors yes" + sensorArr);
-		console.log(sensorArr[0].name);
+		console.log(sensorArr);
 		setSensors(sensorArr);
 	};
 

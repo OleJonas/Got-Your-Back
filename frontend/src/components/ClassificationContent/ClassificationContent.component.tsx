@@ -1,11 +1,6 @@
-import { useState } from "react";
 import { Grid, Box, Typography, makeStyles } from "@material-ui/core";
-
 // Components
-import { Button } from "../Buttons/Button.component";
 import { posture_names } from "../../utils/posture_names";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
-import PauseIcon from "@material-ui/icons/Pause";
 
 type ClassificationProps = {
 	posture: number;
@@ -15,14 +10,14 @@ type ClassificationProps = {
 
 export const ClassificationContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles();
-	const [startRecordRequested, setStartRecordRequested] = useState<any>(false);
+	//const [startRecordRequested, setStartRecordRequested] = useState<any>(false);
 
-	const onStartPressed = () => {
+	/*const onStartPressed = () => {
 		if (!props.recording) {
 			setStartRecordRequested(true);
 		}
 		//Send request til server
-	};
+	};*/
 
 	return (
 		<Box className={classes.root}>

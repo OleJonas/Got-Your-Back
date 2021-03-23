@@ -17,7 +17,7 @@ export const HomeView = () => {
 	});
 	const lastPosture: number = Object.values(datapoints).pop();
 	const samplingRate: number = 5;
-	const [isRecording, setIsRecording] = useState<boolean>(false);
+	const [isRecording, ] = useState<boolean>(false);
 
 	useEffect(() => {
 		fetch("http://localhost:5000/all_predictions", {
