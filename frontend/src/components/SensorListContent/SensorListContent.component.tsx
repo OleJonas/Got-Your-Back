@@ -26,8 +26,7 @@ export const SensorListContent = () => {
 
 	const removeSensor = (id: number) => {
 		console.log("Removing sensor...  " + id);
-		for(let i = 0; i < sensors.length; i++) console.log(sensors[i].index)
-		const helper = sensors.filter(sensor => sensor.index != id);
+		const helper = sensors.filter(sensor => {return sensor.index !== id});
 		console.log(helper)
 		setSensors(helper);
 	}
