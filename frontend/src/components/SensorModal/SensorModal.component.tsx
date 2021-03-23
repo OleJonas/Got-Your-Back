@@ -3,7 +3,7 @@ import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography, DialogAction
 import { makeStyles } from "@material-ui/core/styles";
 // Components
 import { Button } from "../Buttons/Button.component";
-import { SensorListing } from "../SensorListing/SensorListing";
+import { SensorRowModal } from "../SensorRow/SensorRowModal";
 import { SensorList } from "../SensorList/SensorList";
 import loader from "../../assets/loader.svg";
 import "./loader.css";
@@ -129,7 +129,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 
 								{sensorsFound ? (
 									sensorsFound.map((sensor: string, index: number) => (
-										<SensorListing clickConnect={addConnected} connected={false} index={index} name={sensor} battery={false} />
+										<SensorRowModal clickConnect={addConnected} connected={false} index={index} name={sensor} battery={false} />
 									))
 								) : (
 									<></>

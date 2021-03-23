@@ -15,7 +15,7 @@ type SensorProps = {
 	battery: boolean;
 };
 
-export const SensorListing: FC<SensorProps> = (props) => {
+export const SensorRowModal: FC<SensorProps> = (props) => {
 	const [name, setName] = useState<string>("");
 	const [batteryPercent, setBatteryPercent] = useState<string>("");
 	const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -155,10 +155,7 @@ export const SensorListing: FC<SensorProps> = (props) => {
 
 	return <Box>{props.connected ? renderConnected() : renderNotConnected()}</Box>;
 };
-
-const AddButton = () => {
-	return <></>;
-};
+export default SensorRowModal;
 
 const useStyles = makeStyles({
 	root: {

@@ -2,10 +2,10 @@ import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Box, Typography } from "@material-ui/core";
 import { Button } from "../Buttons/Button.component";
-import { SensorListingHome } from "../SensorListingHome/SensorListingHome.component";
+import { SensorRowHome } from "../SensorRow/SensorRowHome.component";
 import { SensorModal } from "../SensorModal/SensorModal.component";
 
-export const SensorListingContent = () => {
+export const SensorListContent = () => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 	const [sensors, setSensors] = useState([]);
@@ -26,7 +26,7 @@ export const SensorListingContent = () => {
 	};
 
 	const mapSensors = sensors.map((sensor) => {
-		return <SensorListingHome connected={true} index={sensor.index} name={sensor.name} battery={true} />;
+		return <SensorRowHome connected={true} index={sensor.index} name={sensor.name} battery={true} />;
 	});
 
 	return (
@@ -51,7 +51,7 @@ export const SensorListingContent = () => {
 							Battery
 						</Typography>
 					</Grid>
-					<Grid containerjustify="center" item lg={3}>
+					<Grid container justify="center" item lg={3}>
 						<Typography variant="h5" color="textPrimary"></Typography>
 					</Grid>
 				</Grid>
@@ -64,6 +64,7 @@ export const SensorListingContent = () => {
 		</Box>
 	);
 };
+export default SensorListContent;
 
 const useStyles = makeStyles({
 	root: {

@@ -7,7 +7,7 @@ import { ContentBox } from "../../components/ContentBox/ContentBox.component";
 import { ClassificationBox } from "../../components/ClassificationContent/ClassificationContent.component";
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
-import { SensorListingContent } from "../../components/SensorListingContent/SensorListingContent.component";
+import { SensorListContent } from "../../components/SensorListContent/SensorListContent.component";
 
 export const HomeView = () => {
 	const classes = useStyles();
@@ -16,7 +16,7 @@ export const HomeView = () => {
 	});
 	const lastPosture: number = Object.values(datapoints).pop();
 	const samplingRate: number = 5;
-	const [isRecording, setIsRecording] = useState<boolean>(true);
+	const [isRecording, setIsRecording] = useState<boolean>(false);
 
 	useEffect(() => {
 		fetch("http://localhost:5000/all_predictions", {
@@ -73,7 +73,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<SensorListingContent />
+								<SensorListContent />
 							</ContentBox>
 						</Grid>
 

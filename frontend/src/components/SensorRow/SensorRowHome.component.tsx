@@ -3,7 +3,7 @@ import { Typography, Grid, makeStyles } from "@material-ui/core";
 
 // Components
 import sensor_icon from "../../assets/SENSOR_FARGET.png";
-import SensorButton from "../../components/Buttons/SensorButton.component";
+import SensorButton from "../Buttons/SensorButton.component";
 import BluetoothConnectedIcon from "@material-ui/icons/BluetoothConnected";
 import { theme } from "../../theme";
 
@@ -16,7 +16,7 @@ type SensorProps = {
 	battery: boolean;
 };
 
-export const SensorListingHome: FC<SensorProps> = (props) => {
+export const SensorRowHome: FC<SensorProps> = (props) => {
 	const [name, setName] = useState<string>("");
 	const [batteryPercent, setBatteryPercent] = useState<string>("");
 	const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -99,6 +99,7 @@ export const SensorListingHome: FC<SensorProps> = (props) => {
 		</Grid>
 	);
 };
+export default SensorRowHome;
 
 const useStyles = makeStyles({
 	root: {
