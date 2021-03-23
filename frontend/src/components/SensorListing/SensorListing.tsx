@@ -1,12 +1,10 @@
 import { FC, useState, useEffect, useCallback } from "react";
-import { Box, Divider, Modal, Typography, Grid } from "@material-ui/core";
+import { Box, Typography, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Check } from "@material-ui/icons";
-import { theme } from "../../theme";
-import { ConnectBtn } from "../Buttons/ConnectButton.component";
 
 // Components
-import { Button } from "../Buttons/Button.component";
+import Button from "../Buttons/Button.component";
+import SensorButton from "../Buttons/SensorButton.component";
 
 type SensorProps = {
 	id?: number;
@@ -129,9 +127,7 @@ export const SensorListing: FC<SensorProps> = (props) => {
 					</Typography>
 				</Grid>
 				<Grid className={classes.gridConnected} container justify="flex-start" item xs={2}>
-					<ConnectBtn status={connected} func={connect} id="connectButton" disabled={isFetching}>
-						{connected ? ">" : "||"}
-					</ConnectBtn>
+					<SensorButton type="connect" status={connected} func={connect} id="connectButton" disabled={isFetching} />
 				</Grid>
 			</Grid>
 		);
@@ -151,9 +147,7 @@ export const SensorListing: FC<SensorProps> = (props) => {
 					</Typography>
 				</Grid>
 				<Grid className={classes.grid} container justify="flex-start" item xs={3}>
-					<ConnectBtn status={connected} func={connect} id="connectButton" disabled={isFetching}>
-						{connected ? ">" : "||"}
-					</ConnectBtn>
+					<SensorButton type="connect" status={connected} func={connect} id="connectButton" disabled={isFetching} />
 				</Grid>
 			</Grid>
 		);
