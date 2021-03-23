@@ -34,6 +34,7 @@ export const SensorList: FC<SensorListProps> = (props: SensorListProps) => {
 		</Box>
 	);
 };
+export default SensorList;
 
 const useStyles = makeStyles({
 	root: {
@@ -41,17 +42,14 @@ const useStyles = makeStyles({
 		textAlign: "center",
 		borderRadius: "0",
 	},
-
 	dialogContent: {
 		height: "1000px",
 	},
-
 	grid: {
 		justify: "center",
 		alignItems: "center",
 		paddingLeft: "30px",
 	},
-
 	columns: {
 		maxWidth: "100%",
 		justifyContent: "space-between",
@@ -69,7 +67,6 @@ const useStyles = makeStyles({
 		height: "80%",
 		width: "70%",
 	},
-
 	whiteSensorBox: {
 		height: "60%",
 		marginTop: "30px",
@@ -77,14 +74,12 @@ const useStyles = makeStyles({
 		width: "95%",
 		margin: "auto",
 	},
-
 	sensorBox: {
 		height: "60%",
 		marginTop: "30px",
 		width: "95%",
 		margin: "auto",
 	},
-
 	btnGrid: {
 		marginTop: "50px",
 		width: "100%",
