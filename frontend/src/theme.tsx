@@ -48,6 +48,7 @@ export const theme = createMuiTheme({
 		},
 		h5: {
 			fontSize: "1rem",
+			fontWeight: 300,
 			color: "white",
 		},
 		h6: {
@@ -75,7 +76,7 @@ export const theme = createMuiTheme({
 			fontWeight: 300,
 		},
 		body2: {
-			fontSize: "0.75rem",
+			fontSize: "0.8rem",
 			fontWeight: 200,
 		},
 		overline: {

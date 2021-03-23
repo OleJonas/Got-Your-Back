@@ -42,7 +42,7 @@ export const SensorButton: FC<ButtonProps> = (props) => {
 						) : (
 							<AddIcon className={classes.icon} />
 						)
-					) : status ? (
+					) : !status ? (
 						<ClearIcon className={classes.icon} />
 					) : (
 						<AddIcon className={classes.icon} />
@@ -59,8 +59,8 @@ const useStyles = makeStyles({
 		width: "10px",
 	},
 	btn: {
-		height: "30px",
-		width: "30px",
+		height: "25px",
+		width: "25px",
 		borderRadius: "5px",
 		backgroundColor: "#EDB93C",
 	},

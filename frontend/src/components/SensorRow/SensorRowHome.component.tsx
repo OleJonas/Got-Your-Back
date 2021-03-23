@@ -52,10 +52,10 @@ export const SensorRowHome: FC<SensorProps> = (props) => {
 				Accept: "application/json",
 			},
 		})
-		.then(res => res.json())
-		.then(data => {
-			if(data !== undefined) setBatteryPercent(data.battery);
-		});
+			.then((res) => res.json())
+			.then((data) => {
+				if (data !== undefined) setBatteryPercent(data.battery);
+			});
 	}, [batteryPercent]);
 
 	useEffect(() => {
@@ -64,28 +64,26 @@ export const SensorRowHome: FC<SensorProps> = (props) => {
 	}, []);
 
 	return (
-		<Grid container className={classes.root}>
-			<Grid container item className={classes.grid} direction="row" justify="center" xs={2}>
-				<Typography variant="body1" color="textPrimary">
-					<BluetoothConnectedIcon className={classes.img} />
-				</Typography>
+		<Grid container className={classes.root} direction="row" justify="center" alignItems="center">
+			<Grid item direction="row" justify="center" xs={2}>
+				<BluetoothConnectedIcon className={classes.icon} />
 			</Grid>
-			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={3}>
-				<Typography variant="body1" color="textPrimary">
+			<Grid item direction="row" justify="flex-start" xs={4}>
+				<Typography variant="body2" color="textPrimary">
 					{props.name}
 				</Typography>
 			</Grid>
-			<Grid container item className={classes.grid} direction="row" justify="center" xs={2}>
-				<Typography variant="body1" color="textPrimary">
+			<Grid item direction="row" justify="center" xs={2}>
+				<Typography variant="body2" color="textPrimary">
 					{props.index}
 				</Typography>
 			</Grid>
-			<Grid container item className={classes.grid} direction="row" justify="center" xs={2}>
-				<Typography variant="body1" color="textPrimary">
-					{batteryPercent}
+			<Grid item direction="row" justify="center" xs={2}>
+				<Typography variant="body2" color="textPrimary">
+					{batteryPercent + "%"}
 				</Typography>
 			</Grid>
-			<Grid className={classes.grid} container justify="center" item xs={3}>
+			<Grid item justify="center" xs={2}>
 				<SensorButton type="disconnect" status={connected} func={disconnect} id="connectButton" disabled={isFetching} />
 			</Grid>
 		</Grid>
@@ -95,16 +93,12 @@ export default SensorRowHome;
 
 const useStyles = makeStyles({
 	root: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
-	},
-	grid: {
 		marginTop: "10px",
 	},
-	img: {
-		width: "40px",
-		height: "40px",
+	icon: {
+		width: "30px",
+		height: "30px",
+		margin: "0 0 0 30px",
 		color: "#EDB93C",
 	},
 });
