@@ -29,6 +29,16 @@ export const SensorListContent = () => {
 		setOpen(false);
 	};
 
+
+	const removeSensor = (id: number) => {
+		console.log("Removing sensor...  " + id);
+		for(let i = 0; i < sensors.length; i++) console.log(sensors[i].index)
+		const helper = sensors.filter(sensor => sensor.index != id);
+		console.log(helper)
+		setSensors(helper);
+	}
+	
+
 	const sendSensors = (sensorArr: any) => {
 		console.log("Send sensors yes" + sensorArr);
 		console.log(sensorArr[0].name);
@@ -36,7 +46,7 @@ export const SensorListContent = () => {
 	};
 
 	const mapSensors = sensors.map((sensor) => {
-		return <SensorRowHome connected={true} index={sensor.index} name={sensor.name} battery={sensor.battery} />;
+		return <SensorRowHome connected={true} index={sensor.index} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />;
 	});
 
 	return (

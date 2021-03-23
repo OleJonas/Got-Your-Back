@@ -12,6 +12,7 @@ type SensorProps = {
 	index: number;
 	clickConnect?: any;
 	battery: number;
+	disconnectFunc: (id: number) => void;
 };
 
 export const SensorRowHome: FC<SensorProps> = (props) => {
@@ -35,13 +36,14 @@ export const SensorRowHome: FC<SensorProps> = (props) => {
 				Accept: "application/json",
 			},
 			body: JSON.stringify({
-				handles: [props.index],
+				"handles": [props.index]
 			}),
 		})
 			.then((res) => res.json())
 			.then((data) => {
 				console.log(data);
 				setConnected(false);
+				props.disconnectFunc(props.index);
 			});
 	}, [connected]);
 
