@@ -26,8 +26,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 		props.clickConnect(props.index, connected);
 	}, [connected]);
 
-	const disconnect = useCallback(async () => {
-		console.log("Disconnected!");
+	const disconnect = async (index:number) => {
 
 		await fetch("http://localhost:5000/setup/disconnect", {
 			method: "POST",
@@ -36,16 +35,16 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 				Accept: "application/json",
 			},
 			body: JSON.stringify({
-				handles: [props.index],
+				"handles": [index]
 			}),
 		})
 			.then((res) => res.json())
 			.then((data) => {
 				console.log(data);
 				setConnected(false);
-				props.disconnectFunc(props.index);
+				props.disconnectFunc(index);
 			});
-	}, [connected]);
+	}
 
 	const getBatteryPercent = useCallback(async () => {
 		if (!props.connected) return;
@@ -85,8 +84,8 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 					{batteryPercent + "%"}
 				</Typography>
 			</Grid>
-			<Grid item justify="center" xs={2}>
-				<SensorButton type="disconnect" status={connected} func={disconnect} id="connectButton" disabled={isFetching} />
+			<Grid container justify="center" item xs={2}>
+				<SensorButton type="disconnect" status={connected} func={()=>disconnect(props.index)} id="connectButton" disabled={isFetching} />
 			</Grid>
 		</Grid>
 	);

@@ -48,7 +48,6 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 		props.clickConnect(sensorData, connected);
 	}, [connected]);
 
-
 	const getStatus = () => {
 		let out: string = "";
 		if (props.id) out += props.id + "  ";
@@ -56,62 +55,23 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 		return out;
 	};
 
-	useEffect(() => {
-		if (!props.connected) return;
-		setInterval(getBatteryPercent, 5000);
-	}, []);
-
-	const renderConnected = () => {
-		return (
-			<Grid container className={classes.root}>
-				<Grid container item className={classes.gridConnected} direction="row" justify="flex-start" xs={2}>
-					<Typography variant="body1" color="textPrimary">
-						{props.name}
-					</Typography>
-				</Grid>
-				<Grid container item className={classes.gridConnected} direction="row" justify="flex-start" xs={4}>
-					<Typography variant="body1" color="textPrimary">
-						{props.name}
-					</Typography>
-				</Grid>
-				<Grid container item className={classes.gridConnected} direction="row" justify="flex-start" xs={2}>
-					<Typography variant="body1" color="textPrimary">
-						{props.index}
-					</Typography>
-				</Grid>
-				<Grid container item className={classes.gridConnected} direction="row" justify="flex-start" xs={2}>
-					<Typography variant="body1" color="textPrimary">
-						{3}
-					</Typography>
-				</Grid>
-				<Grid className={classes.gridConnected} container justify="flex-start" item xs={2}>
-					<SensorButton type="connect" status={connected} func={connect} id="connectButton" disabled={isFetching} />
-				</Grid>
+	return (
+		<Grid container className={classes.root}>
+			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={5}>
+				<Typography variant="body1" color="textSecondary">
+					{props.name}
+				</Typography>
 			</Grid>
-		);
-	};
-
-	const renderNotConnected = () => {
-		return (
-			<Grid container className={classes.root}>
-				<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={5}>
-					<Typography variant="body1" color="textSecondary">
-						{props.name}
-					</Typography>
-				</Grid>
-				<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={4}>
-					<Typography variant="body1" color="textSecondary">
-						{getStatus()}
-					</Typography>
-				</Grid>
-				<Grid className={classes.grid} container justify="flex-start" item xs={3}>
-					<SensorButton type="connect" status={connected} func={connect} id="connectButton" disabled={isFetching} />
-				</Grid>
+			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={4}>
+				<Typography variant="body1" color="textSecondary">
+					{getStatus()}
+				</Typography>
 			</Grid>
-		);
-	};
-
-	return <Box>{props.connected ? renderConnected() : renderNotConnected()}</Box>;
+			<Grid className={classes.grid} container justify="flex-start" item xs={3}>
+				<SensorButton type="connect" status={connected} func={connect} id="connectButton" disabled={isFetching} />
+			</Grid>
+		</Grid>
+	);
 };
 export default SensorRowModal;
 
@@ -125,8 +85,5 @@ const useStyles = makeStyles({
 		paddingLeft: "30px",
 		height: "50px",
 		alignItems: "center",
-	},
-	gridConnected: {
-		border: "2px solid red",
 	},
 });

@@ -320,8 +320,6 @@ def classify_pipe(client, data_queue):
     #finally:
         #os.remove(PIPE_NAME)
 
-
-
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Off)
     print("Fuck you")
