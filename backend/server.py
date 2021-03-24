@@ -91,16 +91,16 @@ def get_days_predictions():
     #res dictionary - to keep the result
     res = dict()
 
-    #Array with every filename (as strings) in dummydata folder
+    #Array with every filename (as strings) from dummydata folder
     filearray = os.listdir("./predictions/dummydata")
 
-    #get first date 
+    #get first date from array
     startDate = filearray[0].split(".")[0]
 
     #Parse string to Datetime-object
     today = datetime.datetime.strptime(startDate, '%Y-%m-%d')
 
-    #Iterate through every day of the 'duration'-days long interval, sum predictions and divide by num of days
+    #Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
     for i in range(0,days):
         ith_Day = today + datetime.timedelta(days=i)
         #parse Datetime-object to string
@@ -108,7 +108,7 @@ def get_days_predictions():
 
         preds = np.zeros(9)
 
-        #if there is a file for the i-th day in the interval, sum every prediction and get mean
+        #if there is a file for the i-th day in the interval, proceed, if not, skip
         if((ith_Day_str + ".csv") in filearray):
             with open("./predictions/dummydata/" + str(ith_Day_str + ".csv"), 'r') as file:
                 reader = csv.reader(file)
