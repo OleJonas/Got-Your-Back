@@ -6,6 +6,7 @@ import openzen
 import keras
 import threading
 import time
+import numpy as np
 import atexit
 import json
 from flask import Flask, request, jsonify, request_started, Response
@@ -83,28 +84,38 @@ def get_all_csv_data():
 
 @app.route("/days")
 def get_days_predictions():
+
+    #Get 'duration'-parameter from request
     days = int(request.args.get("duration"))
+    
+    #res dictionary - to keep the result
     res = dict()
+
+    #Array with every filename (as strings) in dummydata folder
     filearray = os.listdir("./predictions/dummydata")
+
+    #get first date 
     startDate = filearray[0].split(".")[0]
+
+    #Parse string to Datetime-object
     today = datetime.datetime.strptime(startDate, '%Y-%m-%d')
+
+    #Iterate through every day of the 'duration'-days long interval, sum predictions and divide by num of days
     for i in range(0,days):
-        dayAfter = today + datetime.timedelta(days=i)
-        dayAfterStr = dayAfter.strftime("%Y-%m-%d")
-        print(dayAfterStr)
+        ith_Day = today + datetime.timedelta(days=i)
+        #parse Datetime-object to string
+        ith_Day_str = ith_Day.strftime("%Y-%m-%d")
 
-        sum = 0
-        numRows = 0
+        preds = np.zeros(9)
 
-        if((dayAfterStr + ".csv") in filearray):
-            print("yeye")
-            with open("./predictions/dummydata/" + str(dayAfterStr + ".csv"), 'r') as file:
+        #if there is a file for the i-th day in the interval, sum every prediction and get mean
+        if((ith_Day_str + ".csv") in filearray):
+            with open("./predictions/dummydata/" + str(ith_Day_str + ".csv"), 'r') as file:
                 reader = csv.reader(file)
                 for row in reader:
-                    sum += int(row[1])
-                    numRows += 1
-            res[dayAfterStr] = int(sum/numRows)
-        startDate = dayAfterStr
+                    preds[int(row[1])] += 1
+            print(preds)
+            res[ith_Day_str] = int(np.argmax(preds))
     return res
 
 @app.route("/prediction")
