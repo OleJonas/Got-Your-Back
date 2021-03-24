@@ -10,7 +10,6 @@ type SensorProps = {
 	connected: boolean;
 	name: string;
 	index: number;
-	clickConnect: any;
 	battery: number;
 	disconnectFunc: (id: number) => void;
 };
@@ -20,12 +19,6 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	const [isFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
-
-	useEffect(() => {
-		if (!props.clickConnect) return;
-		props.clickConnect(props.index, connected);
-		// eslint-disable-next-line
-	}, [connected]);
 
 	const disconnect = async (index: number) => {
 		await fetch("http://localhost:5000/setup/disconnect", {

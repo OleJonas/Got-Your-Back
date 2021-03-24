@@ -10,7 +10,6 @@ type SensorProps = {
 	name: string;
 	index: number;
 	clickConnect?: any;
-	battery: boolean;
 };
 
 export const SensorRowModal: FC<SensorProps> = (props) => {
