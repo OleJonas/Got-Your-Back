@@ -50,7 +50,7 @@ export const LineChart = (props) => {
 					textStyle: { color: "#FFF" },
 					titleTextStyle: { color: "#FFF" },
 					gridlines: { color: "transparent" },
-					format: props.hAxisFormat ? props.hAxisFormat : "HH:mm",
+					format: props.hAxisFormat ? props.hAxisFormat : "YY-MM-dd HH:mm",
 				},
 				vAxis: {
 					ticks: [

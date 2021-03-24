@@ -17,10 +17,11 @@ export const HomeView = () => {
 	});
 	const lastPosture: number = Object.values(datapoints).pop();
 	const samplingRate: number = 5;
-	const [isRecording, ] = useState<boolean>(false);
+	const [isRecording, setIsRecording] = useState<boolean>(false);
 
+	// Fetch classifications and status on recording
 	useEffect(() => {
-		fetch("http://localhost:5000/all_predictions", {
+		fetch("http://localhost:5000/classifications", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -30,12 +31,29 @@ export const HomeView = () => {
 			.then((data) => {
 				setDatapoints(data);
 			});
+
+		fetch("http://localhost:5000/classify/status")
+			.then((response) => response.json())
+			.then((data) => {
+				data ? setIsRecording(true) : setIsRecording(false);
+			});
+	}, []);
+
+	// Fetch status on recording every tenth second
+	useEffect(() => {
+		setInterval(() => {
+			fetch("http://localhost:5000/classify/status")
+				.then((response) => response.json())
+				.then((data) => {
+					data ? setIsRecording(true) : setIsRecording(false);
+				});
+		}, 10000);
 	}, []);
 
 	/*
 	useEffect(() => {
 		setInterval(() => {
-			fetch("http://localhost:5000/prediction", {
+			fetch("http://localhost:5000/classifications/latest", {
 				headers: {
 					"Content-Type": "application/json",
 					Accept: "application/json",
@@ -142,7 +160,8 @@ const useStyles = makeStyles({
 		minHeight: "300px",
 	},
 	graphContainer: {
-		height: "300px",
+		minHeight: "300px",
+		height: "40vh",
 	},
 	height: {
 		height: "100%",

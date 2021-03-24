@@ -5,7 +5,7 @@ import datetime
 import openzen
 import keras
 import threading
-import time
+import numpy as np
 import atexit
 import json
 from flask import Flask, request, jsonify, request_started, Response
@@ -15,31 +15,15 @@ from sensor_bank import Sensor, Sensor_Bank
 import realtime_test as rt
 from multiprocessing import Process
 
-def shutdown():
-    global client
-    global sensor_bank
-
-    for sensor in sensor_bank.sensor_arr:
-        sensor_bank.disconnect_sensor(sensor.handle)
-    
-    client.close()
-
-atexit.register(shutdown)
-
 app = Flask(__name__)
-# CORS(app)
-CORS(app, support_credentials=True)
-
 client = None
 found_sensors = None
 sensor_bank = None
 data_queue = None
-classify = False
 t_pool = []
 
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
-
-cors = CORS(app)
+CORS(app, support_credentials=True)
 
 
 @app.before_first_request
@@ -55,6 +39,7 @@ def init():
     sensor_bank = Sensor_Bank()
 
 
+# Dårlig practice?
 @app.before_request
 def before_request():
     if request.method == "OPTIONS":
@@ -68,29 +53,32 @@ def before_request():
 
 
 @app.route("/")
-def hello_world():
-    return "Hello, World!"
+def confirm_access():
+    return "The API is up and running!"
 
 
-@app.route("/all_predictions")
-def get_all_csv_data():
-    res = dict()
-    with open('predictions.csv', 'r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            res[row[0]] = row[1]
-    return res
+# Debug endpoints
+
+@app.route("/debug/get_sensors")
+def get_sensors():
+    return str(sensor_bank.sensor_arr)
 
 
-@app.route("/prediction")
-def get_csv_data():
-    rows = []
-    with open('predictions.csv', 'r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            rows.append([row[0], row[1]])
-    return {rows[-1][0]: rows[-1][1]}
+@app.route('/dummy/connected_sensors')
+def get_dummy_connected_sensors():
+    return {"sensors": [
+        {"name": "LPMSB2 - 3036EB", "id": 1, "battery": 85.2},
+        {"name": "LPMSB2 - 4B3326", "id": 2, "battery": 76.6},
+        {"name": "LPMSB2 - 4B31EE", "id": 3, "battery": 54.26},
+    ]}
 
+
+@app.route('/dummy/found_sensors')
+def get_dummy_found_sensors():
+    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
+
+
+# Setup endopoints
 
 @app.route("/setup/scan")
 def scan():
@@ -117,6 +105,21 @@ def connect():
     return res
 
 
+@app.route("/setup/connect_all")
+def connect_all():
+    global sensor_bank
+    for sensor in found_sensors:
+        s_name, sensor, imu = rt.connect_to_sensor(client, sensor)
+        sensor_bank.add_sensor(s_name, sensor, imu)
+    return "All connected"
+
+
+@app.route("/setup/sync")
+def sync_sensors():
+    rt.sync_sensors(client, sensor_bank)
+    return "All sensors are synced!"
+
+
 @app.route("/setup/disconnect", methods=["OPTIONS", "POST"])
 def disconnect():
     # Takes a JSON object as argument. Should be on the form:
@@ -128,34 +131,53 @@ def disconnect():
     print(sensor_handles)
     for handle in sensor_handles:
         sensor_bank.disconnect_sensor(handle)
-
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
-
-
-@app.route("/debug/get_sensors")
-def get_sensors():
-    return str(sensor_bank.sensor_arr)
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
-@app.route("/setup/sync")
-def sync_sensors():
-    rt.sync_sensors(client, sensor_bank)
-    return("All sensors are synced!")
+# Classification endpoints
+
+@app.route("/classifications")
+def get_all_classifications():
+    res = dict()
+    with open('./classifications/classifications.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            res[row[0]] = row[1]
+    return res
 
 
-@app.route("/dummy/battery")
-def get_battery_fresh():
-    id = int(request.args.get("id"))
-    return str(10 + id)
+@app.route("/classifications/latest")
+def get_classification():
+    rows = []
+    with open('./classifications/classifications.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            rows.append([row[0], row[1]])
+    return {rows[-1][0]: rows[-1][1]}
 
 
-@app.route("/sensor/battery")
-def get_battery():
-    global sensor_bank
-    handle = int(request.args.get("id"))
-    print(handle)
-    percent = sensor_bank.sensor_arr[handle].get_battery_percentage()
-    return {"battery": str(percent).split("%")[0]}
+@app.route("/classifications/history")
+def get_days_predictions():
+    days = int(request.args.get("duration"))
+    res = dict()
+    filearray = os.listdir("./classifications/dummydata")
+    startDate = filearray[0].split(".")[0]
+    today = datetime.datetime.strptime(startDate, '%Y-%m-%d')
+
+    # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
+    for i in range(0, days):
+        ith_Day = today + datetime.timedelta(days=i)
+        ith_Day_str = ith_Day.strftime("%Y-%m-%d")
+        classifications = np.zeros(9)
+
+        # if there is a file for the i-th day in the interval, proceed, if not, skip
+        if((ith_Day_str + ".csv") in filearray):
+            with open("./classifications/dummydata/" + str(ith_Day_str + ".csv"), 'r') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    classifications[int(row[1])] += 1
+            res[ith_Day_str] = int(np.argmax(classifications))
+    return res
 
 
 @app.route("/classify/start")
@@ -174,12 +196,12 @@ def classification_pipe():
     classify_thread.start()
 
     print("classification started")
+    return json.dumps(sensor_bank.run)
 
-    return "started classification..."
 
-
+@app.route("/classify/status")
 def check_classify():
-    return classify
+    return json.dumps(sensor_bank.run)
 
 
 @app.route("/classify/stop")
@@ -190,36 +212,26 @@ def stop_classify():
     print("Stopping classification...")
     for t in t_pool:
         t.join()
-    return str(sensor_bank.run)
+    return json.dumps(sensor_bank.run)
 
 
-@app.route("/setup/connect_all")
-def connect_all():
+# Information endpoints
+
+@app.route("/sensor/battery")
+def get_battery():
     global sensor_bank
-    for sensor in found_sensors:
-        s_name, sensor, imu = rt.connect_to_sensor(client, sensor)
-        sensor_bank.add_sensor(s_name, sensor, imu)
-    return "All connected"
+    handle = int(request.args.get("id"))
+    print(handle)
+    percent = sensor_bank.sensor_arr[handle].get_battery_percentage()
+    return {"battery": str(percent).split("%")[0]}
 
-
-@app.route('/connected_sensors')
-def get_dummy_connected_sensors():
-    return {"sensors": [
-        {"name": "LPMSB2 - 3036EB", "id": 1, "battery": 85.2},
-        {"name": "LPMSB2 - 4B3326", "id": 2, "battery": 76.6},
-        {"name": "LPMSB2 - 4B31EE", "id": 3, "battery": 54.26},
-    ]}
-
-
-@app.route('/found_sensors')
-def get_dummy_found_sensors():
-    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
 
 def shutdown():
     global client
     global sensor_bank
-
     for sensor in sensor_bank.sensor_arr:
         sensor_bank.disconnect_sensor(sensor.handle)
-    
     client.close()
+
+
+atexit.register(shutdown)
