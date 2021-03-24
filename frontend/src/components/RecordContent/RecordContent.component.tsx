@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Grid, Box, makeStyles } from "@material-ui/core";
 
 // Components
@@ -14,24 +14,41 @@ type ClassificationProps = {
 
 export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles();
-	const [startRecordRequested, setStartRecordRequested] = useState<any>(false);
+	const [isRecording, setIsRecording] = useState<Boolean>(props.recording);
+	const [buttonPressed, setButtonPressed] = useState<Boolean>(false);
 
-	const onStartPressed = () => {
-		if (!props.recording) {
-			setStartRecordRequested(true);
+	const onButtonPressed = () => {
+		setButtonPressed(true);
+		if (!isRecording) {
+			fetch("http://localhost:5000/classify/start")
+				.then((response) => response.json())
+				.then((data) => {
+					if (data) {
+						setIsRecording(true);
+						setButtonPressed(false);
+					}
+				});
+		} else {
+			fetch("http://localhost:5000/classify/stop")
+				.then((response) => response.json())
+				.then((data) => {
+					if (!data) {
+						setIsRecording(false);
+						setButtonPressed(false);
+					}
+				});
 		}
-		//Send request til server
 	};
 
 	return (
 		<Box className={classes.root}>
 			<Grid className={classes.grid} justify="center" alignItems="center" container item xs={12}>
 				<Grid item xs={12}>
-					{props.recording ? <PlayArrowIcon className={classes.recordIcon} /> : <PauseIcon className={classes.recordIcon} />}
+					{isRecording ? <PlayArrowIcon className={classes.recordIcon} /> : <PauseIcon className={classes.recordIcon} />}
 				</Grid>
 				<Grid item xs={12} className={classes.btn}>
-					<Button func={() => onStartPressed()} disabled={startRecordRequested ? true : false}>
-						{startRecordRequested ? "Starting up ..." : props.recording ? "Stop recording" : "Start recording"}
+					<Button func={() => onButtonPressed()} disabled={buttonPressed ? true : false}>
+						{buttonPressed ? (isRecording ? "Closing down ..." : "Starting up ...") : isRecording ? "Stop Recording" : "Start Recording"}
 					</Button>
 				</Grid>
 			</Grid>

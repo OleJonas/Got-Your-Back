@@ -14,7 +14,7 @@ export const HistoryView = () => {
 	});
 
 	useEffect(() => {
-		fetch("http://localhost:5000/all_predictions", {
+		fetch("http://localhost:5000/classifications", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -29,7 +29,7 @@ export const HistoryView = () => {
 	/*
 	useEffect(() => {
 		setInterval(() => {
-			fetch("http://localhost:5000/prediction", {
+			fetch("http://localhost:5000/classifications/latest", {
 				headers: {
 					"Content-Type": "application/json",
 					Accept: "application/json",
