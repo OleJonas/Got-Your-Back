@@ -11,17 +11,21 @@ import { NavBar } from "../../components/NavBar/NavBar.component";
 import { ContentBox } from "../../components/ContentBox/ContentBox.component";
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
+import { ColumnChart } from "../../components/ColumnChart/ColumnChart.component";
 
 export const HistoryView = () => {
 	const [durationLine, setDurationLine] = useState<number>(7);
 	const [durationColumn, setDurationColumn] = useState<number>(7);
 	const classes = useStyles();
-	const [datapoints, setDatapoints] = useState<any>({
+	const [datapointsLine, setDatapointsLine] = useState<any>({
+		"1998-09-10 08:25:50": "1",
+	});
+	const [datapointsColumn, setDatapointsColumn] = useState<any>({
 		"1998-09-10 08:25:50": "1",
 	});
 
 	useEffect(() => {
-		fetch("http://localhost:5000/7_days", {
+		fetch("http://localhost:5000/days?duration=" + durationLine, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -30,9 +34,23 @@ export const HistoryView = () => {
 			.then((response) => response.json())
 			.then((data) => {
 				console.log(data);
-				setDatapoints(data);
+				setDatapointsLine(data);
 			});
-	}, []);
+	}, [durationLine]);
+
+	useEffect(() => {
+		fetch("http://localhost:5000/days?duration=" + durationColumn, {
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json",
+			},
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(data);
+				setDatapointsColumn(data);
+			});
+	}, [durationColumn]);
 
 	const handleChangeLine = (event: any) => {
 		setDurationLine(event.target.value);
@@ -74,7 +92,7 @@ export const HistoryView = () => {
 								<Typography variant="h3" color="textPrimary"></Typography>
 
 								<ContentBox>
-									<LineChart data={datapoints} />
+									<LineChart hAxisFormat={"dd-MM-YY"} data={datapointsLine} />
 								</ContentBox>
 							</Box>
 						</Grid>
@@ -94,7 +112,9 @@ export const HistoryView = () => {
 								</Select>
 							</FormControl>
 
-							<ContentBox />
+							<ContentBox>
+								<ColumnChart data={datapointsColumn} />
+							</ContentBox>
 						</Grid>
 					</Grid>
 				</Grid>

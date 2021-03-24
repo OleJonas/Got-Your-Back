@@ -1,18 +1,28 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
 import { posture_names } from "../../utils/posture_names";
+import { FC } from "react";
 
-export const ColumnChart = () => {
+type ColumnChartProps = {
+	data: JSON;
+	hAxisFormat?: "HH:mm:ss" | "HH:mm" | "dd.mm";
+	actions: []; //["dragToPan", "dragToZoom", "rightClickToReset"]
+};
+
+export const ColumnChart: FC<ColumnChartProps> = (props) => {
 	const classes = useStyles();
-    
+	let postures = ["Upright", "Forward", "Forward right", "Right", "Backward right", "Backward", "Backward left", "Left", "Forward left"];
 	const processedData = () => {
 		const predictions = Object.values(props.data);
 		let posture_occurences = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 		predictions.forEach((pred) => (posture_occurences[pred] += 1));
-		let chartData = [["Posture", "Total amount of predicions"]];
+		let chartData = [];
+		chartData.push(["posture", "amount"]);
 		for (let i = 0; i < posture_occurences.length; i += 1) {
-			chartData.push([posture_names[i], posture_occurences[i]]);
+			let tempArr = [postures[i], posture_occurences[i]];
+			chartData.push(tempArr);
 		}
+		console.log(chartData);
 		return chartData;
 	};
 
@@ -28,28 +38,31 @@ export const ColumnChart = () => {
 			}
 			data={processedData()}
 			options={{
-				backgroundColor: "transparent",
-				pieSliceBorderColor: "transparent", //"#0a2339"
-				// pieSliceText: "label",
-				// slices: { 4: { offset: 0.1 }},
-				// pieHole: 0.4,
-				// tooltip: {ignoreBounds: false},
+				legend: "none",
 				chartArea: {
-					top: 20,
-					left: 20,
-					bottom: 20,
+					top: 50,
+					left: 50,
+					bottom: 50,
+					right: 50,
 					width: "100%",
 					height: "100%",
 				},
-				tooltip: { showColorCode: true },
-				colors: ["#EDB93C", "#ad519e", "5662AC", "#2d5aad", "#2dabad", "#2dad73", "#b30707", "#dc3912", "#d1660f"],
-				legend: {
+				vAxis: {
 					textStyle: { color: "#FFF" },
-					alignment: "center",
+					titleTextStyle: { color: "#FFF" },
+					gridlines: { color: "#5e5e5e" },
 				},
+				hAxis: {
+					title: "Timestamps",
+					textStyle: { color: "#FFF" },
+					titleTextStyle: { color: "#FFF" },
+					gridlines: { color: "transparent" },
+				},
+				backgroundColor: "transparent",
+				tooltip: { showColorCode: true },
+				colors: ["#EDB93C"],
 			}}
 			rootProps={{ "data-testid": "1" }}
-			className={classes.root}
 		/>
 	);
 };

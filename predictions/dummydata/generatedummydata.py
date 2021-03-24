@@ -13,12 +13,13 @@ def generate(todate, fromdate):
         with open(str(datetime.datetime.strftime(today, '%Y-%m-%d') + ".csv"), 'w', newline='') as file:
             fnames = ['time', 'prediction']
             writer = csv.DictWriter(file, fieldnames=fnames)
-            nextTime = today + datetime.timedelta(seconds=1)
-            for i in range(0, 8):
-                randomNumber = random.randint(1,197)
-                for _ in range(1,randomNumber):
-                    writer.writerow({'time' : datetime.datetime.strftime(nextTime, '%Y-%m-%d %H:%M:%S'), 'prediction' : i})
-                    nextTime = nextTime + datetime.timedelta(seconds=1)
+            endOfDay = today + datetime.timedelta(hours=8)
+            total_seconds = (endOfDay - today).total_seconds()
+            nextTime = today
+            for i in range(0, int(total_seconds)):
+                randomNumber = random.randint(0,8)
+                writer.writerow({'time' : datetime.datetime.strftime(nextTime, '%Y-%m-%d %H:%M:%S'), 'prediction' : randomNumber})
+                nextTime = nextTime + datetime.timedelta(seconds=1)
         today = today + datetime.timedelta(days=1)
 
 if __name__ == "__main__":

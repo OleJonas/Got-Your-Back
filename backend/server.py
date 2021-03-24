@@ -75,28 +75,35 @@ def hello_world():
 @app.route("/all_predictions")
 def get_all_csv_data():
     res = dict()
-    with open('predictions.csv', 'r') as file:
+    with open('./predictions/predictions.csv', 'r') as file:
         reader = csv.reader(file)
         for row in reader:
             res[row[0]] = row[1]
     return res
 
-@app.route("/7_days")
-def get_7_days_predictions():
+@app.route("/days")
+def get_days_predictions():
+    days = int(request.args.get("duration"))
     res = dict()
     filearray = os.listdir("./predictions/dummydata")
     startDate = filearray[0].split(".")[0]
     today = datetime.datetime.strptime(startDate, '%Y-%m-%d')
-    for i in range(0,7):
+    for i in range(0,days):
         dayAfter = today + datetime.timedelta(days=i)
         dayAfterStr = dayAfter.strftime("%Y-%m-%d")
         print(dayAfterStr)
+
+        sum = 0
+        numRows = 0
+
         if((dayAfterStr + ".csv") in filearray):
             print("yeye")
             with open("./predictions/dummydata/" + str(dayAfterStr + ".csv"), 'r') as file:
                 reader = csv.reader(file)
                 for row in reader:
-                    res[row[0]] = row[1]
+                    sum += int(row[1])
+                    numRows += 1
+            res[dayAfterStr] = int(sum/numRows)
         startDate = dayAfterStr
     return res
 
