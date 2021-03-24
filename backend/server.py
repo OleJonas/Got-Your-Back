@@ -5,6 +5,7 @@ import datetime
 import openzen
 import keras
 import threading
+import numpy as np
 import atexit
 import json
 from flask import Flask, request, jsonify, request_started, Response
@@ -24,10 +25,6 @@ t_pool = []
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
 CORS(app, support_credentials=True)
 
-"""
-Både cors(app) og cors support credentials?
-"""
-
 
 @app.before_first_request
 def init():
@@ -42,11 +39,7 @@ def init():
     sensor_bank = Sensor_Bank()
 
 
-"""
-Dårlig practice?
-"""
-
-
+# Dårlig practice?
 @app.before_request
 def before_request():
     if request.method == "OPTIONS":
@@ -146,7 +139,7 @@ def disconnect():
 @app.route("/classifications")
 def get_all_classifications():
     res = dict()
-    with open('predictions.csv', 'r') as file:
+    with open('./classifications/classifications.csv', 'r') as file:
         reader = csv.reader(file)
         for row in reader:
             res[row[0]] = row[1]
@@ -156,11 +149,35 @@ def get_all_classifications():
 @app.route("/classifications/latest")
 def get_classification():
     rows = []
-    with open('predictions.csv', 'r') as file:
+    with open('./classifications/classifications.csv', 'r') as file:
         reader = csv.reader(file)
         for row in reader:
             rows.append([row[0], row[1]])
     return {rows[-1][0]: rows[-1][1]}
+
+
+@app.route("/classifications/history")
+def get_days_predictions():
+    days = int(request.args.get("duration"))
+    res = dict()
+    filearray = os.listdir("./classifications/dummydata")
+    startDate = filearray[0].split(".")[0]
+    today = datetime.datetime.strptime(startDate, '%Y-%m-%d')
+
+    # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
+    for i in range(0, days):
+        ith_Day = today + datetime.timedelta(days=i)
+        ith_Day_str = ith_Day.strftime("%Y-%m-%d")
+        classifications = np.zeros(9)
+
+        # if there is a file for the i-th day in the interval, proceed, if not, skip
+        if((ith_Day_str + ".csv") in filearray):
+            with open("./classifications/dummydata/" + str(ith_Day_str + ".csv"), 'r') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    classifications[int(row[1])] += 1
+            res[ith_Day_str] = int(np.argmax(classifications))
+    return res
 
 
 @app.route("/classify/start")
