@@ -10,14 +10,13 @@ type ColumnChartProps = {
 };
 
 export const ColumnChart: FC<ColumnChartProps> = (props) => {
-	let postures = ["Upright", "Forward", "Forward right", "Right", "Backward right", "Backward", "Backward left", "Left", "Forward left"];
 	const processedData = () => {
 		const classifications = Object.values(props.data);
 		let posture_occurences = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 		classifications.forEach((classification) => (posture_occurences[classification] += 1));
 		let chartData = [["Posture", "Amount"]];
 		for (let i = 0; i < posture_occurences.length; i += 1) {
-			chartData.push([postures[i], posture_occurences[i]]);
+			chartData.push([posture_names[i], posture_occurences[i]]);
 		}
 		console.log(chartData);
 		return chartData;
