@@ -48,7 +48,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 				</Grid>
 				<Grid item xs={12} className={classes.btn}>
 					<Button func={() => onButtonPressed()} disabled={buttonPressed ? true : false}>
-						{buttonPressed ? (isRecording ? "Closing down ..." : "Starting up ...") : isRecording ? "Stop Recording" : "Start Recording"}
+						{buttonPressed ? (isRecording ? "Closing down ..." : "Starting up ...") : isRecording ? "Pause Recording" : "Start Recording"}
 					</Button>
 				</Grid>
 			</Grid>
