@@ -8,9 +8,9 @@ export const PieChart = (props) => {
 	const classes = useStyles;
 
 	const processedData = () => {
-		const predictions = Object.values(props.data);
+		const classifications = Object.values(props.data);
 		let posture_occurences = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-		predictions.forEach((pred) => (posture_occurences[pred] += 1));
+		classifications.forEach((classification) => (posture_occurences[classification] += 1));
 		let chartData = [["Posture", "Total amount of predicions"]];
 		for (let i = 0; i < posture_occurences.length; i += 1) {
 			chartData.push([posture_names[i], posture_occurences[i]]);

@@ -1,7 +1,7 @@
-import { makeStyles, Typography } from "@material-ui/core";
+import { FC } from "react";
+import { Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
 import { posture_names } from "../../utils/posture_names";
-import { FC } from "react";
 
 type ColumnChartProps = {
 	data: JSON;
@@ -10,17 +10,14 @@ type ColumnChartProps = {
 };
 
 export const ColumnChart: FC<ColumnChartProps> = (props) => {
-	const classes = useStyles();
 	let postures = ["Upright", "Forward", "Forward right", "Right", "Backward right", "Backward", "Backward left", "Left", "Forward left"];
 	const processedData = () => {
-		const predictions = Object.values(props.data);
+		const classifications = Object.values(props.data);
 		let posture_occurences = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-		predictions.forEach((pred) => (posture_occurences[pred] += 1));
-		let chartData = [];
-		chartData.push(["posture", "amount"]);
+		classifications.forEach((classification) => (posture_occurences[classification] += 1));
+		let chartData = [["Posture", "Amount"]];
 		for (let i = 0; i < posture_occurences.length; i += 1) {
-			let tempArr = [postures[i], posture_occurences[i]];
-			chartData.push(tempArr);
+			chartData.push([postures[i], posture_occurences[i]]);
 		}
 		console.log(chartData);
 		return chartData;
@@ -66,11 +63,3 @@ export const ColumnChart: FC<ColumnChartProps> = (props) => {
 		/>
 	);
 };
-
-const useStyles = makeStyles({
-	root: {
-		background: "rgba(0,0,0,0.5)",
-		height: "90%",
-		borderRadius: "5px",
-	},
-});
