@@ -1,13 +1,19 @@
-import React from 'react';
-import './styles/App.scss';
-import Routing from './Routing';
+import Routing from "./Routing";
+import { ThemeProvider } from "@material-ui/core";
+import { theme } from "./theme";
+
+// Components
+import HomeShade from "./components/HomeShade/HomeShade.component";
 
 const App = () => {
-  return (
-    <div>
-        <Routing />
-    </div>
-  );
-}
+	return (
+		<>
+			<ThemeProvider theme={theme}>
+				<HomeShade />
+				<Routing />
+			</ThemeProvider>
+		</>
+	);
+};
 
 export default App;

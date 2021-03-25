@@ -1,17 +1,22 @@
-import React from 'react';
-import { Route, BrowserRouter, Switch, Redirect } from 'react-router-dom';
+import { Route, HashRouter, Switch } from "react-router-dom";
 
-import {LandingView} from './views/landingView/LandingView'
+// Views
+import { HomeView } from "./views/HomeView/HomeView";
+import { HistoryView } from "./views/HistoryView/HistoryView";
+import { HelpView } from "./views/HelpView/HelpView";
+import { AboutView } from "./views/AboutView/AboutView";
 
 const Routing = () => {
-    return (
-        <BrowserRouter>
-            <Switch>
-                <Route component={LandingView}/>
-                {/*<Route exact path="/dashboard" render={(props) => (<PrivateRoute path="/dashboard" component={DashboardView} />)} />*/}
-            </Switch>
-        </BrowserRouter>
-    )
-}
+	return (
+		<HashRouter>
+			<Switch>
+				<Route exact path="/" component={HomeView} />
+				<Route exact path="/history" component={HistoryView} />
+				<Route exact path="/help" component={HelpView} />
+				<Route exact path="/about" component={AboutView} />
+			</Switch>
+		</HashRouter>
+	);
+};
 
 export default Routing;

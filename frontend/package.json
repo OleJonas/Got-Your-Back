@@ -1,9 +1,49 @@
 {
-  "name": "frontend",
+  "name": "got-your-back",
+  "productName": "Got Your Back",
+  "author": "NTNU - Bachelor's group 66",
+  "description": "An application for classifying variety in sitting posture using machine learning.",
   "version": "0.1.0",
   "private": true,
+  "main": "public/electron.js",
+  "homepage": "./",
+  "build": {
+    "appId": "no.Got-Your-Back",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
+  },
+  "proxy": "http://localhost:3000",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "dev": "concurrently -k \"npm start\" \"wait-on tcp:3000 && electron .\"",
+    "premake": "npm run build",
+    "make": "electron-builder -mw"
+  },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/styles": "^4.11.3",
+    "csv-loader": "^3.0.3",
+    "csv-manager": "^1.1.0",
+    "electron-is-dev": "^2.0.0",
+    "papaparse": "^5.3.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-google-charts": "^3.0.15",
+    "react-keyboard-event-handler": "^1.5.4",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "web-vitals": "^1.1.0"
+  },
+  "devDependencies": {
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.8.1",
@@ -12,19 +52,11 @@
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
     "@types/react-router-dom": "^5.1.7",
-    "node-sass": "^5.0.0",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.3",
+    "concurrently": "^6.0.0",
+    "electron": "^12.0.0",
+    "electron-builder": "^22.10.5",
     "typescript": "^4.2.2",
-    "web-vitals": "^1.1.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "wait-on": "^5.2.1"
   },
   "eslintConfig": {
     "extends": [
@@ -43,6 +75,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {}
+  }
 }

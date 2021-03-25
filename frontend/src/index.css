@@ -1,0 +1,27 @@
+body, html {
+	margin: 0;
+	height: 100%;
+	background: linear-gradient(90deg, #0f3762 0%, rgba(64, 98, 128, 0.9) 100%),
+		#1c355b;
+}
+
+html {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+::-webkit-scrollbar {
+    width: 0;  /* Remove scrollbar space */
+}
+
+/* define height for wrapper's parent div */
+div#root,
+div#root > div {
+    height: 100%;
+}
+
+/* Hide scrollbar for all browsers */
+body::-webkit-scrollbar {
+	display: none; /* Chrome, Safari and Opera*/
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
