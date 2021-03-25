@@ -8,12 +8,11 @@ import threading
 import numpy as np
 import atexit
 import json
-from flask import Flask, request, jsonify, request_started, Response
+from flask import Flask, request, Response
 from flask_cors import CORS
 sys.path.append("scripts/")
 from sensor_bank import Sensor_Bank
 import realtime_test as rt
-from multiprocessing import Process
 
 app = Flask(__name__)
 client = None
@@ -127,10 +126,6 @@ def sync_sensors():
 
 @app.route("/setup/disconnect", methods=["OPTIONS", "POST"])
 def disconnect():
-    # Takes a JSON object as argument. Should be on the form:
-    # {
-    #   handles: [0,1,2,...]
-    # }
     global sensor_bank
     sensor_names = request.json["names"]
     print(sensor_names)
