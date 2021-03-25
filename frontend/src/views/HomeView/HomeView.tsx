@@ -18,6 +18,7 @@ export const HomeView = () => {
 	const lastPosture: number = Object.values(datapoints).pop();
 	const samplingRate: number = 5;
 	const [isRecording, setIsRecording] = useState<boolean>(false);
+	const [hasSensors, setHasSensors] = useState<boolean>(false);
 
 	// Fetch classifications and status on recording
 	useEffect(() => {
@@ -32,20 +33,23 @@ export const HomeView = () => {
 				setDatapoints(data);
 			});
 
-		fetch("http://localhost:5000/classify/status")
+		fetch("http://localhost:5000/status")
 			.then((response) => response.json())
 			.then((data) => {
-				data ? setIsRecording(true) : setIsRecording(false);
+				data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
+				data.isRecording ? setIsRecording(true) : setIsRecording(false);
 			});
 	}, []);
 
 	// Fetch status on recording every tenth second
 	useEffect(() => {
 		setInterval(() => {
-			fetch("http://localhost:5000/classify/status")
+			fetch("http://localhost:5000/status")
 				.then((response) => response.json())
 				.then((data) => {
-					data ? setIsRecording(true) : setIsRecording(false);
+					console.log(data);
+					data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
+					data.isRecording ? setIsRecording(true) : setIsRecording(false);
 				});
 		}, 10000);
 	}, []);
@@ -103,7 +107,12 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<RecordContent posture={lastPosture} samplingRate={samplingRate} recording={isRecording}></RecordContent>
+								<RecordContent
+									posture={lastPosture}
+									samplingRate={samplingRate}
+									isRecording={isRecording}
+									hasSensors={hasSensors}
+								></RecordContent>
 							</ContentBox>
 						</Grid>
 

@@ -9,12 +9,13 @@ import PauseIcon from "@material-ui/icons/Pause";
 type ClassificationProps = {
 	posture: number;
 	samplingRate: number;
-	recording: boolean;
+	hasSensors: boolean;
+	isRecording: boolean;
 };
 
 export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles();
-	const [isRecording, setIsRecording] = useState<Boolean>(props.recording);
+	const [isRecording, setIsRecording] = useState<Boolean>(props.isRecording);
 	const [buttonPressed, setButtonPressed] = useState<Boolean>(false);
 
 	const onButtonPressed = () => {
@@ -47,8 +48,16 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 					{isRecording ? <PlayArrowIcon className={classes.recordIcon} /> : <PauseIcon className={classes.recordIcon} />}
 				</Grid>
 				<Grid item xs={12} className={classes.btn}>
-					<Button func={() => onButtonPressed()} disabled={buttonPressed ? true : false}>
-						{buttonPressed ? (isRecording ? "Closing down ..." : "Starting up ...") : isRecording ? "Pause Recording" : "Start Recording"}
+					<Button func={() => onButtonPressed()} disabled={buttonPressed || !props.hasSensors ? true : false}>
+						{props.hasSensors
+							? buttonPressed
+								? isRecording
+									? "Closing down ..."
+									: "Starting up ..."
+								: isRecording
+								? "Pause Recording"
+								: "Start Recording"
+							: "Missing sensors"}
 					</Button>
 				</Grid>
 			</Grid>
