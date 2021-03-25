@@ -239,14 +239,14 @@ def get_status():
     global sensor_bank
     return {
         "isRecording": sensor_bank.run,
-        "numberOfSensors": len(sensor_bank.sensor_arr)
+        "numberOfSensors": len(sensor_bank.sensor_dict)
     }
 
 def shutdown():
     global client
     global sensor_bank
-    for sensor in sensor_bank.sensor_arr:
-        sensor_bank.disconnect_sensor(sensor.handle)
+    for sensor in sensor_bank.sensor_dict.values():
+        sensor_bank.disconnect_sensor(sensor.name)
     client.close()
 
 
