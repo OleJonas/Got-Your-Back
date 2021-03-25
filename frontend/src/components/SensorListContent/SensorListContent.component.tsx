@@ -7,9 +7,8 @@ import { SensorRowHome } from "../SensorRow/SensorRowHome.component";
 import { SensorModal } from "../SensorModal/SensorModal.component";
 
 type Sensor = {
-	index: number;
-	name: string;
 	id: number;
+	name: string;
 	battery: number;
 };
 
@@ -29,18 +28,18 @@ export const SensorListContent = () => {
 	const removeSensor = (id: number) => {
 		console.log("Removing sensor...  " + id);
 		const helper = sensors.filter((sensor: Sensor) => {
-			return sensor.index !== id;
+			return sensor.id !== id;
 		});
 		setSensors(helper);
 	};
 
-	const sendSensors = (sensorArr: any) => {
+	const sendSensors = (sensorArr: Sensor[]) => {
 		setSensors(sensorArr);
 	};
 
 	const mapSensors = sensors.map((sensor: Sensor) => {
 		return (
-			<SensorRowHome connected={true} index={sensor.index} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />
+			<SensorRowHome connected={true} id={sensor.id} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />
 		);
 	});
 

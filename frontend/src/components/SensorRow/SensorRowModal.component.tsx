@@ -5,10 +5,9 @@ import { Typography, Grid, makeStyles } from "@material-ui/core";
 import SensorButton from "../Buttons/SensorButton.component";
 
 type SensorProps = {
-	id?: number;
+	id: number;
 	connected: boolean;
 	name: string;
-	index: number;
 	clickConnect?: any;
 };
 
@@ -29,7 +28,7 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 				Accept: "application/json",
 			},
 			body: JSON.stringify({
-				handle: props.index,
+				name: props.name,
 			}),
 		})
 		.then((res) => res.json())
