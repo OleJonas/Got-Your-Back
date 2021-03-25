@@ -23,7 +23,7 @@ class testing_class:
     annot_file: str
 
 training_files = {
-    "Martin": training_class("../../data/train_data/martin_train_3_030221.csv", 
+    "Martin": training_class("../../data/train_data/martin_train_3_030221.csv", 
                             "../../data/annotation/training/martin_train_3_030221.txt"),
     "Simon": training_class("../../data/train_data/simon_train_3_080221.csv",
                             "../../data/annotation/training/simon_train_3_080221.txt"),
