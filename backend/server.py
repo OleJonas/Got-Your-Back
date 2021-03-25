@@ -97,6 +97,7 @@ def connect():
     s_name, sensor, imu = rt.connect_to_sensor(client, found_sensors[content["handle"]])
     sensor_bank.add_sensor(s_name, sensor, imu)
     s_id = sensor_bank.handle_to_id[sensor_bank.sensor_arr[-1].handle]
+    # sensor_bank.n_sensors = len(sensor_bank.sensor_arr)
     res = {
         "name": s_name,
         "id": s_id,
@@ -111,6 +112,7 @@ def connect_all():
     for sensor in found_sensors:
         s_name, sensor, imu = rt.connect_to_sensor(client, sensor)
         sensor_bank.add_sensor(s_name, sensor, imu)
+    # sensor_bank.n_sensors = len(sensor_bank.sensor_arr)
     return "All connected"
 
 
@@ -128,6 +130,7 @@ def disconnect():
     # }
     global sensor_bank
     sensor_handles = request.json["handles"]
+    # sensor_bank.n_sensors = len(sensor_bank.sensor_arr)
     print(sensor_handles)
     for handle in sensor_handles:
         sensor_bank.disconnect_sensor(handle)
@@ -224,6 +227,15 @@ def get_battery():
     print(handle)
     percent = sensor_bank.sensor_arr[handle].get_battery_percentage()
     return {"battery": str(percent).split("%")[0]}
+
+
+@app.route("/status")
+def get_status():
+    global sensor_bank
+    return {
+        "isRecording": sensor_bank.run,
+        "numberOfSensors": len(sensor_bank.sensor_arr)
+    }
 
 
 def shutdown():
