@@ -11,7 +11,7 @@ import "./loader.css";
 type modalProps = {
 	open: boolean;
 	close: () => void;
-	sendSensors: (sensorArr: any) => void;
+	sendSensors: (sensor: any) => void;
 };
 
 export const SensorModal: FC<modalProps> = (props) => {
@@ -48,6 +48,9 @@ export const SensorModal: FC<modalProps> = (props) => {
 	}, [props.open]);
 
 	const handleClose = () => {
+		props.close();
+		setOpen(false);
+		/*
 		if (connectedSensors) {
 			let inboundSensors: any[] = [];
 			connectedSensors.forEach((sensor: any) => {
@@ -60,9 +63,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 				inboundSensors.push(s);
 			});
 			props.sendSensors(inboundSensors);
-		}
-		props.close();
-		setOpen(false);
+		}*/
 		/*
 
 		// DUMMY DATA
@@ -84,15 +85,18 @@ export const SensorModal: FC<modalProps> = (props) => {
 
 	const addConnected = (data: any, isConnected: boolean) => {
 		console.log("addConnected");
-		let helper = connectedSensors;
+		//let helper = connectedSensors;
 		console.log(isConnected);
-		if (helper) {
 			if (isConnected) {
 				console.log("isConnected = true");
-				helper.push(data);
+				let s = {
+					id: data.id,
+					connected: true,
+					name: data.name,
+					battery: data.battery,
+				};
+				props.sendSensors(s);
 			}
-		}
-		setConnectedSensors(helper);
 	};
 
 	return (

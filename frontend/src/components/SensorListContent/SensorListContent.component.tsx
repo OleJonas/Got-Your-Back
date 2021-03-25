@@ -33,8 +33,10 @@ export const SensorListContent = () => {
 		setSensors(helper);
 	};
 
-	const sendSensors = (sensorArr: Sensor[]) => {
-		setSensors(sensorArr);
+	const addSensors = (sensor: Sensor) => {
+		let helper = sensors;
+		helper.push(sensor);
+		setSensors(helper);
 	};
 
 	const mapSensors = sensors.map((sensor: Sensor) => {
@@ -74,7 +76,7 @@ export const SensorListContent = () => {
 			</Grid>
 			<Grid xs={12} item container className={classes.button}>
 				<Button func={openModal}>Scan</Button>
-				<SensorModal sendSensors={sendSensors} close={closeModal} open={open}></SensorModal>
+				<SensorModal sendSensors={addSensors} close={closeModal} open={open}></SensorModal>
 			</Grid>
 		</Grid>
 	);
