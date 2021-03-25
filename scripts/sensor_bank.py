@@ -1,5 +1,7 @@
 import sys
 import openzen
+import os
+from tempfile import NamedTemporaryFile
 
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 
@@ -34,11 +36,12 @@ class Sensor_Bank:
         self.sleep_time = sleep_time
         self.run = False
 
-        self.sensor_id_dict = {
-            "LPMSB2-3036EB": 1,
-            "LPMSB2-4B3326": 2,
-            "LPMSB2-4B31EE": 3
-        }
+        self.sensor_id_dict = dict()
+        with open("./scripts/sensor_id.txt", "r") as f:
+            for line in f:
+                sensor_and_id = line.split(" ")
+                self.sensor_id_dict[sensor_and_id[0]] = int(sensor_and_id[1])
+        print(self.sensor_id_dict) 
 
     def add_sensor(self, name, sensor, imu):
         sensor_conn = Sensor(name, sensor, imu, self.sensor_id_dict[name])
@@ -49,6 +52,16 @@ class Sensor_Bank:
             sensor_dict[name_key].set_sampling_rate(sampling_rate)
         self.sampling_rate = sampling_rate
         print(f"Sampling rates set to: {sampling_rate}")
+
+    def set_id(self, name, id):
+        with open("./scripts/sensor_id.txt") as fin, NamedTemporaryFile(dir='.', delete=False) as fout:
+            for line in fin:
+                if line.startswith(f"{name}"):
+                    line = f"{name} {id}\n"
+                fout.write(line.encode('utf8'))
+
+        os.replace(fout.name, "./scripts/sensor_id.txt")
+                    
 
     def get_sensor(self, name):
         for name_key in self.sensor_dict:
