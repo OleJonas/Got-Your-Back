@@ -133,6 +133,13 @@ def disconnect():
         sensor_bank.disconnect_sensor(name)
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
+@app.route("/setup/set_id", methods=["POST"])
+def set_id():
+    name = request.json["name"]
+    s_id = request.json["id"]
+    sensor_bank.set_id(name, s_id)
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+
 
 # Classification endpoints
 
@@ -220,10 +227,10 @@ def stop_classify():
 @app.route("/sensor/battery")
 def get_battery():
     global sensor_bank
-    sensor_id = int(request.args.get("id"))
-    print(sensor_id)
+    name = str(request.args.get("name"))
+    print(name)
     try:
-        percent = sensor_bank.sensor_dict[sensor_id].get_battery_percentage()
+        percent = sensor_bank.sensor_dict[name].get_battery_percentage()
     except:
         return "-1"
     return {"battery": str(percent).split("%")[0]}
