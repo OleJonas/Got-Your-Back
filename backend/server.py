@@ -11,7 +11,7 @@ import json
 from flask import Flask, request, jsonify, request_started, Response
 from flask_cors import CORS
 sys.path.append("scripts/")
-from sensor_bank import Sensor, Sensor_Bank
+from sensor_bank import Sensor_Bank
 import realtime_test as rt
 from multiprocessing import Process
 
@@ -114,7 +114,7 @@ def connect():
 def connect_all():
     global sensor_bank
     for key in found_sensors:
-        s_name, sensor, imu = rt.connect_to_sensor(client, found_sensors[key])
+        s_name, _, imu = rt.connect_to_sensor(client, found_sensors[key])
         sensor_bank.add_sensor(s_name, found_sensors[key], imu)
     return "All connected"
 
