@@ -191,7 +191,7 @@ def classification_pipe():
     global sensor_bank
     sensor_bank.run = True
     rt.sync_sensors(client, sensor_bank)
-    model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_arr)}.h5")
+    model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
 
     classify_thread = threading.Thread(target=rt.classify, args=[client, model, sensor_bank], daemon=True)
     collect_thread = threading.Thread(target=rt.collect_data, args=[client, sensor_bank], daemon=True)
@@ -228,7 +228,7 @@ def get_battery():
     sensor_id = int(request.args.get("id"))
     print(sensor_id)
     try:
-        percent = sensor_bank.sensor_arr[sensor_id].get_battery_percentage()
+        percent = sensor_bank.sensor_dict[sensor_id].get_battery_percentage()
     except:
         return "-1"
     return {"battery": str(percent).split("%")[0]}
@@ -246,8 +246,8 @@ def get_status():
 def shutdown():
     global client
     global sensor_bank
-    for sensor in sensor_bank.sensor_arr:
-        sensor_bank.disconnect_sensor(sensor.handle)
+    for sensor in sensor_bank.sensor_dict.values():
+        sensor_bank.disconnect_sensor(sensor.name)
     client.close()
 
 
