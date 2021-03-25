@@ -5,10 +5,9 @@ import { Typography, Grid, makeStyles } from "@material-ui/core";
 import SensorButton from "../Buttons/SensorButton.component";
 
 type SensorProps = {
-	id?: number;
+	id: number;
 	connected: boolean;
 	name: string;
-	index: number;
 	clickConnect?: any;
 };
 
@@ -29,31 +28,24 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 				Accept: "application/json",
 			},
 			body: JSON.stringify({
-				handle: props.index,
+				name: props.name,
 			}),
 		})
-		.then((res) => res.json())
-		.then((data) => {
-			console.log(data);
-			setSensorData(data);
-			setConnected(true);
-			setIsFetching(false);
-		});
-	// eslint-disable-next-line
+			.then((res) => res.json())
+			.then((data) => {
+				console.log(data);
+				setSensorData(data);
+				setConnected(true);
+				setIsFetching(false);
+			});
+		// eslint-disable-next-line
 	}, [isFetching]);
 
 	useEffect(() => {
 		if (!props.clickConnect) return;
 		props.clickConnect(sensorData, connected);
-	// eslint-disable-next-line
+		// eslint-disable-next-line
 	}, [connected]);
-
-	const getStatus = () => {
-		let out: string = "";
-		if (props.id) out += props.id + "  ";
-		out += connected ? "Connected" : "Disconnected";
-		return out;
-	};
 
 	return (
 		<Grid container className={classes.root}>
@@ -62,12 +54,17 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 					{props.name}
 				</Typography>
 			</Grid>
-			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={4}>
+			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={2}>
 				<Typography variant="body1" color="textSecondary">
-					{getStatus()}
+					{props.id}
 				</Typography>
 			</Grid>
-			<Grid className={classes.grid} container justify="flex-start" item xs={3}>
+			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={3}>
+				<Typography variant="body1" color="textSecondary">
+					{connected ? "Connected" : "Disconnected"}
+				</Typography>
+			</Grid>
+			<Grid className={classes.grid} container justify="flex-start" item xs={2}>
 				<SensorButton type="connect" status={connected} func={connect} id="connectButton" disabled={isFetching} />
 			</Grid>
 		</Grid>

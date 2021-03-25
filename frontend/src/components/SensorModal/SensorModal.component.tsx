@@ -10,8 +10,8 @@ import "./loader.css";
 
 type modalProps = {
 	open: boolean;
-	close?: any;
-	sendSensors: any;
+	close: () => void;
+	sendSensors: (sensorArr: any) => void;
 };
 
 export const SensorModal: FC<modalProps> = (props) => {
@@ -44,7 +44,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 			setOpen(props.open);
 			scanForSensors();
 		}
-    // eslint-disable-next-line
+		// eslint-disable-next-line
 	}, [props.open]);
 
 	const handleClose = () => {
@@ -52,7 +52,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 			let inboundSensors: any[] = [];
 			connectedSensors.forEach((sensor: any) => {
 				let s = {
-					index: sensor.id,
+					id: sensor.id,
 					connected: true,
 					name: sensor.name,
 					battery: sensor.battery,
@@ -119,17 +119,18 @@ export const SensorModal: FC<modalProps> = (props) => {
 									<Grid container className={classes.grid} justify="flex-start" item xs={5}>
 										<Typography variant="h6">Sensor name</Typography>
 									</Grid>
-									<Grid container className={classes.grid} justify="flex-start" item xs={4}>
+									<Grid container className={classes.grid} justify="flex-start" item xs={2}>
+										<Typography variant="h6">Id</Typography>
+									</Grid>
+									<Grid container className={classes.grid} justify="flex-start" item xs={3}>
 										<Typography variant="h6">Status</Typography>
 									</Grid>
-									<Grid container className={classes.grid} justify="center" item xs={3}>
-										<Typography variant="h6"></Typography>
-									</Grid>
+									<Grid container className={classes.grid} justify="center" item xs={2}></Grid>
 								</Grid>
 
 								{sensorsFound ? (
-									sensorsFound.map((sensor: string, index: number) => (
-										<SensorRowModal clickConnect={addConnected} connected={false} index={index} name={sensor} battery={false} />
+									sensorsFound.map((sensor: any) => (
+										<SensorRowModal clickConnect={addConnected} connected={false} id={sensor.id} name={sensor.name} />
 									))
 								) : (
 									<></>

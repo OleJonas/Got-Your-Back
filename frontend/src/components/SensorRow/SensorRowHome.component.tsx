@@ -6,10 +6,9 @@ import SensorButton from "../Buttons/SensorButton.component";
 import BluetoothConnectedIcon from "@material-ui/icons/BluetoothConnected";
 
 type SensorProps = {
-	id?: number;
+	id: number;
 	connected: boolean;
 	name: string;
-	index: number;
 	battery: number;
 	disconnectFunc: (id: number) => void;
 };
@@ -20,7 +19,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
 
-	const disconnect = async (index: number) => {
+	const disconnect = async (name: string, id: number) => {
 		await fetch("http://localhost:5000/setup/disconnect", {
 			method: "POST",
 			headers: {
@@ -28,20 +27,20 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 				Accept: "application/json",
 			},
 			body: JSON.stringify({
-				handles: [index],
+				names: [name],
 			}),
 		})
 			.then((res) => res.json())
 			.then((data) => {
 				console.log(data);
 				setConnected(false);
-				props.disconnectFunc(index);
+				props.disconnectFunc(id);
 			});
 	};
 
 	const getBatteryPercent = useCallback(async () => {
 		if (!props.connected) return;
-		await fetch("http://localhost:5000/sensor/battery?id=" + props.index, {
+		await fetch("http://localhost:5000/sensor/battery?id=" + props.id, {
 			headers: {
 				Accept: "application/json",
 			},
@@ -71,7 +70,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 			</Grid>
 			<Grid item direction="row" justify="center" xs={2}>
 				<Typography variant="body2" color="textPrimary">
-					{props.index}
+					{props.id}
 				</Typography>
 			</Grid>
 			<Grid item direction="row" justify="center" xs={2}>
@@ -80,7 +79,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 				</Typography>
 			</Grid>
 			<Grid container justify="center" item xs={2}>
-				<SensorButton type="disconnect" status={connected} func={() => disconnect(props.index)} id="connectButton" disabled={isFetching} />
+				<SensorButton type="disconnect" status={connected} func={() => disconnect(props.name, props.id)} id="connectButton" disabled={isFetching} />
 			</Grid>
 		</Grid>
 	);

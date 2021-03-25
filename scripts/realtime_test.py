@@ -91,11 +91,9 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
         imu.set_bool_property(openzen.ZenImuProperty.StreamData, False)
 
         # Set sampling rate
-        set_sampling_rate(imu, SAMPLING_RATE)
+        sensor_bank.set_sampling_rate(imu, SAMPLING_RATE)
 
         imus.append(imu)
-
-        MAP_HANDLE_TO_ID[sensor.sensor.handle] = SENSORS_ID[sensors[index].name]
 
         print(
             f"Connected to sensor {MAP_HANDLE_TO_ID[sensor.sensor.handle]} - {sensors[index].name} ({round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%)!")
@@ -133,9 +131,9 @@ def connect_to_sensor(client, input_sensor):
 
 def sync_sensors(client, sensor_bank):
     imu_arr = []
-    for sensor_conn in sensor_bank.sensor_arr:
-        sensor_conn.set_sampling_rate(sensor_bank.sampling_rate)
-        imu_arr.append(sensor_conn.imu_obj)
+    for sensor in sensor_bank.sensor_dict.values():
+        sensor.set_sampling_rate(sensor_bank.sampling_rate)
+        imu_arr.append(sensor.imu_obj)
 
     # Synchronize
     for imu in imu_arr:
