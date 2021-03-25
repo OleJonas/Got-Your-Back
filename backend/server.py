@@ -30,6 +30,7 @@ CORS(app, support_credentials=True)
 def init():
     global client
     global sensor_bank
+    global found_sensors
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     # Make client
     error, client = openzen.make_client()
@@ -37,6 +38,7 @@ def init():
         print("Error while initializing OpenZen library")
         sys.exit(1)
     sensor_bank = Sensor_Bank()
+    found_sensors = dict()
 
 
 # Dårlig practice?
@@ -61,7 +63,7 @@ def confirm_access():
 
 @app.route("/debug/get_sensors")
 def get_sensors():
-    return str(sensor_bank.sensor_arr)
+    return str(sensor_bank.sensor_dict)
 
 
 @app.route('/dummy/connected_sensors')
@@ -78,29 +80,32 @@ def get_dummy_found_sensors():
     return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
 
 
-# Setup endopoints
+# Setup endpoints
 
 @app.route("/setup/scan")
 def scan():
     global found_sensors
-    found_sensors = rt.scan_for_sensors(client)
-    res = dict()
-    res["sensors"] = [sensor.name for sensor in found_sensors]
-    return res
+    global sensor_bank
+    helper = rt.scan_for_sensors(client)
+    out = {"sensors": []}
+    
+    for sensor in helper:
+        found_sensors[sensor.name] = sensor
+        out["sensors"].append({"name": sensor.name, "id": sensor_bank.sensor_id_dict[sensor.name]})
+    return out
 
 
 @app.route("/setup/connect", methods=["OPTIONS", "POST"])
 def connect():
     global sensor_bank
-    content = request.json
-    print(content)
-    s_name, sensor, imu = rt.connect_to_sensor(client, found_sensors[content["handle"]])
+    sensor_name = request.json["name"]
+    s_name, sensor, imu = rt.connect_to_sensor(client, found_sensors[sensor_name])
     sensor_bank.add_sensor(s_name, sensor, imu)
-    s_id = sensor_bank.handle_to_id[sensor_bank.sensor_arr[-1].handle]
+    s_id = sensor_bank.sensor_id_dict[s_name]
     res = {
         "name": s_name,
         "id": s_id,
-        "battery": sensor_bank.sensor_arr[-1].get_battery_percentage().split("%")[0]
+        "battery": sensor_bank.sensor_dict[sensor_name].get_battery_percentage().split("%")[0]
     }
     return res
 
@@ -108,9 +113,9 @@ def connect():
 @app.route("/setup/connect_all")
 def connect_all():
     global sensor_bank
-    for sensor in found_sensors:
-        s_name, sensor, imu = rt.connect_to_sensor(client, sensor)
-        sensor_bank.add_sensor(s_name, sensor, imu)
+    for key in found_sensors:
+        s_name, sensor, imu = rt.connect_to_sensor(client, found_sensors[key])
+        sensor_bank.add_sensor(s_name, found_sensors[key], imu)
     return "All connected"
 
 
@@ -127,10 +132,10 @@ def disconnect():
     #   handles: [0,1,2,...]
     # }
     global sensor_bank
-    sensor_handles = request.json["handles"]
-    print(sensor_handles)
-    for handle in sensor_handles:
-        sensor_bank.disconnect_sensor(handle)
+    sensor_names = request.json["names"]
+    print(sensor_names)
+    for name in sensor_names:
+        sensor_bank.disconnect_sensor(name)
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
@@ -220,11 +225,22 @@ def stop_classify():
 @app.route("/sensor/battery")
 def get_battery():
     global sensor_bank
-    handle = int(request.args.get("id"))
-    print(handle)
-    percent = sensor_bank.sensor_arr[handle].get_battery_percentage()
+    sensor_id = int(request.args.get("id"))
+    print(sensor_id)
+    try:
+        percent = sensor_bank.sensor_arr[sensor_id].get_battery_percentage()
+    except:
+        return "-1"
     return {"battery": str(percent).split("%")[0]}
 
+
+@app.route("/status")
+def get_status():
+    global sensor_bank
+    return {
+        "isRecording": sensor_bank.run,
+        "numberOfSensors": len(sensor_bank.sensor_arr)
+    }
 
 def shutdown():
     global client
