@@ -88,7 +88,7 @@ def scan():
     global sensor_bank
     helper = rt.scan_for_sensors(client)
     out = {"sensors": []}
-    
+
     for sensor in helper:
         found_sensors[sensor.name] = sensor
         out["sensors"].append({"name": sensor.name, "id": sensor_bank.sensor_id_dict[sensor.name]})
@@ -239,8 +239,9 @@ def get_status():
     global sensor_bank
     return {
         "isRecording": sensor_bank.run,
-        "numberOfSensors": len(sensor_bank.sensor_arr)
+        "numberOfSensors": len(sensor_bank.sensor_dict)
     }
+
 
 def shutdown():
     global client

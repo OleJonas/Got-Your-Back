@@ -10,7 +10,7 @@ import "./loader.css";
 
 type modalProps = {
 	open: boolean;
-	close?: () => void;
+	close: () => void;
 	sendSensors: (sensorArr: any) => void;
 };
 
@@ -44,7 +44,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 			setOpen(props.open);
 			scanForSensors();
 		}
-    // eslint-disable-next-line
+		// eslint-disable-next-line
 	}, [props.open]);
 
 	const handleClose = () => {
@@ -119,12 +119,13 @@ export const SensorModal: FC<modalProps> = (props) => {
 									<Grid container className={classes.grid} justify="flex-start" item xs={5}>
 										<Typography variant="h6">Sensor name</Typography>
 									</Grid>
-									<Grid container className={classes.grid} justify="flex-start" item xs={4}>
+									<Grid container className={classes.grid} justify="flex-start" item xs={2}>
+										<Typography variant="h6">Id</Typography>
+									</Grid>
+									<Grid container className={classes.grid} justify="flex-start" item xs={3}>
 										<Typography variant="h6">Status</Typography>
 									</Grid>
-									<Grid container className={classes.grid} justify="center" item xs={3}>
-										<Typography variant="h6"></Typography>
-									</Grid>
+									<Grid container className={classes.grid} justify="center" item xs={2}></Grid>
 								</Grid>
 
 								{sensorsFound ? (
