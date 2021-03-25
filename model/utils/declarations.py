@@ -12,46 +12,49 @@ POSE_MAP = {
     "fram-venstre": 8
 }
 
+
 @dataclass
 class training_class:
     csv_file: str
     annot_file: str
+
 
 @dataclass
 class testing_class:
     csv_file: str
     annot_file: str
 
+
 training_files = {
-    "Martin": training_class("../../data/train_data/martin_train_3_030221.csv", 
-                            "../../data/annotation/training/martin_train_3_030221.txt"),
-    "Simon": training_class("../../data/train_data/simon_train_3_080221.csv",
-                            "../../data/annotation/training/simon_train_3_080221.txt"),
-    "Jonas": training_class("../../data/train_data/jonas_train_3_080221.csv",
-                            "../../data/annotation/training/jonas_train_3_080221.txt"),
-    "Elise": training_class("../../data/train_data/elise_train_3_090221.csv",
-                            "../../data/annotation/training/elise_train_3_090221.txt"),
-    "Emanuel": training_class("../../data/train_data/emanuel_train_3_110221.csv",
-                            "../../data/annotation/training/emanuel_train_3_110221.txt"),
-    "Xiaomeng": training_class("../../data/train_data/xiaomeng_train_3_110221.csv",
-                            "../../data/annotation/training/xiaomeng_train_3_110221.txt"),
-    "Joy": training_class("../../data/train_data/joy_train_3_030321.csv",
-                            "../../data/annotation/training/joy_train_3_030321.txt"),
-    "Lea": training_class("../../data/train_data/lea_train_3_030321.csv",
-                            "../../data/annotation/training/lea_train_3_030321.txt"),
+    "Martin": training_class("../../data/train_data/001_train_3_030221.csv",
+                             "../../data/annotation/training/001_train_3_030221.txt"),
+    "Simon": training_class("../../data/train_data/002_train_3_080221.csv",
+                            "../../data/annotation/training/002_train_3_080221.txt"),
+    "Jonas": training_class("../../data/train_data/003_train_3_080221.csv",
+                            "../../data/annotation/training/003_train_3_080221.txt"),
+    "Xiaomeng": training_class("../../data/train_data/004_train_3_110221.csv",
+                               "../../data/annotation/training/004_train_3_110221.txt"),
+    "Elise": training_class("../../data/train_data/005_train_3_090221.csv",
+                            "../../data/annotation/training/005_train_3_090221.txt"),
+    "Emanuel": training_class("../../data/train_data/006_train_3_110221.csv",
+                              "../../data/annotation/training/006_train_3_110221.txt"),
+    "Lea": training_class("../../data/train_data/007_train_3_030321.csv",
+                          "../../data/annotation/training/007_train_3_030321.txt"),
+    "Joy": training_class("../../data/train_data/008_train_3_030321.csv",
+                          "../../data/annotation/training/008_train_3_030321.txt"),
 }
 
 testing_files = {
-    "Martin": testing_class("../../data/test_data/martin_test_3_040221.csv",
-                            "../../data/annotation/testing/martin_test_3_040221.txt"),
-    "Emanuel": testing_class("../../data/test_data/emanuel_test_3_110221.csv",
-                             "../../data/annotation/testing/emanuel_test_3_110221.txt"),
-    "Elise": testing_class("../../data/test_data/elise_test_3_090221.csv", 
-                            "../../data/annotation/testing/elise_test_3_090221.txt"),
-    "Xiaomeng": testing_class("../../data/test_data/xiaomeng_test_3_110221.csv", 
-                            "../../data/annotation/testing/xiaomeng_test_3_110221.txt"),
-    "Joy": testing_class("../../data/test_data/joy_test_3_030321.csv", 
-                            "../../data/annotation/testing/joy_test_3_030321.txt"),
-    "Lea": testing_class("../../data/test_data/lea_test_3_030321.csv", 
-                            "../../data/annotation/testing/lea_test_3_030321.txt")
+    "Martin": testing_class("../../data/test_data/001_test_3_040221.csv",
+                            "../../data/annotation/testing/001_test_3_040221.txt"),
+    "Xiaomeng": testing_class("../../data/test_data/004_test_3_110221.csv",
+                              "../../data/annotation/testing/004_test_3_110221.txt"),
+    "Elise": testing_class("../../data/test_data/005_test_3_090221.csv",
+                           "../../data/annotation/testing/005_test_3_090221.txt"),
+    "Emanuel": testing_class("../../data/test_data/006_test_3_110221.csv",
+                             "../../data/annotation/testing/006_test_3_110221.txt"),
+    "Lea": testing_class("../../data/test_data/007_test_3_030321.csv",
+                         "../../data/annotation/testing/007_test_3_030321.txt"),
+    "Joy": testing_class("../../data/test_data/008_test_3_030321.csv",
+                         "../../data/annotation/testing/008_test_3_030321.txt"),
 }
