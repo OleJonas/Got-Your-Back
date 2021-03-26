@@ -19,9 +19,12 @@ SLEEPTIME = 0.05
 NUM_SENSORS = 3
 
 SENSORS_ID = {
-    "LPMSB2-3036EB": 1,
-    "LPMSB2-4B3326": 2,
-    "LPMSB2-4B31EE": 3
+    # "LPMSB2-3036EB": 1,
+    # "LPMSB2-4B3326": 2,
+    # "LPMSB2-4B31EE": 3
+
+    "LPMSB2-4B3326": 1,
+    "LPMSB2-4B31EE": 2
 }
 
 MAP_HANDLE_TO_ID = {}
@@ -204,6 +207,11 @@ def collect_data(client, data_queue):
             continue
 
 
+def _write_to_csv(writer, classification):
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    writer.writerow([current_time, classification])
+
+
 def classify(model, data_queue):
     values = []
     while True:
@@ -220,17 +228,14 @@ def classify(model, data_queue):
 
         if(len(values) == SAMPLING_RATE):
             start_time_predict = time.perf_counter()
-            predictions = model(np.array(values)).numpy()
-            argmax = [pred.argmax() for pred in predictions]
+            classify = model(np.array(values)).numpy()
+            argmax = [classification.argmax() for classification in classify]
             end_time_predict = time.perf_counter() - start_time_predict
-            pred = Counter(argmax).most_common(1)[0][0]
-            print(f"Predicted {pred} in {round(end_time_predict,2)}s!")
+            classification = Counter(argmax).most_common(1)[0][0]
+            print(f"Classified as {classification} in {round(end_time_predict,2)}s!")
 
-            with open('predictions.csv', 'a', newline='') as file:
-                fnames = ['time', 'prediction']
-                writer = csv.DictWriter(file, fieldnames=fnames)
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                writer.writerow({'time' : current_time, 'prediction' : pred})
+            with open('./classifications/classifications.csv', 'a+', newline='') as file:
+                _write_to_csv(csv.writer(file), classification)
             values = []
 
 
@@ -246,7 +251,7 @@ if __name__ == "__main__":
     # Scan, connect and syncronize sensors
     sensors_found = scan_for_sensors(client)
     user_input = [0, 1, 2]
-    # user_input=[int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
+    # user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
     data_queue = Data_Queue(len(user_input))
     NUM_SENSORS = len(user_input)
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
@@ -255,7 +260,7 @@ if __name__ == "__main__":
 
     # Classify
     model = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
-    # model = load('RFC_model_3.joblib')
+    # model = load(f'RFC_model_{NUM_SENSORS}.joblib')
     classify_thread = threading.Thread(target=classify, args=[model, data_queue], daemon=True)
     classify_thread.start()
 
