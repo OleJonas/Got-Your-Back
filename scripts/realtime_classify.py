@@ -19,9 +19,12 @@ SLEEPTIME = 0.05
 NUM_SENSORS = 3
 
 SENSORS_ID = {
-    "LPMSB2-3036EB": 1,
-    "LPMSB2-4B3326": 2,
-    "LPMSB2-4B31EE": 3
+    # "LPMSB2-3036EB": 1,
+    # "LPMSB2-4B3326": 2,
+    # "LPMSB2-4B31EE": 3
+
+    "LPMSB2-4B3326": 1,
+    "LPMSB2-4B31EE": 2
 }
 
 MAP_HANDLE_TO_ID = {}
@@ -231,7 +234,7 @@ def classify(model, data_queue):
             classification = Counter(argmax).most_common(1)[0][0]
             print(f"Classified as {classification} in {round(end_time_predict,2)}s!")
 
-            with open('../classifications/classifications.csv', 'a+', newline='') as file:
+            with open('./classifications/classifications.csv', 'a+', newline='') as file:
                 _write_to_csv(csv.writer(file), classification)
             values = []
 
@@ -248,7 +251,7 @@ if __name__ == "__main__":
     # Scan, connect and syncronize sensors
     sensors_found = scan_for_sensors(client)
     user_input = [0, 1, 2]
-    # user_input=[int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
+    # user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
     data_queue = Data_Queue(len(user_input))
     NUM_SENSORS = len(user_input)
     connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)

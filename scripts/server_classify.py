@@ -1,3 +1,4 @@
+import csv
 import time
 import sys
 import datetime
@@ -52,53 +53,6 @@ def scan_for_sensors(client):
     return sensors
 
 
-def connect_and_get_imus(client, sensors, chosen_sensors):
-    """
-    Connects to all sensors using one client
-
-    Input:\n
-    client - clientobject from the OpenZen-library\n
-    sensors - list of available sensors\n
-    chosen_sensors - user input with chosen sensors\n
-
-    Output:\n
-    connected_sensors - list of connected sensors\n
-    """
-    imus = []
-    connected_sensors = []
-
-    if len(sensors) < 1:
-        sys.exit("No sensors found!\nExiting...")
-
-    for index in chosen_sensors:
-        error, sensor = client.obtain_sensor(sensors[index])
-
-        attempts = 0
-        while not error == openzen.ZenSensorInitError.NoError:
-            attempts += 1
-            print("Error connecting to sensor", flush=True, end='')
-            print("Trying again...", flush=True, end='')
-            error, sensor = client.obtain_sensor(sensors[index])
-            if attempts >= 100:
-                print("Can't connect to sensor", flush=True, end='')
-                sys.exit(1)
-
-        # Obtain IMU from sensor and prevents it from streaming sensor_data yet
-        imu = sensor.get_any_component_of_type(openzen.component_type_imu)
-        imu.set_bool_property(openzen.ZenImuProperty.StreamData, False)
-
-        # Set sampling rate
-        sensor_bank.set_sampling_rate(imu, SAMPLING_RATE)
-
-        imus.append(imu)
-
-        print(
-            f"Connected to sensor {MAP_HANDLE_TO_ID[sensor.sensor.handle]} - {sensors[index].name} ({round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%)!")
-
-        connected_sensors.append(sensor)
-    return connected_sensors, imus
-
-
 def connect_to_sensor(client, input_sensor):
     err, sensor = client.obtain_sensor(input_sensor)
 
@@ -147,9 +101,9 @@ def _remove_unsync_data(client):
         zenEvent = client.poll_next_event()
 
 
-def _make_row(handle, imu_data):
+def _make_row(id, imu_data):
     row = []
-    row.append(handle)
+    row.append(id)
     row.append(imu_data.timestamp)
     row += [imu_data.a[i] for i in range(3)]
     row += [imu_data.g[i] for i in range(3)]
@@ -207,12 +161,18 @@ def collect_data(client, sensor_bank):
 
 
 def _classification_fname():
-    return f'classifications_{datetime.date.today().date.strftime("%Y%m%d")}'
+    return f'classifications_{datetime.date.today().strftime("%Y%m%d")}'
+
+
+def _write_to_csv(writer, classification):
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    writer.writerow([current_time, classification])
 
 
 def classify(client, model, sensor_bank):
     values = []
     file = open(_classification_fname(), "a+")
+    writer = csv.writer(file)
     while sensor_bank.run:
         if(min(data_queue.entries) == 0):
             time.sleep(SLEEPTIME)
@@ -230,7 +190,7 @@ def classify(client, model, sensor_bank):
             argmax = [classification.argmax() for classification in classifications]
             end_time_predict = time.perf_counter() - start_time_predict
             classification = Counter(argmax).most_common(1)[0][0]
-
+            _write_to_csv(writer, classification)
             #print(f"Predicted {classification} in {round(end_time_predict,2)}s!", flush=True, end='\n')
             values = []
 
