@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Grid, Typography, makeStyles } from "@material-ui/core";
 
 // Componentes
@@ -38,6 +38,30 @@ export const SensorListContent = () => {
 		helper.push(sensor);
 		setSensors(helper);
 	};
+
+
+	const getConnectedSensors = useCallback(async () => {
+
+		await fetch("http://localhost:5000/setup/get_sensors", {
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json",
+			},
+		})
+			.then((res) => res.json())
+			.then(data => {
+				console.log(data);
+				setSensors(data["sensors"]);
+			})
+	}, []);
+
+
+	useEffect(() => {
+		console.log("useEffect");
+		getConnectedSensors();
+		// eslint-disable-next-line
+	}, []);
+
 
 	const mapSensors = sensors.map((sensor: Sensor) => {
 		return (
