@@ -50,14 +50,12 @@ export const SensorListContent = () => {
 		})
 			.then((res) => res.json())
 			.then(data => {
-				console.log(data);
 				setSensors(data["sensors"]);
 			})
 	}, []);
 
 
 	useEffect(() => {
-		console.log("useEffect");
 		getConnectedSensors();
 		// eslint-disable-next-line
 	}, []);
@@ -70,7 +68,6 @@ export const SensorListContent = () => {
 	});
 
 	const getSensorsConnectedNames = () => {
-		console.log("getSensorsConnectedNames");
 		let out: string[] = [];
 		sensors.forEach((sensor: Sensor) => out.push(sensor.name))
 		return out;

@@ -1,4 +1,5 @@
 import csv
+import os
 import time
 import sys
 import datetime
@@ -15,6 +16,16 @@ SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 SLEEPTIME = 0.05
 NUM_SENSORS = 3
 data_queue = None
+
+
+def _classification_fname():
+    return f'./classifications/classifications_{datetime.date.today().strftime("%Y%m%d")}.csv'
+
+
+classifications_file_append = open(_classification_fname(), "a+")
+classifications_file_read = open(_classification_fname(), "r+")
+classifications_writer = csv.writer(classifications_file_append)
+classifications_reader = csv.reader(classifications_file_read)
 
 
 def scan_for_sensors(client):
@@ -157,12 +168,9 @@ def collect_data(client, sensor_bank):
             imu_data = zenEvent.data.imu_data
             row = _make_row(sensor_bank.handle_to_id_dict[zenEvent.sensor.handle], imu_data)
             data_queue.push(row[0], row[1:])
+            print("collect")
         else:
             continue
-
-
-def _classification_fname():
-    return f'./classifications/classifications_{datetime.date.today().strftime("%Y%m%d")}.csv'
 
 
 def _write_to_csv(writer, classification):
@@ -172,8 +180,7 @@ def _write_to_csv(writer, classification):
 
 def classify(client, model, sensor_bank):
     values = []
-    file = open(_classification_fname(), "a")
-    writer = csv.writer(file)
+    print("classifying", flush=True)
     while sensor_bank.run:
         if(min(data_queue.entries) == 0):
             time.sleep(SLEEPTIME)
@@ -191,7 +198,7 @@ def classify(client, model, sensor_bank):
             argmax = [classification.argmax() for classification in classifications]
             end_time_predict = time.perf_counter() - start_time_predict
             classification = Counter(argmax).most_common(1)[0][0]
-            _write_to_csv(writer, classification)
+            _write_to_csv(classifications_writer, classification)
             print(f"Classified as {classification} in {round(end_time_predict,2)}s!", flush=True, end='\n')
             values = []
 

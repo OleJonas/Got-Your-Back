@@ -155,21 +155,16 @@ def set_id():
 @app.route("/classifications")
 def get_all_classifications():
     res = dict()
-    with open(sc._classification_fname(), 'r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            res[row[0]] = row[1]
+    sc.classifications_reader = csv.reader(sc.classifications_file_read)
+    for row in sc.classifications_reader:
+        res[row[0]] = row[1]
     return res
 
 
 @app.route("/classifications/latest")
 def get_classification():
-    rows = []
-    with open(sc._classification_fname(), 'r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            rows.append([row[0], row[1]])
-    return {rows[-1][0]: rows[-1][1]}
+    row = next(sc.classifications_reader)
+    return {row[0]: row[1]}
 
 
 @app.route("/classifications/history")
@@ -211,7 +206,7 @@ def classification_pipe():
     collect_thread.start()
     classify_thread.start()
 
-    print("classification started")
+    print("classification started", flush=True)
     return json.dumps(sensor_bank.run)
 
 
@@ -228,6 +223,7 @@ def stop_classify():
     print("Stopping classification...")
     for t in t_pool:
         t.join()
+        print()
     return json.dumps(sensor_bank.run)
 
 
@@ -260,6 +256,7 @@ def shutdown():
     for sensor in sensor_bank.sensor_dict.values():
         sensor_bank.disconnect_sensor(sensor.name)
     client.close()
+    sc.classifications_file.close()
 
 
 atexit.register(shutdown)

@@ -234,7 +234,7 @@ def classify(model, data_queue):
             classification = Counter(argmax).most_common(1)[0][0]
             print(f"Classified as {classification} in {round(end_time_predict,2)}s!")
 
-            with open('./classifications/classifications.csv', 'a', newline='') as file:
+            with open('./classifications/classifications.csv', 'a+') as file:
                 _write_to_csv(csv.writer(file), classification)
             values = []
 

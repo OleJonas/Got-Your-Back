@@ -54,7 +54,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 
 	useEffect(() => {
 		if (!props.connected) return;
-		setInterval(getBatteryPercent, 30000);
+		setInterval(getBatteryPercent, 60000);
 		// eslint-disable-next-line
 	}, []);
 

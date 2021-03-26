@@ -32,7 +32,9 @@ export const HomeView = () => {
 			.then((data) => {
 				setDatapoints(data);
 			});
+	}, []);
 
+	useEffect(() => {
 		fetch("http://localhost:5000/status")
 			.then((response) => response.json())
 			.then((data) => {

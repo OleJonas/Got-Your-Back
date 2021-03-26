@@ -25,6 +25,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 				.then((response) => response.json())
 				.then((data) => {
 					if (data) {
+						console.log("Started");
 						setIsRecording(true);
 						setButtonPressed(false);
 					}
@@ -34,6 +35,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 				.then((response) => response.json())
 				.then((data) => {
 					if (!data) {
+						console.log("Stopped");
 						setIsRecording(false);
 						setButtonPressed(false);
 					}
