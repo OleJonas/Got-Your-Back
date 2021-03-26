@@ -77,12 +77,21 @@ export const HistoryView = () => {
 						<Grid item xs={12} className={classes.components}>
 							<Box mb={0.6} className={classes.box}>
 								<FormControl className={classes.dropdown}>
-									<InputLabel id="durationLine-controlled-open-select-label">Distribution</InputLabel>
+									<InputLabel id="durationLine-controlled-open-select-label">
+										<Typography variant="h5" color="textPrimary">
+											Distribution over time
+										</Typography>
+									</InputLabel>
 									<Select
 										labelId="durationLine-controlled-open-select-label"
 										id="durationLine-controlled-open-select"
 										value={durationLine}
 										onChange={handleChangeLine}
+										inputProps={{
+											classes: {
+												icon: classes.icon,
+											},
+										}}
 									>
 										<MenuItem value={7}>7 days</MenuItem>
 										<MenuItem value={14}>14 days</MenuItem>
@@ -99,12 +108,21 @@ export const HistoryView = () => {
 
 						<Grid item xs={12} md={12} className={classes.components}>
 							<FormControl className={classes.dropdown}>
-								<InputLabel id="durationColumn-controlled-open-select-label">Distribution</InputLabel>
+								<InputLabel id="durationColumn-controlled-open-select-label">
+									<Typography variant="h5" color="textPrimary">
+										Distribution in total
+									</Typography>
+								</InputLabel>
 								<Select
 									labelId="durationColumn-controlled-open-select-label"
 									id="durationColumn-controlled-open-select"
 									value={durationColumn}
 									onChange={handleChangeColumn}
+									inputProps={{
+										classes: {
+											icon: classes.icon,
+										},
+									}}
 								>
 									<MenuItem value={7}>7 days</MenuItem>
 									<MenuItem value={14}>14 days</MenuItem>
@@ -131,9 +149,11 @@ const useStyles = makeStyles({
 	box: {
 		height: "100%",
 	},
-
+	icon: {
+		fill: "white",
+	},
 	dropdown: {
-		minWidth: 120,
+		minWidth: 160,
 	},
 	container: {
 		height: "100%",
