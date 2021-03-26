@@ -204,6 +204,11 @@ def collect_data(client, data_queue):
             continue
 
 
+def _write_to_csv(writer, classification):
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    writer.writerow([current_time, classification])
+
+
 def classify(model, data_queue):
     values = []
     while True:
@@ -220,17 +225,14 @@ def classify(model, data_queue):
 
         if(len(values) == SAMPLING_RATE):
             start_time_predict = time.perf_counter()
-            predictions = model(np.array(values)).numpy()
-            argmax = [pred.argmax() for pred in predictions]
+            classify = model(np.array(values)).numpy()
+            argmax = [classification.argmax() for classification in classify]
             end_time_predict = time.perf_counter() - start_time_predict
-            pred = Counter(argmax).most_common(1)[0][0]
-            print(f"Predicted {pred} in {round(end_time_predict,2)}s!")
+            classification = Counter(argmax).most_common(1)[0][0]
+            print(f"Classified as {classification} in {round(end_time_predict,2)}s!")
 
-            with open('predictions.csv', 'a', newline='') as file:
-                fnames = ['time', 'prediction']
-                writer = csv.DictWriter(file, fieldnames=fnames)
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                writer.writerow({'time' : current_time, 'prediction' : pred})
+            with open('../classifications/classifications.csv', 'a+', newline='') as file:
+                _write_to_csv(csv.writer(file), classification)
             values = []
 
 
@@ -255,7 +257,7 @@ if __name__ == "__main__":
 
     # Classify
     model = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
-    # model = load('RFC_model_3.joblib')
+    # model = load(f'RFC_model_{NUM_SENSORS}.joblib')
     classify_thread = threading.Thread(target=classify, args=[model, data_queue], daemon=True)
     classify_thread.start()
 

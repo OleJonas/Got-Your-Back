@@ -1,13 +1,8 @@
 import time
 import sys
-import threading
-import tensorflow as tf
-import numpy as np
+import datetime
 import openzen
-import keras
-import os
-from sklearn import preprocessing as pp
-from joblib import dump, load
+import numpy as np
 from collections import Counter
 
 sys.path.append("scripts/")
@@ -47,12 +42,13 @@ def scan_for_sensors(client):
 
         if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
             lst_data = zenEvent.data.sensor_listing_progress
-            print(f"Sensor listing progress: {lst_data.progress * 100}%")
+            print(f"Sensor listing progress: {lst_data.progress * 100}%", flush=True, end='')
             if lst_data.complete > 0:
                 break
 
-    print("Sensor Listing complete, found ", len(sensors))
-    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
+    print("Sensor Listing complete, found ", len(sensors), flush=True, end='')
+    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors], flush=True, end='')
+
     return sensors
 
 
@@ -210,10 +206,14 @@ def collect_data(client, sensor_bank):
             continue
 
 
+def _classification_fname():
+    return f'classifications_{datetime.date.today().date.strftime("%Y%m%d")}'
+
+
 def classify(client, model, sensor_bank):
     values = []
+    file = open(_classification_fname(), "a+")
     while sensor_bank.run:
-
         if(min(data_queue.entries) == 0):
             time.sleep(SLEEPTIME)
         else:
@@ -230,114 +230,10 @@ def classify(client, model, sensor_bank):
             argmax = [classification.argmax() for classification in classifications]
             end_time_predict = time.perf_counter() - start_time_predict
             classification = Counter(argmax).most_common(1)[0][0]
-            print(classification, flush=True, end='')
-            #print(f"Predicted {classification} in {round(end_time_predict,2)}s!")
+
+            #print(f"Predicted {classification} in {round(end_time_predict,2)}s!", flush=True, end='\n')
             values = []
-
-
-def scan_for_sensors(client):
-    """
-    Scan for available sensors
-
-    Input:\n
-    client - clientobject from the OpenZen-library
-
-    Output:\n
-    sensors - list of available sensors
-    """
-    client.list_sensors_async()
-
-    # Check for events
-    sensors = []
-    while True:
-        zenEvent = client.wait_for_next_event()
-
-        if zenEvent.event_type == openzen.ZenEventType.SensorFound:
-            print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}", flush=True, end='')
-            # Check if found device is a bluetooth device
-            if zenEvent.data.sensor_found.io_type == "Bluetooth":
-                sensors.append(zenEvent.data.sensor_found)
-
-        if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
-            lst_data = zenEvent.data.sensor_listing_progress
-            print(f"Sensor listing progress: {lst_data.progress * 100}%", flush=True, end='')
-            if lst_data.complete > 0:
-                break
-
-    print("Sensor Listing complete, found ", len(sensors), flush=True, end='')
-    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors], flush=True, end='')
-
-    return sensors
-
-
-def classify_pipe(client, data_queue):
-    PIPE_NAME = "classification"
-    fifo_pipe = None
-    try:
-        count = 0
-        while count < 20:
-            try:
-                fifo_pipe = os.open(PIPE_NAME, os.O_WRONLY)  # Make pipe to send classifications to
-                break
-            except:
-                print("Trying to make pipe again")
-                count += 1  # Try to make pipe again
-        try:
-            print("ready")
-            values = []
-            while True:
-                if(min(data_queue.entries) == 0):
-                    time.sleep(SLEEPTIME)
-                else:
-                    top_row = data_queue.shift()
-                    data = top_row[0][0][1:]
-                    for i in range(1, data_queue.n_sensors):
-                        data += top_row[i][0][1:]
-                    values.append(data)
-
-                if(len(values) == SAMPLING_RATE):
-                    # start_time_predict = time.perf_counter()
-                    classify = model(np.array(values)).numpy()
-                    argmax = [classification.argmax() for classification in classify]
-                    # end_time_predict = time.perf_counter() - start_time_predict
-                    classification = Counter(argmax).most_common(1)[0][0]
-                    os.write(fifo_pipe, classification)
-                    #print(classification, flush=True, end='')
-                    #print(f"Predicted {classification} in {round(end_time_predict,2)}s!")
-                    values = []
-        except:
-            print("failed in os write block")
-    except:
-        print("failed in creating pipe")
-    # finally:
-        # os.remove(PIPE_NAME)
 
 
 if __name__ == "__main__":
-    openzen.set_log_level(openzen.ZenLogLevel.Off)
-
-    # Make client
-    error, client = openzen.make_client()
-    if not error == openzen.ZenError.NoError:
-        print("Error while initializing OpenZen library", flush=True, end='')
-        sys.exit(1)
-
-    # Scan, connect and syncronize sensors
-    sensors_found = scan_for_sensors(client)
-    #name, s, imu, b = connect_to_sensor(client, sensors_found[0])
-
-    sensor_bank = Sensor_Bank()
-    for sensor in sensors_found:
-        name, s, imu = connect_to_sensor(client, sensor)
-        sensor_bank.add_sensor(name, s, imu)
-    data_queue = Data_Queue(len(sensor_bank.sensor_dict))
-
-    #print("Sensor bank: ", [s.name for s in sensor_bank.sensor_dict.values()])
-
-    sync_sensors(client, sensor_bank)
-    # model = load('RFC_model_3.joblib')
-    model = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
-    classify_thread = threading.Thread(target=classify_pipe, args=[model, data_queue], daemon=True)
-    classify_thread.start()
-
-    #collect_data(client, data_queue, sensor_bank)
+    pass

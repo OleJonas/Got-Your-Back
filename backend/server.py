@@ -12,7 +12,7 @@ from flask import Flask, request, Response
 from flask_cors import CORS
 sys.path.append("scripts/")
 from sensor_bank import Sensor_Bank
-import realtime_test as rt
+import server_classify as sc
 
 app = Flask(__name__)
 client = None
@@ -85,7 +85,7 @@ def get_dummy_found_sensors():
 def scan():
     global found_sensors
     global sensor_bank
-    helper = rt.scan_for_sensors(client)
+    helper = sc.scan_for_sensors(client)
     out = {"sensors": []}
 
     for sensor in helper:
@@ -98,7 +98,7 @@ def scan():
 def connect():
     global sensor_bank
     sensor_name = request.json["name"]
-    s_name, sensor, imu = rt.connect_to_sensor(client, found_sensors[sensor_name])
+    s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[sensor_name])
     sensor_bank.add_sensor(s_name, sensor, imu)
     s_id = sensor_bank.sensor_id_dict[s_name]
     res = {
@@ -113,14 +113,14 @@ def connect():
 def connect_all():
     global sensor_bank
     for key in found_sensors:
-        s_name, _, imu = rt.connect_to_sensor(client, found_sensors[key])
+        s_name, _, imu = sc.connect_to_sensor(client, found_sensors[key])
         sensor_bank.add_sensor(s_name, found_sensors[key], imu)
     return "All connected"
 
 
 @app.route("/setup/sync")
 def sync_sensors():
-    rt.sync_sensors(client, sensor_bank)
+    sc.sync_sensors(client, sensor_bank)
     return "All sensors are synced!"
 
 
@@ -192,11 +192,11 @@ def classification_pipe():
     global t_pool
     global sensor_bank
     sensor_bank.run = True
-    rt.sync_sensors(client, sensor_bank)
+    sc.sync_sensors(client, sensor_bank)
     model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
 
-    classify_thread = threading.Thread(target=rt.classify, args=[client, model, sensor_bank], daemon=True)
-    collect_thread = threading.Thread(target=rt.collect_data, args=[client, sensor_bank], daemon=True)
+    classify_thread = threading.Thread(target=sc.classify, args=[client, model, sensor_bank], daemon=True)
+    collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)
     t_pool.append(classify_thread)
     t_pool.append(collect_thread)
     collect_thread.start()
