@@ -98,7 +98,7 @@ def scan():
 def connect():
     global sensor_bank
     sensor_name = request.json["name"]
-    s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[sensor_name])
+    s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[sensor_name], sensor_bank)
     sensor_bank.add_sensor(s_name, sensor, imu)
     s_id = sensor_bank.sensor_id_dict[s_name]
     res = {
@@ -113,7 +113,7 @@ def connect():
 def connect_all():
     global sensor_bank
     for key in found_sensors:
-        s_name, _, imu = sc.connect_to_sensor(client, found_sensors[key])
+        s_name, _, imu = sc.connect_to_sensor(client, found_sensors[key], sensor_bank)
         sensor_bank.add_sensor(s_name, found_sensors[key], imu)
     return "All connected"
 
@@ -133,6 +133,7 @@ def disconnect():
         sensor_bank.disconnect_sensor(name)
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
+
 @app.route("/setup/set_id", methods=["POST"])
 def set_id():
     name = request.json["name"]
@@ -146,7 +147,7 @@ def set_id():
 @app.route("/classifications")
 def get_all_classifications():
     res = dict()
-    with open('./classifications/classifications.csv', 'r') as file:
+    with open(sc._classification_fname(), 'r') as file:
         reader = csv.reader(file)
         for row in reader:
             res[row[0]] = row[1]
@@ -156,7 +157,7 @@ def get_all_classifications():
 @app.route("/classifications/latest")
 def get_classification():
     rows = []
-    with open('./classifications/classifications.csv', 'r') as file:
+    with open(sc._classification_fname(), 'r') as file:
         reader = csv.reader(file)
         for row in reader:
             rows.append([row[0], row[1]])

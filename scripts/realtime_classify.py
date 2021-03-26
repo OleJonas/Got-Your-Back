@@ -208,7 +208,7 @@ def collect_data(client, data_queue):
 
 
 def _write_to_csv(writer, classification):
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     writer.writerow([current_time, classification])
 
 
@@ -234,7 +234,7 @@ def classify(model, data_queue):
             classification = Counter(argmax).most_common(1)[0][0]
             print(f"Classified as {classification} in {round(end_time_predict,2)}s!")
 
-            with open('./classifications/classifications.csv', 'a+', newline='') as file:
+            with open('./classifications/classifications.csv', 'a', newline='') as file:
                 _write_to_csv(csv.writer(file), classification)
             values = []
 

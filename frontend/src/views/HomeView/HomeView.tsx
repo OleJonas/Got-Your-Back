@@ -12,7 +12,7 @@ import { SensorListContent } from "../../components/SensorListContent/SensorList
 
 export const HomeView = () => {
 	const classes = useStyles();
-	const [datapoints, setDatapoints] = useState<any>({
+	const [datapoints, setDatapoints] = useState<json>({
 		"1998-09-10 08:25:50": "1",
 	});
 	const lastPosture: number = Object.values(datapoints).pop();
@@ -54,26 +54,26 @@ export const HomeView = () => {
 		}, 10000);
 	}, []);
 
-	/*
 	useEffect(() => {
 		setInterval(() => {
-			fetch("http://localhost:5000/classifications/latest", {
-				headers: {
-					"Content-Type": "application/json",
-					Accept: "application/json",
-				},
-			})
-				.then((response) => response.json())
-				.then((data) => {
-					let key = Object.keys(data)[0];
-					let val = Object.values(data)[0];
-					let tmp = datapoints;
-					tmp[key] = val;
-					setDatapoints(tmp);
-				});
+			if (isRecording) {
+				fetch("http://localhost:5000/classifications/latest", {
+					headers: {
+						"Content-Type": "application/json",
+						Accept: "application/json",
+					},
+				})
+					.then((response) => response.json())
+					.then((data) => {
+						let key = Object.keys(data)[0];
+						let val = Object.values(data)[0];
+						let tmp = datapoints;
+						tmp[key] = val;
+						setDatapoints(tmp);
+					});
+			}
 		}, 3000);
 	}, []);
-    */
 
 	return (
 		<>
