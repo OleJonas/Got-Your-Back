@@ -8,7 +8,6 @@ from collections import Counter
 
 sys.path.append("scripts/")
 from Data_Queue import Data_Queue
-from sensor_bank import Sensor_Bank
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
@@ -53,7 +52,7 @@ def scan_for_sensors(client):
     return sensors
 
 
-def connect_to_sensor(client, input_sensor):
+def connect_to_sensor(client, input_sensor, sensor_bank):
     err, sensor = client.obtain_sensor(input_sensor)
 
     attempts = 0
@@ -71,6 +70,8 @@ def connect_to_sensor(client, input_sensor):
     imu.set_bool_property(openzen.ZenImuProperty.StreamData, False)
     s_name = input_sensor.name
     battery_percent = f"{round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
+
+    sensor_bank.handle_to_id_dict[sensor.sensor.handle] = sensor_bank.sensor_id_dict[input_sensor.name]
 
     print(
         f"Connected to sensor {s_name} ({battery_percent}%)!", flush=True, end='')
@@ -130,7 +131,7 @@ def collect_data(client, sensor_bank):
     while not aligned:
         zenEvent = client.wait_for_next_event()
         imu_data = zenEvent.data.imu_data
-        tmp_rows.append(_make_row(sensor_bank.handle_to_id[zenEvent.sensor.handle], imu_data))
+        tmp_rows.append(_make_row(sensor_bank.handle_to_id_dict[zenEvent.sensor.handle], imu_data))
         found_timestamps.append(imu_data.timestamp)
         for i, x in enumerate(found_timestamps):
             found = 0
@@ -154,24 +155,24 @@ def collect_data(client, sensor_bank):
         if zenEvent.event_type == openzen.ZenEventType.ImuData:
             occurences[int(zenEvent.sensor.handle) - 1] += 1
             imu_data = zenEvent.data.imu_data
-            row = _make_row(sensor_bank.handle_to_id[zenEvent.sensor.handle], imu_data)
+            row = _make_row(sensor_bank.handle_to_id_dict[zenEvent.sensor.handle], imu_data)
             data_queue.push(row[0], row[1:])
         else:
             continue
 
 
 def _classification_fname():
-    return f'classifications_{datetime.date.today().strftime("%Y%m%d")}'
+    return f'./classifications/classifications_{datetime.date.today().strftime("%Y%m%d")}.csv'
 
 
 def _write_to_csv(writer, classification):
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     writer.writerow([current_time, classification])
 
 
 def classify(client, model, sensor_bank):
     values = []
-    file = open(_classification_fname(), "a+")
+    file = open(_classification_fname(), "a")
     writer = csv.writer(file)
     while sensor_bank.run:
         if(min(data_queue.entries) == 0):
@@ -191,7 +192,7 @@ def classify(client, model, sensor_bank):
             end_time_predict = time.perf_counter() - start_time_predict
             classification = Counter(argmax).most_common(1)[0][0]
             _write_to_csv(writer, classification)
-            #print(f"Predicted {classification} in {round(end_time_predict,2)}s!", flush=True, end='\n')
+            print(f"Classified as {classification} in {round(end_time_predict,2)}s!", flush=True, end='\n')
             values = []
 
 
