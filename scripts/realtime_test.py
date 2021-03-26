@@ -12,7 +12,7 @@ from collections import Counter
 
 sys.path.append("scripts/")
 from Data_Queue import Data_Queue
-from sensor_bank import Sensor_Bank, Sensor
+from sensor_bank import Sensor_Bank
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
@@ -20,6 +20,7 @@ SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 SLEEPTIME = 0.05
 NUM_SENSORS = 3
 data_queue = None
+
 
 def scan_for_sensors(client):
     """
@@ -118,9 +119,7 @@ def connect_to_sensor(client, input_sensor):
     # Obtain IMU from sensor and prevent it from streaming sensor_data until asked to
     imu = sensor.get_any_component_of_type(openzen.component_type_imu)
     imu.set_bool_property(openzen.ZenImuProperty.StreamData, False)
-
     s_name = input_sensor.name
-
     battery_percent = f"{round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
 
     print(
@@ -164,12 +163,10 @@ def _make_row(handle, imu_data):
     return row
 
 
-
-
 def collect_data(client, sensor_bank):
     global data_queue
-    data_queue = Data_Queue(len(sensor_bank.sensor_arr))
-    print(len(sensor_bank.sensor_arr), flush=True, end='')
+    data_queue = Data_Queue(len(sensor_bank.sensor_dict))
+    print(len(sensor_bank.sensor_dict), flush=True, end='')
 
     _remove_unsync_data(client)
     occurences = [0, 0, 0]
@@ -177,7 +174,7 @@ def collect_data(client, sensor_bank):
     aligned = False
     found_timestamps = []
 
-    for sensor in sensor_bank.sensor_arr:
+    for sensor in sensor_bank.sensor_dict.values():
         sensor.start_collect()
 
     while not aligned:
@@ -229,12 +226,12 @@ def classify(client, model, sensor_bank):
 
         if(len(values) == SAMPLING_RATE):
             start_time_predict = time.perf_counter()
-            predictions = model(np.array(values)).numpy()
-            argmax = [pred.argmax() for pred in predictions]
+            classifications = model(np.array(values)).numpy()
+            argmax = [classification.argmax() for classification in classifications]
             end_time_predict = time.perf_counter() - start_time_predict
-            pred = Counter(argmax).most_common(1)[0][0]
-            print(pred, flush=True, end='')
-            #print(f"Predicted {pred} in {round(end_time_predict,2)}s!")
+            classification = Counter(argmax).most_common(1)[0][0]
+            print(classification, flush=True, end='')
+            #print(f"Predicted {classification} in {round(end_time_predict,2)}s!")
             values = []
 
 
@@ -269,29 +266,26 @@ def scan_for_sensors(client):
 
     print("Sensor Listing complete, found ", len(sensors), flush=True, end='')
     print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors], flush=True, end='')
-    
+
     return sensors
 
 
 def classify_pipe(client, data_queue):
     PIPE_NAME = "classification"
     fifo_pipe = None
-
     try:
-        count = 0    
+        count = 0
         while count < 20:
             try:
-                fifo_pipe = os.open(PIPE_NAME, os.O_WRONLY) # Make pipe to send classifications to
+                fifo_pipe = os.open(PIPE_NAME, os.O_WRONLY)  # Make pipe to send classifications to
                 break
             except:
                 print("Trying to make pipe again")
                 count += 1  # Try to make pipe again
-        
         try:
             print("ready")
             values = []
             while True:
-
                 if(min(data_queue.entries) == 0):
                     time.sleep(SLEEPTIME)
                 else:
@@ -302,25 +296,25 @@ def classify_pipe(client, data_queue):
                     values.append(data)
 
                 if(len(values) == SAMPLING_RATE):
-                    start_time_predict = time.perf_counter()
-                    predictions = model(np.array(values)).numpy()
-                    argmax = [pred.argmax() for pred in predictions]
-                    end_time_predict = time.perf_counter() - start_time_predict
-                    pred = Counter(argmax).most_common(1)[0][0]
-                    os.write(fifo_pipe, pred)
-                    #print(pred, flush=True, end='')
-                    #print(f"Predicted {pred} in {round(end_time_predict,2)}s!")
-                    values = []  
+                    # start_time_predict = time.perf_counter()
+                    classify = model(np.array(values)).numpy()
+                    argmax = [classification.argmax() for classification in classify]
+                    # end_time_predict = time.perf_counter() - start_time_predict
+                    classification = Counter(argmax).most_common(1)[0][0]
+                    os.write(fifo_pipe, classification)
+                    #print(classification, flush=True, end='')
+                    #print(f"Predicted {classification} in {round(end_time_predict,2)}s!")
+                    values = []
         except:
             print("failed in os write block")
     except:
-        print("failed in creating pipe")          
-    #finally:
-        #os.remove(PIPE_NAME)
+        print("failed in creating pipe")
+    # finally:
+        # os.remove(PIPE_NAME)
+
 
 if __name__ == "__main__":
     openzen.set_log_level(openzen.ZenLogLevel.Off)
-    print("Fuck you")
 
     # Make client
     error, client = openzen.make_client()
@@ -331,16 +325,14 @@ if __name__ == "__main__":
     # Scan, connect and syncronize sensors
     sensors_found = scan_for_sensors(client)
     #name, s, imu, b = connect_to_sensor(client, sensors_found[0])
-    
+
     sensor_bank = Sensor_Bank()
     for sensor in sensors_found:
         name, s, imu = connect_to_sensor(client, sensor)
         sensor_bank.add_sensor(name, s, imu)
-    #print(len(sensor_bank.sensor_arr))
-    data_queue = Data_Queue(len(sensor_bank.sensor_arr))
+    data_queue = Data_Queue(len(sensor_bank.sensor_dict))
 
-    
-    #print("Sensor bank: ", [s.name for s in sensor_bank.sensor_arr])
+    #print("Sensor bank: ", [s.name for s in sensor_bank.sensor_dict.values()])
 
     sync_sensors(client, sensor_bank)
     # model = load('RFC_model_3.joblib')
@@ -349,19 +341,3 @@ if __name__ == "__main__":
     classify_thread.start()
 
     #collect_data(client, data_queue, sensor_bank)
-    """
-
-    # user_input=[int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
-    NUM_SENSORS = len(user_input)
-    connected_sensors, imus = connect_and_get_imus(client, sensors_found, user_input)
-    _remove_unsync_data(client)
-    sync_sensors(imus)
-
-    # Classify
-    model = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
-    # model = load('RFC_model_3.joblib')
-    classify_thread = threading.Thread(target=classify, args=[model, data_queue], daemon=True)
-    classify_thread.start()
-
-    collect_data(client, data_queue)
-    """

@@ -21,7 +21,7 @@ export const HomeView = () => {
 	const [hasSensors, setHasSensors] = useState<boolean>(false);
 
 	// Fetch classifications and status on recording
-	/*useEffect(() => {
+	useEffect(() => {
 		fetch("http://localhost:5000/classifications", {
 			headers: {
 				"Content-Type": "application/json",
@@ -39,10 +39,10 @@ export const HomeView = () => {
 				data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
 				data.isRecording ? setIsRecording(true) : setIsRecording(false);
 			});
-	}, []);*/
+	}, []);
 
 	// Fetch status on recording every tenth second
-	/*useEffect(() => {
+	useEffect(() => {
 		setInterval(() => {
 			fetch("http://localhost:5000/status")
 				.then((response) => response.json())
@@ -52,7 +52,7 @@ export const HomeView = () => {
 					data.isRecording ? setIsRecording(true) : setIsRecording(false);
 				});
 		}, 10000);
-	}, []);*/
+	}, []);
 
 	/*
 	useEffect(() => {
