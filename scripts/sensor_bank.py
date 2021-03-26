@@ -49,7 +49,7 @@ class Sensor_Bank:
 
     def set_all_sampling_rates(self, sampling_rate):
         for name_key in self.sensor_dict:
-            sensor_dict[name_key].set_sampling_rate(sampling_rate)
+            self.sensor_dict[name_key].set_sampling_rate(sampling_rate)
         self.sampling_rate = sampling_rate
         print(f"Sampling rates set to: {sampling_rate}")
 
