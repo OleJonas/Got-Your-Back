@@ -60,9 +60,17 @@ def confirm_access():
 
 # Debug endpoints
 
-@app.route("/debug/get_sensors")
+@app.route("/setup/get_sensors")
 def get_sensors():
-    return str(sensor_bank.sensor_dict)
+    out = {"sensors": []}
+    for sensor in sensor_bank.sensor_dict:
+        s = sensor_bank.sensor_dict[sensor]
+        out["sensors"].append({
+            "name": s.name,
+            "id": s.id,
+            "battery": s.get_battery_percentage().split("%")[0]
+        })
+    return json.dumps(out)
 
 
 @app.route('/dummy/connected_sensors')
