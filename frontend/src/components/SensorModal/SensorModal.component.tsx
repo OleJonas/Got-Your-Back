@@ -1,6 +1,7 @@
 import { FC, useState, useEffect, useCallback } from "react";
 import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { Sensor } from "../SensorListContent/SensorListContent.component"
 
 // Components
 import { Button } from "../Buttons/Button.component";
@@ -10,6 +11,7 @@ import "./loader.css";
 
 type modalProps = {
 	open: boolean;
+	alreadyConnected: string[]; // Array of sensor names that are already connected
 	close: () => void;
 	sendSensors: (sensor: any) => void;
 };
@@ -38,6 +40,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 				setOpen(true);
 			});
 	}, [isFetching]);
+
 
 	useEffect(() => {
 		if (props.open === true) {
@@ -99,6 +102,25 @@ export const SensorModal: FC<modalProps> = (props) => {
 			}
 	};
 
+	/*const mapSensors = () => {
+		const sensorNames = 
+		sensors.map((sensor: Sensor) => {
+		return (
+			<SensorRowHome connected={true} id={sensor.id} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />
+		);
+	});*/
+
+	const getSensorsNotConnected: Sensor[] = () => {
+		console.log(props.alreadyConnected);
+		if(props.alreadyConnected.length > 0){
+			console.log("alreadyConnected.len: " + props.alreadyConnected.length);
+			return sensorsFound.filter((sensor: Sensor) => !props.alreadyConnected.includes(sensor.name))
+		} else{
+			console.log("alreadyConnected was empty");
+			return sensorsFound;
+		}
+	}
+
 	return (
 		<Box>
 			<Dialog
@@ -133,7 +155,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 								</Grid>
 
 								{sensorsFound ? (
-									sensorsFound.map((sensor: any) => (
+									getSensorsNotConnected().map((sensor: Sensor) => (
 										<SensorRowModal clickConnect={addConnected} connected={false} id={sensor.id} name={sensor.name} />
 									))
 								) : (

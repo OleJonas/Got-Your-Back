@@ -6,7 +6,7 @@ import { Button } from "../Buttons/Button.component";
 import { SensorRowHome } from "../SensorRow/SensorRowHome.component";
 import { SensorModal } from "../SensorModal/SensorModal.component";
 
-type Sensor = {
+export type Sensor = {
 	id: number;
 	name: string;
 	battery: number;
@@ -69,6 +69,13 @@ export const SensorListContent = () => {
 		);
 	});
 
+	const getSensorsConnectedNames = () => {
+		console.log("getSensorsConnectedNames");
+		let out: string[] = [];
+		sensors.forEach((sensor: Sensor) => out.push(sensor.name))
+		return out;
+	}
+
 	return (
 		<Grid container className={classes.root}>
 			<Grid container item className={classes.header} xs={12}>
@@ -100,7 +107,7 @@ export const SensorListContent = () => {
 			</Grid>
 			<Grid xs={12} item container className={classes.button}>
 				<Button func={openModal}>Scan</Button>
-				<SensorModal sendSensors={addSensors} close={closeModal} open={open}></SensorModal>
+				<SensorModal sendSensors={addSensors} alreadyConnected={getSensorsConnectedNames()} close={closeModal} open={open}></SensorModal>
 			</Grid>
 		</Grid>
 	);

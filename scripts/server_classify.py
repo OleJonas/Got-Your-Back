@@ -62,7 +62,7 @@ def connect_to_sensor(client, input_sensor):
         print("Error connecting to sensor")
         print("Trying again...")
         err, sensor = client.obtain_sensor(input_sensor)
-        if attempts >= 100:
+        if attempts >= 10:
             print("Can't connect to sensor")
             sys.exit(1)
 
