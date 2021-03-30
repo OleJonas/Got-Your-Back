@@ -21,7 +21,6 @@ sensor_bank = None
 data_queue = None
 classify = False
 t_pool = []
-
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
 CORS(app, support_credentials=True)
 
@@ -75,18 +74,6 @@ def get_dummy_found_sensors():
     return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
 
 
-# De to neste endepunktene har blitt slettet i videre commits, fjernes?
-@app.route("/debug/get_sensors")
-def get_sensors():
-    return str(sensor_bank.sensor_arr)
-
-
-@app.route("/dummy/battery")
-def get_battery_fresh():
-    id = int(request.args.get("id"))
-    return str(10 + id)
-
-
 """
 SETUP
 """
@@ -96,8 +83,9 @@ SETUP
 def scan():
     global found_sensors
     found_sensors = sc.scan_for_sensors(client)
-    res = dict()
-    res["sensors"] = [sensor.name for sensor in found_sensors]
+    res = {"sensors": []}
+    for sensor in found_sensors:
+        res["sensors"].append({"name": sensor.name, "id": sensor_bank.sensor_id_dict[sensor.name]})
     return res
 
 

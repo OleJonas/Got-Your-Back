@@ -47,9 +47,7 @@ class Sensor_Bank:
         self.n_sensors += 1
         sensor_conn = Sensor(name, sensor, imu, self.n_sensors)
         self.sensor_arr.append(sensor_conn)
-        print(sensor_conn.handle)
         self.handle_to_id[sensor_conn.handle] = self.sensor_id_dict[name]
-        print(self.handle_to_id)
 
     def set_all_sampling_rates(self, sampling_rate):
         for sensor in self.sensor_arr:

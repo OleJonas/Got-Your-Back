@@ -8,7 +8,6 @@ import os
 from collections import Counter
 sys.path.append("scripts/")
 from Data_Queue import Data_Queue
-from sensor_bank import Sensor_Bank
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
@@ -51,10 +50,8 @@ def scan_for_sensors(client):
     return sensors
 
 
-
 def connect_to_sensor(client, input_sensor):
     err, sensor = client.obtain_sensor(input_sensor)
-
     attempts = 0
     while not err == openzen.ZenSensorInitError.NoError:
         attempts += 1
@@ -68,13 +65,11 @@ def connect_to_sensor(client, input_sensor):
     # Obtain IMU from sensor and prevent it from streaming sensor_data until asked to
     imu = sensor.get_any_component_of_type(openzen.component_type_imu)
     imu.set_bool_property(openzen.ZenImuProperty.StreamData, False)
-
     s_name = input_sensor.name
-
     battery_percent = f"{round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
 
     print(
-        f"Connected to sensor {s_name} ({battery_percent}%)!", flush=True, end='')
+        f"Connected to sensor {s_name} ({battery_percent})!", flush=True, end='')
 
     return s_name, sensor, imu
 
@@ -108,7 +103,6 @@ def _make_row(handle, imu_data):
     row.append(imu_data.timestamp)
     row += [imu_data.a[i] for i in range(3)]
     row += [imu_data.g[i] for i in range(3)]
-    #row += [imu_data.b[i] for i in range(3)]
     row += [imu_data.r[i] for i in range(3)]
     row += [imu_data.q[i] for i in range(4)]
     return row
@@ -164,7 +158,6 @@ def collect_data(client, sensor_bank):
 def classify(client, model, sensor_bank):
     values = []
     while sensor_bank.run:
-
         if(min(data_queue.entries) == 0):
             time.sleep(SLEEPTIME)
         else:
@@ -172,7 +165,6 @@ def classify(client, model, sensor_bank):
             data = top_row[0][0][1:]
             for i in range(1, data_queue.n_sensors):
                 data += top_row[i][0][1:]
-
             values.append(data)
 
         if(len(values) == SAMPLING_RATE):
@@ -215,56 +207,9 @@ def scan_for_sensors(client):
             if lst_data.complete > 0:
                 break
 
-    print("Sensor Listing complete, found ", len(sensors), flush=True, end='')
-    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors], flush=True, end='')
-
+    print("Sensor Listing complete, found ", len(sensors))
+    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
     return sensors
-
-
-def classify_pipe(client, data_queue):
-    PIPE_NAME = "classification"
-    fifo_pipe = None
-
-    try:
-        count = 0
-        while count < 20:
-            try:
-                fifo_pipe = os.open(PIPE_NAME, os.O_WRONLY)  # Make pipe to send classifications to
-                break
-            except:
-                print("Trying to make pipe again")
-                count += 1  # Try to make pipe again
-
-        try:
-            print("ready")
-            values = []
-            while True:
-
-                if(min(data_queue.entries) == 0):
-                    time.sleep(SLEEPTIME)
-                else:
-                    top_row = data_queue.shift()
-                    data = top_row[0][0][1:]
-                    for i in range(1, data_queue.n_sensors):
-                        data += top_row[i][0][1:]
-                    values.append(data)
-
-                if(len(values) == SAMPLING_RATE):
-                    start_time_predict = time.perf_counter()
-                    predictions = model(np.array(values)).numpy()
-                    argmax = [pred.argmax() for pred in predictions]
-                    end_time_predict = time.perf_counter() - start_time_predict
-                    pred = Counter(argmax).most_common(1)[0][0]
-                    os.write(fifo_pipe, pred)
-                    #print(pred, flush=True, end='')
-                    #print(f"Predicted {pred} in {round(end_time_predict,2)}s!")
-                    values = []
-        except:
-            print("failed in os write block")
-    except:
-        print("failed in creating pipe")
-    # finally:
-        # os.remove(PIPE_NAME)
 
 
 if __name__ == "__main__":
