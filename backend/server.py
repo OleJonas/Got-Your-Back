@@ -254,7 +254,7 @@ def get_status():
     global sensor_bank
     return {
         "isRecording": sensor_bank.run,
-        "numberOfSensors": len(sensor_bank.sensor_dict)
+        "numberOfSensors": len(sensor_bank.sensor_arr)
     }
 
 
