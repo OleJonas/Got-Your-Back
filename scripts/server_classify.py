@@ -1,15 +1,14 @@
 import time
 import sys
-import threading
+import csv
 import numpy as np
 import openzen
-import keras
-import os
 from collections import Counter
+from datetime import datetime, date
 sys.path.append("scripts/")
 from Data_Queue import Data_Queue
 
-PREDICTION_INTERVAL = 1  # Interval is in seconds
+CLASSIFICATION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 SLEEPTIME = 0.05
@@ -155,6 +154,15 @@ def collect_data(client, sensor_bank):
             continue
 
 
+def _write_to_csv(writer, classification):
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    writer.writerow([current_time, classification])
+
+
+def _classification_fname():
+    return f'./classifications/{date.today().strftime("%Y-%m-%d")}.csv'
+
+
 def classify(client, model, sensor_bank):
     values = []
     while sensor_bank.run:
@@ -168,13 +176,14 @@ def classify(client, model, sensor_bank):
             values.append(data)
 
         if(len(values) == SAMPLING_RATE):
-            start_time_predict = time.perf_counter()
-            predictions = model(np.array(values)).numpy()
-            argmax = [pred.argmax() for pred in predictions]
-            end_time_predict = time.perf_counter() - start_time_predict
-            pred = Counter(argmax).most_common(1)[0][0]
-            print(pred, flush=True, end='')
-            #print(f"Predicted {pred} in {round(end_time_predict,2)}s!")
+            start_time_classify = time.perf_counter()
+            classify = model(np.array(values)).numpy()
+            argmax = [classification.argmax() for classification in classify]
+            end_time_classify = time.perf_counter() - start_time_classify
+            classification = Counter(argmax).most_common(1)[0][0]
+            with open(_classification_fname(), 'a+') as file:
+                _write_to_csv(csv.writer(file), classification)
+            print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
             values = []
 
 
