@@ -199,16 +199,21 @@ FETCH CLASSIFICATIONS
 @app.route("/classifications")
 def get_all_classifications():
     res = dict()
-    sc.classifications_reader = csv.reader(sc.classifications_file_read)
-    for row in sc.classifications_reader:
-        res[row[0]] = row[1]
-    return res
+    with open(sc._classification_fname(), 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            res[row[0]] = row[1]
+        return res
 
 
 @app.route("/classifications/latest")
 def get_classification():
-    row = next(sc.classifications_reader)
-    return {row[0]: row[1]}
+    rows = []
+    with open(sc._classification_fname(), 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            rows.append([row[0], row[1]])
+    return {rows[-1][0]: rows[-1][1]}
 
 
 @app.route("/classifications/history")
