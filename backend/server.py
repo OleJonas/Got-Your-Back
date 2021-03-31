@@ -138,7 +138,7 @@ def disconnect():
     print(names)
     for name in names:
         sensor_bank.disconnect_sensor(name)
-    return json.dumps({'succSess': True}), 200, {'ContentType': 'application/json'}
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
 @app.route("/setup/get_sensors")
@@ -218,23 +218,12 @@ def get_all_classifications():
 
 @app.route("/classifications/latest")
 def get_classification():
-    rows = []
-    start_time_predict = time.perf_counter()
     with open(sc._classification_fname(), 'r') as file:
-        """
-        reader = csv.reader(file)
-        for row in reader:
-            rows.append([row[0], row[1]])
-    return {rows[-1][0]: rows[-1][1]}
-    """
         try:
             lastrow = deque(csv.reader(file), 1)[0]
         except IndexError:  # empty file
-            lastrow = None
-    end_time_predict = time.perf_counter() - start_time_predict
-    print(f"Time used {round(end_time_predict, 5)}s")
-
-    return {"lr": lastrow}
+            return json.dumps({'FileEmpty': True}), 200, {'ContentType': 'application/json'}
+    return {str(lastrow[0]): lastrow[1]}
 
 
 @app.route("/classifications/history")
