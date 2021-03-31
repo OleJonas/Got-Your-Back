@@ -9,6 +9,7 @@ import { RecordContent } from "../../components/RecordContent/RecordContent.comp
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 import { SensorListContent } from "../../components/SensorListContent/SensorListContent.component";
+import handleErrors from "../../utils/handleErrors";
 
 export const HomeView = () => {
 	const classes = useStyles();
@@ -28,9 +29,13 @@ export const HomeView = () => {
 				Accept: "application/json",
 			},
 		})
+			.then(handleErrors)
 			.then((response) => response.json())
 			.then((data) => {
 				setDatapoints(data);
+			})
+			.catch(function (error) {
+				console.log(error);
 			});
 	}, []);
 

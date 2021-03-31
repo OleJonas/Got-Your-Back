@@ -208,21 +208,27 @@ FETCH CLASSIFICATIONS
 
 @app.route("/classifications")
 def get_all_classifications():
-    with open(sc._classification_fname(), 'r') as file:
-        try:
-            return {row[0]: row[1] for row in csv.reader(file)}
-        except IndexError:  # empty file
-            return json.dumps({'FileEmpty': True}), 200, {'ContentType': 'application/json'}
+    try:
+        with open(sc._classification_fname(), 'r') as file:
+            try:
+                return {row[0]: row[1] for row in csv.reader(file)}
+            except IndexError:  # empty file
+                return json.dumps({'Error': "FileEmpty"}), 507, {'ContentType': 'application/json'}
+    except FileNotFoundError:
+        return json.dumps({'Error': "FileNotFound"}), 507, {'ContentType': 'application/json'}
 
 
 @app.route("/classifications/latest")
 def get_classification():
-    with open(sc._classification_fname(), 'r') as file:
-        try:
-            lastrow = deque(csv.reader(file), 1)[0]
-        except IndexError:  # empty file
-            return json.dumps({'FileEmpty': True}), 200, {'ContentType': 'application/json'}
-        return {str(lastrow[0]): lastrow[1]}
+    try:
+        with open(sc._classification_fname(), 'r') as file:
+            try:
+                lastrow = deque(csv.reader(file), 1)[0]
+            except IndexError:  # empty file
+                return json.dumps({'FileEmpty': True}), 507, {'ContentType': 'application/json'}
+            return {str(lastrow[0]): lastrow[1]}
+    except FileNotFoundError:
+        return json.dumps({'Error': "FileNotFound"}), 507, {'ContentType': 'application/json'}
 
 
 @app.route("/classifications/history")
@@ -268,7 +274,7 @@ def get_status():
     global sensor_bank
     return {
         "isRecording": sensor_bank.run,
-        "numberOfSensors": len(sensor_bank.sensor_arr)
+        "numberOfSensors": len(sensor_bank.sensor_dict)
     }
 
 
