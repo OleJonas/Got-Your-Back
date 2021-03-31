@@ -23,10 +23,6 @@ data_queue = None
 classify = False
 t_pool = []
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
-app.config.update(
-    ENV="development",
-    
-)
 CORS(app, support_credentials=True)
 
 
@@ -135,7 +131,6 @@ def disconnect():
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
-# De følgende to endepunktene er laget i tidsrommet etter tirsdag og under debugsesjon tirsdag
 @app.route("/setup/get_sensors")
 def get_sensors():
     out = {"sensors": []}
