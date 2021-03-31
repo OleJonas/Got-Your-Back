@@ -57,7 +57,7 @@ def connect_to_sensor(client, input_sensor):
         print("Error connecting to sensor")
         print("Trying again...")
         err, sensor = client.obtain_sensor(input_sensor)
-        if attempts >= 100:
+        if attempts >= 10:
             print("Can't connect to sensor")
             sys.exit(1)
 
@@ -75,7 +75,7 @@ def connect_to_sensor(client, input_sensor):
 
 def sync_sensors(client, sensor_bank):
     imu_arr = []
-    for sensor_conn in sensor_bank.sensor_arr:
+    for sensor_conn in sensor_bank.sensor_dict.values():
         sensor_conn.set_sampling_rate(sensor_bank.sampling_rate)
         imu_arr.append(sensor_conn.imu_obj)
 
@@ -109,8 +109,8 @@ def _make_row(handle, imu_data):
 
 def collect_data(client, sensor_bank):
     global data_queue
-    data_queue = Data_Queue(len(sensor_bank.sensor_arr))
-    print(len(sensor_bank.sensor_arr), flush=True, end='')
+    data_queue = Data_Queue(len(sensor_bank.sensor_dict))
+    print(len(sensor_bank.sensor_dict))
 
     _remove_unsync_data(client)
     occurences = [0, 0, 0]
@@ -118,7 +118,7 @@ def collect_data(client, sensor_bank):
     aligned = False
     found_timestamps = []
 
-    for sensor in sensor_bank.sensor_arr:
+    for sensor in sensor_bank.sensor_dict.values():
         sensor.start_collect()
 
     while not aligned:
@@ -131,7 +131,7 @@ def collect_data(client, sensor_bank):
             for _, y in enumerate(found_timestamps[i:-1]):
                 if x == y:
                     found += 1
-            if found == len(sensor_bank.sensor_arr):
+            if found == len(sensor_bank.sensor_dict):
                 clean_arr = []
                 for i in range(len(tmp_rows)):
                     if found_timestamps[i] >= x:
