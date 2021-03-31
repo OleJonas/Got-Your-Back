@@ -13,15 +13,13 @@ import handleErrors from "../../utils/handleErrors";
 
 export const HomeView = () => {
 	const classes = useStyles();
-	const [datapoints, setDatapoints] = useState<json>({
-		"1998-09-10 08:25:50": "1",
-	});
+	const [datapoints, setDatapoints] = useState<json>({});
 	const lastPosture: number = Object.values(datapoints).pop();
 	const samplingRate: number = 5;
 	const [isRecording, setIsRecording] = useState<boolean>(false);
 	const [hasSensors, setHasSensors] = useState<boolean>(false);
 
-	// Fetch classifications and status on recording
+	// Fetch classifications on render and every 3 seconds when recording
 	useEffect(() => {
 		fetch("http://localhost:5000/classifications", {
 			headers: {
@@ -34,35 +32,9 @@ export const HomeView = () => {
 			.then((data) => {
 				setDatapoints(data);
 			})
-			.catch(function (error) {
-				console.log(error);
-			});
-	}, []);
+			.catch(function (error) {});
 
-	useEffect(() => {
-		fetch("http://localhost:5000/status")
-			.then((response) => response.json())
-			.then((data) => {
-				data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
-				data.isRecording ? setIsRecording(true) : setIsRecording(false);
-			});
-	}, []);
-
-	// Fetch status on recording every tenth second
-	useEffect(() => {
-		setInterval(() => {
-			fetch("http://localhost:5000/status")
-				.then((response) => response.json())
-				.then((data) => {
-					console.log(data);
-					data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
-					data.isRecording ? setIsRecording(true) : setIsRecording(false);
-				});
-		}, 10000);
-	}, []);
-
-	useEffect(() => {
-		setInterval(() => {
+		const interval = setInterval(() => {
 			if (isRecording) {
 				fetch("http://localhost:5000/classifications/latest", {
 					headers: {
@@ -70,6 +42,7 @@ export const HomeView = () => {
 						Accept: "application/json",
 					},
 				})
+					.then(handleErrors)
 					.then((response) => response.json())
 					.then((data) => {
 						let key = Object.keys(data)[0];
@@ -77,9 +50,34 @@ export const HomeView = () => {
 						let tmp = datapoints;
 						tmp[key] = val;
 						setDatapoints(tmp);
-					});
+					})
+					.catch(function (error) {});
 			}
 		}, 3000);
+		return () => clearInterval(interval);
+	}, []);
+
+	// Fetch status on render and on recording every tenth second
+	useEffect(() => {
+		fetch("http://localhost:5000/status")
+			.then((response) => response.json())
+			.then((data) => {
+				data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
+				data.isRecording ? setIsRecording(true) : setIsRecording(false);
+			});
+
+		const interval = setInterval(() => {
+			if (isRecording) {
+				fetch("http://localhost:5000/status")
+					.then((response) => response.json())
+					.then((data) => {
+						console.log(data);
+						data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
+						data.isRecording ? setIsRecording(true) : setIsRecording(false);
+					});
+			}
+		}, 10000);
+		return () => clearInterval(interval);
 	}, []);
 
 	return (
@@ -137,7 +135,7 @@ export const HomeView = () => {
 						<Grid item xs={12} md={7} className={classes.graphContainer}>
 							<Box mb={0.6}>
 								<Typography variant="h3" color="textPrimary">
-									My day
+									Last hour
 								</Typography>
 							</Box>
 							<ContentBox>
