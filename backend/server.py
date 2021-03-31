@@ -89,7 +89,7 @@ def scan():
     global sensor_bank
     helper = sc.scan_for_sensors(client)
     out = {"sensors": []}
-    
+
     for sensor in helper:
         found_sensors[sensor.name] = sensor
         out["sensors"].append({"name": sensor.name, "id": sensor_bank.sensor_id_dict[sensor.name]})
@@ -238,7 +238,7 @@ def get_classification():
 
 
 @app.route("/classifications/history")
-def get_days_predictions():
+def get_classifications_history():
     days = int(request.args.get("duration"))
     res = dict()
     filearray = os.listdir("./classifications/dummydata")
@@ -246,8 +246,6 @@ def get_days_predictions():
     print("today: ", today)
     startDate = (today - datetime.timedelta(days=days))
     print("startdate: ", startDate)
-    # startDate = filearray[0].split(".")[0]
-    # start = datetime.datetime.strptime(startDate, '%Y-%m-%d')
 
     # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
     for i in range(0, days):
@@ -294,5 +292,6 @@ def shutdown():
     for name in sensor_bank.sensor_dict:
         sensor_bank.disconnect_sensor(name)
     client.close()
+
 
 atexit.register(shutdown)
