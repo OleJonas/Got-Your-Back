@@ -1,3 +1,4 @@
+from collections import deque
 import os
 import sys
 import csv
@@ -209,11 +210,22 @@ def get_all_classifications():
 @app.route("/classifications/latest")
 def get_classification():
     rows = []
+    start_time_predict = time.perf_counter()
     with open(sc._classification_fname(), 'r') as file:
+        """
         reader = csv.reader(file)
         for row in reader:
             rows.append([row[0], row[1]])
     return {rows[-1][0]: rows[-1][1]}
+    """
+        try:
+            lastrow = deque(csv.reader(file), 1)[0]
+        except IndexError:  # empty file
+            lastrow = None
+    end_time_predict = time.perf_counter() - start_time_predict
+    print(f"Time used {round(end_time_predict, 5)}s")
+
+    return {"lr": lastrow}
 
 
 @app.route("/classifications/history")
@@ -225,8 +237,8 @@ def get_days_predictions():
     print("today: ", today)
     startDate = (today - datetime.timedelta(days=days))
     print("startdate: ", startDate)
-    #startDate = filearray[0].split(".")[0]
-    #start = datetime.datetime.strptime(startDate, '%Y-%m-%d')
+    # startDate = filearray[0].split(".")[0]
+    # start = datetime.datetime.strptime(startDate, '%Y-%m-%d')
 
     # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
     for i in range(0, days):

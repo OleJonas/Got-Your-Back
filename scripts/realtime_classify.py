@@ -162,7 +162,6 @@ def _make_row(handle, imu_data):
     row.append(imu_data.timestamp)
     row += [imu_data.a[i] for i in range(3)]
     row += [imu_data.g[i] for i in range(3)]
-    #row += [imu_data.b[i] for i in range(3)]
     row += [imu_data.r[i] for i in range(3)]
     row += [imu_data.q[i] for i in range(4)]
     return row
