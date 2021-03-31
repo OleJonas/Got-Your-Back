@@ -8,6 +8,7 @@ import threading
 import time
 import atexit
 import json
+import numpy as np
 from flask import Flask, request, Response
 from flask_cors import CORS
 sys.path.append("scripts/")
@@ -22,6 +23,10 @@ data_queue = None
 classify = False
 t_pool = []
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
+app.config.update(
+    ENV="development",
+    
+)
 CORS(app, support_credentials=True)
 
 
@@ -216,12 +221,16 @@ def get_days_predictions():
     days = int(request.args.get("duration"))
     res = dict()
     filearray = os.listdir("./classifications/dummydata")
-    startDate = filearray[0].split(".")[0]
-    today = datetime.datetime.strptime(startDate, '%Y-%m-%d')
+    today = datetime.date.today()
+    print("today: ", today)
+    startDate = (today - datetime.timedelta(days=days))
+    print("startdate: ", startDate)
+    #startDate = filearray[0].split(".")[0]
+    #start = datetime.datetime.strptime(startDate, '%Y-%m-%d')
 
     # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
     for i in range(0, days):
-        ith_Day = today + datetime.timedelta(days=i)
+        ith_Day = startDate + datetime.timedelta(days=i)
         ith_Day_str = ith_Day.strftime("%Y-%m-%d")
         classifications = np.zeros(9)
 
