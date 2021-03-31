@@ -31,7 +31,7 @@ def scan_for_sensors(client):
     sensors = []
     while True:
         zenEvent = client.wait_for_next_event()
-
+        
         if zenEvent.event_type == openzen.ZenEventType.SensorFound:
             print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}", flush=True, end='')
             # Check if found device is a bluetooth device

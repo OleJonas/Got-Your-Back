@@ -25,7 +25,6 @@ t_pool = []
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
 app.config.update(
     ENV="development",
-    
 )
 CORS(app, support_credentials=True)
 
@@ -79,9 +78,9 @@ def get_dummy_found_sensors():
     return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
 
 
-"""
+"""""""""""""""
 SETUP
-"""
+"""""""""""""""
 
 
 @app.route("/setup/scan")
@@ -156,9 +155,9 @@ def set_id():
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
-"""
+"""""""""""""""""""""""
 CLASSIFY
-"""
+"""""""""""""""""""""""
 
 
 @app.route("/classify/start")
@@ -222,11 +221,7 @@ def get_days_predictions():
     res = dict()
     filearray = os.listdir("./classifications/dummydata")
     today = datetime.date.today()
-    print("today: ", today)
     startDate = (today - datetime.timedelta(days=days))
-    print("startdate: ", startDate)
-    #startDate = filearray[0].split(".")[0]
-    #start = datetime.datetime.strptime(startDate, '%Y-%m-%d')
 
     # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
     for i in range(0, days):
