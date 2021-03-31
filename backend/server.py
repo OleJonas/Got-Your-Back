@@ -208,12 +208,11 @@ FETCH CLASSIFICATIONS
 
 @app.route("/classifications")
 def get_all_classifications():
-    res = dict()
     with open(sc._classification_fname(), 'r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            res[row[0]] = row[1]
-        return res
+        try:
+            return {row[0]: row[1] for row in csv.reader(file)}
+        except IndexError:  # empty file
+            return json.dumps({'FileEmpty': True}), 200, {'ContentType': 'application/json'}
 
 
 @app.route("/classifications/latest")
@@ -223,7 +222,7 @@ def get_classification():
             lastrow = deque(csv.reader(file), 1)[0]
         except IndexError:  # empty file
             return json.dumps({'FileEmpty': True}), 200, {'ContentType': 'application/json'}
-    return {str(lastrow[0]): lastrow[1]}
+        return {str(lastrow[0]): lastrow[1]}
 
 
 @app.route("/classifications/history")
@@ -231,9 +230,7 @@ def get_classifications_history():
     days = int(request.args.get("duration"))
     res = dict()
     filearray = os.listdir("./classifications/dummydata")
-    today = datetime.date.today()
-    print("today: ", today)
-    startDate = (today - datetime.timedelta(days=days))
+    startDate = (datetime.date.today() - datetime.timedelta(days=days))
     print("startdate: ", startDate)
 
     # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
