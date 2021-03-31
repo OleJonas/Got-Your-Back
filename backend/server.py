@@ -23,10 +23,6 @@ data_queue = None
 classify = False
 t_pool = []
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
-app.config.update(
-    ENV="development",
-    
-)
 CORS(app, support_credentials=True)
 
 
@@ -144,7 +140,6 @@ def disconnect():
     return json.dumps({'succSess': True}), 200, {'ContentType': 'application/json'}
 
 
-# De følgende to endepunktene er laget i tidsrommet etter tirsdag og under debugsesjon tirsdag
 @app.route("/setup/get_sensors")
 def get_sensors():
     out = {"sensors": []}
@@ -213,16 +208,21 @@ FETCH CLASSIFICATIONS
 @app.route("/classifications")
 def get_all_classifications():
     res = dict()
-    sc.classifications_reader = csv.reader(sc.classifications_file_read)
-    for row in sc.classifications_reader:
-        res[row[0]] = row[1]
-    return res
+    with open(sc._classification_fname(), 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            res[row[0]] = row[1]
+        return res
 
 
 @app.route("/classifications/latest")
 def get_classification():
-    row = next(sc.classifications_reader)
-    return {row[0]: row[1]}
+    rows = []
+    with open(sc._classification_fname(), 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            rows.append([row[0], row[1]])
+    return {rows[-1][0]: rows[-1][1]}
 
 
 @app.route("/classifications/history")
