@@ -162,7 +162,6 @@ def _make_row(handle, imu_data):
     row.append(imu_data.timestamp)
     row += [imu_data.a[i] for i in range(3)]
     row += [imu_data.g[i] for i in range(3)]
-    #row += [imu_data.b[i] for i in range(3)]
     row += [imu_data.r[i] for i in range(3)]
     row += [imu_data.q[i] for i in range(4)]
     return row
@@ -227,13 +226,12 @@ def classify(model, data_queue):
             values.append(data)
 
         if(len(values) == SAMPLING_RATE):
-            start_time_predict = time.perf_counter()
+            start_time_classify = time.perf_counter()
             classify = model(np.array(values)).numpy()
             argmax = [classification.argmax() for classification in classify]
-            end_time_predict = time.perf_counter() - start_time_predict
+            end_time_classify = time.perf_counter() - start_time_classify
             classification = Counter(argmax).most_common(1)[0][0]
-            print(f"Classified as {classification} in {round(end_time_predict,2)}s!")
-
+            print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
             with open('./classifications/classifications.csv', 'a+') as file:
                 _write_to_csv(csv.writer(file), classification)
             values = []

@@ -7,10 +7,18 @@ type LineChartProps = {
 	data: JSON,
 	hAxisFormat: "HH:mm:ss" | "HH:mm" | "dd.mm",
 	actions: [], //["dragToPan", "dragToZoom", "rightClickToReset"]
+	type: "1 day" | "7 days" | "14 days" | "30 days",
 };
+
+function isEmpty(obj) {
+	return Object.keys(obj).length === 0;
+}
 
 export const LineChart = (props) => {
 	const classes = useStyles;
+	let defaultMinDate = new Date();
+	let defaultMaxDate = new Date();
+	defaultMinDate.setUTCHours(defaultMaxDate.getHours() - 1, defaultMaxDate.getMinutes() - 1, defaultMaxDate.getSeconds() - 1);
 
 	const processedData = () => {
 		const timestamps = Object.keys(props.data);
@@ -50,7 +58,11 @@ export const LineChart = (props) => {
 					textStyle: { color: "#FFF" },
 					titleTextStyle: { color: "#FFF" },
 					gridlines: { color: "transparent" },
-					format: props.hAxisFormat ? props.hAxisFormat : "YY-MM-dd HH:mm",
+					format: props.hAxisFormat ? props.hAxisFormat : "HH:mm",
+					viewWindow: {
+						min: defaultMinDate,
+						max: defaultMaxDate,
+					},
 				},
 				vAxis: {
 					ticks: [

@@ -1,3 +1,4 @@
+from collections import deque
 import os
 import sys
 import csv
@@ -23,9 +24,6 @@ data_queue = None
 classify = False
 t_pool = []
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
-app.config.update(
-    ENV="development",
-)
 CORS(app, support_credentials=True)
 
 
@@ -33,12 +31,14 @@ CORS(app, support_credentials=True)
 def init():
     global client
     global sensor_bank
+    global found_sensors
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     # Make client
     error, client = openzen.make_client()
     if not error == openzen.ZenError.NoError:
         print("Error while initializing OpenZen library")
         sys.exit(1)
+    found_sensors = {}
     sensor_bank = Sensor_Bank()
 
 
@@ -86,11 +86,14 @@ SETUP
 @app.route("/setup/scan")
 def scan():
     global found_sensors
-    found_sensors = sc.scan_for_sensors(client)
-    res = {"sensors": []}
-    for sensor in found_sensors:
-        res["sensors"].append({"name": sensor.name, "id": sensor_bank.sensor_id_dict[sensor.name]})
-    return res
+    global sensor_bank
+    helper = sc.scan_for_sensors(client)
+    out = {"sensors": []}
+
+    for sensor in helper:
+        found_sensors[sensor.name] = sensor
+        out["sensors"].append({"name": sensor.name, "id": sensor_bank.sensor_id_dict[sensor.name]})
+    return out
 
 
 @app.route("/setup/connect", methods=["OPTIONS", "POST"])
@@ -98,15 +101,19 @@ def connect():
     global sensor_bank
     content = request.json
     print(content)
-    s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[content["handle"]])
-    sensor_bank.add_sensor(s_name, sensor, imu)
-    s_id = sensor_bank.handle_to_id[sensor_bank.sensor_arr[-1].handle]
-    res = {
-        "name": s_name,
-        "id": s_id,
-        "battery_percent": sensor_bank.sensor_arr[-1].get_battery_percentage()
-    }
-    return res
+    try:
+        s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[content["name"]])
+        sensor_bank.add_sensor(s_name, sensor, imu)
+        s_id = sensor_bank.sensor_id_dict[s_name]
+        res = {
+            "name": s_name,
+            "id": s_id,
+            "battery_percent": sensor_bank.sensor_dict[s_name].get_battery_percentage()
+        }
+        return res
+    except:
+        print("Could not connect to sensor, please try again...")
+        return "Could not connect to sensor, please try again..."
 
 
 @app.route("/setup/connect_all")
@@ -127,18 +134,17 @@ def sync_sensors():
 @app.route("/setup/disconnect", methods=["OPTIONS", "POST"])
 def disconnect():
     global sensor_bank
-    sensor_handles = request.json["handles"]
-    print(sensor_handles)
-    for handle in sensor_handles:
-        sensor_bank.disconnect_sensor(handle)
+    names = request.json["names"]
+    print(names)
+    for name in names:
+        sensor_bank.disconnect_sensor(name)
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
-# De følgende to endepunktene er laget i tidsrommet etter tirsdag og under debugsesjon tirsdag
 @app.route("/setup/get_sensors")
 def get_sensors():
     out = {"sensors": []}
-    for s in sensor_bank.sensor_arr:
+    for s in sensor_bank.sensor_dict.values():
         out["sensors"].append({
             "name": s.name,
             "id": s.id,
@@ -166,7 +172,7 @@ def classification_pipe():
     global sensor_bank
     sensor_bank.run = True
     sc.sync_sensors(client, sensor_bank)
-    model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_arr)}.h5")
+    model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
 
     classify_thread = threading.Thread(target=sc.classify, args=[client, model, sensor_bank], daemon=True)
     collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)
@@ -202,26 +208,35 @@ FETCH CLASSIFICATIONS
 
 @app.route("/classifications")
 def get_all_classifications():
-    res = dict()
-    sc.classifications_reader = csv.reader(sc.classifications_file_read)
-    for row in sc.classifications_reader:
-        res[row[0]] = row[1]
-    return res
+    try:
+        with open(sc._classification_fname(), 'r') as file:
+            try:
+                return {row[0]: row[1] for row in csv.reader(file)}
+            except IndexError:  # empty file
+                return json.dumps({'Error': "FileEmpty"}), 507, {'ContentType': 'application/json'}
+    except FileNotFoundError:
+        return json.dumps({'Error': "FileNotFound"}), 507, {'ContentType': 'application/json'}
 
 
 @app.route("/classifications/latest")
 def get_classification():
-    row = next(sc.classifications_reader)
-    return {row[0]: row[1]}
+    try:
+        with open(sc._classification_fname(), 'r') as file:
+            try:
+                lastrow = deque(csv.reader(file), 1)[0]
+            except IndexError:  # empty file
+                return json.dumps({'FileEmpty': True}), 507, {'ContentType': 'application/json'}
+            return {str(lastrow[0]): lastrow[1]}
+    except FileNotFoundError:
+        return json.dumps({'Error': "FileNotFound"}), 507, {'ContentType': 'application/json'}
 
 
 @app.route("/classifications/history")
-def get_days_predictions():
+def get_classifications_history():
     days = int(request.args.get("duration"))
     res = dict()
     filearray = os.listdir("./classifications/dummydata")
-    today = datetime.date.today()
-    startDate = (today - datetime.timedelta(days=days))
+    startDate = (datetime.date.today() - datetime.timedelta(days=days))
 
     # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
     for i in range(0, days):
@@ -247,9 +262,9 @@ STATUS/BATTERY LEVEL
 @app.route("/sensor/battery")
 def get_battery():
     global sensor_bank
-    handle = int(request.args.get("id"))
+    name = int(request.args.get("name"))
     print(handle)
-    percent = sensor_bank.sensor_arr[handle].get_battery_percentage()
+    percent = sensor_bank.sensor_dict[name].get_battery_percentage()
     return {"battery": str(percent).split("%")[0]}
 
 
@@ -258,15 +273,15 @@ def get_status():
     global sensor_bank
     return {
         "isRecording": sensor_bank.run,
-        "numberOfSensors": len(sensor_bank.sensor_arr)
+        "numberOfSensors": len(sensor_bank.sensor_dict)
     }
 
 
 def shutdown():
     global client
     global sensor_bank
-    for sensor in sensor_bank.sensor_arr:
-        sensor_bank.disconnect_sensor(sensor.handle)
+    for name in sensor_bank.sensor_dict:
+        sensor_bank.disconnect_sensor(name)
     client.close()
 
 
