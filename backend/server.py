@@ -144,7 +144,7 @@ def disconnect():
 @app.route("/setup/get_sensors")
 def get_sensors():
     out = {"sensors": []}
-    for s in sensor_bank.sensor_arr:
+    for s in sensor_bank.sensor_dict.values():
         out["sensors"].append({
             "name": s.name,
             "id": s.id,
@@ -260,9 +260,9 @@ STATUS/BATTERY LEVEL
 @app.route("/sensor/battery")
 def get_battery():
     global sensor_bank
-    handle = int(request.args.get("id"))
+    name = int(request.args.get("name"))
     print(handle)
-    percent = sensor_bank.sensor_arr[handle].get_battery_percentage()
+    percent = sensor_bank.sensor_dict[name].get_battery_percentage()
     return {"battery": str(percent).split("%")[0]}
 
 
@@ -271,7 +271,7 @@ def get_status():
     global sensor_bank
     return {
         "isRecording": sensor_bank.run,
-        "numberOfSensors": len(sensor_bank.sensor_arr)
+        "numberOfSensors": len(sensor_bank.sensor_dict)
     }
 
 
