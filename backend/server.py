@@ -64,7 +64,7 @@ def before_request():
 
 @app.route("/")
 def confirm_access():
-    """Method for confirming connection to API.
+    """Confirm connection to API.
 
     Returns:
         str: Message confirming connection.
@@ -82,7 +82,7 @@ def get_dummy_connected_sensors():
     """Fetch dummydata mocking a list of connected sensors.
 
     Returns:
-        dict: Dictionary with list of sensors.
+        dict: Dictionary with list of connected sensors.
     """    
     return {"sensors": [
         {"name": "LPMSB2 - 3036EB", "id": "1", "battery_percent": "85,3%"},
@@ -93,6 +93,11 @@ def get_dummy_connected_sensors():
 
 @app.route('/dummy/found_sensors')
 def get_dummy_found_sensors():
+    """Fetch dummydata mocking a list of found sensors.
+
+    Returns:
+        dict: Dictionary with list of found sensors.
+    """
     return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
 
 
@@ -103,6 +108,11 @@ SETUP
 
 @app.route("/setup/scan")
 def scan():
+    """Scan for sensors
+
+    Returns:
+        [type]: [description]
+    """    
     global found_sensors
     global sensor_bank
     helper = sc.scan_for_sensors(client)
