@@ -118,7 +118,6 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
             f"Connected to sensor {MAP_HANDLE_TO_ID[sensor.sensor.handle]} - {sensors[index].name} ({round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%)!")
 
         connected_sensors.append(sensor)
-        print(f"cs: {type(connected_sensors[0])}\nim: {type(imus[0])}")
 
     return connected_sensors, imus
 
