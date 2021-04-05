@@ -51,7 +51,7 @@ def before_request():
 
     Returns:
         flask.Response: Response with the right headers.
-    """    
+    """
     if request.method == "OPTIONS":
         res = Response("")
         res.headers["Access-Control-Allow-Origin"] = "*"
@@ -64,6 +64,11 @@ def before_request():
 
 @app.route("/")
 def confirm_access():
+    """Method for confirming connection to API.
+
+    Returns:
+        str: Message confirming connection.
+    """
     return "The API is up and running!"
 
 
@@ -74,6 +79,11 @@ DEBUG
 
 @app.route('/dummy/connected_sensors')
 def get_dummy_connected_sensors():
+    """Fetch dummydata mocking a list of connected sensors.
+
+    Returns:
+        dict: Dictionary with list of sensors.
+    """    
     return {"sensors": [
         {"name": "LPMSB2 - 3036EB", "id": "1", "battery_percent": "85,3%"},
         {"name": "LPMSB2 - 4B3326", "id": "2", "battery_percent": "76,6%"},
