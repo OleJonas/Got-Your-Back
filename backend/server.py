@@ -1,4 +1,3 @@
-from collections import deque
 import os
 import sys
 import csv
@@ -12,6 +11,7 @@ import json
 import numpy as np
 from flask import Flask, request, Response
 from flask_cors import CORS
+from collections import deque
 sys.path.append("scripts/")
 from sensor_bank import Sensor_Bank
 import server_classify as sc
