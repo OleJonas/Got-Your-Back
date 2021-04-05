@@ -29,6 +29,9 @@ CORS(app, support_credentials=True)
 
 @app.before_first_request
 def init():
+    """
+    Global initialisation of variables used in the server.
+    """
     global client
     global sensor_bank
     global found_sensors
@@ -44,6 +47,11 @@ def init():
 
 @app.before_request
 def before_request():
+    """Create response for OPTIONS-requests.
+
+    Returns:
+        flask.Response: Response with the right headers.
+    """    
     if request.method == "OPTIONS":
         res = Response("")
         res.headers["Access-Control-Allow-Origin"] = "*"
