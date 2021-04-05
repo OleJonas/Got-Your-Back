@@ -76,9 +76,17 @@ def confirm_access():
 DEBUG
 """
 
+@app.route('/dummy/scan')
+def get_dummy_scan():
+    """Fetch dummydata mocking a list of found sensors.
 
-@app.route('/dummy/connected_sensors')
-def get_dummy_connected_sensors():
+    Returns:
+        dict: Dictionary with list of found sensors.
+    """
+    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
+
+@app.route('/dummy/connect')
+def get_dummy_connect():
     """Fetch dummydata mocking a list of connected sensors.
 
     Returns:
@@ -91,16 +99,6 @@ def get_dummy_connected_sensors():
     ]}
 
 
-@app.route('/dummy/found_sensors')
-def get_dummy_found_sensors():
-    """Fetch dummydata mocking a list of found sensors.
-
-    Returns:
-        dict: Dictionary with list of found sensors.
-    """
-    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
-
-
 """
 SETUP
 """
@@ -108,10 +106,10 @@ SETUP
 
 @app.route("/setup/scan")
 def scan():
-    """Scan for sensors
+    """Scan for available sensors using the openZen library.
 
     Returns:
-        [type]: [description]
+        dict: Dictionary with list of found sensors.
     """    
     global found_sensors
     global sensor_bank
@@ -126,9 +124,13 @@ def scan():
 
 @app.route("/setup/connect", methods=["OPTIONS", "POST"])
 def connect():
+    """Connect to sensor based on sensorname.
+
+    Returns:
+        dict: Dictionary with information about connected sensor.
+    """    
     global sensor_bank
     content = request.json
-    print(content)
     try:
         s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[content["name"]])
         sensor_bank.add_sensor(s_name, sensor, imu)
@@ -146,6 +148,11 @@ def connect():
 
 @app.route("/setup/connect_all")
 def connect_all():
+    """Connect to all sensors.
+
+    Returns:
+        str: Message confirming that all sensors are connected.
+    """    
     global sensor_bank
     for sensor in found_sensors:
         s_name, sensor, imu = sc.connect_to_sensor(client, sensor)
@@ -155,12 +162,22 @@ def connect_all():
 
 @app.route("/setup/sync")
 def sync_sensors():
-    sc.sync_sensors(client, sensor_bank)
-    return("All sensors are synced!")
+    """Synchronize all sensors using the openZen library.
 
+    Returns:
+        str: Message confirming that all sensors are synced.
+    """    
+    sc.sync_sensors(client, sensor_bank)
+    return "All sensors are synced!"
 
 @app.route("/setup/disconnect", methods=["OPTIONS", "POST"])
 def disconnect():
+    """Disconnect sensor(s) based on name(s).
+
+    Returns:
+        str: Message confirming successful disconnect.
+        http.HTTPStatus.OK: Response status code 200.
+    """    
     global sensor_bank
     names = request.json["names"]
     print(names)
@@ -171,6 +188,11 @@ def disconnect():
 
 @app.route("/setup/get_sensors")
 def get_sensors():
+    """Fetch a list of connected sensors.
+
+    Returns:
+        dict: Dictionary with list of connected sensors.
+    """
     out = {"sensors": []}
     for s in sensor_bank.sensor_dict.values():
         out["sensors"].append({
@@ -183,6 +205,12 @@ def get_sensors():
 
 @app.route("/setup/set_id", methods=["POST"])
 def set_id():
+    """Set id on sensor based on name.
+
+    Returns:
+        str: Message confirming successful change of id.
+        http.HTTPStatus.OK: Response status code 200.
+    """ 
     name = request.json["name"]
     s_id = request.json["id"]
     sensor_bank.set_id(name, s_id)
