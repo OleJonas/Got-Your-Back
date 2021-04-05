@@ -32,7 +32,7 @@ class Data_Queue:
 
         Args:
             sensor_id (int): Sensor id based on position on body.
-            data ([float]): Columns of data from sensor
+            data ([float]): Columns of data from sensor.
         """
         self.queue[sensor_id - 1].append(data)
         self.entries[sensor_id - 1] += 1
