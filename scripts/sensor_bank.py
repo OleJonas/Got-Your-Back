@@ -14,7 +14,7 @@ class Sensor:
 
     def get_battery_percentage(self):
         return f"{round(self.sensor_obj.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
-
+ 
     def set_sampling_rate(self, sampling_rate):
         assert sampling_rate in SUPPORTED_SAMPLING_RATES, \
             f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"

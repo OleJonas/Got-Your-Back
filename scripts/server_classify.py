@@ -111,7 +111,7 @@ def collect_data(client, sensor_bank):
     global data_queue
     data_queue = Data_Queue(len(sensor_bank.sensor_dict))
     print(len(sensor_bank.sensor_dict))
-
+    
     _remove_unsync_data(client)
     occurences = [0, 0, 0]
     tmp_rows = []

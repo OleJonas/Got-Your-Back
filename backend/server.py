@@ -149,7 +149,7 @@ def get_sensors():
             "name": s.name,
             "id": s.id,
             "battery": s.get_battery_percentage().split("%")[0]
-        })
+        }) 
     return json.dumps(out)
 
 
@@ -173,14 +173,14 @@ def classification_pipe():
     sensor_bank.run = True
     sc.sync_sensors(client, sensor_bank)
     model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
-
+    
     classify_thread = threading.Thread(target=sc.classify, args=[client, model, sensor_bank], daemon=True)
     collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)
     t_pool.append(classify_thread)
     t_pool.append(collect_thread)
     collect_thread.start()
     classify_thread.start()
-
+    
     print("classification started")
     return "started classification..."
 
