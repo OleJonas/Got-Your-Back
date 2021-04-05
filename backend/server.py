@@ -76,14 +76,19 @@ def confirm_access():
 DEBUG
 """
 
+
 @app.route('/dummy/scan')
 def get_dummy_scan():
     """Fetch dummydata mocking a list of found sensors.
 
     Returns:
         dict: Dictionary with list of found sensors.
+                Format:
+
+                {"sensors": [str]}
     """
     return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
+
 
 @app.route('/dummy/connect')
 def get_dummy_connect():
@@ -91,7 +96,14 @@ def get_dummy_connect():
 
     Returns:
         dict: Dictionary with list of connected sensors.
-    """    
+                Each sensor object is on the format:
+
+                {
+                    name: str,
+                    id: int,
+                    battery: int
+                }
+    """
     return {"sensors": [
         {"name": "LPMSB2 - 3036EB", "id": "1", "battery_percent": "85,3%"},
         {"name": "LPMSB2 - 4B3326", "id": "2", "battery_percent": "76,6%"},
@@ -110,7 +122,10 @@ def scan():
 
     Returns:
         dict: Dictionary with list of found sensors.
-    """    
+                Format:
+
+                {"sensors": [str]}
+    """
     global found_sensors
     global sensor_bank
     helper = sc.scan_for_sensors(client)
@@ -127,8 +142,15 @@ def connect():
     """Connect to sensor based on sensorname.
 
     Returns:
-        dict: Dictionary with information about connected sensor.
-    """    
+        dict: Dictionary with information about connected sensor if connected. Error message if not.
+                Each sensor object is on the format:
+
+                {
+                    name: str,
+                    id: int,
+                    battery: int
+                }
+    """
     global sensor_bank
     content = request.json
     try:
@@ -152,7 +174,7 @@ def connect_all():
 
     Returns:
         str: Message confirming that all sensors are connected.
-    """    
+    """
     global sensor_bank
     for sensor in found_sensors:
         s_name, sensor, imu = sc.connect_to_sensor(client, sensor)
@@ -166,18 +188,19 @@ def sync_sensors():
 
     Returns:
         str: Message confirming that all sensors are synced.
-    """    
+    """
     sc.sync_sensors(client, sensor_bank)
     return "All sensors are synced!"
 
+
 @app.route("/setup/disconnect", methods=["OPTIONS", "POST"])
 def disconnect():
-    """Disconnect sensor(s) based on name(s).
+    """Disconnect sensor(s) based on name(s) given in request body.
 
     Returns:
         str: Message confirming successful disconnect.
         http.HTTPStatus.OK: Response status code 200.
-    """    
+    """
     global sensor_bank
     names = request.json["names"]
     print(names)
@@ -192,6 +215,13 @@ def get_sensors():
 
     Returns:
         dict: Dictionary with list of connected sensors.
+                Each sensor object is on the format:
+
+                {
+                    name: str,
+                    id: int,
+                    battery: int
+                }
     """
     out = {"sensors": []}
     for s in sensor_bank.sensor_dict.values():
@@ -205,12 +235,12 @@ def get_sensors():
 
 @app.route("/setup/set_id", methods=["POST"])
 def set_id():
-    """Set id on sensor based on name.
+    """Set id on sensor based on name. New id and name has to be sent in request body.
 
     Returns:
         str: Message confirming successful change of id.
         http.HTTPStatus.OK: Response status code 200.
-    """ 
+    """
     name = request.json["name"]
     s_id = request.json["id"]
     sensor_bank.set_id(name, s_id)
@@ -223,7 +253,12 @@ CLASSIFY
 
 
 @app.route("/classify/start")
-def classification_pipe():
+def start_classify():
+    """Start classifying.
+
+    Returns:
+        str: Message confirming that the server is classifying.
+    """
     global t_pool
     global sensor_bank
     sensor_bank.run = True
@@ -237,24 +272,34 @@ def classification_pipe():
     collect_thread.start()
     classify_thread.start()
 
-    print("classification started")
-    return "started classification..."
+    print("Classification started")
+    return "Classification started"
 
 
 @app.route("/classify/status")
 def check_classify():
+    """Check if classifying.
+
+    Returns:
+        bool: True if server is classifying. False if not.
+    """
     return json.dumps(sensor_bank.run)
 
 
 @app.route("/classify/stop")
 def stop_classify():
+    """Stop classifying.
+
+    Returns:
+        str: Message confirming that the server has stopped classifying.
+    """
     global sensor_bank
     global t_pool
     sensor_bank.run = False
     print("Stopping classification...")
     for t in t_pool:
         t.join()
-    return str(sensor_bank.run)
+    return "Classification stopped"
 
 
 """
@@ -264,6 +309,12 @@ FETCH CLASSIFICATIONS
 
 @app.route("/classifications")
 def get_all_classifications():
+    """Get all classifications for today.
+
+    Returns:
+        dict: Dictionary with classifications if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
+        http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
+    """
     try:
         with open(sc._classification_fname(), 'r') as file:
             try:
@@ -276,6 +327,12 @@ def get_all_classifications():
 
 @app.route("/classifications/latest")
 def get_classification():
+    """Get the latest classification for today.
+
+    Returns:
+        dict: Dictionary with latest classification if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
+        http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
+    """
     try:
         with open(sc._classification_fname(), 'r') as file:
             try:
@@ -286,9 +343,17 @@ def get_classification():
     except FileNotFoundError:
         return json.dumps({'Error': "FileNotFound"}), 507, {'ContentType': 'application/json'}
 
+# Have to fix conversion from dummydata here
+
 
 @app.route("/classifications/history")
 def get_classifications_history():
+    """Get historical classifications based on duration given in request body.
+
+    Returns:
+        dict: Dictionary with classifications if file not empty. {Error: "FileEmpty"} if not.
+        http.HTTPStatus: Response status code 200 if file not empty, else 507.
+    """
     days = int(request.args.get("duration"))
     res = dict()
     filearray = os.listdir("./classifications/dummydata")
@@ -303,10 +368,13 @@ def get_classifications_history():
 
         # if there is a file for the i-th day in the interval, proceed, if not, skip
         if((ith_Day_str + ".csv") in filearray):
-            with open("./classifications/dummydata/" + str(ith_Day_str + ".csv"), 'r') as file:
-                reader = csv.reader(file)
-                for row in reader:
-                    classifications[int(row[1])] += 1
+            try:
+                with open("./classifications/dummydata/" + str(ith_Day_str + ".csv"), 'r') as file:
+                    reader = csv.reader(file)
+                    for row in reader:
+                        classifications[int(row[1])] += 1
+            except IndexError:  # empty file
+                return json.dumps({'FileEmpty': True}), 507, {'ContentType': 'application/json'}
             res[ith_Day_str] = int(np.argmax(classifications))
     return res
 
@@ -318,15 +386,28 @@ STATUS/BATTERY LEVEL
 
 @app.route("/sensor/battery")
 def get_battery():
+    """Get battery percent based on name given in request body.
+
+    Returns:
+        dict: Dictionary on the format {battery: str}
+    """
     global sensor_bank
     name = int(request.args.get("name"))
-    print(handle)
     percent = sensor_bank.sensor_dict[name].get_battery_percentage()
     return {"battery": str(percent).split("%")[0]}
 
 
 @app.route("/status")
 def get_status():
+    """Get status about connection and classification.
+
+    Returns:
+        dict: Dictionary with status information on the format:
+            {
+                isRecording: str,
+                numberOfSensors: int
+            }
+    """
     global sensor_bank
     return {
         "isRecording": sensor_bank.run,
@@ -335,6 +416,8 @@ def get_status():
 
 
 def shutdown():
+    """Disconnect sensors and close connections by server shutdown.
+    """    
     global client
     global sensor_bank
     for name in sensor_bank.sensor_dict:
