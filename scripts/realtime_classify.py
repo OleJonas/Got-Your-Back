@@ -9,14 +9,11 @@ Further on, the main task of the main thread is to flush excess data, synchroniz
 import time
 import sys
 import threading
-import tensorflow as tf
 from datetime import datetime
 import numpy as np
 import openzen
 import csv
 import keras
-from sklearn import preprocessing as pp
-from joblib import dump, load
 from collections import Counter
 from Data_Queue import Data_Queue
 
@@ -67,7 +64,7 @@ def scan_for_sensors(client):
             if lst_data.complete > 0:
                 break
 
-    print("Sensor Listing complete, found ", len(sensors))
+    print(f"Sensor Listing complete, found {len(sensors)}")
     print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
     return sensors
 
@@ -150,6 +147,14 @@ def get_sampling_rate(IMU):
 
 
 def sync_sensors(imus):
+    """Synchronize sensors.
+
+    Args:
+        imus ([openzen.ZenSensorComponent]): List of imus of connected sensors.
+
+    Returns:
+        [openzen.ZenSensorComponent]: List of synchronized imus.
+    """
     # Synchronize
     for imu in imus:
         imu.execute_property(openzen.ZenImuProperty.StartSensorSync)
@@ -176,12 +181,30 @@ def sync_sensors(imus):
 
 
 def _remove_unsync_data(client):
+    """Removes data events from before sensor synchronization.
+
+    Args:
+        client (openzen.ZenClient): Client object from the OpenZen-library.
+    """
     zenEvent = client.poll_next_event()
     while(zenEvent != None):
         zenEvent = client.poll_next_event()
 
 
 def _make_row(handle, imu_data):
+    """Create row with the following data columns:
+        a (m/s^2): Accleration measurement after all corrections have been applied.
+        g (deg/s): Gyroscope measurement after all corrections have been applied.
+        r (deg/s): Three euler angles representing the current rotation of the sensor.
+        q: Quaternion representing the current rotation of the sensor (w, x, y, z). 
+
+    Args:
+        handle (int): Sensor handle/id.
+        imu_data (openzen.ZenImuData): Data from sensor's inertial measurement unit. 
+
+    Returns:
+        [float]: New row consisting of wanted data columns from sensors.
+    """
     row = []
     row.append(handle)
     row.append(imu_data.timestamp)
@@ -193,6 +216,12 @@ def _make_row(handle, imu_data):
 
 
 def collect_data(client, data_queue):
+    """Collect data from connected sensors.
+
+    Args:
+        client (openzen.ZenClient): Client object from the OpenZen-library.
+        data_queue (Data_Queue): Data queue with data collected from sensor(s).
+    """
     occurences = [0, 0, 0]
     tmp_rows = []
     aligned = False
@@ -232,11 +261,23 @@ def collect_data(client, data_queue):
 
 
 def _write_to_csv(writer, classification):
-    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    """Write classification to csv.
+
+    Args:
+        writer (_csv.writer): Csv writer object.
+        classification (int): Classification from 0-8 based on trained model.
+    """
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     writer.writerow([current_time, classification])
 
 
 def classify(model, data_queue):
+    """Classify in realtime based on trained model and data in data queue.
+
+    Args:
+        model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
+        data_queue (Data_Queue): Data queue with data collected from sensor(s).
+    """
     values = []
     while True:
 
