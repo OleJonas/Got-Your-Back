@@ -67,5 +67,17 @@ Our frontend folder is a React project, and we will therefore only focus on the 
 
 
 
+.. toctree::
+   :maxdepth: 2
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+
 
 
