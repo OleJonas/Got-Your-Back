@@ -56,9 +56,9 @@ def connect_to_sensor(client, input_sensor):
         input_sensor (openzen.ZenSensorDesc): Found sensor object from the OpenZen-library.
 
     Returns:
-        str: Sensor name
-        openzen.ZenSensor: Sensor object
-        openzen.ZenSensorComponent: imu
+        str: Sensor name.
+        openzen.ZenSensor: Sensor object.
+        openzen.ZenSensorComponent: imu.
     """
     err, sensor = client.obtain_sensor(input_sensor)
     attempts = 0
