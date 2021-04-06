@@ -12,6 +12,9 @@ export type Sensor = {
 	battery: number;
 };
 
+/**
+ * @returns A listing of the currently connected sensors.
+ */
 export const SensorListContent = () => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
@@ -25,6 +28,12 @@ export const SensorListContent = () => {
 		setOpen(false);
 	};
 
+	/**
+	 * @remarks
+	 * Removes the chosen sensor from the sensors array.
+	 * 
+	 * @param id Number denoting which sensor is to be removed
+	 */
 	const removeSensor = (id: number) => {
 		console.log("Removing sensor...  " + id);
 		const helper = sensors.filter((sensor: Sensor) => {
@@ -33,13 +42,22 @@ export const SensorListContent = () => {
 		setSensors(helper);
 	};
 
+	/**
+	 * @remarks
+	 * Adds the given sensor to the sensors array
+	 * 
+	 * @param sensor An object of the sensor type
+	 */
 	const addSensors = (sensor: Sensor) => {
 		let helper = sensors;
 		helper.push(sensor);
 		setSensors(helper);
 	};
 
-
+	/**
+	 * @remarks
+	 * Uses an API call to fetch sensors currently connected via bluetooth. Then sets state to reflect the sensors found to be connected.
+	 */
 	const getConnectedSensors = useCallback(async () => {
 
 		await fetch("http://localhost:5000/setup/get_sensors", {
@@ -60,13 +78,22 @@ export const SensorListContent = () => {
 		// eslint-disable-next-line
 	}, []);
 
-
+	/**
+	 * @remarks
+	 * Returns an array containing one SensorRowHome component for each sensor in this components sensors array.
+	 */
 	const mapSensors = sensors.map((sensor: Sensor) => {
 		return (
 			<SensorRowHome connected={true} id={sensor.id} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />
 		);
 	});
 
+	/**
+	 * @remarks
+	 * A helper method for use in the SensorModal component. It is used to tell the component which sensors are already connected and should not show up in the list of available sensors.
+	 * @returns
+	 * An array of strings containing the names of the currently connected sensors.
+	 */
 	const getSensorsConnectedNames = () => {
 		let out: string[] = [];
 		sensors.forEach((sensor: Sensor) => out.push(sensor.name))
