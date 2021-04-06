@@ -4,7 +4,7 @@ This repository is for our Bachelors project; a project in which we want to be a
 
 #### For cloning this repo, write:
 
-As we depend on another repo for the OpenZen-library, you have to clone the project with the submodules included. 
+As we depend on another repo for the OpenZen-library, you have to clone the project with the submodules included.
 The following line wil fix this for you:
 
 `git clone --recurse-submodules https://github.com/OleJonas/Got-Your-Back.git 'GotYourBack'`
@@ -12,7 +12,6 @@ The following line wil fix this for you:
 #### Setup
 
 We have to fix the setupprocess for openzen, for Linux and for Windows. Maybe create a script for building, adding classpath and updating the openzen.pyd/so for Linux and Mac automatically if possible?
-
 
 #### Structure
 
@@ -105,10 +104,6 @@ Got Your Back
 ├── requirements.txt
 ├── scripts
 │   ├── Queue.py
-│   ├── deprecated
-│   │   ├── collect_data.py
-│   │   ├── realtime_collect.py
-│   │   └── realtime_jonas.py
 │   ├── openzen.pyd
 │   └── realtime_classify.py
 └── setup.cfg
@@ -117,14 +112,16 @@ Got Your Back
 ### Sensor properties fetchable
 
 From the sensors we can fetch different properties using one of the following methods:
-* get_float_property()
-* get_byte_property()
-* get_int32_property()
-* get_uint64_property()
-* get_array_property()
-* execute_command()
+
+- get_float_property()
+- get_byte_property()
+- get_int32_property()
+- get_uint64_property()
+- get_array_property()
+- execute_command()
 
 ZenImu object:
+
 ```
 openzen.ZenImuProperty.Invalid = 0,
 openzen.ZenImuProperty.StreamData = 1000,
@@ -190,7 +187,9 @@ openzen.ZenImuProperty.StartSensorSync,
 openzen.ZenImuProperty.StopSensorSync,
 openzen.ZenImuProperty.Max
 ```
+
 ZenSensor object:
+
 ```
 openzen.ZenSensorProperty.Invalid = 0,
 openzen.ZenSensorProperty.DeviceName = 1000,
@@ -211,3 +210,14 @@ openzen.ZenSensorProperty.SensorSpecific_Start = 10000,
 openzen.ZenSensorProperty.SensorSpecific_End = 19999,
 openzen.ZenSensorProperty.Max
 ```
+
+## Creating Python docs
+
+With Sphinx fully installed and python lib accessible from terminal:
+
+```
+cd docs
+sphinx-build ./source ./build/html
+```
+
+and make html from rst only with `make html`

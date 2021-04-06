@@ -70,7 +70,7 @@ def scan_for_sensors(client):
 
 
 def connect_and_get_imus(client, sensors, chosen_sensors):
-    """Connects to all sensors using one client
+    """Connects to chosen sensors and get a connection to their inertial measurement unit.
 
     Args:
         client (openzen.ZenClient): Client object from the OpenZen-library.

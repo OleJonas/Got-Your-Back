@@ -1,4 +1,3 @@
-import sys
 import openzen
 
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
@@ -69,18 +68,9 @@ class Sensor_Bank:
         if name in self.sensor_dict:
             self.sensor_dict[name].sensor_obj.release()
             self.sensor_dict.pop(name)
-        
+
         print(f"sensor_dict after disconnect: {self.sensor_dict}")
         return
-
-        """
-        for i, sensor in enumerate(self.sensor_arr):
-            found_id = self.handle_to_id[handle]
-            if found_id == sensor.handle:
-                sensor.sensor_obj.release()
-                self.sensor_arr.pop(i)
-            print(self.sensor_arr)
-        """
 
     def set_sleep_time(self, sleep_time):
         self.sleep_time = sleep_time
