@@ -69,7 +69,8 @@ def connect_to_sensor(client, input_sensor):
         err, sensor = client.obtain_sensor(input_sensor)
         if attempts >= 10:
             print("Can't connect to sensor")
-            sys.exit(1)
+            #sys.exit(1)
+            return
 
     # Obtain IMU from sensor and prevent it from streaming sensor_data until asked to
     imu = sensor.get_any_component_of_type(openzen.component_type_imu)

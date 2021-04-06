@@ -176,7 +176,7 @@ def connect_all():
         str: Message confirming that all sensors are connected.
     """
     global sensor_bank
-    for sensor in found_sensors:
+    for sensor in found_sensors.values():
         s_name, sensor, imu = sc.connect_to_sensor(client, sensor)
         sensor_bank.add_sensor(s_name, sensor, imu)
     return "All connected"
