@@ -13,6 +13,15 @@ import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 import { ColumnChart } from "../../components/ColumnChart/ColumnChart.component";
 
+
+// DENNE MÅ NOEN ANDRE KOMMENTERE ANER IKKE HVA JEG SKAL SKRIVE HER
+
+
+
+/**
+ * 
+ * @returns The history page showing statistics from the last few days all the way back to months.
+ */
 export const HistoryView = () => {
 	const [durationLine, setDurationLine] = useState<number>(7);
 	const [durationColumn, setDurationColumn] = useState<number>(7);

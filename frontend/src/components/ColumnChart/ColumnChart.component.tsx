@@ -9,7 +9,15 @@ type ColumnChartProps = {
 	actions: []; //["dragToPan", "dragToZoom", "rightClickToReset"]
 };
 
+/**
+ * @param props 
+ * @returns A column chart presenting the classification data over a set period of time.
+ */
 export const ColumnChart: FC<ColumnChartProps> = (props) => {
+
+	/**
+	 * @returns An array containing the amount of times each posture is observed in the classification data.
+	 */
 	const processedData = () => {
 		const classifications = Object.values(props.data);
 		let posture_occurences = [0, 0, 0, 0, 0, 0, 0, 0, 0];

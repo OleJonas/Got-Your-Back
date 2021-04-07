@@ -11,6 +11,10 @@ import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 import { SensorListContent } from "../../components/SensorListContent/SensorListContent.component";
 import handleErrors from "../../utils/handleErrors";
 
+/**
+ * @remarks
+ * This is the main page of the application. It contains live classification data as well as different components also relating to live classification and recording of data.
+ */
 export const HomeView = () => {
 	const classes = useStyles();
 	const [datapoints, setDatapoints] = useState<json>({});
@@ -19,7 +23,11 @@ export const HomeView = () => {
 	const [isRecording, setIsRecording] = useState<boolean>(false);
 	const [hasSensors, setHasSensors] = useState<boolean>(false);
 
-	// Fetch classifications on render and every 3 seconds when recording
+
+	/**
+	 * @remarks
+	 * useEffect that fetches classifications on render and every 3 seconds when recording is active.
+	 */
 	useEffect(() => {
 		fetch("http://localhost:5000/classifications", {
 			headers: {
@@ -57,7 +65,11 @@ export const HomeView = () => {
 		return () => clearInterval(interval);
 	}, []);
 
-	// Fetch status on render and on recording every tenth second
+
+	/**
+	 * @remarks
+	 * useEffect that fetches status of the sensors on render and every tenth second after that.
+	 */
 	useEffect(() => {
 		fetch("http://localhost:5000/status")
 			.then((response) => response.json())
