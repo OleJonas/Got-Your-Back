@@ -156,33 +156,84 @@
 <span id="server-classify-module"></span><h1>server_classify module<a class="headerlink" href="#module-server_classify" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="server_classify.classify">
-<code class="sig-prename descclassname"><span class="pre">server_classify.</span></code><code class="sig-name descname"><span class="pre">classify</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor_bank</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#server_classify.classify" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-prename descclassname"><span class="pre">server_classify.</span></code><code class="sig-name descname"><span class="pre">classify</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor_bank</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#server_classify.classify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classify in realtime based on trained model and data in data queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>tensorflow.python.keras.engine.sequential.Sequential</em>) – ANN model trained for n_sensors connected.</p></li>
+<li><p><strong>data_queue</strong> (<a class="reference internal" href="Data_Queue.html#Data_Queue.Data_Queue" title="Data_Queue.Data_Queue"><em>Data_Queue</em></a>) – Data queue with data collected from sensor(s).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="server_classify.collect_data">
 <code class="sig-prename descclassname"><span class="pre">server_classify.</span></code><code class="sig-name descname"><span class="pre">collect_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor_bank</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#server_classify.collect_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Collect data from connected sensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p></li>
+<li><p><strong>sensor_bank</strong> (<a class="reference internal" href="sensor_bank.html#sensor_bank.Sensor_Bank" title="sensor_bank.Sensor_Bank"><em>Sensor_Bank</em></a>) – Object containing the connected sensors.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="server_classify.connect_to_sensor">
 <code class="sig-prename descclassname"><span class="pre">server_classify.</span></code><code class="sig-name descname"><span class="pre">connect_to_sensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_sensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#server_classify.connect_to_sensor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Connects to chosen sensor and establishes a connection to it’s inertial measurement unit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p></li>
+<li><p><strong>input_sensor</strong> (<em>openzen.ZenSensorDesc</em>) – Found sensor object from the OpenZen-library.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Sensor name.
+openzen.ZenSensor: Sensor object.
+openzen.ZenSensorComponent: imu.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt id="server_classify.scan_for_sensors">
 <code class="sig-prename descclassname"><span class="pre">server_classify.</span></code><code class="sig-name descname"><span class="pre">scan_for_sensors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#server_classify.scan_for_sensors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Scan for available sensors</p>
-<p>Input:</p>
-<p>client - clientobject from the OpenZen-library</p>
-<p>Output:</p>
-<p>sensors - list of available sensors</p>
+<dd><p>Scan for available sensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of available sensor objects.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>[openzen.ZenSensorDesc]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="server_classify.sync_sensors">
 <code class="sig-prename descclassname"><span class="pre">server_classify.</span></code><code class="sig-name descname"><span class="pre">sync_sensors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor_bank</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#server_classify.sync_sensors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Synchronize sensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p></li>
+<li><p><strong>sensor_bank</strong> (<a class="reference internal" href="sensor_bank.html#sensor_bank.Sensor_Bank" title="sensor_bank.Sensor_Bank"><em>Sensor_Bank</em></a>) – Object containing the connected sensors.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 

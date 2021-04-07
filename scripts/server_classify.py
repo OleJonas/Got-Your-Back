@@ -56,9 +56,9 @@ def connect_to_sensor(client, input_sensor):
         input_sensor (openzen.ZenSensorDesc): Found sensor object from the OpenZen-library.
 
     Returns:
-        str: Sensor name
-        openzen.ZenSensor: Sensor object
-        openzen.ZenSensorComponent: imu
+        str: Sensor name.
+        openzen.ZenSensor: Sensor object.
+        openzen.ZenSensorComponent: imu.
     """
     err, sensor = client.obtain_sensor(input_sensor)
     attempts = 0
@@ -69,7 +69,8 @@ def connect_to_sensor(client, input_sensor):
         err, sensor = client.obtain_sensor(input_sensor)
         if attempts >= 10:
             print("Can't connect to sensor")
-            sys.exit(1)
+            #sys.exit(1)
+            return
 
     # Obtain IMU from sensor and prevent it from streaming sensor_data until asked to
     imu = sensor.get_any_component_of_type(openzen.component_type_imu)
@@ -215,6 +216,12 @@ def _classification_fname():
 
 
 def classify(model, sensor_bank):
+    """Classify in realtime based on trained model and data in data queue.
+
+    Args:
+        model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
+        data_queue (Data_Queue): Data queue with data collected from sensor(s).
+    """
     values = []
     while sensor_bank.run:
         if(min(data_queue.entries) == 0):
@@ -236,40 +243,6 @@ def classify(model, sensor_bank):
                 _write_to_csv(csv.writer(file), classification)
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
             values = []
-
-
-def scan_for_sensors(client):
-    """
-    Scan for available sensors
-
-    Input:\n
-    client - clientobject from the OpenZen-library
-
-    Output:\n
-    sensors - list of available sensors
-    """
-    client.list_sensors_async()
-
-    # Check for events
-    sensors = []
-    while True:
-        zenEvent = client.wait_for_next_event()
-
-        if zenEvent.event_type == openzen.ZenEventType.SensorFound:
-            print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}", flush=True, end='')
-            # Check if found device is a bluetooth device
-            if zenEvent.data.sensor_found.io_type == "Bluetooth":
-                sensors.append(zenEvent.data.sensor_found)
-
-        if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
-            lst_data = zenEvent.data.sensor_listing_progress
-            print(f"Sensor listing progress: {lst_data.progress * 100}%", flush=True, end='')
-            if lst_data.complete > 0:
-                break
-
-    print("Sensor Listing complete, found ", len(sensors))
-    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
-    return sensors
 
 
 if __name__ == "__main__":

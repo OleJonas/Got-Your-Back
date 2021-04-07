@@ -19,7 +19,6 @@ type modalProps = {
 export const SensorModal: FC<modalProps> = (props) => {
 	const classes = useStyles();
 	const [sensorsFound, setSensorsFound] = useState<any>();
-	const [connectedSensors, setConnectedSensors] = useState<any[]>([]);
 	const [isFetching, setIsFetching] = useState(false);
 	const [open, setOpen] = useState(false);
 
@@ -53,21 +52,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 	const handleClose = () => {
 		props.close();
 		setOpen(false);
-		/*
-		if (connectedSensors) {
-			let inboundSensors: any[] = [];
-			connectedSensors.forEach((sensor: any) => {
-				let s = {
-					id: sensor.id,
-					connected: true,
-					name: sensor.name,
-					battery: sensor.battery,
-				};
-				inboundSensors.push(s);
-			});
-			props.sendSensors(inboundSensors);
-		}*/
-		/*
 
 		// DUMMY DATA
 		console.log("Yo fra inni if ye!");
@@ -83,12 +67,10 @@ export const SensorModal: FC<modalProps> = (props) => {
 		props.sendSensors(inboundSensors);
 		props.close();
 		setOpen(false);
-        */
 	};
 
 	const addConnected = (data: any, isConnected: boolean) => {
 		console.log("addConnected");
-		//let helper = connectedSensors;
 		console.log(isConnected);
 			if (isConnected) {
 				console.log("isConnected = true");
