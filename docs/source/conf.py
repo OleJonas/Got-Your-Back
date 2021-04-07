@@ -35,8 +35,13 @@ release = '2021'
 # ones.
 extensions = [
     'sphinxcontrib.napoleon',
+    'sphinx_js',
     "sphinx_rtd_theme"
 ]
+
+js_source_path = '../../frontend'
+jsdoc_config_path = "../../frontend/tsconfig.json"
+js_language = 'typescript'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
