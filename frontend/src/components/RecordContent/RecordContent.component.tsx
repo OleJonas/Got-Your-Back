@@ -13,11 +13,20 @@ type ClassificationProps = {
 	isRecording: boolean;
 };
 
+/**
+ * 
+ * @param props 
+ * @returns A GUI interface that lets the user start and stop recording and classification of data. This is contained inside a material-ui Box.
+ */
 export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles();
 	const [isRecording, setIsRecording] = useState<Boolean>(props.isRecording);
 	const [buttonPressed, setButtonPressed] = useState<Boolean>(false);
 
+	/**
+	 * @remarks
+	 * Function that uses the API-calls to start and stop classification. 
+	 */
 	const onButtonPressed = () => {
 		setButtonPressed(true);
 		if (!isRecording) {

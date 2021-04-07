@@ -22,6 +22,10 @@ export const SensorModal: FC<modalProps> = (props) => {
 	const [isFetching, setIsFetching] = useState(false);
 	const [open, setOpen] = useState(false);
 
+	/**
+	 * @remarks
+	 * Uses an API call to fetch sensors available to connect to via bluetooth. When found, the state is updated.
+	 */
 	const scanForSensors = useCallback(async () => {
 		if (isFetching) return;
 		setIsFetching(true);
@@ -49,12 +53,13 @@ export const SensorModal: FC<modalProps> = (props) => {
 		// eslint-disable-next-line
 	}, [props.open]);
 
+
 	const handleClose = () => {
 		props.close();
 		setOpen(false);
 
 		// DUMMY DATA
-		console.log("Yo fra inni if ye!");
+		/*
 		let inboundSensors = [];
 		for (let i = 0; i < 3; i++) {
 			let s = {
@@ -67,8 +72,16 @@ export const SensorModal: FC<modalProps> = (props) => {
 		props.sendSensors(inboundSensors);
 		props.close();
 		setOpen(false);
+		*/
 	};
 
+	/**
+	 * @remarks
+	 * Function that sends sensor data up to the SensorListContent component
+	 * 
+	 * @param data JSON data about the sensor returned from the connect API call.
+	 * @param isConnected Boolean telling if the sensor is connected or not.
+	 */
 	const addConnected = (data: any, isConnected: boolean) => {
 		console.log("addConnected");
 		console.log(isConnected);
@@ -84,14 +97,10 @@ export const SensorModal: FC<modalProps> = (props) => {
 			}
 	};
 
-	/*const mapSensors = () => {
-		const sensorNames = 
-		sensors.map((sensor: Sensor) => {
-		return (
-			<SensorRowHome connected={true} id={sensor.id} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />
-		);
-	});*/
-
+	/**
+	 * 
+	 * @returns An array of Sensor type objects that are found via searching, but not yet connected.
+	 */
 	const getSensorsNotConnected: Sensor[] = () => {
 		console.log(props.alreadyConnected);
 		if(props.alreadyConnected.length > 0){

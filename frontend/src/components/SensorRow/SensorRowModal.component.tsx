@@ -11,12 +11,21 @@ type SensorProps = {
 	clickConnect?: any;
 };
 
+/**
+ * @remarks
+ * A functional component showing the details of a not connected sensor.
+ */
 export const SensorRowModal: FC<SensorProps> = (props) => {
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
 	const [sensorData, setSensorData] = useState<any>();
 	const classes = useStyles();
 
+	/**
+	 * @remarks
+	 * Function that connects to the chosen sensor via bluetooth.
+	 * Then the function sets the state variables sensorData and connected, as well as isFetching to the corresponding data returned from the async call.
+	 */
 	const connect = useCallback(async () => {
 		if (isFetching) return;
 		setIsFetching(true);
