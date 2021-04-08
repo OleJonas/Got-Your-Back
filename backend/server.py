@@ -134,7 +134,7 @@ def scan():
 
     for sensor in helper:
         found_sensors[sensor.name] = sensor
-        out["sensors"].append({"name": sensor.name, "id": sensor_bank.sensor_id_dict[sensor.name]})
+        out["sensors"].append({"name": sensor.name})
     return out
 
 
@@ -157,7 +157,7 @@ def connect():
     try:
         s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[content["name"]])
         sensor_bank.add_sensor(s_name, sensor, imu)
-        s_id = sensor_bank.sensor_id_dict[s_name]
+        s_id = sensor_bank.sensor_dict[s_name].id
         res = {
             "name": s_name,
             "id": s_id,
@@ -166,7 +166,7 @@ def connect():
         return res
     except:
         print("Could not connect to sensor, please try again...")
-        return "Could not connect to sensor, please try again..."
+        return {"error": "Could not conect to sensor, please try again..."}
 
 
 @app.route("/setup/connect_all")

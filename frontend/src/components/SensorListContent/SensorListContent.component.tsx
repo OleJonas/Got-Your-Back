@@ -21,7 +21,10 @@ export const SensorListContent = () => {
 	const [sensors, setSensors] = useState<Sensor[]>([]);
 
 	const openModal = () => {
-		setOpen(true);
+		getConnectedSensors().then(() => {
+			console.log(sensors);
+			setOpen(true);
+		})
 	};
 
 	const closeModal = () => {
@@ -58,7 +61,7 @@ export const SensorListContent = () => {
 	 * @remarks
 	 * Uses an API call to fetch sensors currently connected via bluetooth. Then sets state to reflect the sensors found to be connected.
 	 */
-	const getConnectedSensors = useCallback(async () => {
+	const getConnectedSensors = async () => {
 
 		await fetch("http://localhost:5000/setup/get_sensors", {
 			headers: {
@@ -66,11 +69,11 @@ export const SensorListContent = () => {
 				Accept: "application/json",
 			},
 		})
-			.then((res) => res.json())
-			.then(data => {
-				setSensors(data["sensors"]);
-			})
-	}, []);
+		.then((res) => res.json())
+		.then(data => {
+			setSensors(data["sensors"]);
+		}).then(() => console.log(sensors))
+	}
 
 
 	useEffect(() => {
@@ -131,7 +134,8 @@ export const SensorListContent = () => {
 			</Grid>
 			<Grid xs={12} item container className={classes.button}>
 				<Button func={openModal}>Scan</Button>
-				<SensorModal sendSensors={addSensors} alreadyConnected={getSensorsConnectedNames()} close={closeModal} open={open}></SensorModal>
+				{open? <SensorModal sendSensors={addSensors} alreadyConnected={getSensorsConnectedNames()} close={closeModal} open={open}></SensorModal> : <></>
+				}
 			</Grid>
 		</Grid>
 	);

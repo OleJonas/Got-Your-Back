@@ -68,7 +68,7 @@ export const HomeView = () => {
 				.catch(function (error) {});
 		}
 		console.log(isRecording);
-	}, 3000);
+	}, 5000);
 
 	/**
 	 * @remarks
