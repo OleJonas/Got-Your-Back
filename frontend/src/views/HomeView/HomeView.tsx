@@ -148,7 +148,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<LineChart data={datapoints} />
+								<LineChart duration={1} data={datapoints} />
 							</ContentBox>
 						</Grid>
 

@@ -357,7 +357,7 @@ def get_classifications_history():
     """
     days = int(request.args.get("duration"))
     res = dict()
-    filearray = os.listdir("./classifications/dummydata")
+    filearray = os.listdir("./classifications/")
     startDate = (datetime.date.today() - datetime.timedelta(days=days))
 
     # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day

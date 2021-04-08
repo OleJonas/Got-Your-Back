@@ -1,8 +1,10 @@
 import { makeStyles, Typography } from "@material-ui/core";
+import { SignalCellularNullOutlined } from "@material-ui/icons";
+import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
 import { posture_names } from "../../utils/posture_names";
 
-// type LineChartProps = {
+// type LineChartProps, = {
 // 	data: JSON,
 // 	hAxisFormat?: "HH:mm:ss" | "HH:mm" | "dd.mm",
 // 	actions?: [], //["dragToPan", "dragToZoom", "rightClickToReset"]
@@ -16,9 +18,24 @@ import { posture_names } from "../../utils/posture_names";
  */
 export const LineChart = (props) => {
 	const classes = useStyles;
-	let defaultMinDate = new Date();
-	let defaultMaxDate = new Date();
-	defaultMinDate.setUTCHours(defaultMaxDate.getHours() - 1, defaultMaxDate.getMinutes() - 1, defaultMaxDate.getSeconds() - 1);
+
+	const [minTime, setMinTime] = useState(new Date());
+	const [maxTime, setMaxTime] = useState(new Date());
+
+	useEffect(() => {
+		let minDate = new Date();
+		let maxDate = new Date();
+
+		console.log("duration, ", props.duration);
+		if (props.duration === 1) {
+			setMinTime(new Date(minDate.setHours(minDate.getHours() - 1)));
+			//setMinTime(minDate.getHours() - 1, minDate.getMinutes() - 1, minDate.getSeconds() - 1);
+		} else {
+			setMinTime(new Date(minDate.setDate(minDate.getDate() - (props.duration + 1))));
+			setMaxTime(new Date(maxDate.setDate(maxDate.getDate() - 1)));
+			console.log(maxTime);
+		}
+	}, [props.duration]);
 
 	/**
 	 *
@@ -62,10 +79,10 @@ export const LineChart = (props) => {
 					textStyle: { color: "#FFF" },
 					titleTextStyle: { color: "#FFF" },
 					gridlines: { color: "transparent" },
-					format: props.hAxisFormat ? props.hAxisFormat : "HH:mm",
+					format: props.duration > 1 ? "YYYY-MM-dd" : "HH:mm:ss",
 					viewWindow: {
-						min: defaultMinDate,
-						max: defaultMaxDate,
+						min: minTime,
+						max: maxTime,
 					},
 				},
 				vAxis: {
