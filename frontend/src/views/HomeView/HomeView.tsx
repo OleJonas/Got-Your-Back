@@ -39,6 +39,7 @@ export const HomeView = () => {
 			.then(handleErrors)
 			.then((response) => response.json())
 			.then((data) => {
+				console.log(data);
 				setDatapoints(data);
 			})
 			.catch(function (error) {});
