@@ -38,7 +38,8 @@ export const SensorModal: FC<modalProps> = (props) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				setSensorsFound(data["sensors"]);
+
+				setSensorsFound(getSensorsNotConnected(data["sensors"]));
 				setIsFetching(false);
 				setOpen(true);
 			});
@@ -99,14 +100,16 @@ export const SensorModal: FC<modalProps> = (props) => {
 	 *
 	 * @returns An array of Sensor type objects that are found via searching, but not yet connected.
 	 */
-	const getSensorsNotConnected: () => Sensor[] = () => {
+
+
+	const getSensorsNotConnected: (foundSensors: Sensor[]) => Sensor[] = (foundSensors): Sensor[] => {
 		console.log(props.alreadyConnected);
 		if (props.alreadyConnected.length > 0) {
 			console.log("alreadyConnected.len: " + props.alreadyConnected.length);
-			return sensorsFound.filter((sensor: Sensor) => !props.alreadyConnected.includes(sensor.name));
+			return foundSensors.filter((sensor: Sensor) => !props.alreadyConnected.includes(sensor.name));
 		} else {
 			console.log("alreadyConnected was empty");
-			return sensorsFound;
+			return foundSensors;
 		}
 	};
 
@@ -134,9 +137,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 									<Grid container className={classes.grid} justify="flex-start" item xs={5}>
 										<Typography variant="h6">Sensor name</Typography>
 									</Grid>
-									<Grid container className={classes.grid} justify="flex-start" item xs={2}>
-										<Typography variant="h6">Id</Typography>
-									</Grid>
 									<Grid container className={classes.grid} justify="flex-start" item xs={3}>
 										<Typography variant="h6">Status</Typography>
 									</Grid>
@@ -144,8 +144,8 @@ export const SensorModal: FC<modalProps> = (props) => {
 								</Grid>
 
 								{sensorsFound ? (
-									getSensorsNotConnected().map((sensor: Sensor) => (
-										<SensorRowModal clickConnect={addConnected} connected={false} id={sensor.id} name={sensor.name} />
+									sensorsFound.map((sensor: Sensor) => (
+										<SensorRowModal clickConnect={addConnected} connected={false} name={sensor.name} />
 									))
 								) : (
 									<></>

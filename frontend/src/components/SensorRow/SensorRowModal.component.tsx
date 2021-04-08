@@ -5,7 +5,6 @@ import { Typography, Grid, makeStyles } from "@material-ui/core";
 import SensorButton from "../Buttons/SensorButton.component";
 
 type SensorProps = {
-	id: number;
 	connected: boolean;
 	name: string;
 	clickConnect?: any;
@@ -43,9 +42,11 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 			.then((res) => res.json())
 			.then((data) => {
 				console.log(data);
-				setSensorData(data);
-				setConnected(true);
-				setIsFetching(false);
+				if(!data.hasOwnProperty("error")){
+					setSensorData(data);
+					setConnected(true);
+					setIsFetching(false);
+				}
 			});
 		// eslint-disable-next-line
 	}, [isFetching]);
@@ -58,14 +59,9 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 
 	return (
 		<Grid container className={classes.root}>
-			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={5}>
+			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={6}>
 				<Typography variant="body1" color="textSecondary">
 					{props.name}
-				</Typography>
-			</Grid>
-			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={2}>
-				<Typography variant="body1" color="textSecondary">
-					{props.id}
 				</Typography>
 			</Grid>
 			<Grid container item className={classes.grid} direction="row" justify="flex-start" xs={3}>
@@ -73,7 +69,7 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 					{connected ? "Connected" : "Disconnected"}
 				</Typography>
 			</Grid>
-			<Grid className={classes.grid} container justify="flex-start" item xs={2}>
+			<Grid className={classes.grid} container justify="center" item xs={2}>
 				<SensorButton type="connect" status={connected} func={connect} id="connectButton" disabled={isFetching} />
 			</Grid>
 		</Grid>

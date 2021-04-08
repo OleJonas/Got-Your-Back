@@ -7,11 +7,10 @@ class Sensor:
     """Class representing a sensor with the properties we want from the OpenZen-library.
     """
 
-    def __init__(self, name, sensor, imu, handle, id):
+    def __init__(self, name, sensor, imu, id):
         self.name = name
         self.sensor_obj = sensor
         self.imu_obj = imu
-        self.handle = handle
         self.id = id
 
     def get_battery_percentage(self):
@@ -43,20 +42,12 @@ class Sensor_Bank:
     Class to make managing sensor properties easier.
     """
 
-    def __init__(self, sensor_dict={}, sampling_rate=5, sleep_time=0.05, handle_to_id={}):
+    def __init__(self, sensor_dict={}, sampling_rate=5, sleep_time=0.05):
         self.sensor_dict = sensor_dict
         self.n_sensors = 0
         self.sampling_rate = sampling_rate
         self.sleep_time = sleep_time
         self.run = False
-
-        self.sensor_id_dict = {
-            "LPMSB2-3036EB": 1,
-            "LPMSB2-4B3326": 2,
-            "LPMSB2-4B31EE": 3  # 3
-        }
-
-        self.handle_to_id = handle_to_id
 
     def add_sensor(self, name, sensor, imu):
         """Add sensor to sensor bank.
@@ -66,13 +57,11 @@ class Sensor_Bank:
             sensor (openzen.ZenSensor): Sensor object.
             imu (openzen.ZenSensorComponent): inertial measurement unit.
         """
-        if name in self.sensor_id_dict:
-            self.n_sensors += 1
-            s = Sensor(name, sensor, imu, self.n_sensors, self.sensor_id_dict[name])
-            self.sensor_dict[name] = s
-            self.handle_to_id[s.handle] = self.sensor_id_dict[name]
-        else:
-            print("Sensor not in sensor_id_dict. Please add it manually...")
+        
+        self.n_sensors += 1
+        s = Sensor(name, sensor, imu, self.n_sensors)
+        self.sensor_dict[name] = s
+
 
     def set_all_sampling_rates(self, sampling_rate):
         """Set the sampling rates for all sensors connected.
@@ -108,9 +97,10 @@ class Sensor_Bank:
         if name in self.sensor_dict:
             self.sensor_dict[name].sensor_obj.release()
             self.sensor_dict.pop(name)
+            self.n_sensors -= 1
 
         print(f"sensor_dict after disconnect: {self.sensor_dict}")
-        return # Er denne nødvendig?
+
 
     def set_sleep_time(self, sleep_time):
         """Set sleep time.
