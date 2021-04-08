@@ -392,7 +392,7 @@ def get_battery():
         dict: Dictionary on the format {battery: str}
     """
     global sensor_bank
-    name = int(request.args.get("name"))
+    name = request.args.get("name")
     percent = sensor_bank.sensor_dict[name].get_battery_percentage()
     return {"battery": str(percent).split("%")[0]}
 
@@ -417,7 +417,7 @@ def get_status():
 
 def shutdown():
     """Disconnect sensors and close connections by server shutdown.
-    """    
+    """
     global client
     global sensor_bank
     for name in sensor_bank.sensor_dict:

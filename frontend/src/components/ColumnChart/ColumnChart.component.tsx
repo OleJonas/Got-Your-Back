@@ -6,15 +6,14 @@ import { posture_names } from "../../utils/posture_names";
 type ColumnChartProps = {
 	data: JSON;
 	hAxisFormat?: "HH:mm:ss" | "HH:mm" | "dd.mm";
-	actions: []; //["dragToPan", "dragToZoom", "rightClickToReset"]
+	actions?: []; //["dragToPan", "dragToZoom", "rightClickToReset"]
 };
 
 /**
- * @param props 
+ * @param props
  * @returns A column chart presenting the classification data over a set period of time.
  */
 export const ColumnChart: FC<ColumnChartProps> = (props) => {
-
 	/**
 	 * @returns An array containing the amount of times each posture is observed in the classification data.
 	 */
@@ -24,7 +23,7 @@ export const ColumnChart: FC<ColumnChartProps> = (props) => {
 		classifications.forEach((classification) => (posture_occurences[classification] += 1));
 		let chartData = [["Posture", "Amount"]];
 		for (let i = 0; i < posture_occurences.length; i += 1) {
-			chartData.push([posture_names[i], posture_occurences[i]]);
+			chartData.push([posture_names[i], posture_occurences[i].toString()]);
 		}
 		console.log(chartData);
 		return chartData;
