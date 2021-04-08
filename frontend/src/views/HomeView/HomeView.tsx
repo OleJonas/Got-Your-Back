@@ -39,7 +39,6 @@ export const HomeView = () => {
 			.then(handleErrors)
 			.then((response) => response.json())
 			.then((data) => {
-				console.log(data);
 				setDatapoints(data);
 			})
 			.catch(function (error) {});
@@ -61,7 +60,7 @@ export const HomeView = () => {
 				.then((response) => response.json())
 				.then((data: JSON) => {
 					let key: string = Object.keys(data)[0];
-					let val: number = Object.values(data)[0];
+					let val: number = parseInt(Object.values(data)[0]);
 					datapoints[key] = val;
 					setDatapoints({ ...datapoints });
 				})

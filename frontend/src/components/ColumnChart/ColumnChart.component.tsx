@@ -52,6 +52,7 @@ export const ColumnChart: FC<ColumnChartProps> = (props) => {
 					height: "100%",
 				},
 				vAxis: {
+					minorGridlines: { color: "#5e5e5e" },
 					textStyle: { color: "#FFF" },
 					titleTextStyle: { color: "#FFF" },
 					viewWindow: {
@@ -59,8 +60,11 @@ export const ColumnChart: FC<ColumnChartProps> = (props) => {
 					},
 					format: "#",
 					gridlines: { color: "#5e5e5e" },
+					baselineColor: "#5e5e5e",
 				},
 				hAxis: {
+					minorGridlines: { color: "#5e5e5e" },
+					baselineColor: "#5e5e5e",
 					title: "Timestamps",
 					textStyle: { color: "#FFF" },
 					titleTextStyle: { color: "#FFF" },

@@ -29,13 +29,14 @@ export const LineChart = (props) => {
 		console.log("duration, ", props.duration);
 		if (props.duration === 1) {
 			setMinTime(new Date(minDate.setHours(minDate.getHours() - 1)));
-			//setMinTime(minDate.getHours() - 1, minDate.getMinutes() - 1, minDate.getSeconds() - 1);
+			setMaxTime(maxDate);
+			console.log(props.data)
 		} else {
 			setMinTime(new Date(minDate.setDate(minDate.getDate() - (props.duration + 1))));
 			setMaxTime(new Date(maxDate.setDate(maxDate.getDate() - 1)));
 			console.log(maxTime);
 		}
-	}, [props.duration]);
+	}, [props.data]);
 
 	/**
 	 *

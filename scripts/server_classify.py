@@ -165,7 +165,7 @@ def collect_data(client, sensor_bank):
     while not aligned:
         zenEvent = client.wait_for_next_event()
         imu_data = zenEvent.data.imu_data
-        tmp_rows.append(_make_row(sensor_bank.handle_to_id[zenEvent.sensor.handle], imu_data))
+        tmp_rows.append(_make_row(zenEvent.sensor.handle, imu_data))
         found_timestamps.append(imu_data.timestamp)
         for i, x in enumerate(found_timestamps):
             found = 0
@@ -189,7 +189,7 @@ def collect_data(client, sensor_bank):
         if zenEvent.event_type == openzen.ZenEventType.ImuData:
             occurences[int(zenEvent.sensor.handle) - 1] += 1
             imu_data = zenEvent.data.imu_data
-            row = _make_row(sensor_bank.handle_to_id[zenEvent.sensor.handle], imu_data)
+            row = _make_row(zenEvent.sensor.handle, imu_data)
             data_queue.push(row[0], row[1:])
         else:
             continue
