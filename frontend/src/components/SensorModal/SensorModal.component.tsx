@@ -145,7 +145,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 
 								{sensorsFound ? (
 									sensorsFound.map((sensor: Sensor) => (
-										<SensorRowModal clickConnect={addConnected} connected={false} name={sensor.name} />
+										<SensorRowModal clickConnect={addConnected} name={sensor.name} />
 									))
 								) : (
 									<></>
