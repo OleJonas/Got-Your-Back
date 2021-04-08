@@ -46,7 +46,7 @@ export const SensorButton: FC<ButtonProps> = (props) => {
 						status ? (
 							<CheckIcon className={classes.icon} />
 						) : props.loading ? (
-							<img src={loader} className="loading" alt="Rotating loading icon"></img>
+							<img src={loader} className={classes.loading} alt="Rotating loading icon"></img>
 						) : (
 							<AddIcon className={classes.icon} />
 						)
@@ -73,6 +73,20 @@ const useStyles = makeStyles({
 		backgroundColor: "#EDB93C",
 	},
 	icon: {
+		marginTop: "10px",
+	},
+	"@keyframes rotate": {
+		from: {
+			transform: "rotate(0)",
+		},
+		to: {
+			transform: "rotate(360deg)",
+		},
+	},
+	loading: {
+		animation: "1s linear infinite $rotate",
+		width: "42px",
+		height: "42px",
 		marginTop: "10px",
 	},
 });
