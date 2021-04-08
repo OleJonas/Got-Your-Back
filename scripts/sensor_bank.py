@@ -58,8 +58,13 @@ class Sensor_Bank:
             imu (openzen.ZenSensorComponent): inertial measurement unit.
         """
         
+        helper_id = 1
+        for s_id in self.sensor_dict.values().id:
+            if helper_id == s_id:
+                helper_id += 1
+            else:
+                s = Sensor(name, sensor, imu, helper_id)
         self.n_sensors += 1
-        s = Sensor(name, sensor, imu, self.n_sensors)
         self.sensor_dict[name] = s
 
 
