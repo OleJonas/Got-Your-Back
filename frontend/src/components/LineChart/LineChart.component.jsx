@@ -79,7 +79,7 @@ export const LineChart = (props) => {
 					textStyle: { color: "#FFF" },
 					titleTextStyle: { color: "#FFF" },
 					gridlines: { color: "transparent" },
-					format: props.duration > 1 ? "YYYY-MM-dd" : "HH:mm:ss",
+					format: props.duration > 1 ? "YYYY-MM-dd" : "HH:mm",
 					viewWindow: {
 						min: minTime,
 						max: maxTime,
