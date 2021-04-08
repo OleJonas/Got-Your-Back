@@ -369,7 +369,7 @@ def get_classifications_history():
         # if there is a file for the i-th day in the interval, proceed, if not, skip
         if((ith_Day_str + ".csv") in filearray):
             try:
-                with open("./classifications/dummydata/" + str(ith_Day_str + ".csv"), 'r') as file:
+                with open("./classifications/" + str(ith_Day_str + ".csv"), 'r') as file:
                     reader = csv.reader(file)
                     for row in reader:
                         classifications[int(row[1])] += 1
