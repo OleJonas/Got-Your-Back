@@ -154,19 +154,20 @@ def connect():
     """
     global sensor_bank
     content = request.json
-    try:
-        s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[content["name"]])
-        sensor_bank.add_sensor(s_name, sensor, imu)
-        s_id = sensor_bank.sensor_dict[s_name].id
-        res = {
-            "name": s_name,
-            "id": s_id,
-            "battery_percent": sensor_bank.sensor_dict[s_name].get_battery_percentage()
-        }
-        return res
-    except:
-        print("Could not connect to sensor, please try again...")
-        return {"error": "Could not conect to sensor, please try again..."}
+
+    s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[content["name"]])
+    sensor_bank.add_sensor(s_name, sensor, imu)
+    s_id = sensor_bank.sensor_dict[s_name].id
+    res = {
+        "name": s_name,
+        "id": s_id,
+        "battery_percent": sensor_bank.sensor_dict[s_name].get_battery_percentage()
+    }
+    return res
+    """
+    print("Could not connect to sensor, please try again...")
+    return {"error": "Could not conect to sensor, please try again..."}
+    """
 
 
 @app.route("/setup/connect_all")
