@@ -239,7 +239,7 @@ def classify(model, sensor_bank):
             argmax = [classification.argmax() for classification in classify]
             end_time_classify = time.perf_counter() - start_time_classify
             classification = Counter(argmax).most_common(1)[0][0]
-            with open(_classification_fname(), 'a+') as file:
+            with open(_classification_fname(), 'a+', newline='') as file:
                 _write_to_csv(csv.writer(file), classification)
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
             values = []
