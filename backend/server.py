@@ -316,10 +316,21 @@ def get_all_classifications():
         dict: Dictionary with classifications if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
         http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
     """
+    INTERVAL = 10
+    counter = 0
+    classifications = np.zeros(9)
+    res = dict()
+
     try:
         with open(sc._classification_fname(), 'r') as file:
             try:
-                return {row[0]: row[1] for row in csv.reader(file)}
+                for row in csv.reader(file):
+                    classifications[int(row[1])] += 1
+                    counter += 1
+                    if counter % INTERVAL == 0:
+                        res[row[0]] = int(np.argmax(classifications))
+                        classifications = np.zeros(9)
+                return res
             except IndexError:  # empty file
                 return json.dumps({'Error': "FileEmpty"}), 507, {'ContentType': 'application/json'}
     except FileNotFoundError:
@@ -334,6 +345,7 @@ def get_classification():
         dict: Dictionary with latest classification if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
         http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
     """
+
     try:
         with open(sc._classification_fname(), 'r') as file:
             try:
@@ -343,8 +355,6 @@ def get_classification():
             return {str(lastrow[0]): lastrow[1]}
     except FileNotFoundError:
         return json.dumps({'Error': "FileNotFound"}), 507, {'ContentType': 'application/json'}
-
-# Have to fix conversion from dummydata here
 
 
 @app.route("/classifications/history")
