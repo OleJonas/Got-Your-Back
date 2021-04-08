@@ -20,7 +20,7 @@ class Sensor:
             str: Battery percentage of sensor, with one decimal precision.
         """
         return f"{round(self.sensor_obj.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
-
+ 
     def set_sampling_rate(self, sampling_rate):
         """Sets the sampling rate.
 

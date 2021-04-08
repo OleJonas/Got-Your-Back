@@ -13,13 +13,10 @@ import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 import { ColumnChart } from "../../components/ColumnChart/ColumnChart.component";
 
-
 // DENNE MÅ NOEN ANDRE KOMMENTERE ANER IKKE HVA JEG SKAL SKRIVE HER
 
-
-
 /**
- * 
+ *
  * @returns The history page showing statistics from the last few days all the way back to months.
  */
 export const HistoryView = () => {
@@ -63,6 +60,7 @@ export const HistoryView = () => {
 
 	const handleChangeLine = (event: any) => {
 		setDurationLine(event.target.value);
+		console.log("changed line");
 	};
 
 	const handleChangeColumn = (event: any) => {
@@ -92,6 +90,12 @@ export const HistoryView = () => {
 										</Typography>
 									</InputLabel>
 									<Select
+										onClose={() => {
+											console.log("closing");
+										}}
+										onOpen={() => {
+											console.log("open");
+										}}
 										labelId="durationLine-controlled-open-select-label"
 										id="durationLine-controlled-open-select"
 										value={durationLine}
@@ -110,7 +114,7 @@ export const HistoryView = () => {
 								<Typography variant="h3" color="textPrimary"></Typography>
 
 								<ContentBox>
-									<LineChart hAxisFormat={"dd-MM-YY"} data={datapointsLine} />
+									<LineChart duration={durationLine} data={datapointsLine} />
 								</ContentBox>
 							</Box>
 						</Grid>

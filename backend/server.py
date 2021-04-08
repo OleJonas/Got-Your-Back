@@ -111,14 +111,15 @@ def get_dummy_connect():
     ]}
 
 
-"""
-SETUP
-"""
+@app.route('/dummy/found_sensors')
+def get_dummy_found_sensors():
+    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
 
 
 @app.route("/setup/scan")
 def scan():
-    """Scan for available sensors using the openZen library.
+    """
+    Scan for available sensors using the openZen library.
 
     Returns:
         dict: Dictionary with list of found sensors.
@@ -247,9 +248,9 @@ def set_id():
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
-"""
+"""""""""""""""""""""""
 CLASSIFY
-"""
+"""""""""""""""""""""""
 
 
 @app.route("/classify/start")
@@ -356,9 +357,8 @@ def get_classifications_history():
     """
     days = int(request.args.get("duration"))
     res = dict()
-    filearray = os.listdir("./classifications/dummydata")
+    filearray = os.listdir("./classifications/")
     startDate = (datetime.date.today() - datetime.timedelta(days=days))
-    print("startdate: ", startDate)
 
     # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
     for i in range(0, days):
@@ -369,7 +369,7 @@ def get_classifications_history():
         # if there is a file for the i-th day in the interval, proceed, if not, skip
         if((ith_Day_str + ".csv") in filearray):
             try:
-                with open("./classifications/dummydata/" + str(ith_Day_str + ".csv"), 'r') as file:
+                with open("./classifications/" + str(ith_Day_str + ".csv"), 'r') as file:
                     reader = csv.reader(file)
                     for row in reader:
                         classifications[int(row[1])] += 1

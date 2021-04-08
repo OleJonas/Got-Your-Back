@@ -69,7 +69,7 @@ def connect_to_sensor(client, input_sensor):
         err, sensor = client.obtain_sensor(input_sensor)
         if attempts >= 10:
             print("Can't connect to sensor")
-            #sys.exit(1)
+            # sys.exit(1)
             return
 
     # Obtain IMU from sensor and prevent it from streaming sensor_data until asked to
@@ -220,7 +220,7 @@ def classify(model, sensor_bank):
 
     Args:
         model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
-        data_queue (Data_Queue): Data queue with data collected from sensor(s).
+        sensor_bank (Sensor_Bank): Object containing the connected sensors.
     """
     values = []
     while sensor_bank.run:

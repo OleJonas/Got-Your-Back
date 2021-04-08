@@ -2,6 +2,8 @@ import { FC } from "react";
 import { Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
 import { posture_names } from "../../utils/posture_names";
+import { GoogleDataTableColumnRoleType } from "react-google-charts/dist/types";
+import { RowingTwoTone } from "@material-ui/icons";
 
 type ColumnChartProps = {
 	data: JSON;
@@ -21,9 +23,10 @@ export const ColumnChart: FC<ColumnChartProps> = (props) => {
 		const classifications = Object.values(props.data);
 		let posture_occurences = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 		classifications.forEach((classification) => (posture_occurences[classification] += 1));
-		let chartData = [["Posture", "Amount"]];
+		let chartData = [];
+		chartData.push(["Postures", "Occurences"]);
 		for (let i = 0; i < posture_occurences.length; i += 1) {
-			chartData.push([posture_names[i], posture_occurences[i].toString()]);
+			chartData.push([posture_names[i], posture_occurences[i]]);
 		}
 		console.log(chartData);
 		return chartData;
@@ -53,6 +56,10 @@ export const ColumnChart: FC<ColumnChartProps> = (props) => {
 				vAxis: {
 					textStyle: { color: "#FFF" },
 					titleTextStyle: { color: "#FFF" },
+					viewWindow: {
+						min: 0,
+					},
+					format: "#",
 					gridlines: { color: "#5e5e5e" },
 				},
 				hAxis: {
