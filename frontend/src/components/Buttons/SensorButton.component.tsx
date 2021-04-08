@@ -14,6 +14,11 @@ type ButtonProps = {
 	status?: boolean;
 };
 
+/**
+ * 
+ * @param props 
+ * @returns A button component specifically used for sensor setup - connecting and disconnecting.
+ */
 export const SensorButton: FC<ButtonProps> = (props) => {
 	const classes = useStyles();
 	const [status, setStatus] = useState<boolean>(false);

@@ -13,12 +13,24 @@ type SensorProps = {
 	disconnectFunc: (id: number) => void;
 };
 
+/**
+ * 
+ * @param props 
+ * @returns A functional component showing data for the sensor
+ */
 export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	const [batteryPercent, setBatteryPercent] = useState<number>(props.battery);
 	const [isFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
 
+	/**
+	 * @remarks
+	 * Does an async call to disconnect from the desired sensor.
+	 * 
+	 * @param name A string containing the sensors name
+	 * @param id A number used to identify each sensor.
+	 */
 	const disconnect = async (name: string, id: number) => {
 		await fetch("http://localhost:5000/setup/disconnect", {
 			method: "POST",
@@ -38,6 +50,10 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 			});
 	};
 
+	/**
+	 * @remarks
+	 * Does an async fetch request to aquire the current battery level of the sensor
+	 */
 	const getBatteryPercent = useCallback(async () => {
 		if (!props.connected) return;
 		await fetch("http://localhost:5000/sensor/battery?name=" + props.name, {

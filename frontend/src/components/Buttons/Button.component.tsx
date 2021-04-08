@@ -6,6 +6,11 @@ type ButtonProps = {
 	disabled?: boolean;
 };
 
+/**
+ * 
+ * @param props 
+ * @returns A base button component for use in several different buttons throughout the application
+ */
 export const Button: FC<ButtonProps> = (props) => {
 	return (
 		<Fab

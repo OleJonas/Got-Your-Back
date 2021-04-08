@@ -16,14 +16,13 @@ data_queue = None
 
 
 def scan_for_sensors(client):
-    """
-    Scan for available sensors
+    """Scan for available sensors.
 
-    Input:\n
-    client - clientobject from the OpenZen-library
+    Args:
+        client (openzen.ZenClient): Client object from the OpenZen-library.
 
-    Output:\n
-    sensors - list of available sensors
+    Returns:
+        [openzen.ZenSensorDesc]: List of available sensor objects.
     """
     client.list_sensors_async()
 
@@ -50,6 +49,17 @@ def scan_for_sensors(client):
 
 
 def connect_to_sensor(client, input_sensor):
+    """Connects to chosen sensor and establishes a connection to it's inertial measurement unit.
+
+    Args:
+        client (openzen.ZenClient): Client object from the OpenZen-library.
+        input_sensor (openzen.ZenSensorDesc): Found sensor object from the OpenZen-library.
+
+    Returns:
+        str: Sensor name.
+        openzen.ZenSensor: Sensor object.
+        openzen.ZenSensorComponent: imu.
+    """
     err, sensor = client.obtain_sensor(input_sensor)
     attempts = 0
     while not err == openzen.ZenSensorInitError.NoError:
@@ -59,7 +69,8 @@ def connect_to_sensor(client, input_sensor):
         err, sensor = client.obtain_sensor(input_sensor)
         if attempts >= 10:
             print("Can't connect to sensor")
-            sys.exit(1)
+            #sys.exit(1)
+            return
 
     # Obtain IMU from sensor and prevent it from streaming sensor_data until asked to
     imu = sensor.get_any_component_of_type(openzen.component_type_imu)
@@ -74,6 +85,12 @@ def connect_to_sensor(client, input_sensor):
 
 
 def sync_sensors(client, sensor_bank):
+    """Synchronize sensors.
+
+    Args:
+        client (openzen.ZenClient): Client object from the OpenZen-library.
+        sensor_bank (Sensor_Bank): Object containing the connected sensors.
+    """
     imu_arr = []
     for sensor_conn in sensor_bank.sensor_dict.values():
         sensor_conn.set_sampling_rate(sensor_bank.sampling_rate)
@@ -91,12 +108,30 @@ def sync_sensors(client, sensor_bank):
 
 
 def _remove_unsync_data(client):
+    """Removes data events from before sensor synchronization.
+
+    Args:
+        client (openzen.ZenClient): Client object from the OpenZen-library.
+    """
     zenEvent = client.poll_next_event()
     while(zenEvent != None):
         zenEvent = client.poll_next_event()
 
 
 def _make_row(handle, imu_data):
+    """Create row with the following data columns:
+        a (m/s^2): Accleration measurement after all corrections have been applied.
+        g (deg/s): Gyroscope measurement after all corrections have been applied.
+        r (deg/s): Three euler angles representing the current rotation of the sensor.
+        q: Quaternion representing the current rotation of the sensor (w, x, y, z). 
+
+    Args:
+        handle (int): Sensor handle/id.
+        imu_data (openzen.ZenImuData): Data from sensor's inertial measurement unit. 
+
+    Returns:
+        [float]: New row consisting of wanted data columns from sensors.
+    """
     row = []
     row.append(handle)
     row.append(imu_data.timestamp)
@@ -108,6 +143,12 @@ def _make_row(handle, imu_data):
 
 
 def collect_data(client, sensor_bank):
+    """Collect data from connected sensors.
+
+    Args:
+        client (openzen.ZenClient): Client object from the OpenZen-library.
+        sensor_bank (Sensor_Bank): Object containing the connected sensors.
+    """
     global data_queue
     data_queue = Data_Queue(len(sensor_bank.sensor_dict))
     print(len(sensor_bank.sensor_dict))
@@ -155,15 +196,32 @@ def collect_data(client, sensor_bank):
 
 
 def _write_to_csv(writer, classification):
+    """Write classification to csv.
+
+    Args:
+        writer (_csv.writer): Csv writer object.
+        classification (int): Classification from 0-8 based on trained model.
+    """
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     writer.writerow([current_time, classification])
 
 
 def _classification_fname():
+    """Get the classification filename. Our naming convention takes use of todays date on the format (%Y-%m-%d.csv).
+
+    Returns:
+        str: Path to classification file.
+    """
     return f'./classifications/{date.today().strftime("%Y-%m-%d")}.csv'
 
 
-def classify(client, model, sensor_bank):
+def classify(model, sensor_bank):
+    """Classify in realtime based on trained model and data in data queue.
+
+    Args:
+        model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
+        data_queue (Data_Queue): Data queue with data collected from sensor(s).
+    """
     values = []
     while sensor_bank.run:
         if(min(data_queue.entries) == 0):
@@ -185,40 +243,6 @@ def classify(client, model, sensor_bank):
                 _write_to_csv(csv.writer(file), classification)
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
             values = []
-
-
-def scan_for_sensors(client):
-    """
-    Scan for available sensors
-
-    Input:\n
-    client - clientobject from the OpenZen-library
-
-    Output:\n
-    sensors - list of available sensors
-    """
-    client.list_sensors_async()
-
-    # Check for events
-    sensors = []
-    while True:
-        zenEvent = client.wait_for_next_event()
-
-        if zenEvent.event_type == openzen.ZenEventType.SensorFound:
-            print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}", flush=True, end='')
-            # Check if found device is a bluetooth device
-            if zenEvent.data.sensor_found.io_type == "Bluetooth":
-                sensors.append(zenEvent.data.sensor_found)
-
-        if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
-            lst_data = zenEvent.data.sensor_listing_progress
-            print(f"Sensor listing progress: {lst_data.progress * 100}%", flush=True, end='')
-            if lst_data.complete > 0:
-                break
-
-    print("Sensor Listing complete, found ", len(sensors))
-    print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
-    return sensors
 
 
 if __name__ == "__main__":

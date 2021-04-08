@@ -10,16 +10,22 @@ type LineChartProps = {
 	type: "1 day" | "7 days" | "14 days" | "30 days",
 };
 
-function isEmpty(obj) {
-	return Object.keys(obj).length === 0;
-}
 
+/**
+ * 
+ * @param {*} props 
+ * @returns A LineChart that updates with new classification data received.
+ */
 export const LineChart = (props) => {
 	const classes = useStyles;
 	let defaultMinDate = new Date();
 	let defaultMaxDate = new Date();
 	defaultMinDate.setUTCHours(defaultMaxDate.getHours() - 1, defaultMaxDate.getMinutes() - 1, defaultMaxDate.getSeconds() - 1);
 
+	/**
+	 * 
+	 * @returns The data to be used in the rendering of the component. The data is structured as an array of tuples each containing the time of the classification and the classification itself.
+	 */
 	const processedData = () => {
 		const timestamps = Object.keys(props.data);
 		const predictions = Object.values(props.data);
