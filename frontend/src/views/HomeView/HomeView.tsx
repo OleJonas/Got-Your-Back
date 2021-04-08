@@ -10,6 +10,7 @@ import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 import { SensorListContent } from "../../components/SensorListContent/SensorListContent.component";
 import handleErrors from "../../utils/handleErrors";
+import useInterval from "../../utils/useInterval";
 
 /**
  * @remarks
@@ -26,7 +27,7 @@ export const HomeView = () => {
 
 	/**
 	 * @remarks
-	 * useEffect that fetches classifications on render and every 3 seconds when recording is active.
+	 * useEffect that fetches classifications on render.
 	 */
 	useEffect(() => {
 		fetch("http://localhost:5000/classifications", {
@@ -41,8 +42,14 @@ export const HomeView = () => {
 				setDatapoints(data);
 			})
 			.catch(function (error) {});
+	}, []);
 
-		const interval = setInterval(() => {
+	/**
+	 * @remarks
+	 * custom React hook that fetches classifications every 3 seconds when recording is active.
+	 */
+	useInterval(() => {
+		if (isRecording) {
 			fetch("http://localhost:5000/classifications/latest", {
 				headers: {
 					"Content-Type": "application/json",
@@ -54,37 +61,34 @@ export const HomeView = () => {
 				.then((data: JSON) => {
 					let key: string = Object.keys(data)[0];
 					let val: number = Object.values(data)[0];
-					let tmp = datapoints;
-					tmp[key] = val;
-					setDatapoints(tmp);
+					datapoints[key] = val;
+					setDatapoints({ ...datapoints });
 				})
 				.catch(function (error) {});
-		}, 3000);
-		return () => clearInterval(interval);
-		// eslint-disable-next-line
-	}, []);
+		}
+		console.log(isRecording);
+	}, 3000);
 
 	/**
 	 * @remarks
-	 * useEffect that fetches status of the sensors on render and every tenth second after that.
+	 * useEffect that fetches status of the sensors on render and every ninth second.
 	 */
 	useEffect(() => {
 		fetch("http://localhost:5000/status")
 			.then((response) => response.json())
 			.then((data) => {
-				data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
-				data.isRecording ? setIsRecording(true) : setIsRecording(false);
+				setIsRecording(data.isRecording);
+				setHasSensors(data.numberOfSensors !== 0);
 			});
 
 		const interval = setInterval(() => {
 			fetch("http://localhost:5000/status")
 				.then((response) => response.json())
 				.then((data) => {
-					console.log(data);
-					data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
-					data.isRecording ? setIsRecording(true) : setIsRecording(false);
+					if (data.isRecording !== isRecording) setIsRecording(data.isRecording);
+					if ((data.numberOfSensors !== 0) !== hasSensors) setHasSensors(data.numberOfSensors !== 0);
 				});
-		}, 10000);
+		}, 9000);
 		return () => clearInterval(interval);
 		// eslint-disable-next-line
 	}, []);
