@@ -310,16 +310,13 @@ FETCH CLASSIFICATIONS
 
 @app.route("/classifications")
 def get_all_classifications():
-
     """Get all classifications for today.
 
     Returns:
         dict: Dictionary with classifications if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
         http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
     """
-
-    NUM_MINUTES = 5
- 
+    INTERVAL = 10
     counter = 0
     classifications = np.zeros(9)
     res = dict()
@@ -330,7 +327,7 @@ def get_all_classifications():
                 for row in csv.reader(file):
                     classifications[int(row[1])] += 1
                     counter += 1
-                    if counter % NUM_MINUTES == 0:
+                    if counter % INTERVAL == 0:
                         res[row[0]] = int(np.argmax(classifications))
                         classifications = np.zeros(9)
                 return res
@@ -348,7 +345,7 @@ def get_classification():
         dict: Dictionary with latest classification if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
         http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
     """
-    
+
     try:
         with open(sc._classification_fname(), 'r') as file:
             try:

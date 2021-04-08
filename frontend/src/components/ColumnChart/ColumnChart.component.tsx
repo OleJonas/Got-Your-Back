@@ -2,8 +2,6 @@ import { FC } from "react";
 import { Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
 import { posture_names } from "../../utils/posture_names";
-import { GoogleDataTableColumnRoleType } from "react-google-charts/dist/types";
-import { RowingTwoTone } from "@material-ui/icons";
 
 type ColumnChartProps = {
 	data: JSON;

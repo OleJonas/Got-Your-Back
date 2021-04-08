@@ -19,7 +19,7 @@ def generate(from_date: str, to_date: str, hours_per_day: int):
     # given as input
     while(not (current_day.date() == end_day.date())):
         # Create new CSV-file, with date of 'current_day' as filename
-        with open(f"./classifications/dummydata/{str(datetime.datetime.strftime(current_day, '%Y-%m-%d'))}.csv", 'w+', newline='') as file:
+        with open(f"./classifications/{str(datetime.datetime.strftime(current_day, '%Y-%m-%d'))}.csv", 'w+', newline='') as file:
             # Declaring fieldnames and DictWriter
             fnames = ['time', 'prediction']
             writer = csv.DictWriter(file, fieldnames=fnames)
