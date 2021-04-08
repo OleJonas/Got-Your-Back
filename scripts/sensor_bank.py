@@ -64,8 +64,9 @@ class Sensor_Bank:
                 helper_id += 1
             else:
                 s = Sensor(name, sensor, imu, helper_id)
+                self.sensor_dict[name] = s
+                print("connected")
         self.n_sensors += 1
-        self.sensor_dict[name] = s
 
 
     def set_all_sampling_rates(self, sampling_rate):
