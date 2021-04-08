@@ -1,7 +1,7 @@
 import { FC, useState, useEffect, useCallback } from "react";
 import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Sensor } from "../SensorListContent/SensorListContent.component"
+import { Sensor } from "../SensorListContent/SensorListContent.component";
 
 // Components
 import { Button } from "../Buttons/Button.component";
@@ -44,7 +44,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 			});
 	}, [isFetching]);
 
-
 	useEffect(() => {
 		if (props.open === true) {
 			setOpen(props.open);
@@ -52,7 +51,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 		}
 		// eslint-disable-next-line
 	}, [props.open]);
-
 
 	const handleClose = () => {
 		props.close();
@@ -78,39 +76,39 @@ export const SensorModal: FC<modalProps> = (props) => {
 	/**
 	 * @remarks
 	 * Function that sends sensor data up to the SensorListContent component
-	 * 
+	 *
 	 * @param data JSON data about the sensor returned from the connect API call.
 	 * @param isConnected Boolean telling if the sensor is connected or not.
 	 */
 	const addConnected = (data: any, isConnected: boolean) => {
 		console.log("addConnected");
 		console.log(isConnected);
-			if (isConnected) {
-				console.log("isConnected = true");
-				let s = {
-					id: data.id,
-					connected: true,
-					name: data.name,
-					battery: data.battery,
-				};
-				props.sendSensors(s);
-			}
+		if (isConnected) {
+			console.log("isConnected = true");
+			let s = {
+				id: data.id,
+				connected: true,
+				name: data.name,
+				battery: data.battery_percent.split("%")[0],
+			};
+			props.sendSensors(s);
+		}
 	};
 
 	/**
-	 * 
+	 *
 	 * @returns An array of Sensor type objects that are found via searching, but not yet connected.
 	 */
-	const getSensorsNotConnected: Sensor[] = () => {
+	const getSensorsNotConnected: () => Sensor[] = () => {
 		console.log(props.alreadyConnected);
-		if(props.alreadyConnected.length > 0){
+		if (props.alreadyConnected.length > 0) {
 			console.log("alreadyConnected.len: " + props.alreadyConnected.length);
-			return sensorsFound.filter((sensor: Sensor) => !props.alreadyConnected.includes(sensor.name))
-		} else{
+			return sensorsFound.filter((sensor: Sensor) => !props.alreadyConnected.includes(sensor.name));
+		} else {
 			console.log("alreadyConnected was empty");
 			return sensorsFound;
 		}
-	}
+	};
 
 	return (
 		<Box>

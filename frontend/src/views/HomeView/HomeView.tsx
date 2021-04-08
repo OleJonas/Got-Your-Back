@@ -17,12 +17,12 @@ import handleErrors from "../../utils/handleErrors";
  */
 export const HomeView = () => {
 	const classes = useStyles();
-	const [datapoints, setDatapoints] = useState<json>({});
-	const lastPosture: number = Object.values(datapoints).pop();
+	const [datapoints, setDatapoints] = useState<any>({});
+	const lastPosture: number =
+		datapoints && Object.values(datapoints).length !== 0 ? (Object.values(datapoints)[Object.values(datapoints).length - 1] as number) : -1;
 	const samplingRate: number = 5;
 	const [isRecording, setIsRecording] = useState<boolean>(false);
 	const [hasSensors, setHasSensors] = useState<boolean>(false);
-
 
 	/**
 	 * @remarks
@@ -43,28 +43,26 @@ export const HomeView = () => {
 			.catch(function (error) {});
 
 		const interval = setInterval(() => {
-			if (isRecording) {
-				fetch("http://localhost:5000/classifications/latest", {
-					headers: {
-						"Content-Type": "application/json",
-						Accept: "application/json",
-					},
+			fetch("http://localhost:5000/classifications/latest", {
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+				},
+			})
+				.then(handleErrors)
+				.then((response) => response.json())
+				.then((data: JSON) => {
+					let key: string = Object.keys(data)[0];
+					let val: number = Object.values(data)[0];
+					let tmp = datapoints;
+					tmp[key] = val;
+					setDatapoints(tmp);
 				})
-					.then(handleErrors)
-					.then((response) => response.json())
-					.then((data) => {
-						let key = Object.keys(data)[0];
-						let val = Object.values(data)[0];
-						let tmp = datapoints;
-						tmp[key] = val;
-						setDatapoints(tmp);
-					})
-					.catch(function (error) {});
-			}
+				.catch(function (error) {});
 		}, 3000);
 		return () => clearInterval(interval);
+		// eslint-disable-next-line
 	}, []);
-
 
 	/**
 	 * @remarks
@@ -79,17 +77,16 @@ export const HomeView = () => {
 			});
 
 		const interval = setInterval(() => {
-			if (isRecording) {
-				fetch("http://localhost:5000/status")
-					.then((response) => response.json())
-					.then((data) => {
-						console.log(data);
-						data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
-						data.isRecording ? setIsRecording(true) : setIsRecording(false);
-					});
-			}
+			fetch("http://localhost:5000/status")
+				.then((response) => response.json())
+				.then((data) => {
+					console.log(data);
+					data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
+					data.isRecording ? setIsRecording(true) : setIsRecording(false);
+				});
 		}, 10000);
 		return () => clearInterval(interval);
+		// eslint-disable-next-line
 	}, []);
 
 	return (

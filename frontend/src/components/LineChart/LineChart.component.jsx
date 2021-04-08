@@ -2,18 +2,16 @@ import { makeStyles, Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
 import { posture_names } from "../../utils/posture_names";
 
-// eslint-disable-next-line
-type LineChartProps = {
-	data: JSON,
-	hAxisFormat: "HH:mm:ss" | "HH:mm" | "dd.mm",
-	actions: [], //["dragToPan", "dragToZoom", "rightClickToReset"]
-	type: "1 day" | "7 days" | "14 days" | "30 days",
-};
-
+// type LineChartProps = {
+// 	data: JSON,
+// 	hAxisFormat?: "HH:mm:ss" | "HH:mm" | "dd.mm",
+// 	actions?: [], //["dragToPan", "dragToZoom", "rightClickToReset"]
+// 	type?: "1 day" | "7 days" | "14 days" | "30 days",
+// };
 
 /**
- * 
- * @param {*} props 
+ *
+ * @param {*} props
  * @returns A LineChart that updates with new classification data received.
  */
 export const LineChart = (props) => {
@@ -23,7 +21,7 @@ export const LineChart = (props) => {
 	defaultMinDate.setUTCHours(defaultMaxDate.getHours() - 1, defaultMaxDate.getMinutes() - 1, defaultMaxDate.getSeconds() - 1);
 
 	/**
-	 * 
+	 *
 	 * @returns The data to be used in the rendering of the component. The data is structured as an array of tuples each containing the time of the classification and the classification itself.
 	 */
 	const processedData = () => {

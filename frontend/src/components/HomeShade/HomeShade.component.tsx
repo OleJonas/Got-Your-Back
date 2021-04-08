@@ -7,9 +7,8 @@ import "./HomeShade.css";
 import Logo from "../../assets/Logo.svg";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
-
 /**
- * 
+ *
  * @returns A foreground that is pulled back when clicking any button. This serves as the "landing page".
  */
 export const HomeShade: React.FC = () => {
@@ -40,7 +39,7 @@ const useStyles = makeStyles({
 		background: "linear-gradient(90deg, #0f3762 0%, rgba(64, 98, 128, 0.9) 100%),#1c355b",
 		height: "100vh",
 		width: "100vw",
-		zIndex: "1",
+		zIndex: 1,
 	},
 	container: {
 		position: "relative",
