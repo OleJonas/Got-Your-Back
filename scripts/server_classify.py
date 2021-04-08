@@ -30,7 +30,7 @@ def scan_for_sensors(client):
     sensors = []
     while True:
         zenEvent = client.wait_for_next_event()
-        
+
         if zenEvent.event_type == openzen.ZenEventType.SensorFound:
             print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}", flush=True, end='')
             # Check if found device is a bluetooth device
@@ -69,7 +69,7 @@ def connect_to_sensor(client, input_sensor):
         err, sensor = client.obtain_sensor(input_sensor)
         if attempts >= 10:
             print("Can't connect to sensor")
-            #sys.exit(1)
+            # sys.exit(1)
             return
 
     # Obtain IMU from sensor and prevent it from streaming sensor_data until asked to
@@ -152,7 +152,7 @@ def collect_data(client, sensor_bank):
     global data_queue
     data_queue = Data_Queue(len(sensor_bank.sensor_dict))
     print(len(sensor_bank.sensor_dict))
-    
+
     _remove_unsync_data(client)
     occurences = [0, 0, 0]
     tmp_rows = []
@@ -220,7 +220,7 @@ def classify(model, sensor_bank):
 
     Args:
         model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
-        data_queue (Data_Queue): Data queue with data collected from sensor(s).
+        sensor_bank (Sensor_Bank): Object containing the connected sensors.
     """
     values = []
     while sensor_bank.run:
