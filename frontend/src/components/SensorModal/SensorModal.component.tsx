@@ -64,10 +64,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 	 * @param isConnected Boolean telling if the sensor is connected or not.
 	 */
 	const addConnected = (data: any, isConnected: boolean) => {
-		console.log("addConnected");
-		console.log(isConnected);
 		if (isConnected) {
-			console.log("isConnected = true");
 			let s = {
 				id: data.id,
 				connected: true,

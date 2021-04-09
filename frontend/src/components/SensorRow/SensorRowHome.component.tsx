@@ -45,7 +45,6 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data);
 				setConnected(false);
 				props.disconnectFunc(id);
 			});

@@ -31,7 +31,6 @@ export const SensorButton: FC<ButtonProps> = (props) => {
 		if (props.status === true) {
 			setStatus(true);
 			if (props.type === "connect") handleTooltipOpen();
-			console.log(props);
 		} else {
 			setStatus(false);
 			if (props.type === "connect") handleTooltipClose();

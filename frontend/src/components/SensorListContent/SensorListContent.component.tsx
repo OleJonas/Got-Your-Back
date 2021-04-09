@@ -28,24 +28,21 @@ export const SensorListContent: FC<ListProps> = (props) => {
 
 	const openModal = () => {
 		getConnectedSensors().then(() => {
-			console.log(sensors);
 			setOpen(true);
-		})
+		});
 	};
 
 	const closeModal = () => {
 		setOpen(false);
 	};
 
-
 	/**
 	 * @remarks
 	 * Removes the chosen sensor from the sensors array.
-	 * 
+	 *
 	 * @param id Number denoting which sensor is to be removed
 	 */
 	const removeSensor = (id: number) => {
-		console.log("Removing sensor...  " + id);
 		const helper = sensors.filter((sensor: Sensor) => {
 			return sensor.id !== id;
 		});
@@ -55,7 +52,7 @@ export const SensorListContent: FC<ListProps> = (props) => {
 	/**
 	 * @remarks
 	 * Adds the given sensor to the sensors array
-	 * 
+	 *
 	 * @param sensor An object of the sensor type
 	 */
 	const addSensors = (sensor: Sensor) => {
@@ -69,19 +66,17 @@ export const SensorListContent: FC<ListProps> = (props) => {
 	 * Uses an API call to fetch sensors currently connected via bluetooth. Then sets state to reflect the sensors found to be connected.
 	 */
 	const getConnectedSensors = async () => {
-
 		await fetch("http://localhost:5000/setup/get_sensors", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
 			},
 		})
-		.then((res) => res.json())
-		.then(data => {
-			setSensors(data["sensors"]);
-		}).then(() => console.log(sensors))
-	}
-
+			.then((res) => res.json())
+			.then((data) => {
+				setSensors(data["sensors"]);
+			});
+	};
 
 	useEffect(() => {
 		getConnectedSensors();
@@ -94,7 +89,15 @@ export const SensorListContent: FC<ListProps> = (props) => {
 	 */
 	const mapSensors = sensors.map((sensor: Sensor) => {
 		return (
-			<SensorRowHome connected={true} id={sensor.id} busy={props.recording} disconnectFunc={removeSensor} name={sensor.name} position={sensor_placement[sensor.id.toString()]} battery={sensor.battery} />
+			<SensorRowHome
+				connected={true}
+				id={sensor.id}
+				busy={props.recording}
+				disconnectFunc={removeSensor}
+				name={sensor.name}
+				position={sensor_placement[sensor.id.toString()]}
+				battery={sensor.battery}
+			/>
 		);
 	});
 
@@ -106,9 +109,9 @@ export const SensorListContent: FC<ListProps> = (props) => {
 	 */
 	const getSensorsConnectedNames = () => {
 		let out: string[] = [];
-		sensors.forEach((sensor: Sensor) => out.push(sensor.name))
+		sensors.forEach((sensor: Sensor) => out.push(sensor.name));
 		return out;
-	}
+	};
 
 	return (
 		<Grid container className={classes.root}>
@@ -145,9 +148,14 @@ export const SensorListContent: FC<ListProps> = (props) => {
 				{mapSensors}
 			</Grid>
 			<Grid xs={12} item container className={classes.button}>
-				<Button func={openModal} disabled={props.recording}>Scan</Button>
-				{open? <SensorModal sendSensors={addSensors} alreadyConnected={getSensorsConnectedNames()} close={closeModal} open={open}></SensorModal> : <></>
-				}
+				<Button func={openModal} disabled={props.recording}>
+					Scan
+				</Button>
+				{open ? (
+					<SensorModal sendSensors={addSensors} alreadyConnected={getSensorsConnectedNames()} close={closeModal} open={open}></SensorModal>
+				) : (
+					<></>
+				)}
 			</Grid>
 		</Grid>
 	);
