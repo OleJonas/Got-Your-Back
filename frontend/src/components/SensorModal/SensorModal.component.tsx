@@ -54,22 +54,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 	const handleClose = () => {
 		props.close();
 		setOpen(false);
-
-		// DUMMY DATA
-		/*
-		let inboundSensors = [];
-		for (let i = 0; i < 3; i++) {
-			let s = {
-				index: i,
-				connected: true,
-				name: "SENSOR" + i,
-			};
-			inboundSensors.push(s);
-		}
-		props.sendSensors(inboundSensors);
-		props.close();
-		setOpen(false);
-		*/
 	};
 
 	/**
@@ -100,12 +84,9 @@ export const SensorModal: FC<modalProps> = (props) => {
 	 */
 
 	const getSensorsNotConnected: (foundSensors: Sensor[]) => Sensor[] = (foundSensors): Sensor[] => {
-		console.log(props.alreadyConnected);
 		if (props.alreadyConnected.length > 0) {
-			console.log("alreadyConnected.len: " + props.alreadyConnected.length);
 			return foundSensors.filter((sensor: Sensor) => !props.alreadyConnected.includes(sensor.name));
 		} else {
-			console.log("alreadyConnected was empty");
 			return foundSensors;
 		}
 	};

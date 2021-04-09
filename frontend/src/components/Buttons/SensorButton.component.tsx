@@ -1,6 +1,7 @@
 import { FC, useState, useEffect } from "react";
-import { Box, ButtonBase, Typography, makeStyles } from "@material-ui/core";
+import { Box, ButtonBase, Typography, makeStyles, Tooltip, ClickAwayListener } from "@material-ui/core";
 import loader from "../../assets/loader_black.svg";
+import sensor_placement from "../../utils/sensor_placement";
 
 // Components
 import CheckIcon from "@material-ui/icons/Check";
@@ -10,7 +11,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 type ButtonProps = {
 	type: "connect" | "disconnect";
 	func?: any;
-	id?: string;
+	sensorid: number;
 	disabled?: boolean;
 	status?: boolean;
 	loading?: boolean;
@@ -24,39 +25,63 @@ type ButtonProps = {
 export const SensorButton: FC<ButtonProps> = (props) => {
 	const classes = useStyles(props);
 	const [status, setStatus] = useState<boolean>(false);
+	const [showTooltip, setShowTooltip] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (props.status === true) {
 			setStatus(true);
+			if (props.type === "connect") handleTooltipOpen();
+			console.log(props);
 		} else {
 			setStatus(false);
+			if (props.type === "connect") handleTooltipClose();
 		}
 	}, [props.status]);
 
+	const handleTooltipOpen = () => {
+		setShowTooltip(true);
+	};
+
+	const handleTooltipClose = () => {
+		setShowTooltip(false);
+	};
+
 	return (
 		<Box>
-			<ButtonBase
-				className={classes.btn}
-				id={props.id}
-				onClick={props.func === undefined ? () => {} : props.func}
-				disabled={props.disabled ? true : false}
-			>
-				<Typography variant="button" color="textSecondary">
-					{props.type === "connect" ? (
-						status ? (
-							<CheckIcon className={classes.icon} />
-						) : props.loading ? (
-							<img src={loader} className={classes.loading} alt="Rotating loading icon"></img>
-						) : (
-							<AddIcon className={classes.icon} />
-						)
-					) : !status ? (
-						<ClearIcon className={classes.icon} />
-					) : (
-						<AddIcon className={classes.icon} />
-					)}
-				</Typography>
-			</ButtonBase>
+			<ClickAwayListener onClickAway={handleTooltipClose}>
+				<Tooltip
+					open={showTooltip}
+					disableFocusListener
+					disableHoverListener
+					disableTouchListener
+					onBlur={handleTooltipClose}
+					title={"" + sensor_placement[props.sensorid.toString()]}
+					placement="right"
+					arrow
+				>
+					<ButtonBase
+						className={classes.btn}
+						onClick={props.func === undefined ? () => {} : props.func}
+						disabled={props.disabled ? true : false}
+					>
+						<Typography variant="button" color="textSecondary">
+							{props.type === "connect" ? (
+								status ? (
+									<CheckIcon className={classes.icon} />
+								) : props.loading ? (
+									<img src={loader} className={classes.loading} alt="Rotating loading icon"></img>
+								) : (
+									<AddIcon className={classes.icon} />
+								)
+							) : !status ? (
+								<ClearIcon className={classes.icon} />
+							) : (
+								<AddIcon className={classes.icon} />
+							)}
+						</Typography>
+					</ButtonBase>
+				</Tooltip>
+			</ClickAwayListener>
 		</Box>
 	);
 };

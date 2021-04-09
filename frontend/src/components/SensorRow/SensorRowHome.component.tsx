@@ -22,7 +22,6 @@ type SensorProps = {
  */
 export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	const [batteryPercent, setBatteryPercent] = useState<number>(props.battery);
-	const [isFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
 
@@ -102,7 +101,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 				</Typography>
 			</Grid>
 			<Grid container justify="center" item xs={2}>
-				<SensorButton type="disconnect" status={connected} func={() => disconnect(props.name, props.id)} id="connectButton" disabled={props.busy} />
+				<SensorButton type="disconnect" status={connected} func={() => disconnect(props.name, props.id)} sensorid={props.id} disabled={props.busy} />
 			</Grid>
 		</Grid>
 	);

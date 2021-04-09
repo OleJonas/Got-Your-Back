@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, FC } from "react";
+import { useState, useEffect, FC } from "react";
 import { Grid, Typography, makeStyles } from "@material-ui/core";
 
 // Componentes
@@ -6,7 +6,6 @@ import { Button } from "../Buttons/Button.component";
 import { SensorRowHome } from "../SensorRow/SensorRowHome.component";
 import { SensorModal } from "../SensorModal/SensorModal.component";
 import { sensor_placement } from "../../utils/sensor_placement";
-import { stringify } from "node:querystring";
 
 export type Sensor = {
 	id: number;
@@ -146,7 +145,7 @@ export const SensorListContent: FC<ListProps> = (props) => {
 				{mapSensors}
 			</Grid>
 			<Grid xs={12} item container className={classes.button}>
-				<Button func={openModal}>Scan</Button>
+				<Button func={openModal} disabled={props.recording}>Scan</Button>
 				{open? <SensorModal sendSensors={addSensors} alreadyConnected={getSensorsConnectedNames()} close={closeModal} open={open}></SensorModal> : <></>
 				}
 			</Grid>
