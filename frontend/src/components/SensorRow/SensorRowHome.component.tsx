@@ -10,6 +10,7 @@ type SensorProps = {
 	connected: boolean;
 	name: string;
 	battery: number;
+	busy: boolean;
 	disconnectFunc: (id: number) => void;
 };
 
@@ -95,7 +96,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 				</Typography>
 			</Grid>
 			<Grid container justify="center" item xs={2}>
-				<SensorButton type="disconnect" status={connected} func={() => disconnect(props.name, props.id)} id="connectButton" disabled={isFetching} />
+				<SensorButton type="disconnect" status={connected} func={() => disconnect(props.name, props.id)} id="connectButton" disabled={props.busy} />
 			</Grid>
 		</Grid>
 	);

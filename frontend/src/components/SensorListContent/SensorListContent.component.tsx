@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, FC } from "react";
 import { Grid, Typography, makeStyles } from "@material-ui/core";
 
 // Componentes
@@ -12,13 +12,18 @@ export type Sensor = {
 	battery: number;
 };
 
+type ListProps = {
+	recording: boolean;
+};
+
 /**
  * @returns A listing of the currently connected sensors.
  */
-export const SensorListContent = () => {
+export const SensorListContent: FC<ListProps> = (props) => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 	const [sensors, setSensors] = useState<Sensor[]>([]);
+	//const [classifying, setClassifying] = useState<boolean>(false);
 
 	const openModal = () => {
 		getConnectedSensors().then(() => {
@@ -30,6 +35,7 @@ export const SensorListContent = () => {
 	const closeModal = () => {
 		setOpen(false);
 	};
+
 
 	/**
 	 * @remarks
@@ -87,7 +93,7 @@ export const SensorListContent = () => {
 	 */
 	const mapSensors = sensors.map((sensor: Sensor) => {
 		return (
-			<SensorRowHome connected={true} id={sensor.id} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />
+			<SensorRowHome connected={true} id={sensor.id} busy={props.recording} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />
 		);
 	});
 
