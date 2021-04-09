@@ -121,7 +121,7 @@ export const SensorListContent: FC<ListProps> = (props) => {
 				</Grid>
 				<Grid item justify="flex-start" xs={3}>
 					<Typography variant="h5" color="textPrimary">
-						Position
+						Placement
 					</Typography>
 				</Grid>
 				<Grid item justify="flex-start" xs={1}>
