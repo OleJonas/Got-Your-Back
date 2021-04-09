@@ -11,6 +11,7 @@ type SensorProps = {
 	name: string;
 	battery: number;
 	busy: boolean;
+	position: string;
 	disconnectFunc: (id: number) => void;
 };
 
@@ -80,17 +81,22 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 			<Grid item direction="row" justify="center" xs={2}>
 				<BluetoothConnectedIcon className={classes.icon} />
 			</Grid>
-			<Grid item direction="row" justify="flex-start" xs={4}>
+			<Grid item direction="row" justify="flex-start" xs={3}>
 				<Typography variant="body2" color="textPrimary">
 					{props.name}
 				</Typography>
 			</Grid>
-			<Grid item direction="row" justify="center" xs={2}>
+			<Grid item direction="row" justify="flex-start" xs={3}>
+				<Typography variant="body2" color="textPrimary">
+					{props.position}
+				</Typography>
+			</Grid>
+			<Grid item direction="row" justify="center" xs={1}>
 				<Typography variant="body2" color="textPrimary">
 					{props.id}
 				</Typography>
 			</Grid>
-			<Grid item direction="row" justify="center" xs={2}>
+			<Grid item direction="row" justify="center" xs={1}>
 				<Typography variant="body2" color="textPrimary">
 					{batteryPercent + "%"}
 				</Typography>

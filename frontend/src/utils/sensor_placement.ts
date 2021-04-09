@@ -1,4 +1,4 @@
-export const sensor_placement: {} = {
+export const sensor_placement: any = {
   1: "Lower neck",
   2: "Lumbar spine",
   3: "Right shoulder",
