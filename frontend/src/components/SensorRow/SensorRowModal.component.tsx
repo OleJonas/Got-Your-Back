@@ -69,7 +69,14 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 				</Typography>
 			</Grid>
 			<Grid className={classes.grid} container justify="center" item xs={2}>
-				<SensorButton type="connect" loading={isFetching} status={connected} func={connect} id="connectButton" disabled={isFetching} />
+				<SensorButton
+					type="connect"
+					loading={isFetching}
+					status={connected}
+					func={connect}
+					id="connectButton"
+					disabled={isFetching || connected}
+				/>
 			</Grid>
 		</Grid>
 	);

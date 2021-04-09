@@ -25,7 +25,6 @@ export const SensorButton: FC<ButtonProps> = (props) => {
 	const classes = useStyles(props);
 	const [status, setStatus] = useState<boolean>(false);
 
-
 	useEffect(() => {
 		if (props.status === true) {
 			setStatus(true);
@@ -71,7 +70,7 @@ const useStyles = makeStyles({
 		height: "25px",
 		width: "25px",
 		borderRadius: "5px",
-		backgroundColor: (props: ButtonProps) => (props.disabled ? "#CCC" : "#EDB93C") as string,
+		backgroundColor: (props: ButtonProps) => (props.disabled ? "rgba(60, 60, 60, 0.5)" : "#EDB93C") as string,
 	},
 	icon: {
 		marginTop: "10px",
