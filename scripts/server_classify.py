@@ -7,6 +7,8 @@ from collections import Counter
 from datetime import datetime, date
 sys.path.append("scripts/")
 from Data_Queue import Data_Queue
+from scipy import stats
+from scripts.rnn_utils import create_2d_y_array, create_3d_array
 
 CLASSIFICATION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
@@ -216,6 +218,45 @@ def _classification_fname():
 
 
 def classify(model, sensor_bank):
+    """Classify in realtime based on trained model and data in data queue.
+
+    Args:
+        model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
+        sensor_bank (Sensor_Bank): Object containing the connected sensors.
+    """
+    values = []
+    while sensor_bank.run:
+        if(min(data_queue.entries) == 0):
+            time.sleep(SLEEPTIME)
+        else:
+            top_row = data_queue.shift()
+            data = top_row[0][0][1:]
+            for i in range(1, data_queue.n_sensors):
+                data += top_row[i][0][1:]
+            values.append(data)
+
+        if(len(values) == SAMPLING_RATE*10):
+            start_time_classify = time.perf_counter()
+
+            values_3d = np.array(create_3d_array(np.array(values), 50))
+
+            classify = model(np.array(values_3d)).numpy()
+            argmax = [classification.argmax() for classification in classify]
+            end_time_classify = time.perf_counter() - start_time_classify
+            classification = Counter(argmax).most_common(1)[0][0]
+            with open(_classification_fname(), 'a+') as file:
+                _write_to_csv(csv.writer(file), classification)
+            print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
+            values = []
+
+
+
+
+
+
+
+
+def classify_rnn(model, sensor_bank):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:

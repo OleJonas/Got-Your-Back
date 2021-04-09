@@ -264,9 +264,9 @@ def start_classify():
     global sensor_bank
     sensor_bank.run = True
     sc.sync_sensors(client, sensor_bank)
-    model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
-
-    classify_thread = threading.Thread(target=sc.classify, args=[model, sensor_bank], daemon=True)
+    #model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
+    rnn_model = keras.models.load_model("model/models/RNN-LSTM.h5") 
+    classify_thread = threading.Thread(target=sc.classify, args=[rnn_model, sensor_bank], daemon=True)
     collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)
     t_pool.append(classify_thread)
     t_pool.append(collect_thread)
