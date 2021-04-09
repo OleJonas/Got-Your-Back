@@ -7,7 +7,6 @@ import { Sensor } from "../SensorListContent/SensorListContent.component";
 import { Button } from "../Buttons/Button.component";
 import { SensorRowModal } from "../SensorRow/SensorRowModal.component";
 import loader from "../../assets/loader.svg";
-import "./loader.css";
 
 type modalProps = {
 	open: boolean;
@@ -38,7 +37,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-
 				setSensorsFound(getSensorsNotConnected(data["sensors"]));
 				setIsFetching(false);
 				setOpen(true);
@@ -101,7 +99,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 	 * @returns An array of Sensor type objects that are found via searching, but not yet connected.
 	 */
 
-
 	const getSensorsNotConnected: (foundSensors: Sensor[]) => Sensor[] = (foundSensors): Sensor[] => {
 		console.log(props.alreadyConnected);
 		if (props.alreadyConnected.length > 0) {
@@ -129,7 +126,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 					<Box className={classes.sensorBox}>
 						{isFetching ? (
 							<Box>
-								<img src={loader} className="loading" alt="Rotating loading icon"></img>
+								<img src={loader} className={classes.loading} alt="Rotating loading icon"></img>
 							</Box>
 						) : (
 							<Box>
@@ -144,9 +141,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 								</Grid>
 
 								{sensorsFound ? (
-									sensorsFound.map((sensor: Sensor) => (
-										<SensorRowModal clickConnect={addConnected} connected={false} name={sensor.name} />
-									))
+									sensorsFound.map((sensor: Sensor) => <SensorRowModal clickConnect={addConnected} name={sensor.name} />)
 								) : (
 									<></>
 								)}
@@ -210,5 +205,16 @@ const useStyles = makeStyles({
 	},
 	btnGrid: {
 		marginTop: "15%",
+	},
+	"@keyframes rotate": {
+		from: {
+			transform: "rotate(0)",
+		},
+		to: {
+			transform: "rotate(360deg)",
+		},
+	},
+	loading: {
+		animation: "1s linear infinite $rotate",
 	},
 });

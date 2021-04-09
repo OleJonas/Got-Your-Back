@@ -1,10 +1,12 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, FC } from "react";
 import { Grid, Typography, makeStyles } from "@material-ui/core";
 
 // Componentes
 import { Button } from "../Buttons/Button.component";
 import { SensorRowHome } from "../SensorRow/SensorRowHome.component";
 import { SensorModal } from "../SensorModal/SensorModal.component";
+import { sensor_placement } from "../../utils/sensor_placement";
+import { stringify } from "node:querystring";
 
 export type Sensor = {
 	id: number;
@@ -12,13 +14,18 @@ export type Sensor = {
 	battery: number;
 };
 
+type ListProps = {
+	recording: boolean;
+};
+
 /**
  * @returns A listing of the currently connected sensors.
  */
-export const SensorListContent = () => {
+export const SensorListContent: FC<ListProps> = (props) => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 	const [sensors, setSensors] = useState<Sensor[]>([]);
+	//const [classifying, setClassifying] = useState<boolean>(false);
 
 	const openModal = () => {
 		getConnectedSensors().then(() => {
@@ -30,6 +37,7 @@ export const SensorListContent = () => {
 	const closeModal = () => {
 		setOpen(false);
 	};
+
 
 	/**
 	 * @remarks
@@ -87,7 +95,7 @@ export const SensorListContent = () => {
 	 */
 	const mapSensors = sensors.map((sensor: Sensor) => {
 		return (
-			<SensorRowHome connected={true} id={sensor.id} disconnectFunc={removeSensor} name={sensor.name} battery={sensor.battery} />
+			<SensorRowHome connected={true} id={sensor.id} busy={props.recording} disconnectFunc={removeSensor} name={sensor.name} position={sensor_placement[sensor.id.toString()]} battery={sensor.battery} />
 		);
 	});
 
@@ -107,17 +115,22 @@ export const SensorListContent = () => {
 		<Grid container className={classes.root}>
 			<Grid container item className={classes.header} xs={12}>
 				<Grid item xs={2}></Grid>
-				<Grid item justify="flex-start" xs={4}>
+				<Grid item justify="flex-start" xs={3}>
 					<Typography variant="h5" color="textPrimary">
 						Sensor name
 					</Typography>
 				</Grid>
-				<Grid item justify="flex-start" xs={2}>
+				<Grid item justify="flex-start" xs={3}>
+					<Typography variant="h5" color="textPrimary">
+						Placement
+					</Typography>
+				</Grid>
+				<Grid item justify="flex-start" xs={1}>
 					<Typography variant="h5" color="textPrimary">
 						Id
 					</Typography>
 				</Grid>
-				<Grid item justify="flex-start" xs={2}>
+				<Grid item justify="flex-start" xs={1}>
 					<Typography variant="h5" color="textPrimary">
 						Battery
 					</Typography>

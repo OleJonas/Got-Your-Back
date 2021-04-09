@@ -167,7 +167,7 @@ def collect_data(client, sensor_bank):
     while not aligned:
         zenEvent = client.wait_for_next_event()
         imu_data = zenEvent.data.imu_data
-        tmp_rows.append(_make_row(sensor_bank.handle_to_id[zenEvent.sensor.handle], imu_data))
+        tmp_rows.append(_make_row(zenEvent.sensor.handle, imu_data))
         found_timestamps.append(imu_data.timestamp)
         for i, x in enumerate(found_timestamps):
             found = 0
@@ -191,7 +191,7 @@ def collect_data(client, sensor_bank):
         if zenEvent.event_type == openzen.ZenEventType.ImuData:
             occurences[int(zenEvent.sensor.handle) - 1] += 1
             imu_data = zenEvent.data.imu_data
-            row = _make_row(sensor_bank.handle_to_id[zenEvent.sensor.handle], imu_data)
+            row = _make_row(zenEvent.sensor.handle, imu_data)
             data_queue.push(row[0], row[1:])
         else:
             continue
@@ -280,7 +280,7 @@ def classify_rnn(model, sensor_bank):
             argmax = [classification.argmax() for classification in classify]
             end_time_classify = time.perf_counter() - start_time_classify
             classification = Counter(argmax).most_common(1)[0][0]
-            with open(_classification_fname(), 'a+') as file:
+            with open(_classification_fname(), 'a+', newline='') as file:
                 _write_to_csv(csv.writer(file), classification)
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
             values = []

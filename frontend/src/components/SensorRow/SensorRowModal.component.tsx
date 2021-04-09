@@ -5,7 +5,6 @@ import { Typography, Grid, makeStyles } from "@material-ui/core";
 import SensorButton from "../Buttons/SensorButton.component";
 
 type SensorProps = {
-	connected: boolean;
 	name: string;
 	clickConnect?: any;
 };
@@ -42,7 +41,7 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 			.then((res) => res.json())
 			.then((data) => {
 				console.log(data);
-				if(!data.hasOwnProperty("error")){
+				if (!data.hasOwnProperty("error")) {
 					setSensorData(data);
 					setConnected(true);
 					setIsFetching(false);
@@ -70,7 +69,14 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 				</Typography>
 			</Grid>
 			<Grid className={classes.grid} container justify="center" item xs={2}>
-				<SensorButton type="connect" status={connected} func={connect} id="connectButton" disabled={isFetching} />
+				<SensorButton
+					type="connect"
+					loading={isFetching}
+					status={connected}
+					func={connect}
+					id="connectButton"
+					disabled={isFetching || connected}
+				/>
 			</Grid>
 		</Grid>
 	);
