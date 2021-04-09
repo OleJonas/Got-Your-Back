@@ -1,5 +1,4 @@
 import { makeStyles, Typography } from "@material-ui/core";
-import { SignalCellularNullOutlined } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
 import { posture_names } from "../../utils/posture_names";
@@ -30,7 +29,7 @@ export const LineChart = (props) => {
 		if (props.duration === 1) {
 			setMinTime(new Date(minDate.setHours(minDate.getHours() - 1)));
 			setMaxTime(maxDate);
-			console.log(props.data)
+			console.log(props.data);
 		} else {
 			setMinTime(new Date(minDate.setDate(minDate.getDate() - (props.duration + 1))));
 			setMaxTime(new Date(maxDate.setDate(maxDate.getDate() - 1)));

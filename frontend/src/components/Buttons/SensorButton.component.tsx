@@ -1,5 +1,6 @@
 import { FC, useState, useEffect } from "react";
 import { Box, ButtonBase, Typography, makeStyles } from "@material-ui/core";
+import loader from "../../assets/loader_black.svg";
 
 // Components
 import CheckIcon from "@material-ui/icons/Check";
@@ -12,11 +13,12 @@ type ButtonProps = {
 	id?: string;
 	disabled?: boolean;
 	status?: boolean;
+	loading?: boolean;
 };
 
 /**
- * 
- * @param props 
+ *
+ * @param props
  * @returns A button component specifically used for sensor setup - connecting and disconnecting.
  */
 export const SensorButton: FC<ButtonProps> = (props) => {
@@ -44,6 +46,8 @@ export const SensorButton: FC<ButtonProps> = (props) => {
 					{props.type === "connect" ? (
 						status ? (
 							<CheckIcon className={classes.icon} />
+						) : props.loading ? (
+							<img src={loader} className={classes.loading} alt="Rotating loading icon"></img>
 						) : (
 							<AddIcon className={classes.icon} />
 						)
@@ -70,6 +74,20 @@ const useStyles = makeStyles({
 		backgroundColor: (props: ButtonProps) => (props.disabled ? "#CCC" : "#EDB93C") as string,
 	},
 	icon: {
+		marginTop: "10px",
+	},
+	"@keyframes rotate": {
+		from: {
+			transform: "rotate(0)",
+		},
+		to: {
+			transform: "rotate(360deg)",
+		},
+	},
+	loading: {
+		animation: "1s linear infinite $rotate",
+		width: "42px",
+		height: "42px",
 		marginTop: "10px",
 	},
 });

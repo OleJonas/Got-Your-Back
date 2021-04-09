@@ -275,7 +275,7 @@ def start_classify():
     classify_thread.start()
 
     print("Classification started")
-    return "Classification started"
+    return json.dumps(sensor_bank.run)
 
 
 @app.route("/classify/status")
@@ -301,7 +301,7 @@ def stop_classify():
     print("Stopping classification...")
     for t in t_pool:
         t.join()
-    return "Classification stopped"
+    return json.dumps(sensor_bank.run)
 
 
 """

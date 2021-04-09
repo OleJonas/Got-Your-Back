@@ -127,9 +127,9 @@ export const HomeView = () => {
 							<ContentBox>
 								<RecordContent
 									posture={lastPosture}
-									samplingRate={samplingRate}
-									isRecording={isRecording}
 									hasSensors={hasSensors}
+									isRecording={isRecording}
+									setIsRecording={(bool: boolean) => setIsRecording(bool)}
 								></RecordContent>
 							</ContentBox>
 						</Grid>
