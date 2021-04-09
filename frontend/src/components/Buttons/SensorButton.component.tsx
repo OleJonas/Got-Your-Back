@@ -85,8 +85,8 @@ const useStyles = makeStyles({
 	},
 	loading: {
 		animation: "1s linear infinite $rotate",
-		width: "42px",
-		height: "42px",
-		marginTop: "10px",
+		width: "40px",
+		height: "40px",
+		marginTop: "10.5px",
 	},
 });

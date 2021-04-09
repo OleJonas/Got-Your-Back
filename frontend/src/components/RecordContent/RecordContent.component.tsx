@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Grid, Box, makeStyles } from "@material-ui/core";
 
 // Components
@@ -32,23 +32,19 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 			fetch("http://localhost:5000/classify/start")
 				.then((response) => response.json())
 				.then((data) => {
+					setButtonPressed(false);
 					if (data) {
 						props.setIsRecording(true);
 					}
-				})
-				.then(() => {
-					setButtonPressed(false);
 				});
 		} else {
 			fetch("http://localhost:5000/classify/stop")
 				.then((response) => response.json())
 				.then((data) => {
+					setButtonPressed(false);
 					if (!data) {
 						props.setIsRecording(false);
 					}
-				})
-				.then(() => {
-					setButtonPressed(false);
 				});
 		}
 	};
