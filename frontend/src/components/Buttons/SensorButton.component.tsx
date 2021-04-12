@@ -35,6 +35,7 @@ export const SensorButton: FC<ButtonProps> = (props) => {
 			setStatus(false);
 			if (props.type === "connect") handleTooltipClose();
 		}
+		//eslint-disable-next-line
 	}, [props.status]);
 
 	const handleTooltipOpen = () => {

@@ -113,7 +113,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<SensorListContent recording={isRecording} />
+								<SensorListContent setHasSensors={setHasSensors} recording={isRecording} />
 							</ContentBox>
 						</Grid>
 

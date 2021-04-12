@@ -15,6 +15,7 @@ export type Sensor = {
 
 type ListProps = {
 	recording: boolean;
+	setHasSensors: (bool: boolean) => void;
 };
 
 /**
@@ -48,6 +49,11 @@ export const SensorListContent: FC<ListProps> = (props) => {
 		});
 		setSensors(helper);
 	};
+
+	useEffect(() => {
+		if (sensors.length === 0) props.setHasSensors(false);
+		//eslint-disable-next-line
+	}, [sensors]);
 
 	/**
 	 * @remarks

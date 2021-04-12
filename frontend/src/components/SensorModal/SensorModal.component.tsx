@@ -41,6 +41,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 				setIsFetching(false);
 				setOpen(true);
 			});
+		//eslint-disable-next-line
 	}, [isFetching]);
 
 	useEffect(() => {
