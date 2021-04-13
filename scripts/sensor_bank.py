@@ -21,6 +21,16 @@ class Sensor:
         """
         return f"{round(self.sensor_obj.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
  
+    def check_alive(self):
+        """Checking if sensor has run out of battery or otherwise unexpectedly disconnected
+        """
+        try:
+            #Making an arbitrary call to the sensor object to see if it gives a response, if it doesn't, the sensor is no longer connected.
+            test = self.sensor_obj.name
+        except:
+            return False
+        return True
+
     def set_sampling_rate(self, sampling_rate):
         """Sets the sampling rate.
 
@@ -106,6 +116,11 @@ class Sensor_Bank:
 
         print(f"sensor_dict after disconnect: {self.sensor_dict}")
 
+
+    def verify_sensors_alive(self):
+        for sensor in self.sensor_dict.values():
+            if not sensor.check_alive():
+                self.disconnect_sensor(sensor.name)
 
     def set_sleep_time(self, sleep_time):
         """Set sleep time.
