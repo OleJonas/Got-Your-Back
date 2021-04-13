@@ -16,6 +16,7 @@ import csv
 import keras
 from collections import Counter
 from Data_Queue import Data_Queue
+from rnn_utils import create_3d_array
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
@@ -295,6 +296,39 @@ def classify(model, data_queue):
             classification = Counter(argmax).most_common(1)[0][0]
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
             with open('./classifications/classifications.csv', 'a+') as file:
+                _write_to_csv(csv.writer(file), classification)
+            values = []
+
+def classify_rnn(model, data_queue):
+    """Classify in realtime based on trained model and data in data queue.
+
+    Args:
+        model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
+        data_queue (Data_Queue): Data queue with data collected from sensor(s).
+    """
+    values = []
+    while True:
+
+        if(min(data_queue.entries) == 0):
+            time.sleep(SLEEPTIME)
+        else:
+            top_row = data_queue.shift()
+            data = top_row[0][0][1:]
+            for i in range(1, data_queue.n_sensors):
+                data += top_row[i][0][1:]
+
+            values.append(data)
+
+        if(len(values) == SAMPLING_RATE):
+            start_time_classify = time.perf_counter()
+            values_3d = np.array(create_3d_array(values, 50))
+            classify = model.predict(values_3d)
+            end_time_classify = time.perf_counter() - start_time_classify
+            argmax = [classification.argmax() for classification in classify]
+            
+            classification = Counter(argmax).most_common(1)[0][0]
+            print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
+            with open('./classifications/rnn_classifications.csv', 'a+', newline='') as file:
                 _write_to_csv(csv.writer(file), classification)
             values = []
 
