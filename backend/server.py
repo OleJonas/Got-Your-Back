@@ -59,13 +59,8 @@ def before_request():
         res.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
         return res
     else:
-        sensor_bank.check_sensors()
+        sensor_bank.verify_sensors_alive()
         return 
-
-
-def check_sensors():
-    sensor_bank.verify_sensors_alive()
-
 
 
 @app.route("/")
@@ -115,6 +110,13 @@ def get_dummy_connect():
         {"name": "LPMSB2 - 4B3326", "id": "2", "battery_percent": "76,6%"},
         {"name": "LPMSB2 - 4B31EE", "id": "3", "battery_percent": "54,26%"}
     ]}
+
+@app.route("/dummy/test_dead")
+def test_dead():
+    print(sensor_bank.sensor_dict)
+    ans = sensor_bank.test_dead()
+    print(sensor_bank.sensor_dict)
+    return ans
 
 
 @app.route('/dummy/found_sensors')
