@@ -31,6 +31,7 @@ export const LineChart = (props) => {
 			setMinTime(new Date(minDate.setDate(minDate.getDate() - (props.duration + 1))));
 			setMaxTime(new Date(maxDate.setDate(maxDate.getDate() - 1)));
 		}
+		//eslint-disable-next-line
 	}, [props.data]);
 
 	/**

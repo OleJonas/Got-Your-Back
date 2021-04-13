@@ -7,8 +7,6 @@ from collections import Counter
 from datetime import datetime, date
 sys.path.append("scripts/")
 from Data_Queue import Data_Queue
-from scipy import stats
-from scripts.rnn_utils import create_2d_y_array, create_3d_array
 
 CLASSIFICATION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
