@@ -75,7 +75,7 @@ export const LineChart = (props) => {
 					textStyle: { color: "#FFF" },
 					titleTextStyle: { color: "#FFF" },
 					gridlines: { color: "transparent" },
-					format: props.duration > 1 ? "YYYY-MM-dd" : "HH:mm",
+					format: props.duration > 1 ? "MMM dd" : "HH:mm",
 					viewWindow: {
 						min: minTime,
 						max: maxTime,
@@ -97,6 +97,7 @@ export const LineChart = (props) => {
 					titleTextStyle: { color: "#FFF" },
 					gridlines: { color: "#5e5e5e" },
 				},
+				crosshair: {orientation: 'vertical', trigger: 'focus'},
 				explorer: {
 					actions: props.actions ? props.actions : ["dragToPan", "rightClickToReset"],
 				},
