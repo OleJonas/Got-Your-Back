@@ -41,6 +41,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 				setIsFetching(false);
 				setOpen(true);
 			});
+		//eslint-disable-next-line
 	}, [isFetching]);
 
 	useEffect(() => {
@@ -54,22 +55,6 @@ export const SensorModal: FC<modalProps> = (props) => {
 	const handleClose = () => {
 		props.close();
 		setOpen(false);
-
-		// DUMMY DATA
-		/*
-		let inboundSensors = [];
-		for (let i = 0; i < 3; i++) {
-			let s = {
-				index: i,
-				connected: true,
-				name: "SENSOR" + i,
-			};
-			inboundSensors.push(s);
-		}
-		props.sendSensors(inboundSensors);
-		props.close();
-		setOpen(false);
-		*/
 	};
 
 	/**
@@ -80,10 +65,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 	 * @param isConnected Boolean telling if the sensor is connected or not.
 	 */
 	const addConnected = (data: any, isConnected: boolean) => {
-		console.log("addConnected");
-		console.log(isConnected);
 		if (isConnected) {
-			console.log("isConnected = true");
 			let s = {
 				id: data.id,
 				connected: true,
@@ -100,12 +82,9 @@ export const SensorModal: FC<modalProps> = (props) => {
 	 */
 
 	const getSensorsNotConnected: (foundSensors: Sensor[]) => Sensor[] = (foundSensors): Sensor[] => {
-		console.log(props.alreadyConnected);
 		if (props.alreadyConnected.length > 0) {
-			console.log("alreadyConnected.len: " + props.alreadyConnected.length);
 			return foundSensors.filter((sensor: Sensor) => !props.alreadyConnected.includes(sensor.name));
 		} else {
-			console.log("alreadyConnected was empty");
 			return foundSensors;
 		}
 	};

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Grid, Box, makeStyles, Typography } from "@material-ui/core";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 
@@ -10,7 +9,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { NavBar } from "../../components/NavBar/NavBar.component";
 import { ContentBox } from "../../components/ContentBox/ContentBox.component";
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
-import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 import { ColumnChart } from "../../components/ColumnChart/ColumnChart.component";
 
 // DENNE MÅ NOEN ANDRE KOMMENTERE ANER IKKE HVA JEG SKAL SKRIVE HER
@@ -39,7 +37,6 @@ export const HistoryView = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log(data);
 				setDatapointsLine(data);
 			});
 	}, [durationLine]);
@@ -53,14 +50,12 @@ export const HistoryView = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log(data);
 				setDatapointsColumn(data);
 			});
 	}, [durationColumn]);
 
 	const handleChangeLine = (event: any) => {
 		setDurationLine(event.target.value);
-		console.log("changed line");
 	};
 
 	const handleChangeColumn = (event: any) => {
@@ -90,12 +85,6 @@ export const HistoryView = () => {
 										</Typography>
 									</InputLabel>
 									<Select
-										onClose={() => {
-											console.log("closing");
-										}}
-										onOpen={() => {
-											console.log("open");
-										}}
 										labelId="durationLine-controlled-open-select-label"
 										id="durationLine-controlled-open-select"
 										value={durationLine}

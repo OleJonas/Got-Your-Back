@@ -26,7 +26,6 @@ export const ColumnChart: FC<ColumnChartProps> = (props) => {
 		for (let i = 0; i < posture_occurences.length; i += 1) {
 			chartData.push([posture_names[i], posture_occurences[i]]);
 		}
-		console.log(chartData);
 		return chartData;
 	};
 

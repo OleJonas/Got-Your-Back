@@ -16,7 +16,7 @@ type SensorProps = {
 export const SensorRowModal: FC<SensorProps> = (props) => {
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
-	const [sensorData, setSensorData] = useState<any>();
+	const [sensorData, setSensorData] = useState<{battery_percent: string, id: number, name: string}>();
 	const classes = useStyles();
 
 	/**
@@ -40,7 +40,6 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data);
 				if (!data.hasOwnProperty("error")) {
 					setSensorData(data);
 					setConnected(true);
@@ -74,7 +73,7 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 					loading={isFetching}
 					status={connected}
 					func={connect}
-					id="connectButton"
+					sensorid={sensorData ? sensorData.id : 0}
 					disabled={isFetching || connected}
 				/>
 			</Grid>

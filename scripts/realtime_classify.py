@@ -24,14 +24,10 @@ SLEEPTIME = 0.05
 NUM_SENSORS = 3
 
 SENSORS_ID = {
-    # "LPMSB2-3036EB": 1,
-    # "LPMSB2-4B3326": 2,
-    # "LPMSB2-4B31EE": 3
-
-    "LPMSB2-4B3326": 1,
-    "LPMSB2-4B31EE": 2
+    "LPMSB2-3036EB": 1,
+    "LPMSB2-4B3326": 2,
+    "LPMSB2-4B31EE": 3
 }
-
 MAP_HANDLE_TO_ID = {}
 
 
@@ -314,8 +310,7 @@ if __name__ == "__main__":
 
     # Scan, connect and syncronize sensors
     sensors_found = scan_for_sensors(client)
-    # user_input = [0, 1, 2]
-    user_input = [0]
+    user_input = [0, 1, 2]
     # user_input = [int(i) for i in (input("Which sensors do you want to connect to?\n[id] separated by spaces:\n").split(" "))]
     data_queue = Data_Queue(len(user_input))
     NUM_SENSORS = len(user_input)

@@ -31,8 +31,10 @@ export const HelpView = () => {
 										<AccordionDetails>
 											<Box>
 												<Typography variant="body1" color="textPrimary">
-													{" "}
-													To connect to the sensors, go to the "Home" section of the application and click the scan button. This will open up a pop-up that will list out all the sensors available to connect to. To connect, click the + sign adjacent to the sensor you wish to connect. After connecting, each sensor will be given their own id and a placement. This placement tells you where on the body to put the sensor.
+													To connect to the sensors, go to the "Home" section of the application and click the scan button. This will open
+													up a pop-up that will list out all the sensors available to connect to. To connect, click the + sign adjacent to
+													the sensor you wish to connect. After connecting, each sensor will be given their own id and a placement. This
+													placement tells you where on the body to put the sensor.
 												</Typography>
 											</Box>
 										</AccordionDetails>
@@ -49,8 +51,10 @@ export const HelpView = () => {
 										<AccordionDetails>
 											<Box>
 												<Typography variant="body1" color="textPrimary">
-													{" "}
-													To disconnect from a sensor, navigate to the "Home" section of the application and find the "Connected sensors" module. Here you will see a listing of all currently connected sensors. To disconnect from one, click the yellow button with an x adjacent to it.
+													To disconnect from a sensor, navigate to the "Home" section of the application and find the "Connected sensors"
+													module. Here you will see a listing of all currently connected sensors. To disconnect from one, click the yellow
+													button with an x adjacent to it. Disconnecting sensors while classifying is not possible, and the button is
+													therefore disabled during live classification.
 												</Typography>
 											</Box>
 										</AccordionDetails>
@@ -67,8 +71,11 @@ export const HelpView = () => {
 										<AccordionDetails>
 											<Box>
 												<Typography variant="body1" color="textPrimary">
-													{" "}
-													To start collecting data and classifying positions, navigate to the "Home" section of the application and click the "Start recording" button. This will start collecting data from all connected sensors and present the models classifications on these data. While collecting data, you cannot click the button to disconnect from the sensors. To stop collecting data, click the same button you clicked to start collecting data, only now it is labelled "Stop recording".
+													To start collecting data and classifying positions, navigate to the "Home" section of the application and click
+													the "Start recording" button. This will start collecting data from all connected sensors and present the models
+													classifications on these data. While collecting data, you cannot click the button to disconnect from the sensors.
+													To stop collecting data, click the same button you clicked to start collecting data, only now it is labelled "Stop
+													recording".
 												</Typography>
 											</Box>
 										</AccordionDetails>
@@ -88,8 +95,10 @@ export const HelpView = () => {
 										<AccordionDetails>
 											<Box>
 												<Typography variant="body1" color="textPrimary">
-													{" "}
-													The classifications are performed by a machine learning model trained on a large dataset of different people in the 9 positions available for classification. Currently we are using an ANN model, but we are experimenting with several others. An interesting candidate seems to be an LSTM-model, but this is still some time in the future.
+													The classifications are performed by a machine learning model trained on a large dataset of different people in
+													the 9 positions available for classification. Currently we are using an ANN model, but we are experimenting with
+													several others such as RFC and CNN. An interesting candidate seems to be an LSTM-model, but this is still some
+													time in the future.
 												</Typography>
 											</Box>
 										</AccordionDetails>

@@ -66,7 +66,6 @@ export const HomeView = () => {
 				})
 				.catch(function (error) {});
 		}
-		console.log(isRecording);
 	}, 5000);
 
 	/**
@@ -114,7 +113,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<SensorListContent recording={isRecording}/>
+								<SensorListContent setHasSensors={setHasSensors} recording={isRecording} />
 							</ContentBox>
 						</Grid>
 

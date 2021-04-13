@@ -17,7 +17,6 @@ import { posture_names } from "../../utils/posture_names";
  */
 export const LineChart = (props) => {
 	const classes = useStyles;
-
 	const [minTime, setMinTime] = useState(new Date());
 	const [maxTime, setMaxTime] = useState(new Date());
 
@@ -25,16 +24,14 @@ export const LineChart = (props) => {
 		let minDate = new Date();
 		let maxDate = new Date();
 
-		console.log("duration, ", props.duration);
 		if (props.duration === 1) {
 			setMinTime(new Date(minDate.setHours(minDate.getHours() - 1)));
 			setMaxTime(maxDate);
-			console.log(props.data);
 		} else {
 			setMinTime(new Date(minDate.setDate(minDate.getDate() - (props.duration + 1))));
 			setMaxTime(new Date(maxDate.setDate(maxDate.getDate() - 1)));
-			console.log(maxTime);
 		}
+		//eslint-disable-next-line
 	}, [props.data]);
 
 	/**
