@@ -59,7 +59,13 @@ def before_request():
         res.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
         return res
     else:
-        return
+        sensor_bank.check_sensors()
+        return 
+
+
+def check_sensors():
+    sensor_bank.verify_sensors_alive()
+
 
 
 @app.route("/")
