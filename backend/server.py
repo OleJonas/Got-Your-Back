@@ -59,6 +59,7 @@ def before_request():
         res.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
         return res
     else:
+<<<<<<< HEAD
         check_sensors()
         return 
 
@@ -66,6 +67,10 @@ def before_request():
 def check_sensors():
     sensor_bank.verify_sensors_alive()
 
+=======
+        print(sensor_bank.verify_sensors_alive())
+        return
+>>>>>>> dbf634848ec81cfaff9b5486b33e9954f08a3b7a
 
 
 @app.route("/")
@@ -110,11 +115,52 @@ def get_dummy_connect():
                     battery: int
                 }
     """
-    return {"sensors": [
+
+    global sensor_bank
+
+    res = {"sensors": [
         {"name": "LPMSB2 - 3036EB", "id": "1", "battery_percent": "85,3%"},
         {"name": "LPMSB2 - 4B3326", "id": "2", "battery_percent": "76,6%"},
         {"name": "LPMSB2 - 4B31EE", "id": "3", "battery_percent": "54,26%"}
     ]}
+
+    sensors = res["sensors"]
+
+    for sensor in sensors:
+        sensor_bank.add_sensor(sensor["name"], None, None)
+
+    return res
+
+@app.route("/dummy/get_sensors")
+def dummy_get_sensors():
+    """Fetch a list of dummy sensors.
+
+    Returns:
+        dict: Dictionary with list of connected sensors.
+                Each sensor object is on the format:
+
+                {
+                    name: str,
+                    id: int,
+                    battery: int
+                }
+    """
+    out = {"sensors": []}
+    for s in sensor_bank.sensor_dict.values():
+        out["sensors"].append({
+            "name": s.name,
+            "id": s.id,
+            "battery": "50.0"
+        })
+    return json.dumps(out)
+
+
+@app.route("/dummy/test_dead")
+def test_dead():
+    print(sensor_bank.sensor_dict)
+    ans = sensor_bank.test_dead()
+    print(sensor_bank.sensor_dict)
+    return ans
 
 
 @app.route('/dummy/found_sensors')
