@@ -29,6 +29,7 @@ class Sensor:
             #Making an arbitrary call to the sensor object to see if it gives a response, if it doesn't, the sensor is no longer connected.
             test = self.sensor_obj.get_float_property(openzen.ZenSensorProperty.BatteryLevel)
         except:
+            print("sensor_obj.name failed bruh")
             return False
         return True
 

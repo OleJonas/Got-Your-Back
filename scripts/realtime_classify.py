@@ -16,6 +16,8 @@ import csv
 import keras
 from collections import Counter
 from Data_Queue import Data_Queue
+from rnn_utils import create_3d_array
+from joblib import dump, load
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
@@ -267,7 +269,42 @@ def _write_to_csv(writer, classification):
     writer.writerow([current_time, classification])
 
 
-def classify(model, data_queue):
+def classify(model, data_queue, type="cnn"):
+    """Classify in realtime based on trained model and data in data queue.
+
+    Args:
+        model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
+        data_queue (Data_Queue): Data queue with data collected from sensor(s).
+        type (str): Type of model
+    """
+    values = []
+    while True:
+
+        if(min(data_queue.entries) == 0):
+            time.sleep(SLEEPTIME)
+        else:
+            top_row = data_queue.shift()
+            data = top_row[0][0][1:]
+            for i in range(1, data_queue.n_sensors):
+                data += top_row[i][0][1:]
+
+            values.append(data)
+
+        if(len(values) == SAMPLING_RATE):
+            start_time_classify = time.perf_counter()
+            values_np = np.array(values)
+            values_reshaped = values_np.reshape(values_np.shape[0], values_np.shape[1], 1)
+            classify = np.array(model(values_reshaped)) if type == "cnn" else np.array(model(values_np))
+            argmax = [classification.argmax() for classification in classify]
+            end_time_classify = time.perf_counter() - start_time_classify
+            classification = Counter(argmax).most_common(1)[0][0]
+            print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
+            with open('./classifications/classifications.csv', 'a+') as file:
+                _write_to_csv(csv.writer(file), classification)
+            values = []
+
+
+def classify_rnn(model, data_queue):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:
@@ -289,12 +326,14 @@ def classify(model, data_queue):
 
         if(len(values) == SAMPLING_RATE):
             start_time_classify = time.perf_counter()
-            classify = model(np.array(values)).numpy()
-            argmax = [classification.argmax() for classification in classify]
+            values_3d = np.array(create_3d_array(values, 50))
+            classify = model.predict(values_3d)
             end_time_classify = time.perf_counter() - start_time_classify
+            argmax = [classification.argmax() for classification in classify]
+
             classification = Counter(argmax).most_common(1)[0][0]
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
-            with open('./classifications/classifications.csv', 'a+') as file:
+            with open('./classifications/rnn_classifications.csv', 'a+', newline='') as file:
                 _write_to_csv(csv.writer(file), classification)
             values = []
 
@@ -319,9 +358,11 @@ if __name__ == "__main__":
     sync_sensors(imus)
 
     # Classify
-    model = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
-    # model = load(f'RFC_model_{NUM_SENSORS}.joblib')
-    classify_thread = threading.Thread(target=classify, args=[model, data_queue], daemon=True)
+    model_ann = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}_130421.h5')
+    model_cnn = keras.models.load_model(f'model/models/CNN_model_{NUM_SENSORS}.h5')
+    model_rfc = load(f'./model/models/RFC_model_{NUM_SENSORS}.joblib')
+
+    classify_thread = threading.Thread(target=classify, args=[model_cnn, data_queue], daemon=True)
     classify_thread.start()
 
     collect_data(client, data_queue)
