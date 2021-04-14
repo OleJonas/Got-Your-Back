@@ -293,10 +293,20 @@ def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, 
         if(len(values) == SAMPLING_RATE):
             start_time_classify = time.perf_counter()
             values_np = np.array(values)
-            values_rnn = np.array(create_3d_array(values, 50))
-            values_cnn = values_np.reshape(values_np.shape[0], values_np.shape[1], 1)
-            classify = np.array(model(values_cnn if type == "cnn" else values_rnn if type == "rnn" else values_np))
+            arr = None
+            
+            if type == "cnn":
+                arr = values_np.reshape(values_np.shape[0], values_np.shape[1], 1)
+            elif type == "rnn":
+                arr = np.array(create_3d_array(values, 50))
+            elif type == "rfc":
+                arr = values_np.reshape(values_np.shape[0], values_np.shape[1])
+            else:
+                arr = np.array(values)
+            
+            classify = np.array(model(arr) if type != "rfc" else model.predict(arr))
             argmax = [classification.argmax() for classification in classify]
+            print(argmax)
             end_time_classify = time.perf_counter() - start_time_classify
             classification = Counter(argmax).most_common(1)[0][0]
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
@@ -327,9 +337,9 @@ if __name__ == "__main__":
     # Classify
     model_ann = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
     model_cnn = keras.models.load_model(f'model/models/CNN_model_{NUM_SENSORS}.h5')
-    model_rfc = load(f'./model/models/RFC_model_{NUM_SENSORS}.joblib')
+    model_rfc = load(f'./model/models/RFC_model_{NUM_SENSORS}_140421.joblib')
 
-    classify_thread = threading.Thread(target=classify, args=[model_cnn, data_queue], daemon=True)
+    classify_thread = threading.Thread(target=classify, args=[model_ann, data_queue], daemon=True)
     classify_thread.start()
 
     collect_data(client, data_queue)
