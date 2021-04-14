@@ -17,7 +17,7 @@ import keras
 from collections import Counter
 from Data_Queue import Data_Queue
 from rnn_utils import create_3d_array
-from joblib import dump, load
+from joblib import load
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
