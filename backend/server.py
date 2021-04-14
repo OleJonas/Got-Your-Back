@@ -59,7 +59,7 @@ def before_request():
         res.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
         return res
     else:
-        sensor_bank.check_sensors()
+        check_sensors()
         return 
 
 

@@ -42,6 +42,9 @@ training_files = {
                           "../../data/annotation/training/007_train_3_030321.txt"),
     "008": training_class("../../data/train_data/008_train_3_030321.csv",
                           "../../data/annotation/training/008_train_3_030321.txt"),
+    "009": training_class("../../data/train_data/009_train_3_120421.csv",
+                          "../../data/annotation/training/009_train_3_120421.txt"),
+
 }
 
 testing_files = {

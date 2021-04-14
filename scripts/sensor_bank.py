@@ -26,8 +26,9 @@ class Sensor:
         """
         try:
             #Making an arbitrary call to the sensor object to see if it gives a response, if it doesn't, the sensor is no longer connected.
-            test = self.sensor_obj.name
+            test = self.sensor_obj.get_float_property(openzen.ZenSensorProperty.BatteryLevel)
         except:
+            print("sensor_obj.name failed bruh")
             return False
         return True
 
@@ -118,9 +119,14 @@ class Sensor_Bank:
 
 
     def verify_sensors_alive(self):
+        dead_sensors = []
         for sensor in self.sensor_dict.values():
             if not sensor.check_alive():
-                self.disconnect_sensor(sensor.name)
+                dead_sensors.append(sensor.name)
+        
+        for s_name in dead_sensors:
+            self.sensor_dict.pop(s_name)
+            self.n_sensors -= 1
 
     def set_sleep_time(self, sleep_time):
         """Set sleep time.
