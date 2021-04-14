@@ -1,6 +1,8 @@
 class Data_Queue:
-    """
-    All data from sensors divided into columns depending on sensorID
+    """A queue structure for keeping track of the data collected from sensors.
+
+    Args:
+        n_sensors (int): Number of sensors to collect data from.
     """
 
     def __init__(self, n_sensors=1):
@@ -9,7 +11,12 @@ class Data_Queue:
         self.entries = [0 for i in range(n_sensors)]
 
     def shift(self):
-        out = [[] for i in range(self.n_sensors)]
+        """Takes out the first datapoint from every sensor if present.
+
+        Returns:
+            [[[float]]]: List of data entries from all sensors, combined in a list of size n_sensors, if data from every sensor is present. None if not. 
+        """
+        out = [[] for _ in range(self.n_sensors)]
         for i in range(self.n_sensors):
             if len(self.queue[i]) > 0:
                 if self.queue[i][0] == None:  # Return None if the queue didn't have data for all sensors requested
@@ -21,5 +28,11 @@ class Data_Queue:
         return out
 
     def push(self, sensor_id, data):
+        """Add a new entry of data in the data queue.
+
+        Args:
+            sensor_id (int): Sensor id based on position on body.
+            data ([float]): Columns of data from sensor.
+        """
         self.queue[sensor_id - 1].append(data)
         self.entries[sensor_id - 1] += 1

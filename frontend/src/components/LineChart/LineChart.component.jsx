@@ -1,17 +1,43 @@
 import { makeStyles, Typography } from "@material-ui/core";
+import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
 import { posture_names } from "../../utils/posture_names";
 
-// eslint-disable-next-line
-type LineChartProps = {
-	data: JSON,
-	hAxisFormat: "HH:mm:ss" | "HH:mm" | "dd.mm",
-	actions: [], //["dragToPan", "dragToZoom", "rightClickToReset"]
-};
+// type LineChartProps, = {
+// 	data: JSON,
+// 	hAxisFormat?: "HH:mm:ss" | "HH:mm" | "dd.mm",
+// 	actions?: [], //["dragToPan", "dragToZoom", "rightClickToReset"]
+// 	type?: "1 day" | "7 days" | "14 days" | "30 days",
+// };
 
+/**
+ *
+ * @param {*} props
+ * @returns A LineChart that updates with new classification data received.
+ */
 export const LineChart = (props) => {
 	const classes = useStyles;
+	const [minTime, setMinTime] = useState(new Date());
+	const [maxTime, setMaxTime] = useState(new Date());
 
+	useEffect(() => {
+		let minDate = new Date();
+		let maxDate = new Date();
+
+		if (props.duration === 1) {
+			setMinTime(new Date(minDate.setHours(minDate.getHours() - 1)));
+			setMaxTime(maxDate);
+		} else {
+			setMinTime(new Date(minDate.setDate(minDate.getDate() - (props.duration + 1))));
+			setMaxTime(new Date(maxDate.setDate(maxDate.getDate() - 1)));
+		}
+		//eslint-disable-next-line
+	}, [props.data]);
+
+	/**
+	 *
+	 * @returns The data to be used in the rendering of the component. The data is structured as an array of tuples each containing the time of the classification and the classification itself.
+	 */
 	const processedData = () => {
 		const timestamps = Object.keys(props.data);
 		const predictions = Object.values(props.data);
@@ -50,7 +76,11 @@ export const LineChart = (props) => {
 					textStyle: { color: "#FFF" },
 					titleTextStyle: { color: "#FFF" },
 					gridlines: { color: "transparent" },
-					format: props.hAxisFormat ? props.hAxisFormat : "YY-MM-dd HH:mm",
+					format: props.duration > 1 ? "YYYY-MM-dd" : "HH:mm",
+					viewWindow: {
+						min: minTime,
+						max: maxTime,
+					},
 				},
 				vAxis: {
 					ticks: [

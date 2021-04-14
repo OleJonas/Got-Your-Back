@@ -5,6 +5,7 @@ export const theme = createMuiTheme({
 	palette: {
 		primary: {
 			main: "#EDB93C",
+			dark: "#a37f2a",
 		},
 		secondary: {
 			main: "#23BFC1",
@@ -17,14 +18,20 @@ export const theme = createMuiTheme({
 			primary: "#FFF", // white
 			secondary: "#000", // black
 		},
-		/*
-    error: {
-      main: '#EA526F',
-    },
-    success: {
-      main: '#50C878',
-    },
-    */
+	},
+	overrides: {
+		MuiCssBaseline: {
+			"@global": {
+				body: {},
+			},
+		},
+		MuiIconButton: {
+			root: {
+				"&.Mui-disabled": {
+					backgroundColor: "rgba(60, 60, 60, 0.5)",
+				},
+			},
+		},
 	},
 	typography: {
 		fontFamily: "Nunito",
@@ -93,3 +100,4 @@ export const theme = createMuiTheme({
 		},
 	},
 });
+export default theme;

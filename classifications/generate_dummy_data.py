@@ -3,28 +3,31 @@ import datetime
 import random
 
 
-def generate(todate, fromdate):
+def generate(from_date: str, to_date: str, hours_per_day: int):
+    """Generate dummy classification data from date to another date.
+
+    Args:
+        from_date (str): Start date on format "%Y-%m-%d %H:%M:%S".
+        to_date (str): End date on format "%Y-%m-%d".
+        hours_per_day (int): Number of hours of recording each day-
+    """
     # Parse input-strings to Datetime-objects
-    today = datetime.datetime.strptime(todate, '%Y-%m-%d %H:%M:%S')
-    fromday = datetime.datetime.strptime(fromdate, '%Y-%m-%d %H:%M:%S')
+    current_day = datetime.datetime.strptime(from_date, '%Y-%m-%d %H:%M:%S')
+    end_day = datetime.datetime.strptime(to_date, '%Y-%m-%d')
 
-    # Number of hours of recording each day
-    HOURS = 8
-
-    # Iterate through every day, checks if the date is equal to the "fromdate", which was
+    # Iterate through every day, checks if the date is equal to the "from_date", which was
     # given as input
-    while(not (today.date() == fromday.date())):
-
-        # Create new CSV-file, with date of 'today' as filename
-        with open(str(datetime.datetime.strftime(today, '%Y-%m-%d') + ".csv"), 'w', newline='') as file:
+    while(not (current_day.date() == end_day.date())):
+        # Create new CSV-file, with date of 'current_day' as filename
+        with open(f"./classifications/{str(datetime.datetime.strftime(current_day, '%Y-%m-%d'))}.csv", 'w+', newline='') as file:
             # Declaring fieldnames and DictWriter
             fnames = ['time', 'prediction']
             writer = csv.DictWriter(file, fieldnames=fnames)
 
-            # Declaring end of today (end of current day in the iteration) and get total amount of seconds for that day.
-            endOfDay = today + datetime.timedelta(hours=HOURS)
-            total_seconds = (endOfDay - today).total_seconds()
-            nextTime = today
+            # Declaring end of current_day (end of current day in the iteration) and get total amount of seconds for that day.
+            endOfDay = current_day + datetime.timedelta(hours=hours_per_day)
+            total_seconds = (endOfDay - current_day).total_seconds()
+            nextTime = current_day
 
             # for every second of the day, generate random posture from 0-8
             for i in range(0, int(total_seconds)):
@@ -35,10 +38,15 @@ def generate(todate, fromdate):
                 nextTime = nextTime + datetime.timedelta(seconds=1)
 
         # iterating to next day, and proceed to check if equal to the last day
-        today = today + datetime.timedelta(days=1)
+        current_day = current_day + datetime.timedelta(days=1)
 
 
 if __name__ == "__main__":
-    todate = str(input())
-    fromdate = str(input())
-    generate(todate, fromdate)
+    from_date = str(input("Start date on format '%Y-%m-%d %H:%M:%S': "))
+    # 2021-03-01 09:00:00
+    to_date = str(input("End date on format '%Y-%m-%d': "))
+    # 2021-04-30
+    hours_per_day = 8
+    print("Starting to generate dummydata")
+    generate(from_date, to_date, hours_per_day)
+    print("Dummydata generated!")

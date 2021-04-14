@@ -8,6 +8,11 @@ type ClassificationProps = {
 	recording: boolean;
 };
 
+/**
+ *
+ * @param props
+ * @returns A component containing the classification GUI such as the posture recorded, both as a number and a string.
+ */
 export const ClassificationContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles();
 
@@ -17,7 +22,7 @@ export const ClassificationContent: React.FC<ClassificationProps> = (props) => {
 				<Grid item xs={12}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Typography variant="subtitle1" color="textPrimary">
-							{props.recording ? props.posture : "-"}
+							{props.recording ? (props.posture === -1 ? "-" : props.posture) : "-"}
 						</Typography>
 					</Box>
 					<Typography variant="h2" color="textPrimary">

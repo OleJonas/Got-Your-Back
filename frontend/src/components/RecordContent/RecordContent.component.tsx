@@ -1,41 +1,49 @@
-import { useEffect, useState } from "react";
-import { Grid, Box, makeStyles } from "@material-ui/core";
+import { useState } from "react";
+import { Grid, Box, makeStyles, Typography, IconButton } from "@material-ui/core";
+import loader from "../../assets/loader_black.svg";
 
 // Components
-import { Button } from "../Buttons/Button.component";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 
 type ClassificationProps = {
 	posture: number;
-	samplingRate: number;
 	hasSensors: boolean;
 	isRecording: boolean;
+	setIsRecording: (bool: boolean) => void;
 };
 
+/**
+ *
+ * @param props
+ * @returns A GUI interface that lets the user start and stop recording and classification of data. This is contained inside a material-ui Box.
+ */
 export const RecordContent: React.FC<ClassificationProps> = (props) => {
-	const classes = useStyles();
-	const [isRecording, setIsRecording] = useState<Boolean>(props.isRecording);
+	const classes = useStyles(props);
 	const [buttonPressed, setButtonPressed] = useState<Boolean>(false);
 
+	/**
+	 * @remarks
+	 * Function that uses the API-calls to start and stop classification.
+	 */
 	const onButtonPressed = () => {
 		setButtonPressed(true);
-		if (!isRecording) {
+		if (!props.isRecording) {
 			fetch("http://localhost:5000/classify/start")
 				.then((response) => response.json())
 				.then((data) => {
+					setButtonPressed(false);
 					if (data) {
-						setIsRecording(true);
-						setButtonPressed(false);
+						props.setIsRecording(true);
 					}
 				});
 		} else {
 			fetch("http://localhost:5000/classify/stop")
 				.then((response) => response.json())
 				.then((data) => {
+					setButtonPressed(false);
 					if (!data) {
-						setIsRecording(false);
-						setButtonPressed(false);
+						props.setIsRecording(false);
 					}
 				});
 		}
@@ -45,20 +53,20 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 		<Box className={classes.root}>
 			<Grid className={classes.grid} justify="center" alignItems="center" container item xs={12}>
 				<Grid item xs={12}>
-					{isRecording ? <PlayArrowIcon className={classes.recordIcon} /> : <PauseIcon className={classes.recordIcon} />}
-				</Grid>
-				<Grid item xs={12} className={classes.btn}>
-					<Button func={() => onButtonPressed()} disabled={buttonPressed || !props.hasSensors ? true : false}>
-						{props.hasSensors
-							? buttonPressed
-								? isRecording
-									? "Closing down ..."
-									: "Starting up ..."
-								: isRecording
-								? "Pause Recording"
-								: "Start Recording"
-							: "Missing sensors"}
-					</Button>
+					<Box display="flex" justifyContent="center" alignItems="center">
+						<IconButton onClick={onButtonPressed} className={classes.btn} disabled={!props.hasSensors}>
+							{buttonPressed ? (
+								<img src={loader} className={classes.loading} alt="Rotating loading icon" />
+							) : !props.isRecording ? (
+								<PlayArrowIcon className={classes.recordIcon} />
+							) : (
+								<PauseIcon className={classes.recordIcon} />
+							)}
+						</IconButton>
+					</Box>
+					<Typography variant="h2" color="textPrimary">
+						{props.hasSensors ? (props.isRecording ? "Recording" : "Paused") : "Missing sensors"}
+					</Typography>
 				</Grid>
 			</Grid>
 		</Box>
@@ -66,7 +74,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 };
 export default RecordContent;
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
 	root: {
 		height: "100%",
 	},
@@ -75,10 +83,27 @@ const useStyles = makeStyles({
 		textAlign: "center",
 	},
 	btn: {
-		marginTop: "-40px",
+		backgroundColor: (props: ClassificationProps) => (!props.hasSensors ? "rgba(60, 60, 60, 0.5)" : theme.palette.primary.main) as string,
+		margin: "20px",
+		"&:hover": {
+			backgroundColor: theme.palette.primary.dark,
+		},
 	},
 	recordIcon: {
-		color: "white",
-		fontSize: "200px",
+		color: (props: ClassificationProps) => (!props.hasSensors ? "#aaa" : "#fff") as string,
+		fontSize: "100px",
 	},
-});
+	"@keyframes rotate": {
+		from: {
+			transform: "rotate(0)",
+		},
+		to: {
+			transform: "rotate(360deg)",
+		},
+	},
+	loading: {
+		animation: "1s linear infinite $rotate",
+		width: "100px",
+		height: "100px",
+	},
+}));

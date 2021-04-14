@@ -1,15 +1,16 @@
 import { FC, useState, useEffect, useCallback } from "react";
 import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { Sensor } from "../SensorListContent/SensorListContent.component";
 
 // Components
 import { Button } from "../Buttons/Button.component";
 import { SensorRowModal } from "../SensorRow/SensorRowModal.component";
 import loader from "../../assets/loader.svg";
-import "./loader.css";
 
 type modalProps = {
 	open: boolean;
+	alreadyConnected: string[]; // Array of sensor names that are already connected
 	close: () => void;
 	sendSensors: (sensor: any) => void;
 };
@@ -17,10 +18,13 @@ type modalProps = {
 export const SensorModal: FC<modalProps> = (props) => {
 	const classes = useStyles();
 	const [sensorsFound, setSensorsFound] = useState<any>();
-	const [connectedSensors, setConnectedSensors] = useState<any[]>([]);
 	const [isFetching, setIsFetching] = useState(false);
 	const [open, setOpen] = useState(false);
 
+	/**
+	 * @remarks
+	 * Uses an API call to fetch sensors available to connect to via bluetooth. When found, the state is updated.
+	 */
 	const scanForSensors = useCallback(async () => {
 		if (isFetching) return;
 		setIsFetching(true);
@@ -33,10 +37,11 @@ export const SensorModal: FC<modalProps> = (props) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				setSensorsFound(data["sensors"]);
+				setSensorsFound(getSensorsNotConnected(data["sensors"]));
 				setIsFetching(false);
 				setOpen(true);
 			});
+		//eslint-disable-next-line
 	}, [isFetching]);
 
 	useEffect(() => {
@@ -50,53 +55,38 @@ export const SensorModal: FC<modalProps> = (props) => {
 	const handleClose = () => {
 		props.close();
 		setOpen(false);
-		/*
-		if (connectedSensors) {
-			let inboundSensors: any[] = [];
-			connectedSensors.forEach((sensor: any) => {
-				let s = {
-					id: sensor.id,
-					connected: true,
-					name: sensor.name,
-					battery: sensor.battery,
-				};
-				inboundSensors.push(s);
-			});
-			props.sendSensors(inboundSensors);
-		}*/
-		/*
-
-		// DUMMY DATA
-		console.log("Yo fra inni if ye!");
-		let inboundSensors = [];
-		for (let i = 0; i < 3; i++) {
-			let s = {
-				index: i,
-				connected: true,
-				name: "SENSOR" + i,
-			};
-			inboundSensors.push(s);
-		}
-		props.sendSensors(inboundSensors);
-		props.close();
-		setOpen(false);
-        */
 	};
 
+	/**
+	 * @remarks
+	 * Function that sends sensor data up to the SensorListContent component
+	 *
+	 * @param data JSON data about the sensor returned from the connect API call.
+	 * @param isConnected Boolean telling if the sensor is connected or not.
+	 */
 	const addConnected = (data: any, isConnected: boolean) => {
-		console.log("addConnected");
-		//let helper = connectedSensors;
-		console.log(isConnected);
-			if (isConnected) {
-				console.log("isConnected = true");
-				let s = {
-					id: data.id,
-					connected: true,
-					name: data.name,
-					battery: data.battery,
-				};
-				props.sendSensors(s);
-			}
+		if (isConnected) {
+			let s = {
+				id: data.id,
+				connected: true,
+				name: data.name,
+				battery: data.battery_percent.split("%")[0],
+			};
+			props.sendSensors(s);
+		}
+	};
+
+	/**
+	 *
+	 * @returns An array of Sensor type objects that are found via searching, but not yet connected.
+	 */
+
+	const getSensorsNotConnected: (foundSensors: Sensor[]) => Sensor[] = (foundSensors): Sensor[] => {
+		if (props.alreadyConnected.length > 0) {
+			return foundSensors.filter((sensor: Sensor) => !props.alreadyConnected.includes(sensor.name));
+		} else {
+			return foundSensors;
+		}
 	};
 
 	return (
@@ -115,16 +105,13 @@ export const SensorModal: FC<modalProps> = (props) => {
 					<Box className={classes.sensorBox}>
 						{isFetching ? (
 							<Box>
-								<img src={loader} className="loading" alt="Rotating loading icon"></img>
+								<img src={loader} className={classes.loading} alt="Rotating loading icon"></img>
 							</Box>
 						) : (
 							<Box>
 								<Grid className={classes.columns} container xs={12}>
 									<Grid container className={classes.grid} justify="flex-start" item xs={5}>
 										<Typography variant="h6">Sensor name</Typography>
-									</Grid>
-									<Grid container className={classes.grid} justify="flex-start" item xs={2}>
-										<Typography variant="h6">Id</Typography>
 									</Grid>
 									<Grid container className={classes.grid} justify="flex-start" item xs={3}>
 										<Typography variant="h6">Status</Typography>
@@ -133,9 +120,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 								</Grid>
 
 								{sensorsFound ? (
-									sensorsFound.map((sensor: any) => (
-										<SensorRowModal clickConnect={addConnected} connected={false} id={sensor.id} name={sensor.name} />
-									))
+									sensorsFound.map((sensor: Sensor) => <SensorRowModal clickConnect={addConnected} name={sensor.name} />)
 								) : (
 									<></>
 								)}
@@ -199,5 +184,16 @@ const useStyles = makeStyles({
 	},
 	btnGrid: {
 		marginTop: "15%",
+	},
+	"@keyframes rotate": {
+		from: {
+			transform: "rotate(0)",
+		},
+		to: {
+			transform: "rotate(360deg)",
+		},
+	},
+	loading: {
+		animation: "1s linear infinite $rotate",
 	},
 });

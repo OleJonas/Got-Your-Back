@@ -1,8 +1,10 @@
+"""Test of config file
+
+This is meant for testing the usage of a configfile, listing the id of all the known sensors.
+"""
+
 import os
-import select
-import fileinput
 from tempfile import NamedTemporaryFile
-import time
 
 FIFO_NAME = "classifications"
 

@@ -1,14 +1,19 @@
+"""Classification in realtime using terminal.
+
+Implemented methods for scanning, listing and connecting to supported sensors using the openZen library.
+After the connection is established, a new thread is made. This thread is supposed to take care of the live 
+classification, such as loading the right model, and write the classifications in realtime to a file and terminal. 
+Further on, the main task of the main thread is to flush excess data, synchronize and collecting data until killed.
+"""
+
 import time
 import sys
 import threading
-import tensorflow as tf
 from datetime import datetime
 import numpy as np
 import openzen
 import csv
 import keras
-from sklearn import preprocessing as pp
-from joblib import dump, load
 from collections import Counter
 from Data_Queue import Data_Queue
 
@@ -19,26 +24,21 @@ SLEEPTIME = 0.05
 NUM_SENSORS = 3
 
 SENSORS_ID = {
-    # "LPMSB2-3036EB": 1,
-    # "LPMSB2-4B3326": 2,
-    # "LPMSB2-4B31EE": 3
-
-    "LPMSB2-4B3326": 1,
-    "LPMSB2-4B31EE": 2
+    "LPMSB2-3036EB": 1,
+    "LPMSB2-4B3326": 2,
+    "LPMSB2-4B31EE": 3
 }
-
 MAP_HANDLE_TO_ID = {}
 
 
 def scan_for_sensors(client):
-    """
-    Scan for available sensors
+    """Scan for available sensors.
 
-    Input:\n
-    client - clientobject from the OpenZen-library
+    Args:
+        client (openzen.ZenClient): Client object from the OpenZen-library.
 
-    Output:\n
-    sensors - list of available sensors
+    Returns:
+        [openzen.ZenSensorDesc]: List of available sensor objects.
     """
     client.list_sensors_async()
 
@@ -51,6 +51,7 @@ def scan_for_sensors(client):
             print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}")
             # Check if found device is a bluetooth device
             if zenEvent.data.sensor_found.io_type == "Bluetooth":
+                print(zenEvent.data.sensor_found)
                 sensors.append(zenEvent.data.sensor_found)
 
         if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
@@ -59,22 +60,22 @@ def scan_for_sensors(client):
             if lst_data.complete > 0:
                 break
 
-    print("Sensor Listing complete, found ", len(sensors))
+    print(f"Sensor Listing complete, found {len(sensors)}")
     print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
     return sensors
 
 
 def connect_and_get_imus(client, sensors, chosen_sensors):
-    """
-    Connects to all sensors using one client
+    """Connects to chosen sensors and get a connection to their inertial measurement unit.
 
-    Input:\n
-    client - clientobject from the OpenZen-library\n
-    sensors - list of available sensors\n
-    chosen_sensors - user input with chosen sensors\n
+    Args:
+        client (openzen.ZenClient): Client object from the OpenZen-library.
+        sensors ([openzen.ZenSensorDesc]): List of available sensor objects.
+        chosen_sensors ([int]): List of chosen sensor indices.
 
-    Output:\n
-    connected_sensors - list of connected sensors\n
+    Returns:
+        [openzen.ZenSensor]: List of connected sensors.
+        [openzen.ZenSensorComponent]: List of imus of connected sensors.
     """
     imus = []
     connected_sensors = []
@@ -115,16 +116,41 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
 
 
 def set_sampling_rate(IMU, sampling_rate):
+    """Sets the sampling rate of given imu.
+
+    Args:
+        IMU (openzen.ZenSensorComponent): Object representing the inertial measurement unit on connected sensor.
+        sampling_rate (int): New sampling rate.
+
+    Returns:
+        int: Sampling rate of imu.
+    """
     assert sampling_rate in SUPPORTED_SAMPLING_RATES, f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
     IMU.set_int32_property(openzen.ZenImuProperty.SamplingRate, sampling_rate)
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
 
 def get_sampling_rate(IMU):
+    """Get sampling rate from imu.
+
+    Args:
+        IMU (openzen.ZenSensorComponent): Object representing the inertial measurement unit on connected sensor.
+
+    Returns:
+        int: Sampling rate of imu.
+    """
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
 
 def sync_sensors(imus):
+    """Synchronize sensors.
+
+    Args:
+        imus ([openzen.ZenSensorComponent]): List of imus of connected sensors.
+
+    Returns:
+        [openzen.ZenSensorComponent]: List of synchronized imus.
+    """
     # Synchronize
     for imu in imus:
         imu.execute_property(openzen.ZenImuProperty.StartSensorSync)
@@ -151,24 +177,47 @@ def sync_sensors(imus):
 
 
 def _remove_unsync_data(client):
+    """Removes data events from before sensor synchronization.
+
+    Args:
+        client (openzen.ZenClient): Client object from the OpenZen-library.
+    """
     zenEvent = client.poll_next_event()
     while(zenEvent != None):
         zenEvent = client.poll_next_event()
 
 
 def _make_row(handle, imu_data):
+    """Create row with the following data columns:
+        a (m/s^2): Accleration measurement after all corrections have been applied.
+        g (deg/s): Gyroscope measurement after all corrections have been applied.
+        r (deg/s): Three euler angles representing the current rotation of the sensor.
+        q: Quaternion representing the current rotation of the sensor (w, x, y, z). 
+
+    Args:
+        handle (int): Sensor handle/id.
+        imu_data (openzen.ZenImuData): Data from sensor's inertial measurement unit. 
+
+    Returns:
+        [float]: New row consisting of wanted data columns from sensors.
+    """
     row = []
     row.append(handle)
     row.append(imu_data.timestamp)
     row += [imu_data.a[i] for i in range(3)]
     row += [imu_data.g[i] for i in range(3)]
-    #row += [imu_data.b[i] for i in range(3)]
     row += [imu_data.r[i] for i in range(3)]
     row += [imu_data.q[i] for i in range(4)]
     return row
 
 
 def collect_data(client, data_queue):
+    """Collect data from connected sensors.
+
+    Args:
+        client (openzen.ZenClient): Client object from the OpenZen-library.
+        data_queue (Data_Queue): Data queue with data collected from sensor(s).
+    """
     occurences = [0, 0, 0]
     tmp_rows = []
     aligned = False
@@ -208,11 +257,23 @@ def collect_data(client, data_queue):
 
 
 def _write_to_csv(writer, classification):
+    """Write classification to csv.
+
+    Args:
+        writer (_csv.writer): Csv writer object.
+        classification (int): Classification from 0-8 based on trained model.
+    """
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     writer.writerow([current_time, classification])
 
 
 def classify(model, data_queue):
+    """Classify in realtime based on trained model and data in data queue.
+
+    Args:
+        model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
+        data_queue (Data_Queue): Data queue with data collected from sensor(s).
+    """
     values = []
     while True:
 
@@ -227,14 +288,13 @@ def classify(model, data_queue):
             values.append(data)
 
         if(len(values) == SAMPLING_RATE):
-            start_time_predict = time.perf_counter()
+            start_time_classify = time.perf_counter()
             classify = model(np.array(values)).numpy()
             argmax = [classification.argmax() for classification in classify]
-            end_time_predict = time.perf_counter() - start_time_predict
+            end_time_classify = time.perf_counter() - start_time_classify
             classification = Counter(argmax).most_common(1)[0][0]
-            print(f"Classified as {classification} in {round(end_time_predict,2)}s!")
-
-            with open('./classifications/classifications.csv', 'a+', newline='') as file:
+            print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
+            with open('./classifications/classifications.csv', 'a+') as file:
                 _write_to_csv(csv.writer(file), classification)
             values = []
 

@@ -10,15 +10,28 @@ type SensorProps = {
 	connected: boolean;
 	name: string;
 	battery: number;
+	busy: boolean;
+	position: string;
 	disconnectFunc: (id: number) => void;
 };
 
+/**
+ * 
+ * @param props 
+ * @returns A functional component showing data for the sensor
+ */
 export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	const [batteryPercent, setBatteryPercent] = useState<number>(props.battery);
-	const [isFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
 
+	/**
+	 * @remarks
+	 * Does an async call to disconnect from the desired sensor.
+	 * 
+	 * @param name A string containing the sensors name
+	 * @param id A number used to identify each sensor.
+	 */
 	const disconnect = async (name: string, id: number) => {
 		await fetch("http://localhost:5000/setup/disconnect", {
 			method: "POST",
@@ -32,12 +45,15 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data);
 				setConnected(false);
 				props.disconnectFunc(id);
 			});
 	};
 
+	/**
+	 * @remarks
+	 * Does an async fetch request to aquire the current battery level of the sensor
+	 */
 	const getBatteryPercent = useCallback(async () => {
 		if (!props.connected) return;
 		await fetch("http://localhost:5000/sensor/battery?name=" + props.name, {
@@ -54,7 +70,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 
 	useEffect(() => {
 		if (!props.connected) return;
-		setInterval(getBatteryPercent, 30000);
+		setInterval(getBatteryPercent, 60000);
 		// eslint-disable-next-line
 	}, []);
 
@@ -63,23 +79,28 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 			<Grid item direction="row" justify="center" xs={2}>
 				<BluetoothConnectedIcon className={classes.icon} />
 			</Grid>
-			<Grid item direction="row" justify="flex-start" xs={4}>
+			<Grid item direction="row" justify="flex-start" xs={3}>
 				<Typography variant="body2" color="textPrimary">
 					{props.name}
 				</Typography>
 			</Grid>
-			<Grid item direction="row" justify="center" xs={2}>
+			<Grid item direction="row" justify="flex-start" xs={3}>
+				<Typography variant="body2" color="textPrimary">
+					{props.position}
+				</Typography>
+			</Grid>
+			<Grid item direction="row" justify="center" xs={1}>
 				<Typography variant="body2" color="textPrimary">
 					{props.id}
 				</Typography>
 			</Grid>
-			<Grid item direction="row" justify="center" xs={2}>
+			<Grid item direction="row" justify="center" xs={1}>
 				<Typography variant="body2" color="textPrimary">
 					{batteryPercent + "%"}
 				</Typography>
 			</Grid>
 			<Grid container justify="center" item xs={2}>
-				<SensorButton type="disconnect" status={connected} func={() => disconnect(props.name, props.id)} id="connectButton" disabled={isFetching} />
+				<SensorButton type="disconnect" status={connected} func={() => disconnect(props.name, props.id)} sensorid={props.id} disabled={props.busy} />
 			</Grid>
 		</Grid>
 	);

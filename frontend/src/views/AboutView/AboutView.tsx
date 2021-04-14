@@ -2,7 +2,8 @@ import { Grid, Box, makeStyles, Typography } from "@material-ui/core";
 
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
-import TeamPortrait from "../../assets/Portrait1.jpg";
+// import TeamPortrait from "../../assets/Portrait1.jpg";
+import TeamPortrait from "../../assets/Portrait2.png";
 
 export const AboutView = () => {
 	const classes = useStyles();

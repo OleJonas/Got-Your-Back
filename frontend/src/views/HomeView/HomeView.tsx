@@ -9,18 +9,26 @@ import { RecordContent } from "../../components/RecordContent/RecordContent.comp
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
 import { SensorListContent } from "../../components/SensorListContent/SensorListContent.component";
+import handleErrors from "../../utils/handleErrors";
+import useInterval from "../../utils/useInterval";
 
+/**
+ * @remarks
+ * This is the main page of the application. It contains live classification data as well as different components also relating to live classification and recording of data.
+ */
 export const HomeView = () => {
 	const classes = useStyles();
-	const [datapoints, setDatapoints] = useState<any>({
-		"1998-09-10 08:25:50": "1",
-	});
-	const lastPosture: number = Object.values(datapoints).pop();
+	const [datapoints, setDatapoints] = useState<any>({});
+	const lastPosture: number =
+		datapoints && Object.values(datapoints).length !== 0 ? (Object.values(datapoints)[Object.values(datapoints).length - 1] as number) : -1;
 	const samplingRate: number = 5;
 	const [isRecording, setIsRecording] = useState<boolean>(false);
 	const [hasSensors, setHasSensors] = useState<boolean>(false);
 
-	// Fetch classifications and status on recording
+	/**
+	 * @remarks
+	 * useEffect that fetches classifications on render.
+	 */
 	useEffect(() => {
 		fetch("http://localhost:5000/classifications", {
 			headers: {
@@ -28,52 +36,61 @@ export const HomeView = () => {
 				Accept: "application/json",
 			},
 		})
+			.then(handleErrors)
 			.then((response) => response.json())
 			.then((data) => {
 				setDatapoints(data);
-			});
-
-		fetch("http://localhost:5000/status")
-			.then((response) => response.json())
-			.then((data) => {
-				data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
-				data.isRecording ? setIsRecording(true) : setIsRecording(false);
-			});
+			})
+			.catch(function (error) {});
 	}, []);
 
-	// Fetch status on recording every tenth second
-	useEffect(() => {
-		setInterval(() => {
-			fetch("http://localhost:5000/status")
-				.then((response) => response.json())
-				.then((data) => {
-					console.log(data);
-					data.numberOfSensors === 0 ? setHasSensors(false) : setHasSensors(true);
-					data.isRecording ? setIsRecording(true) : setIsRecording(false);
-				});
-		}, 10000);
-	}, []);
-
-	/*
-	useEffect(() => {
-		setInterval(() => {
+	/**
+	 * @remarks
+	 * custom React hook that fetches classifications every 3 seconds when recording is active.
+	 */
+	useInterval(() => {
+		if (isRecording) {
 			fetch("http://localhost:5000/classifications/latest", {
 				headers: {
 					"Content-Type": "application/json",
 					Accept: "application/json",
 				},
 			})
+				.then(handleErrors)
+				.then((response) => response.json())
+				.then((data: JSON) => {
+					let key: string = Object.keys(data)[0];
+					let val: number = parseInt(Object.values(data)[0]);
+					datapoints[key] = val;
+					setDatapoints({ ...datapoints });
+				})
+				.catch(function (error) {});
+		}
+	}, 5000);
+
+	/**
+	 * @remarks
+	 * useEffect that fetches status of the sensors on render and every ninth second.
+	 */
+	useEffect(() => {
+		fetch("http://localhost:5000/status")
+			.then((response) => response.json())
+			.then((data) => {
+				setIsRecording(data.isRecording);
+				setHasSensors(data.numberOfSensors !== 0);
+			});
+
+		const interval = setInterval(() => {
+			fetch("http://localhost:5000/status")
 				.then((response) => response.json())
 				.then((data) => {
-					let key = Object.keys(data)[0];
-					let val = Object.values(data)[0];
-					let tmp = datapoints;
-					tmp[key] = val;
-					setDatapoints(tmp);
+					if (data.isRecording !== isRecording) setIsRecording(data.isRecording);
+					if ((data.numberOfSensors !== 0) !== hasSensors) setHasSensors(data.numberOfSensors !== 0);
 				});
-		}, 3000);
+		}, 9000);
+		return () => clearInterval(interval);
+		// eslint-disable-next-line
 	}, []);
-    */
 
 	return (
 		<>
@@ -96,7 +113,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<SensorListContent />
+								<SensorListContent setHasSensors={setHasSensors} recording={isRecording} />
 							</ContentBox>
 						</Grid>
 
@@ -109,9 +126,9 @@ export const HomeView = () => {
 							<ContentBox>
 								<RecordContent
 									posture={lastPosture}
-									samplingRate={samplingRate}
-									isRecording={isRecording}
 									hasSensors={hasSensors}
+									isRecording={isRecording}
+									setIsRecording={(bool: boolean) => setIsRecording(bool)}
 								></RecordContent>
 							</ContentBox>
 						</Grid>
@@ -130,11 +147,11 @@ export const HomeView = () => {
 						<Grid item xs={12} md={7} className={classes.graphContainer}>
 							<Box mb={0.6}>
 								<Typography variant="h3" color="textPrimary">
-									My day
+									Last hour
 								</Typography>
 							</Box>
 							<ContentBox>
-								<LineChart data={datapoints} />
+								<LineChart duration={1} data={datapoints} />
 							</ContentBox>
 						</Grid>
 

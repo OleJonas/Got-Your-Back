@@ -1,82 +1,152 @@
-import sys
 import openzen
-import os
-from tempfile import NamedTemporaryFile
 
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 
 
 class Sensor:
-    def __init__(self, name, sensor, imu, id=-1):
+    """Class representing a sensor with the properties we want from the OpenZen-library.
+    """
+
+    def __init__(self, name, sensor, imu, id):
         self.name = name
         self.sensor_obj = sensor
         self.imu_obj = imu
         self.id = id
 
     def get_battery_percentage(self):
+        """Get the battery percentage.
+
+        Returns:
+            str: Battery percentage of sensor, with one decimal precision.
+        """
         return f"{round(self.sensor_obj.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
+ 
+
+    def check_alive(self):
+        """Checking if sensor has run out of battery or otherwise unexpectedly disconnected
+        """
+        try:
+            #Making an arbitrary call to the sensor object to see if it gives a response, if it doesn't, the sensor is no longer connected.
+            test = self.sensor_obj.get_float_property(openzen.ZenSensorProperty.BatteryLevel)
+        except:
+            return False
+        return True
 
     def set_sampling_rate(self, sampling_rate):
+        """Sets the sampling rate.
+
+        Args:
+            sampling_rate (int): New sampling rate.
+        """
         assert sampling_rate in SUPPORTED_SAMPLING_RATES, \
             f"Not supported sampling rate! Supported sampling rates: {SUPPORTED_SAMPLING_RATES}"
         self.imu_obj.set_int32_property(openzen.ZenImuProperty.SamplingRate, sampling_rate)
 
     def start_collect(self):
+        """Start to stream data from sensor.
+        """        
         self.imu_obj.set_bool_property(openzen.ZenImuProperty.StreamData, True)
 
 
 class Sensor_Bank:
     """
-    Class to make managing sensor properties easier
+    Class to make managing sensor properties easier.
     """
 
-    def __init__(self, sensor_dict=dict(), sampling_rate=5, sleep_time=0.05, handle_to_id={}):
+    def __init__(self, sensor_dict={}, sampling_rate=5, sleep_time=0.05):
         self.sensor_dict = sensor_dict
+        self.n_sensors = 0
         self.sampling_rate = sampling_rate
         self.sleep_time = sleep_time
         self.run = False
 
-        self.sensor_id_dict = dict()
-        with open("./scripts/sensor_id.txt", "r") as f:
-            for line in f:
-                sensor_and_id = line.split(" ")
-                self.sensor_id_dict[sensor_and_id[0]] = int(sensor_and_id[1])
-        print(self.sensor_id_dict) 
-
     def add_sensor(self, name, sensor, imu):
-        sensor_conn = Sensor(name, sensor, imu, self.sensor_id_dict[name])
-        self.sensor_dict[name] = sensor_conn
+        """Add sensor to sensor bank.
+
+        Args:
+            name (str): Sensor name.
+            sensor (openzen.ZenSensor): Sensor object.
+            imu (openzen.ZenSensorComponent): inertial measurement unit.
+        """
+        
+        helper_id = 1
+        for s in self.sensor_dict.values():
+            if helper_id == s.id:
+                helper_id += 1
+
+        self.sensor_dict[name] = Sensor(name, sensor, imu, helper_id)
+        print("connected")
+        self.n_sensors += 1
+
 
     def set_all_sampling_rates(self, sampling_rate):
-        for name_key in self.sensor_dict:
-            self.sensor_dict[name_key].set_sampling_rate(sampling_rate)
+        """Set the sampling rates for all sensors connected.
+
+        Args:
+            sampling_rate (int): New sampling rate.
+        """        
+        for sensor in self.sensor_dict.values():
+            sensor.set_sampling_rate(sampling_rate)
         self.sampling_rate = sampling_rate
         print(f"Sampling rates set to: {sampling_rate}")
 
-    def set_id(self, name, id):
-        with open("./scripts/sensor_id.txt") as fin, NamedTemporaryFile(dir='.', delete=False) as fout:
-            for line in fin:
-                if line.startswith(f"{name}"):
-                    line = f"{name} {id}\n"
-                fout.write(line.encode('utf8'))
-
-        os.replace(fout.name, "./scripts/sensor_id.txt")
-                    
-
     def get_sensor(self, name):
-        for name_key in self.sensor_dict:
-            if name == name_key:
-                return self.sensor_dict[name_key]
+        """Get sensor object from sensor bank.
+
+        Args:
+            name (str): Sensor name.
+
+        Returns:
+            openzen.ZenSensor: Sensor object if found, else None.
+        """        
+        if name in self.sensor_dict:
+            return self.sensor_dict[name]
+        print(f"Sensor with name {name} is not connected...")
         return None
 
     def disconnect_sensor(self, name):
+        """Disconnect sensor from sensor bank.
+
+        Args:
+            name (str): Sensor name
+        """        
         if name in self.sensor_dict:
-            print("Fant sensor ", name)
             self.sensor_dict[name].sensor_obj.release()
             self.sensor_dict.pop(name)
+            self.n_sensors -= 1
 
-            print("Sensors left:")
-            print(self.sensor_dict.keys())
+        print(f"sensor_dict after disconnect: {self.sensor_dict}")
+
+
+    def test_dead(self):
+        dead = None
+        for sensor in self.sensor_dict.values():
+            print(sensor.name)
+            if not sensor.check_alive():
+                dead = sensor.name
+                break
+        
+        self.sensor_dict.pop(dead)
+        self.n_sensors -= 1
+        return f"{self.sensor_dict}"
+
+
+    def verify_sensors_alive(self):
+        dead_sensors = []
+        for sensor in self.sensor_dict.values():
+            if not sensor.check_alive():
+                dead_sensors.append(sensor.name)
+        
+        for s_name in dead_sensors:
+            self.sensor_dict.pop(s_name)
+            self.n_sensors -= 1
+        
+        return f"{self.sensor_dict}"
 
     def set_sleep_time(self, sleep_time):
+        """Set sleep time.
+
+        Args:
+            sleep_time (float): Time wanted to sleep for when needed.
+        """        
         self.sleep_time = sleep_time
