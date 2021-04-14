@@ -3,10 +3,12 @@ import sys
 import csv
 import numpy as np
 import openzen
+import keras
 from collections import Counter
 from datetime import datetime, date
 sys.path.append("scripts/")
 from Data_Queue import Data_Queue
+from sensor_bank import Sensor_Bank
 
 CLASSIFICATION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
@@ -195,7 +197,7 @@ def collect_data(client: openzen.ZenClient, sensor_bank: Sensor_Bank):
             continue
 
 
-def _write_to_csv(writer: _csv.writer, classification: int):
+def _write_to_csv(writer: csv.writer, classification: int):
     """Write classification to csv.
 
     Args:
@@ -215,7 +217,7 @@ def _classification_fname():
     return f'./classifications/{date.today().strftime("%Y-%m-%d")}.csv'
 
 
-def classify(model: tensorflow.python.keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank):
+def classify(model: keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:
@@ -254,7 +256,7 @@ def classify(model: tensorflow.python.keras.engine.sequential.Sequential, sensor
 
 
 
-def classify_rnn(model: tensorflow.python.keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank):
+def classify_rnn(model: keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:
