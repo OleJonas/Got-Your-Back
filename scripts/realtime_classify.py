@@ -67,7 +67,7 @@ def scan_for_sensors(client: openzen.ZenClient):
     return sensors
 
 
-def connect_and_get_imus(client: openzen.ZenClient, sensors: list(openzen.ZenSensorDesc), chosen_sensors: list(str)):
+def connect_and_get_imus(client: openzen.ZenClient, sensors: list, chosen_sensors: list):
     """Connects to chosen sensors and get a connection to their inertial measurement unit.
 
     Args:
@@ -144,7 +144,7 @@ def get_sampling_rate(IMU: openzen.ZenSensorComponent):
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
 
-def sync_sensors(imus: list(openzen.ZenSensorComponent)):
+def sync_sensors(imus: list):
     """Synchronize sensors.
 
     Args:
@@ -269,7 +269,7 @@ def _write_to_csv(writer: csv.writer, classification: int):
     writer.writerow([current_time, classification])
 
 
-def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, type="cnn"):
+def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, type="ann"):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:
@@ -325,7 +325,7 @@ if __name__ == "__main__":
     sync_sensors(imus)
 
     # Classify
-    model_ann = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}_130421.h5')
+    model_ann = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
     model_cnn = keras.models.load_model(f'model/models/CNN_model_{NUM_SENSORS}.h5')
     model_rfc = load(f'./model/models/RFC_model_{NUM_SENSORS}.joblib')
 
