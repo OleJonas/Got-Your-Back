@@ -15,7 +15,7 @@ SLEEPTIME = 0.05
 data_queue = None
 
 
-def scan_for_sensors(client):
+def scan_for_sensors(client: openzen.ZenClient):
     """Scan for available sensors.
 
     Args:
@@ -48,7 +48,7 @@ def scan_for_sensors(client):
     return sensors
 
 
-def connect_to_sensor(client, input_sensor):
+def connect_to_sensor(client: openzen.ZenClient, input_sensor: openzen.ZenSensorComponent):
     """Connects to chosen sensor and establishes a connection to it's inertial measurement unit.
 
     Args:
@@ -84,7 +84,7 @@ def connect_to_sensor(client, input_sensor):
     return s_name, sensor, imu
 
 
-def sync_sensors(client, sensor_bank):
+def sync_sensors(client: openzen.ZenClient, sensor_bank: Sensor_Bank):
     """Synchronize sensors.
 
     Args:
@@ -107,7 +107,7 @@ def sync_sensors(client, sensor_bank):
     _remove_unsync_data(client)
 
 
-def _remove_unsync_data(client):
+def _remove_unsync_data(client: openzen.ZenClient):
     """Removes data events from before sensor synchronization.
 
     Args:
@@ -118,7 +118,7 @@ def _remove_unsync_data(client):
         zenEvent = client.poll_next_event()
 
 
-def _make_row(handle, imu_data):
+def _make_row(handle: int, imu_data: openzen.ZenImuData):
     """Create row with the following data columns:
         a (m/s^2): Accleration measurement after all corrections have been applied.
         g (deg/s): Gyroscope measurement after all corrections have been applied.
@@ -142,7 +142,7 @@ def _make_row(handle, imu_data):
     return row
 
 
-def collect_data(client, sensor_bank):
+def collect_data(client: openzen.ZenClient, sensor_bank: Sensor_Bank):
     """Collect data from connected sensors.
 
     Args:
@@ -195,7 +195,7 @@ def collect_data(client, sensor_bank):
             continue
 
 
-def _write_to_csv(writer, classification):
+def _write_to_csv(writer: _csv.writer, classification: int):
     """Write classification to csv.
 
     Args:
@@ -215,7 +215,7 @@ def _classification_fname():
     return f'./classifications/{date.today().strftime("%Y-%m-%d")}.csv'
 
 
-def classify(model, sensor_bank):
+def classify(model: tensorflow.python.keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:
@@ -254,7 +254,7 @@ def classify(model, sensor_bank):
 
 
 
-def classify_rnn(model, sensor_bank):
+def classify_rnn(model: tensorflow.python.keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:
