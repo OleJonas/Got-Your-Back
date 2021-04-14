@@ -27,7 +27,7 @@ class Data_Queue:
             self.entries[i] -= 1
         return out
 
-    def push(self, sensor_id, data):
+    def push(self, sensor_id: int, data: list(float)):
         """Add a new entry of data in the data queue.
 
         Args:
