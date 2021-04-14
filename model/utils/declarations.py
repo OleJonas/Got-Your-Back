@@ -44,7 +44,6 @@ training_files = {
                           "../../data/annotation/training/008_train_3_030321.txt"),
     "009": training_class("../../data/train_data/009_train_3_120421.csv",
                           "../../data/annotation/training/009_train_3_120421.txt"),
-
 }
 
 testing_files = {
@@ -60,4 +59,6 @@ testing_files = {
                          "../../data/annotation/testing/007_test_3_030321.txt"),
     "008": testing_class("../../data/test_data/008_test_3_030321.csv",
                          "../../data/annotation/testing/008_test_3_030321.txt"),
+    "009": testing_class("../../data/test_data/009_test_3_120421.csv",
+                          "../../data/annotation/testing/009_test_3_120421.txt"),
 }
