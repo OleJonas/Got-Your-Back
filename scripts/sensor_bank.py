@@ -20,7 +20,6 @@ class Sensor:
             str: Battery percentage of sensor, with one decimal precision.
         """
         return f"{round(self.sensor_obj.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
- 
 
     def check_alive(self):
         """Checking if sensor has run out of battery or otherwise unexpectedly disconnected
@@ -35,7 +34,7 @@ class Sensor:
             return False
         return True
 
-    def set_sampling_rate(self, sampling_rate):
+    def set_sampling_rate(self, sampling_rate: int):
         """Sets the sampling rate.
 
         Args:
@@ -47,7 +46,7 @@ class Sensor:
 
     def start_collect(self):
         """Start to stream data from sensor.
-        """        
+        """
         self.imu_obj.set_bool_property(openzen.ZenImuProperty.StreamData, True)
 
 
@@ -63,7 +62,7 @@ class Sensor_Bank:
         self.sleep_time = sleep_time
         self.run = False
 
-    def add_sensor(self, name, sensor, imu):
+    def add_sensor(self, name: str, sensor: openzen.ZenSensor, imu: openzen.ZenSensorComponent):
         """Add sensor to sensor bank.
 
         Args:
@@ -71,7 +70,7 @@ class Sensor_Bank:
             sensor (openzen.ZenSensor): Sensor object.
             imu (openzen.ZenSensorComponent): inertial measurement unit.
         """
-        
+
         helper_id = 1
         for s in self.sensor_dict.values():
             if helper_id == s.id:
@@ -81,19 +80,18 @@ class Sensor_Bank:
         print("connected")
         self.n_sensors += 1
 
-
-    def set_all_sampling_rates(self, sampling_rate):
+    def set_all_sampling_rates(self, sampling_rate: int):
         """Set the sampling rates for all sensors connected.
 
         Args:
             sampling_rate (int): New sampling rate.
-        """        
+        """
         for sensor in self.sensor_dict.values():
             sensor.set_sampling_rate(sampling_rate)
         self.sampling_rate = sampling_rate
         print(f"Sampling rates set to: {sampling_rate}")
 
-    def get_sensor(self, name):
+    def get_sensor(self, name: str):
         """Get sensor object from sensor bank.
 
         Args:
@@ -101,25 +99,24 @@ class Sensor_Bank:
 
         Returns:
             openzen.ZenSensor: Sensor object if found, else None.
-        """        
+        """
         if name in self.sensor_dict:
             return self.sensor_dict[name]
         print(f"Sensor with name {name} is not connected...")
         return None
 
-    def disconnect_sensor(self, name):
+    def disconnect_sensor(self, name: str):
         """Disconnect sensor from sensor bank.
 
         Args:
             name (str): Sensor name
-        """        
+        """
         if name in self.sensor_dict:
             self.sensor_dict[name].sensor_obj.release()
             self.sensor_dict.pop(name)
             self.n_sensors -= 1
 
         print(f"sensor_dict after disconnect: {self.sensor_dict}")
-
 
     def test_dead(self):
         dead = None
@@ -128,11 +125,10 @@ class Sensor_Bank:
             if not sensor.check_alive():
                 dead = sensor.name
                 break
-        
+
         self.sensor_dict.pop(dead)
         self.n_sensors -= 1
         return f"{self.sensor_dict}"
-
 
     def verify_sensors_alive(self):
         dead_sensors = []
@@ -140,17 +136,17 @@ class Sensor_Bank:
             print(sensor.name)
             if not sensor.check_alive():
                 dead_sensors.append(sensor.name)
-        
+
         for s_name in dead_sensors:
             self.sensor_dict.pop(s_name)
             self.n_sensors -= 1
         
         return f"Sensor dict after error handling...: {self.sensor_dict}"
 
-    def set_sleep_time(self, sleep_time):
+    def set_sleep_time(self, sleep_time: float):
         """Set sleep time.
 
         Args:
             sleep_time (float): Time wanted to sleep for when needed.
-        """        
+        """
         self.sleep_time = sleep_time

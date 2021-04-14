@@ -17,7 +17,7 @@ import keras
 from collections import Counter
 from Data_Queue import Data_Queue
 from rnn_utils import create_3d_array
-from joblib import dump, load
+from joblib import load
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
@@ -33,7 +33,7 @@ SENSORS_ID = {
 MAP_HANDLE_TO_ID = {}
 
 
-def scan_for_sensors(client):
+def scan_for_sensors(client: openzen.ZenClient):
     """Scan for available sensors.
 
     Args:
@@ -67,7 +67,7 @@ def scan_for_sensors(client):
     return sensors
 
 
-def connect_and_get_imus(client, sensors, chosen_sensors):
+def connect_and_get_imus(client: openzen.ZenClient, sensors: list(openzen.ZenSensorDesc), chosen_sensors: list(str)):
     """Connects to chosen sensors and get a connection to their inertial measurement unit.
 
     Args:
@@ -117,7 +117,7 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
     return connected_sensors, imus
 
 
-def set_sampling_rate(IMU, sampling_rate):
+def set_sampling_rate(IMU: openzen.ZenSensorComponent, sampling_rate: int):
     """Sets the sampling rate of given imu.
 
     Args:
@@ -132,7 +132,7 @@ def set_sampling_rate(IMU, sampling_rate):
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
 
-def get_sampling_rate(IMU):
+def get_sampling_rate(IMU: openzen.ZenSensorComponent):
     """Get sampling rate from imu.
 
     Args:
@@ -144,7 +144,7 @@ def get_sampling_rate(IMU):
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
 
-def sync_sensors(imus):
+def sync_sensors(imus: list(openzen.ZenSensorComponent)):
     """Synchronize sensors.
 
     Args:
@@ -178,7 +178,7 @@ def sync_sensors(imus):
     return imus
 
 
-def _remove_unsync_data(client):
+def _remove_unsync_data(client: openzen.ZenClient):
     """Removes data events from before sensor synchronization.
 
     Args:
@@ -189,7 +189,7 @@ def _remove_unsync_data(client):
         zenEvent = client.poll_next_event()
 
 
-def _make_row(handle, imu_data):
+def _make_row(handle: int, imu_data: openzen.ZenImuData):
     """Create row with the following data columns:
         a (m/s^2): Accleration measurement after all corrections have been applied.
         g (deg/s): Gyroscope measurement after all corrections have been applied.
@@ -213,7 +213,7 @@ def _make_row(handle, imu_data):
     return row
 
 
-def collect_data(client, data_queue):
+def collect_data(client: openzen.ZenClient, data_queue: Data_Queue):
     """Collect data from connected sensors.
 
     Args:
@@ -258,7 +258,7 @@ def collect_data(client, data_queue):
             continue
 
 
-def _write_to_csv(writer, classification):
+def _write_to_csv(writer: csv.writer, classification: int):
     """Write classification to csv.
 
     Args:
@@ -269,7 +269,7 @@ def _write_to_csv(writer, classification):
     writer.writerow([current_time, classification])
 
 
-def classify(model, data_queue, type="cnn"):
+def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, type="cnn"):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:
@@ -293,47 +293,14 @@ def classify(model, data_queue, type="cnn"):
         if(len(values) == SAMPLING_RATE):
             start_time_classify = time.perf_counter()
             values_np = np.array(values)
-            values_reshaped = values_np.reshape(values_np.shape[0], values_np.shape[1], 1)
-            classify = np.array(model(values_reshaped)) if type == "cnn" else np.array(model(values_np))
+            values_rnn = np.array(create_3d_array(values, 50))
+            values_cnn = values_np.reshape(values_np.shape[0], values_np.shape[1], 1)
+            classify = np.array(model(values_cnn if type == "cnn" else values_rnn if type == "rnn" else values_np))
             argmax = [classification.argmax() for classification in classify]
             end_time_classify = time.perf_counter() - start_time_classify
             classification = Counter(argmax).most_common(1)[0][0]
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
             with open('./classifications/classifications.csv', 'a+') as file:
-                _write_to_csv(csv.writer(file), classification)
-            values = []
-
-
-def classify_rnn(model, data_queue):
-    """Classify in realtime based on trained model and data in data queue.
-
-    Args:
-        model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
-        data_queue (Data_Queue): Data queue with data collected from sensor(s).
-    """
-    values = []
-    while True:
-
-        if(min(data_queue.entries) == 0):
-            time.sleep(SLEEPTIME)
-        else:
-            top_row = data_queue.shift()
-            data = top_row[0][0][1:]
-            for i in range(1, data_queue.n_sensors):
-                data += top_row[i][0][1:]
-
-            values.append(data)
-
-        if(len(values) == SAMPLING_RATE):
-            start_time_classify = time.perf_counter()
-            values_3d = np.array(create_3d_array(values, 50))
-            classify = model.predict(values_3d)
-            end_time_classify = time.perf_counter() - start_time_classify
-            argmax = [classification.argmax() for classification in classify]
-
-            classification = Counter(argmax).most_common(1)[0][0]
-            print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
-            with open('./classifications/rnn_classifications.csv', 'a+', newline='') as file:
                 _write_to_csv(csv.writer(file), classification)
             values = []
 
