@@ -122,6 +122,7 @@ def get_dummy_connect():
 
     return res
 
+
 @app.route("/dummy/get_sensors")
 def dummy_get_sensors():
     """Fetch a list of dummy sensors.

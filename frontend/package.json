@@ -25,7 +25,8 @@
     "eject": "react-scripts eject",
     "dev": "concurrently -k \"npm start\" \"wait-on tcp:3000 && electron .\"",
     "premake": "npm run build",
-    "make": "electron-builder -mw"
+    "make": "electron-builder -mw",
+    "make_windows": "electron-builder -w"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.3",

@@ -9,9 +9,9 @@ from datetime import datetime, date
 sys.path.append("scripts/")
 from Data_Queue import Data_Queue
 from sensor_bank import Sensor_Bank
+from rnn_utils import create_3d_array
 
 CLASSIFICATION_INTERVAL = 1  # Interval is in seconds
-SAMPLING_RATE = 5
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 SLEEPTIME = 0.05
 data_queue = None
@@ -217,15 +217,17 @@ def _classification_fname():
     return f'./classifications/{date.today().strftime("%Y-%m-%d")}.csv'
 
 
-def classify(model: keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank):
+def classify(model: keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank, type="ann"):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:
         model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
         sensor_bank (Sensor_Bank): Object containing the connected sensors.
+        type (str): Type of model
     """
     values = []
-    while sensor_bank.run:
+    while True:
+
         if(min(data_queue.entries) == 0):
             time.sleep(SLEEPTIME)
         else:
@@ -233,56 +235,30 @@ def classify(model: keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank
             data = top_row[0][0][1:]
             for i in range(1, data_queue.n_sensors):
                 data += top_row[i][0][1:]
+
             values.append(data)
 
-        if(len(values) == SAMPLING_RATE*10):
+        if(len(values) == sensor_bank.sampling_rate):
             start_time_classify = time.perf_counter()
+            values_np = np.array(values)
+            arr = None
 
-            values_3d = np.array(create_3d_array(np.array(values), 50))
+            if type == "cnn":
+                arr = values_np.reshape(values_np.shape[0], values_np.shape[1], 1)
+            elif type == "rnn":
+                arr = np.array(create_3d_array(values, 50))
+            elif type == "rfc":
+                arr = values_np.reshape(values_np.shape[0], values_np.shape[1])
+            else:
+                arr = np.array(values)
 
-            classify = model(np.array(values_3d)).numpy()
+            classify = np.array(model(arr) if type != "rfc" else model.predict(arr))
             argmax = [classification.argmax() for classification in classify]
             end_time_classify = time.perf_counter() - start_time_classify
             classification = Counter(argmax).most_common(1)[0][0]
+            print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
             with open(_classification_fname(), 'a+') as file:
                 _write_to_csv(csv.writer(file), classification)
-            print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
-            values = []
-
-
-
-
-
-
-
-
-def classify_rnn(model: keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank):
-    """Classify in realtime based on trained model and data in data queue.
-
-    Args:
-        model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
-        sensor_bank (Sensor_Bank): Object containing the connected sensors.
-    """
-    values = []
-    while sensor_bank.run:
-        if(min(data_queue.entries) == 0):
-            time.sleep(SLEEPTIME)
-        else:
-            top_row = data_queue.shift()
-            data = top_row[0][0][1:]
-            for i in range(1, data_queue.n_sensors):
-                data += top_row[i][0][1:]
-            values.append(data)
-
-        if(len(values) == SAMPLING_RATE):
-            start_time_classify = time.perf_counter()
-            classify = model(np.array(values)).numpy()
-            argmax = [classification.argmax() for classification in classify]
-            end_time_classify = time.perf_counter() - start_time_classify
-            classification = Counter(argmax).most_common(1)[0][0]
-            with open(_classification_fname(), 'a+', newline='') as file:
-                _write_to_csv(csv.writer(file), classification)
-            print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
             values = []
 
 
