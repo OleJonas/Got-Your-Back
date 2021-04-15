@@ -44,6 +44,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 					setButtonPressed(false);
 					if (!data) {
 						props.setIsRecording(false);
+						setButtonPressed(false);
 					}
 				});
 		}
