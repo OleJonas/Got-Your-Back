@@ -185,7 +185,7 @@ def collect_data(client: openzen.ZenClient, sensor_bank: Sensor_Bank):
                 break
     for row in tmp_rows:
         data_queue.push(row[0], row[1:])
-
+    
     while sensor_bank.run:
         row = None
         zenEvent = client.wait_for_next_event()
