@@ -153,8 +153,9 @@ def collect_data(client: openzen.ZenClient, sensor_bank: Sensor_Bank):
     """
     global data_queue
     data_queue = Data_Queue(len(sensor_bank.sensor_dict))
+    print("length of data queue: ", len(data_queue.queue))
     print(len(sensor_bank.sensor_dict))
-
+    
     _remove_unsync_data(client)
     occurences = [0, 0, 0]
     tmp_rows = []

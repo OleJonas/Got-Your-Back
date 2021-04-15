@@ -60,7 +60,7 @@ def before_request():
         return res
     else:
         global sensor_bank
-        print(sensor_bank.verify_sensors_alive())
+        sensor_bank.verify_sensors_alive()
         return
 
 

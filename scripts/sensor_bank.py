@@ -118,22 +118,9 @@ class Sensor_Bank:
 
         print(f"sensor_dict after disconnect: {self.sensor_dict}")
 
-    def test_dead(self):
-        dead = None
-        for sensor in self.sensor_dict.values():
-            print(sensor.name)
-            if not sensor.check_alive():
-                dead = sensor.name
-                break
-
-        self.sensor_dict.pop(dead)
-        self.n_sensors -= 1
-        return f"{self.sensor_dict}"
-
     def verify_sensors_alive(self):
         dead_sensors = []
         for sensor in self.sensor_dict.values():
-            print(sensor.name)
             if not sensor.check_alive():
                 dead_sensors.append(sensor.name)
 
