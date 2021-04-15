@@ -198,15 +198,20 @@ def connect():
     """
     global sensor_bank
     content = request.json
+    res = None
 
-    s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[content["name"]])
-    sensor_bank.add_sensor(s_name, sensor, imu)
-    s_id = sensor_bank.sensor_dict[s_name].id
-    res = {
-        "name": s_name,
-        "id": s_id,
-        "battery_percent": sensor_bank.sensor_dict[s_name].get_battery_percentage()
-    }
+    try:
+        s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[content["name"]])
+        sensor_bank.add_sensor(s_name, sensor, imu)
+        s_id = sensor_bank.sensor_dict[s_name].id
+        res = {
+            "name": s_name,
+            "id": s_id,
+            "battery_percent": sensor_bank.sensor_dict[s_name].get_battery_percentage()
+        }
+    except:
+        res = json.dumps({'success': False, 'error': "Could not connect to sensor, please try again..."}), 503, {'ContentType': 'application/json'}
+    
     return res
     """
     print("Could not connect to sensor, please try again...")

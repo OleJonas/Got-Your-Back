@@ -305,14 +305,22 @@ def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, 
                 arr = np.array(values)
             
             classify = np.array(model(arr) if type != "rfc" else model.predict(arr))
-            argmax = [classification.argmax() for classification in classify]
-            print(argmax)
-            end_time_classify = time.perf_counter() - start_time_classify
-            classification = Counter(argmax).most_common(1)[0][0]
+            print(classify)
+            classification = None
+            
+            if type != "rfc":
+                argmax = [classification.argmax() for classification in classify]
+                print(argmax)
+                end_time_classify = time.perf_counter() - start_time_classify
+                classification = Counter(argmax).most_common(1)[0][0]
+            else:
+                end_time_classify = time.perf_counter() - start_time_classify
+                classification = Counter(classify).most_common(1)[0][0]
+            
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
             with open('./classifications/classifications.csv', 'a+') as file:
                 _write_to_csv(csv.writer(file), classification)
-            values = []
+                values = []
 
 
 if __name__ == "__main__":
@@ -339,7 +347,7 @@ if __name__ == "__main__":
     model_cnn = keras.models.load_model(f'model/models/CNN_model_{NUM_SENSORS}.h5')
     model_rfc = load(f'./model/models/RFC_model_{NUM_SENSORS}_140421.joblib')
 
-    classify_thread = threading.Thread(target=classify, args=[model_ann, data_queue], daemon=True)
+    classify_thread = threading.Thread(target=classify, args=[model_rfc, data_queue, "rfc"], daemon=True)
     classify_thread.start()
 
     collect_data(client, data_queue)

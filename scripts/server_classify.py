@@ -69,7 +69,7 @@ def connect_to_sensor(client: openzen.ZenClient, input_sensor: openzen.ZenSensor
         print("Error connecting to sensor")
         print("Trying again...")
         err, sensor = client.obtain_sensor(input_sensor)
-        if attempts >= 10:
+        if attempts >= 5:
             print("Can't connect to sensor")
             # sys.exit(1)
             return
