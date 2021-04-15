@@ -41,7 +41,7 @@ export const theme = createMuiTheme({
 			lineHeight: "2em",
 		},
 		h2: {
-			fontSize: "1.75rem",
+			fontSize: "1.5rem",
 			fontWeight: 400,
 			color: "white",
 		},
@@ -97,6 +97,7 @@ export const theme = createMuiTheme({
 			fontWeight: 700,
 			padding: "10px",
 			textTransform: "none",
+			textShadow: "0px 0px 1px rgba(0, 0, 0, 1)",
 		},
 	},
 });
