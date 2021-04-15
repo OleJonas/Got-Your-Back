@@ -218,17 +218,18 @@ def _classification_fname():
     return f'./classifications/{date.today().strftime("%Y-%m-%d")}.csv'
 
 
-def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, type="ann"):
+def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, sensor_bank: Sensor_Bank, type="ann"):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:
         model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
         data_queue (Data_Queue): Data queue with data collected from sensor(s).
+        sensor_bank (Sensor_Bank): Object containing the connected sensors.
         type (str): Type of model
     """
     values = []
     while True:
-        
+
         if(min(data_queue.entries) == 0):
             time.sleep(SLEEPTIME)
         else:
@@ -239,11 +240,11 @@ def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, 
 
             values.append(data)
 
-        if(len(values) == SAMPLING_RATE):
+        if(len(values) == sensor_bank.sampling_rate):
             start_time_classify = time.perf_counter()
             values_np = np.array(values)
             arr = None
-            
+
             if type == "cnn":
                 arr = values_np.reshape(values_np.shape[0], values_np.shape[1], 1)
             elif type == "rnn":
@@ -252,15 +253,16 @@ def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, 
                 arr = values_np.reshape(values_np.shape[0], values_np.shape[1])
             else:
                 arr = np.array(values)
-            
+
             classify = np.array(model(arr) if type != "rfc" else model.predict(arr))
             argmax = [classification.argmax() for classification in classify]
             end_time_classify = time.perf_counter() - start_time_classify
             classification = Counter(argmax).most_common(1)[0][0]
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
-            with open('./classifications/classifications.csv', 'a+') as file:
+            with open(_classification_fname(), 'a+') as file:
                 _write_to_csv(csv.writer(file), classification)
             values = []
+
 
 if __name__ == "__main__":
     pass
