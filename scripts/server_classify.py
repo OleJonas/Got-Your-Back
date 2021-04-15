@@ -217,12 +217,11 @@ def _classification_fname():
     return f'./classifications/{date.today().strftime("%Y-%m-%d")}.csv'
 
 
-def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, sensor_bank: Sensor_Bank, type="ann"):
+def classify(model: keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank, type="ann"):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:
         model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
-        data_queue (Data_Queue): Data queue with data collected from sensor(s).
         sensor_bank (Sensor_Bank): Object containing the connected sensors.
         type (str): Type of model
     """
