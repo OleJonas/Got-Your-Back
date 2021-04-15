@@ -64,7 +64,7 @@ export const SensorButton: FC<ButtonProps> = (props) => {
 						onClick={props.func === undefined ? () => {} : props.func}
 						disabled={props.disabled ? true : false}
 					>
-						<Typography variant="button" color="textSecondary">
+						<Typography variant="button" color="textPrimary">
 							{props.type === "connect" ? (
 								status ? (
 									<CheckIcon className={classes.icon} />
