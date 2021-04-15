@@ -14,6 +14,7 @@ from flask_cors import CORS
 from collections import deque
 sys.path.append("scripts/")
 from sensor_bank import Sensor_Bank
+from joblib import load
 import server_classify as sc
 
 app = Flask(__name__)
@@ -314,8 +315,11 @@ def start_classify():
     global sensor_bank
     sensor_bank.run = True
     sc.sync_sensors(client, sensor_bank)
-    model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
-    classify_thread = threading.Thread(target=sc.classify, args=[model, sensor_bank], daemon=True)
+    # keras model
+    #model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
+    
+    rfc_model = load(f"model/models/RFC_model_{len(sensor_bank.sensor_dict)}.joblib")
+    classify_thread = threading.Thread(target=sc.classify, args=[rfc_model, sensor_bank], daemon=True)
     collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)
     t_pool.append(classify_thread)
     t_pool.append(collect_thread)

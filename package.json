@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "forever": "^3.0.4"
+  }
+}

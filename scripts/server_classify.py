@@ -155,7 +155,7 @@ def collect_data(client: openzen.ZenClient, sensor_bank: Sensor_Bank):
     data_queue = Data_Queue(len(sensor_bank.sensor_dict))
     print("length of data queue: ", len(data_queue.queue))
     print(len(sensor_bank.sensor_dict))
-    
+
     _remove_unsync_data(client)
     occurences = [0, 0, 0]
     tmp_rows = []
@@ -218,7 +218,7 @@ def _classification_fname():
     return f'./classifications/{date.today().strftime("%Y-%m-%d")}.csv'
 
 
-def classify(model: keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank, type="ann"):
+def classify(model, sensor_bank: Sensor_Bank, type="rfc"):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:
@@ -243,7 +243,7 @@ def classify(model: keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank
             start_time_classify = time.perf_counter()
             values_np = np.array(values)
             arr = None
-
+            
             if type == "cnn":
                 arr = values_np.reshape(values_np.shape[0], values_np.shape[1], 1)
             elif type == "rnn":
@@ -252,15 +252,26 @@ def classify(model: keras.engine.sequential.Sequential, sensor_bank: Sensor_Bank
                 arr = values_np.reshape(values_np.shape[0], values_np.shape[1])
             else:
                 arr = np.array(values)
-
+            
             classify = np.array(model(arr) if type != "rfc" else model.predict(arr))
-            argmax = [classification.argmax() for classification in classify]
-            end_time_classify = time.perf_counter() - start_time_classify
-            classification = Counter(argmax).most_common(1)[0][0]
+            print(classify)
+            classification = None
+            
+            if type != "rfc":
+                argmax = [classification.argmax() for classification in classify]
+                print(argmax)
+                end_time_classify = time.perf_counter() - start_time_classify
+                classification = Counter(argmax).most_common(1)[0][0]
+            else:
+                end_time_classify = time.perf_counter() - start_time_classify
+                classification = Counter(classify).most_common(1)[0][0]
+            
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
-            with open(_classification_fname(), 'a+',newline='') as file:
+            with open(_classification_fname(), 'a+', newline='') as file:
                 _write_to_csv(csv.writer(file), classification)
-            values = []
+                values = []
+
+
 
 
 if __name__ == "__main__":

@@ -318,7 +318,7 @@ def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, 
                 classification = Counter(classify).most_common(1)[0][0]
             
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
-            with open('./classifications/classifications.csv', 'a+') as file:
+            with open('./classifications/classifications.csv', 'a+',newline='') as file:
                 _write_to_csv(csv.writer(file), classification)
                 values = []
 
@@ -345,7 +345,7 @@ if __name__ == "__main__":
     # Classify
     model_ann = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
     model_cnn = keras.models.load_model(f'model/models/CNN_model_{NUM_SENSORS}.h5')
-    model_rfc = load(f'./model/models/RFC_model_{NUM_SENSORS}_140421.joblib')
+    model_rfc = load(f'./model/models/RFC_model_{NUM_SENSORS}.joblib')
 
     classify_thread = threading.Thread(target=classify, args=[model_rfc, data_queue, "rfc"], daemon=True)
     classify_thread.start()
