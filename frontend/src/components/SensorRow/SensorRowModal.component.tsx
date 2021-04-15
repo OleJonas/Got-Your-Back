@@ -43,8 +43,8 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 				if (!data.hasOwnProperty("error")) {
 					setSensorData(data);
 					setConnected(true);
-					setIsFetching(false);
 				}
+				setIsFetching(false);
 			});
 		// eslint-disable-next-line
 	}, [isFetching]);
