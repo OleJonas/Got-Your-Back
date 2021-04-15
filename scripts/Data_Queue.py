@@ -9,7 +9,7 @@ class Data_Queue:
         self.n_sensors = n_sensors
         self.queue = [[] for i in range(n_sensors)]
         self.entries = [0 for i in range(n_sensors)]
-
+    
     def shift(self):
         """Takes out the first datapoint from every sensor if present.
 
