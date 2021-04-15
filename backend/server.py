@@ -310,7 +310,7 @@ def start_classify():
     sensor_bank.run = True
     sc.sync_sensors(client, sensor_bank)
     model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
-    classify_thread = threading.Thread(target=sc.classify, args=[model, data_queue, sensor_bank], daemon=True)
+    classify_thread = threading.Thread(target=sc.classify, args=[model, sensor_bank], daemon=True)
     collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)
     t_pool.append(classify_thread)
     t_pool.append(collect_thread)
