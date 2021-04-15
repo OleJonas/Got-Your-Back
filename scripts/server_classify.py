@@ -12,7 +12,6 @@ from sensor_bank import Sensor_Bank
 from rnn_utils import create_3d_array
 
 CLASSIFICATION_INTERVAL = 1  # Interval is in seconds
-SAMPLING_RATE = 5
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 SLEEPTIME = 0.05
 data_queue = None
