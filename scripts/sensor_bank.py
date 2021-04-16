@@ -1,4 +1,5 @@
 import openzen
+import time
 
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 
@@ -45,7 +46,7 @@ class Sensor:
         self.imu_obj.set_int32_property(openzen.ZenImuProperty.SamplingRate, sampling_rate)
 
     def start_collect(self):
-        """Start to stream data from sensor.
+        """Start streaming data from sensor.
         """
         self.imu_obj.set_bool_property(openzen.ZenImuProperty.StreamData, True)
 
@@ -137,3 +138,103 @@ class Sensor_Bank:
             sleep_time (float): Time wanted to sleep for when needed.
         """
         self.sleep_time = sleep_time
+
+    def scan_for_sensors(self, client: openzen.ZenClient):
+        """Scan for available sensors.
+
+        Args:
+            client (openzen.ZenClient): Client object from the OpenZen-library.
+
+        Returns:
+            [openzen.ZenSensorDesc]: List of available sensor objects.
+        """
+        client.list_sensors_async()
+
+        # Check for events
+        sensors = []
+        while True:
+            zenEvent = client.wait_for_next_event()
+
+            if zenEvent.event_type == openzen.ZenEventType.SensorFound:
+                print(f"Found sensor {zenEvent.data.sensor_found.name} on IoType {zenEvent.data.sensor_found.io_type}", flush=True, end='')
+                # Check if found device is a bluetooth device
+                if zenEvent.data.sensor_found.io_type == "Bluetooth":
+                    sensors.append(zenEvent.data.sensor_found)
+
+            if zenEvent.event_type == openzen.ZenEventType.SensorListingProgress:
+                lst_data = zenEvent.data.sensor_listing_progress
+                print(f"Sensor listing progress: {lst_data.progress * 100}%")
+                if lst_data.complete > 0:
+                    break
+
+        print("Sensor Listing complete, found ", len(sensors))
+        print("Listing found sensors in sensors array:\n", [sensor.name for sensor in sensors])
+        return sensors
+
+    def connect_to_sensor(self, client: openzen.ZenClient, input_sensor: openzen.ZenSensorComponent):
+        """Connects to chosen sensor and establishes a connection to it's inertial measurement unit.
+
+        Args:
+            client (openzen.ZenClient): Client object from the OpenZen-library.
+            input_sensor (openzen.ZenSensorDesc): Found sensor object from the OpenZen-library.
+
+        Returns:
+            str: Sensor name.
+            openzen.ZenSensor: Sensor object.
+            openzen.ZenSensorComponent: imu.
+        """
+        err, sensor = client.obtain_sensor(input_sensor)
+        attempts = 0
+        while not err == openzen.ZenSensorInitError.NoError:
+            attempts += 1
+            print("Error connecting to sensor")
+            print("Trying again...")
+            err, sensor = client.obtain_sensor(input_sensor)
+            if attempts >= 5:
+                print("Can't connect to sensor")
+                # sys.exit(1)
+                return
+
+        # Obtain IMU from sensor and prevent it from streaming sensor_data until asked to
+        imu = sensor.get_any_component_of_type(openzen.component_type_imu)
+        imu.set_bool_property(openzen.ZenImuProperty.StreamData, False)
+        s_name = input_sensor.name
+        battery_percent = f"{round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
+
+        print(
+            f"Connected to sensor {s_name} ({battery_percent})!", flush=True, end='')
+
+        return s_name, sensor, imu
+
+
+    def sync_sensors(self, client: openzen.ZenClient):
+        """Synchronize sensors.
+
+        Args:
+            client (openzen.ZenClient): Client object from the OpenZen-library.
+        """
+        imu_arr = []
+        for sensor_conn in self.sensor_dict.values():
+            sensor_conn.set_sampling_rate(self.sampling_rate)
+            imu_arr.append(sensor_conn.imu_obj)
+
+        # Synchronize
+        for imu in imu_arr:
+            imu.execute_property(openzen.ZenImuProperty.StartSensorSync)
+        time.sleep(5)
+        # Back to normal mode
+        for imu in imu_arr:
+            imu.execute_property(openzen.ZenImuProperty.StopSensorSync)
+
+        _remove_unsync_data(client)
+
+
+def _remove_unsync_data(client: openzen.ZenClient):
+    """Removes data events from before sensor synchronization.
+
+    Args:
+        client (openzen.ZenClient): Client object from the OpenZen-library.
+    """
+    zenEvent = client.poll_next_event()
+    while(zenEvent != None):
+        zenEvent = client.poll_next_event()

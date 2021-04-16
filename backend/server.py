@@ -174,7 +174,7 @@ def scan():
     """
     global found_sensors
     global sensor_bank
-    helper = sc.scan_for_sensors(client)
+    helper = sensor_bank.scan_for_sensors(client)
     out = {"sensors": []}
 
     for sensor in helper:
@@ -202,7 +202,7 @@ def connect():
     res = None
 
     try:
-        s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[content["name"]])
+        s_name, sensor, imu = sensor_bank.connect_to_sensor(client, found_sensors[content["name"]])
         sensor_bank.add_sensor(s_name, sensor, imu)
         s_id = sensor_bank.sensor_dict[s_name].id
         res = {
@@ -229,7 +229,7 @@ def connect_all():
     """
     global sensor_bank
     for sensor in found_sensors.values():
-        s_name, sensor, imu = sc.connect_to_sensor(client, sensor)
+        s_name, sensor, imu = sensor_bank.connect_to_sensor(client, sensor)
         sensor_bank.add_sensor(s_name, sensor, imu)
     return "All connected"
 
@@ -241,7 +241,7 @@ def sync_sensors():
     Returns:
         str: Message confirming that all sensors are synced.
     """
-    sc.sync_sensors(client, sensor_bank)
+    sensor_bank.sync_sensors(client, sensor_bank)
     return "All sensors are synced!"
 
 
@@ -285,20 +285,6 @@ def get_sensors():
     return json.dumps(out)
 
 
-@app.route("/setup/set_id", methods=["POST"])
-def set_id():
-    """Set id on sensor based on name. New id and name has to be sent in request body.
-
-    Returns:
-        str: Message confirming successful change of id.
-        http.HTTPStatus.OK: Response status code 200.
-    """
-    name = request.json["name"]
-    s_id = request.json["id"]
-    sensor_bank.set_id(name, s_id)
-    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
-
-
 """""""""""""""""""""""
 CLASSIFY
 """""""""""""""""""""""
@@ -314,7 +300,7 @@ def start_classify():
     global t_pool
     global sensor_bank
     sensor_bank.run = True
-    sc.sync_sensors(client, sensor_bank)
+    sensor_bank.sync_sensors(client)
     # keras model
     #model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
     
