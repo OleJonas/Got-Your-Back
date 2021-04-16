@@ -46,7 +46,7 @@ export const HomeView = () => {
 
 	/**
 	 * @remarks
-	 * custom React hook that fetches classifications every 3 seconds when recording is active.
+	 * custom React hook that fetches classifications every 5 seconds when recording is active.
 	 */
 	useInterval(() => {
 		if (isRecording) {
@@ -80,17 +80,17 @@ export const HomeView = () => {
 				setHasSensors(data.numberOfSensors !== 0);
 			});
 
-		const interval = setInterval(() => {
-			fetch("http://localhost:5000/status")
-				.then((response) => response.json())
-				.then((data) => {
-					if (data.isRecording !== isRecording) setIsRecording(data.isRecording);
-					if ((data.numberOfSensors !== 0) !== hasSensors) setHasSensors(data.numberOfSensors !== 0);
-				});
-		}, 9000);
-		return () => clearInterval(interval);
 		// eslint-disable-next-line
 	}, []);
+
+	useInterval(() => {
+		fetch("http://localhost:5000/status")
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.isRecording !== isRecording) setIsRecording(!isRecording);
+				if ((data.numberOfSensors !== 0) !== hasSensors) setHasSensors(data.numberOfSensors !== 0);
+			});
+	}, 9000);
 
 	return (
 		<>

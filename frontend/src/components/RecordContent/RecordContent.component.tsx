@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Grid, Box, makeStyles, Typography, IconButton } from "@material-ui/core";
-import loader from "../../assets/loader_black.svg";
+import loader from "../../assets/loader_white.svg";
 
 // Components
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
@@ -32,20 +32,20 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 			fetch("http://localhost:5000/classify/start")
 				.then((response) => response.json())
 				.then((data) => {
-					setButtonPressed(false);
 					if (data) {
 						props.setIsRecording(true);
 					}
+					setButtonPressed(false);
 				});
 		} else {
 			fetch("http://localhost:5000/classify/stop")
 				.then((response) => response.json())
 				.then((data) => {
-					setButtonPressed(false);
+					console.log("data:" + data);
 					if (!data) {
 						props.setIsRecording(false);
-						setButtonPressed(false);
 					}
+					setButtonPressed(false);
 				});
 		}
 	};
@@ -56,7 +56,8 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 				<Grid item xs={12}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<IconButton onClick={onButtonPressed} className={classes.btn} disabled={!props.hasSensors}>
-							{buttonPressed ? (
+							{console.log(buttonPressed)}
+							{buttonPressed === true ? (
 								<img src={loader} className={classes.loading} alt="Rotating loading icon" />
 							) : !props.isRecording ? (
 								<PlayArrowIcon className={classes.recordIcon} />
