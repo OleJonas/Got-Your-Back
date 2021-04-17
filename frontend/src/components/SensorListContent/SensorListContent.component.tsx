@@ -50,6 +50,10 @@ export const SensorListContent: FC<ListProps> = (props) => {
 		setSensors(helper);
 	};
 
+	/**
+	 * @remarks
+	 * useEffect that checks if sensorlist has sensors.
+	 */
 	useEffect(() => {
 		if (sensors.length === 0) props.setHasSensors(false);
 		//eslint-disable-next-line

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Grid, Box, makeStyles, Typography, IconButton } from "@material-ui/core";
 import loader from "../../assets/loader_white.svg";
 
@@ -11,6 +10,8 @@ type ClassificationProps = {
 	hasSensors: boolean;
 	isRecording: boolean;
 	setIsRecording: (bool: boolean) => void;
+	buttonPressed: boolean;
+	setButtonPressed: (bool: boolean) => void;
 };
 
 /**
@@ -20,14 +21,13 @@ type ClassificationProps = {
  */
 export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles(props);
-	const [buttonPressed, setButtonPressed] = useState<Boolean>(false);
 
 	/**
 	 * @remarks
 	 * Function that uses the API-calls to start and stop classification.
 	 */
 	const onButtonPressed = () => {
-		setButtonPressed(true);
+		props.setButtonPressed(true);
 		if (!props.isRecording) {
 			fetch("http://localhost:5000/classify/start")
 				.then((response) => response.json())
@@ -35,7 +35,6 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 					if (data) {
 						props.setIsRecording(true);
 					}
-					setButtonPressed(false);
 				});
 		} else {
 			fetch("http://localhost:5000/classify/stop")
@@ -45,7 +44,6 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 					if (!data) {
 						props.setIsRecording(false);
 					}
-					setButtonPressed(false);
 				});
 		}
 	};
@@ -56,8 +54,8 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 				<Grid item xs={12}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<IconButton onClick={onButtonPressed} className={classes.btn} disabled={!props.hasSensors}>
-							{console.log(buttonPressed)}
-							{buttonPressed === true ? (
+							{console.log(props.buttonPressed)}
+							{props.buttonPressed === true ? (
 								<img src={loader} className={classes.loading} alt="Rotating loading icon" />
 							) : !props.isRecording ? (
 								<PlayArrowIcon className={classes.recordIcon} />
