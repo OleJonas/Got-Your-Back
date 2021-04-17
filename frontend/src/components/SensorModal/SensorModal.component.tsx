@@ -172,18 +172,19 @@ const useStyles = makeStyles({
 		marginTop: "20px",
 	},
 	paper: {
-		height: "80%",
+		height: "calc(60% + 150px)",
 		width: "70%",
 	},
 	sensorBox: {
-		height: "60%",
+		height: "80%",
 		backgroundColor: "rgba(255,255,255,0.9)",
 		width: "95%",
 		margin: "auto",
 		overflow: "auto",
 	},
 	btnGrid: {
-		marginTop: "15%",
+		marginTop: "40px",
+		marginBottom: "30px",
 	},
 	"@keyframes rotate": {
 		from: {

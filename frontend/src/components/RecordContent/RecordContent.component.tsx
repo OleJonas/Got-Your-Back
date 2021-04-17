@@ -40,7 +40,6 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 			fetch("http://localhost:5000/classify/stop")
 				.then((response) => response.json())
 				.then((data) => {
-					console.log("data:" + data);
 					if (!data) {
 						props.setIsRecording(false);
 					}
@@ -54,7 +53,6 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 				<Grid item xs={12}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<IconButton onClick={onButtonPressed} className={classes.btn} disabled={!props.hasSensors}>
-							{console.log(props.buttonPressed)}
 							{props.buttonPressed === true ? (
 								<img src={loader} className={classes.loading} alt="Rotating loading icon" />
 							) : !props.isRecording ? (
