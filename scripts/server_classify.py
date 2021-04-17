@@ -8,7 +8,7 @@ from collections import Counter
 from datetime import datetime, date
 sys.path.append("scripts/")
 from Data_Queue import Data_Queue
-from sensor_bank import Sensor_Bank
+from sensor_bank import Sensor_Bank, _remove_unsync_data
 from rnn_utils import create_3d_array
 
 CLASSIFICATION_INTERVAL = 1  # Interval is in seconds
@@ -82,7 +82,7 @@ def collect_data(client: openzen.ZenClient, sensor_bank: Sensor_Bank):
                 break
     for row in tmp_rows:
         data_queue.push(row[0], row[1:])
-    
+
     while sensor_bank.run:
         row = None
         zenEvent = client.wait_for_next_event()
@@ -133,14 +133,13 @@ def classify(model, sensor_bank: Sensor_Bank, type="rfc"):
             data = top_row[0][0][1:]
             for i in range(1, data_queue.n_sensors):
                 data += top_row[i][0][1:]
-
             values.append(data)
 
         if(len(values) == sensor_bank.sampling_rate):
             start_time_classify = time.perf_counter()
             values_np = np.array(values)
             arr = None
-            
+
             if type == "cnn":
                 arr = values_np.reshape(values_np.shape[0], values_np.shape[1], 1)
             elif type == "rnn":
@@ -149,20 +148,17 @@ def classify(model, sensor_bank: Sensor_Bank, type="rfc"):
                 arr = values_np.reshape(values_np.shape[0], values_np.shape[1])
             else:
                 arr = np.array(values)
-            
             classify = np.array(model(arr) if type != "rfc" else model.predict(arr))
-            print(classify)
             classification = None
-            
+
             if type != "rfc":
                 argmax = [classification.argmax() for classification in classify]
-                print(argmax)
                 end_time_classify = time.perf_counter() - start_time_classify
                 classification = Counter(argmax).most_common(1)[0][0]
             else:
                 end_time_classify = time.perf_counter() - start_time_classify
                 classification = Counter(classify).most_common(1)[0][0]
-            
+
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
             with open(_classification_fname(), 'a+', newline='') as file:
                 _write_to_csv(csv.writer(file), classification)

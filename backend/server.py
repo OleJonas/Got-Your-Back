@@ -161,6 +161,11 @@ def get_dummy_found_sensors():
     return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
 
 
+"""""""""""""""""""""""
+SENSORCONNECTION
+"""""""""""""""""""""""
+
+
 @app.route("/setup/scan")
 def scan():
     """
@@ -212,12 +217,8 @@ def connect():
         }
     except:
         res = json.dumps({'success': False, 'error': "Could not connect to sensor, please try again..."}), 503, {'ContentType': 'application/json'}
-    
+
     return res
-    """
-    print("Could not connect to sensor, please try again...")
-    return {"error": "Could not conect to sensor, please try again..."}
-    """
 
 
 @app.route("/setup/connect_all")
@@ -303,7 +304,7 @@ def start_classify():
     sensor_bank.sync_sensors(client)
     # keras model
     #model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
-    
+
     rfc_model = load(f"model/models/RFC_model_{len(sensor_bank.sensor_dict)}.joblib")
     classify_thread = threading.Thread(target=sc.classify, args=[rfc_model, sensor_bank], daemon=True)
     collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)

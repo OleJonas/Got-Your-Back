@@ -93,7 +93,7 @@ export const HomeView = () => {
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.isRecording !== isRecording) setIsRecording(!isRecording);
-				if ((data.numberOfSensors !== 0) !== hasSensors) setHasSensors(data.numberOfSensors !== 0);
+				if ((data.numberOfSensors !== 0) !== hasSensors) setHasSensors(true);
 			});
 	}, 9000);
 

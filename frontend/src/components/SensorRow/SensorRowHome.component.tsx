@@ -16,8 +16,8 @@ type SensorProps = {
 };
 
 /**
- * 
- * @param props 
+ *
+ * @param props
  * @returns A functional component showing data for the sensor
  */
 export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
@@ -28,7 +28,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	/**
 	 * @remarks
 	 * Does an async call to disconnect from the desired sensor.
-	 * 
+	 *
 	 * @param name A string containing the sensors name
 	 * @param id A number used to identify each sensor.
 	 */
@@ -75,32 +75,40 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	}, []);
 
 	return (
-		<Grid container className={classes.root} direction="row" justify="center" alignItems="center">
-			<Grid item direction="row" justify="center" xs={2}>
+		<Grid container className={classes.root} justify="flex-start" alignItems="center">
+			<Grid item xs={2}>
 				<BluetoothConnectedIcon className={classes.icon} />
 			</Grid>
-			<Grid item direction="row" justify="flex-start" xs={3}>
+			<Grid item xs={3}>
 				<Typography variant="body2" color="textPrimary">
 					{props.name}
 				</Typography>
 			</Grid>
-			<Grid item direction="row" justify="flex-start" xs={3}>
+			<Grid item xs={3}>
 				<Typography variant="body2" color="textPrimary">
 					{props.position}
 				</Typography>
 			</Grid>
-			<Grid item direction="row" justify="center" xs={1}>
+			<Grid item xs={1}>
 				<Typography variant="body2" color="textPrimary">
 					{props.id}
 				</Typography>
 			</Grid>
-			<Grid item direction="row" justify="center" xs={1}>
+			<Grid item xs={1}>
 				<Typography variant="body2" color="textPrimary">
 					{batteryPercent + "%"}
 				</Typography>
 			</Grid>
-			<Grid container justify="center" item xs={2}>
-				<SensorButton type="disconnect" status={connected} func={() => disconnect(props.name, props.id)} sensorid={props.id} disabled={props.busy} />
+			<Grid item xs={2}>
+				<Grid container justify="center">
+					<SensorButton
+						type="disconnect"
+						status={connected}
+						func={() => disconnect(props.name, props.id)}
+						sensorid={props.id}
+						disabled={props.busy}
+					/>
+				</Grid>
 			</Grid>
 		</Grid>
 	);

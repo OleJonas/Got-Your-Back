@@ -100,6 +100,7 @@ export const SensorListContent: FC<ListProps> = (props) => {
 	const mapSensors = sensors.map((sensor: Sensor) => {
 		return (
 			<SensorRowHome
+				key={sensor.id}
 				connected={true}
 				id={sensor.id}
 				busy={props.recording}
@@ -125,47 +126,56 @@ export const SensorListContent: FC<ListProps> = (props) => {
 
 	return (
 		<Grid container className={classes.root}>
-			<Grid container item className={classes.header} xs={12}>
-				<Grid item xs={2}></Grid>
-				<Grid item justify="flex-start" xs={3}>
-					<Typography variant="h5" color="textPrimary">
-						Sensor name
-					</Typography>
-				</Grid>
-				<Grid item justify="flex-start" xs={3}>
-					<Typography variant="h5" color="textPrimary">
-						Placement
-					</Typography>
-				</Grid>
-				<Grid item justify="flex-start" xs={1}>
-					<Typography variant="h5" color="textPrimary">
-						Id
-					</Typography>
-				</Grid>
-				<Grid item justify="flex-start" xs={1}>
-					<Typography variant="h5" color="textPrimary">
-						Battery
-					</Typography>
-				</Grid>
-				<Grid item justify="flex-start" xs={2}>
-					<Typography variant="h5" color="textPrimary"></Typography>
-				</Grid>
-				<Grid xs={12}>
-					<hr className={classes.hr} />
+			<Grid item xs={12}>
+				<Grid container className={classes.header}>
+					<Grid item xs={2}></Grid>
+					<Grid item xs={3}>
+						<Typography variant="h5" color="textPrimary">
+							Sensor name
+						</Typography>
+					</Grid>
+					<Grid item xs={3}>
+						<Typography variant="h5" color="textPrimary">
+							Placement
+						</Typography>
+					</Grid>
+					<Grid item xs={1}>
+						<Typography variant="h5" color="textPrimary">
+							Id
+						</Typography>
+					</Grid>
+					<Grid item xs={1}>
+						<Typography variant="h5" color="textPrimary">
+							Battery
+						</Typography>
+					</Grid>
+					<Grid item xs={2}>
+						<Typography variant="h5" color="textPrimary"></Typography>
+					</Grid>
+					<Grid item xs={12}>
+						<hr className={classes.hr} />
+					</Grid>
 				</Grid>
 			</Grid>
 			<Grid item xs={12} className={classes.container}>
 				{mapSensors}
 			</Grid>
-			<Grid xs={12} item container className={classes.button}>
-				<Button func={openModal} disabled={props.recording}>
-					Scan
-				</Button>
-				{open ? (
-					<SensorModal sendSensors={addSensors} alreadyConnected={getSensorsConnectedNames()} close={closeModal} open={open}></SensorModal>
-				) : (
-					<></>
-				)}
+			<Grid item xs={12}>
+				<Grid container className={classes.button}>
+					<Button func={openModal} disabled={props.recording}>
+						Scan
+					</Button>
+					{open ? (
+						<SensorModal
+							sendSensors={addSensors}
+							alreadyConnected={getSensorsConnectedNames()}
+							close={closeModal}
+							open={open}
+						></SensorModal>
+					) : (
+						<></>
+					)}
+				</Grid>
 			</Grid>
 		</Grid>
 	);
