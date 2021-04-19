@@ -1,6 +1,6 @@
 import { FC, useState, useEffect } from "react";
 import { Box, ButtonBase, Typography, makeStyles, Tooltip, ClickAwayListener } from "@material-ui/core";
-import loader from "../../assets/loader_black.svg";
+import loader from "../../assets/loader_white.svg";
 import sensor_placement from "../../utils/sensor_placement";
 
 // Components
@@ -10,7 +10,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 
 type ButtonProps = {
 	type: "connect" | "disconnect";
-	func?: any;
+	func?: any;	
 	sensorid: number;
 	disabled?: boolean;
 	status?: boolean;

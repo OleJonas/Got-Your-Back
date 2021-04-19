@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Grid, Box, makeStyles, Typography } from "@material-ui/core";
 
 // Components
@@ -22,6 +22,7 @@ export const HomeView = () => {
 	const lastPosture: number =
 		datapoints && Object.values(datapoints).length !== 0 ? (Object.values(datapoints)[Object.values(datapoints).length - 1] as number) : -1;
 	const samplingRate: number = 5;
+	const [buttonPressed, setButtonPressed] = useState<boolean>(false);
 	const [isRecording, setIsRecording] = useState<boolean>(false);
 	const [hasSensors, setHasSensors] = useState<boolean>(false);
 
@@ -46,7 +47,7 @@ export const HomeView = () => {
 
 	/**
 	 * @remarks
-	 * custom React hook that fetches classifications every 3 seconds when recording is active.
+	 * custom React hook that fetches classifications every 5 seconds when recording is active.
 	 */
 	useInterval(() => {
 		if (isRecording) {
@@ -70,7 +71,7 @@ export const HomeView = () => {
 
 	/**
 	 * @remarks
-	 * useEffect that fetches status of the sensors on render and every ninth second.
+	 * useEffect that fetches status of the sensors on render.
 	 */
 	useEffect(() => {
 		fetch("http://localhost:5000/status")
@@ -80,17 +81,27 @@ export const HomeView = () => {
 				setHasSensors(data.numberOfSensors !== 0);
 			});
 
-		const interval = setInterval(() => {
-			fetch("http://localhost:5000/status")
-				.then((response) => response.json())
-				.then((data) => {
-					if (data.isRecording !== isRecording) setIsRecording(data.isRecording);
-					if ((data.numberOfSensors !== 0) !== hasSensors) setHasSensors(data.numberOfSensors !== 0);
-				});
-		}, 9000);
-		return () => clearInterval(interval);
 		// eslint-disable-next-line
 	}, []);
+
+	/**
+	 * @remarks
+	 * custom React hook that fetches status of the sensors every 9 seconds.
+	 */
+	useInterval(() => {
+		fetch("http://localhost:5000/status")
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.isRecording !== isRecording) setIsRecording(!isRecording);
+				if ((data.numberOfSensors !== 0) !== hasSensors) setHasSensors(true);
+			});
+	}, 9000);
+
+	useMemo(
+		() => setButtonPressed(false),
+		//eslint-disable-next-line
+		[isRecording]
+	);
 
 	return (
 		<>
@@ -128,7 +139,9 @@ export const HomeView = () => {
 									posture={lastPosture}
 									hasSensors={hasSensors}
 									isRecording={isRecording}
+									buttonPressed={buttonPressed}
 									setIsRecording={(bool: boolean) => setIsRecording(bool)}
+									setButtonPressed={(bool: boolean) => setButtonPressed(bool)}
 								></RecordContent>
 							</ContentBox>
 						</Grid>

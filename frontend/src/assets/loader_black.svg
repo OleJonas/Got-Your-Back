@@ -5,5 +5,9 @@
 <style type="text/css">
 	.st0{fill:none;stroke:#000000;stroke-width:10;stroke-miterlimit:8;stroke-dasharray:150.7964,54.2655;}
 </style>
-<circle class="st0" cx="100" cy="100" r="32"/>
+<g id="Loader">
+	<g>
+		<circle class="st0" cx="100" cy="100" r="32"/>
+	</g>
+</g>
 </svg>

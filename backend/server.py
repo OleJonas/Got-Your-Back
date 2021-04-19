@@ -161,6 +161,11 @@ def get_dummy_found_sensors():
     return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
 
 
+"""""""""""""""""""""""
+SENSORCONNECTION
+"""""""""""""""""""""""
+
+
 @app.route("/setup/scan")
 def scan():
     """
@@ -174,7 +179,7 @@ def scan():
     """
     global found_sensors
     global sensor_bank
-    helper = sc.scan_for_sensors(client)
+    helper = sensor_bank.scan_for_sensors(client)
     out = {"sensors": []}
 
     for sensor in helper:
@@ -202,7 +207,7 @@ def connect():
     res = None
 
     try:
-        s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[content["name"]])
+        s_name, sensor, imu = sensor_bank.connect_to_sensor(client, found_sensors[content["name"]])
         sensor_bank.add_sensor(s_name, sensor, imu)
         s_id = sensor_bank.sensor_dict[s_name].id
         res = {
@@ -212,12 +217,8 @@ def connect():
         }
     except:
         res = json.dumps({'success': False, 'error': "Could not connect to sensor, please try again..."}), 503, {'ContentType': 'application/json'}
-    
+
     return res
-    """
-    print("Could not connect to sensor, please try again...")
-    return {"error": "Could not conect to sensor, please try again..."}
-    """
 
 
 @app.route("/setup/connect_all")
@@ -229,7 +230,7 @@ def connect_all():
     """
     global sensor_bank
     for sensor in found_sensors.values():
-        s_name, sensor, imu = sc.connect_to_sensor(client, sensor)
+        s_name, sensor, imu = sensor_bank.connect_to_sensor(client, sensor)
         sensor_bank.add_sensor(s_name, sensor, imu)
     return "All connected"
 
@@ -241,7 +242,7 @@ def sync_sensors():
     Returns:
         str: Message confirming that all sensors are synced.
     """
-    sc.sync_sensors(client, sensor_bank)
+    sensor_bank.sync_sensors(client, sensor_bank)
     return "All sensors are synced!"
 
 
@@ -285,20 +286,6 @@ def get_sensors():
     return json.dumps(out)
 
 
-@app.route("/setup/set_id", methods=["POST"])
-def set_id():
-    """Set id on sensor based on name. New id and name has to be sent in request body.
-
-    Returns:
-        str: Message confirming successful change of id.
-        http.HTTPStatus.OK: Response status code 200.
-    """
-    name = request.json["name"]
-    s_id = request.json["id"]
-    sensor_bank.set_id(name, s_id)
-    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
-
-
 """""""""""""""""""""""
 CLASSIFY
 """""""""""""""""""""""
@@ -314,10 +301,10 @@ def start_classify():
     global t_pool
     global sensor_bank
     sensor_bank.run = True
-    sc.sync_sensors(client, sensor_bank)
+    sensor_bank.sync_sensors(client)
     # keras model
     #model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
-    
+
     rfc_model = load(f"model/models/RFC_model_{len(sensor_bank.sensor_dict)}.joblib")
     classify_thread = threading.Thread(target=sc.classify, args=[rfc_model, sensor_bank], daemon=True)
     collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)

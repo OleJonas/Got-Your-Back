@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { Grid, Box, makeStyles, Typography, IconButton } from "@material-ui/core";
-import loader from "../../assets/loader_black.svg";
+import loader from "../../assets/loader_white.svg";
 
 // Components
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
@@ -11,6 +10,8 @@ type ClassificationProps = {
 	hasSensors: boolean;
 	isRecording: boolean;
 	setIsRecording: (bool: boolean) => void;
+	buttonPressed: boolean;
+	setButtonPressed: (bool: boolean) => void;
 };
 
 /**
@@ -20,19 +21,17 @@ type ClassificationProps = {
  */
 export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles(props);
-	const [buttonPressed, setButtonPressed] = useState<Boolean>(false);
 
 	/**
 	 * @remarks
 	 * Function that uses the API-calls to start and stop classification.
 	 */
 	const onButtonPressed = () => {
-		setButtonPressed(true);
+		props.setButtonPressed(true);
 		if (!props.isRecording) {
 			fetch("http://localhost:5000/classify/start")
 				.then((response) => response.json())
 				.then((data) => {
-					setButtonPressed(false);
 					if (data) {
 						props.setIsRecording(true);
 					}
@@ -41,10 +40,8 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 			fetch("http://localhost:5000/classify/stop")
 				.then((response) => response.json())
 				.then((data) => {
-					setButtonPressed(false);
 					if (!data) {
 						props.setIsRecording(false);
-						setButtonPressed(false);
 					}
 				});
 		}
@@ -52,11 +49,11 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 
 	return (
 		<Box className={classes.root}>
-			<Grid className={classes.grid} justify="center" alignItems="center" container item xs={12}>
+			<Grid container className={classes.grid} justify="center" alignItems="center">
 				<Grid item xs={12}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<IconButton onClick={onButtonPressed} className={classes.btn} disabled={!props.hasSensors}>
-							{buttonPressed ? (
+							{props.buttonPressed === true ? (
 								<img src={loader} className={classes.loading} alt="Rotating loading icon" />
 							) : !props.isRecording ? (
 								<PlayArrowIcon className={classes.recordIcon} />

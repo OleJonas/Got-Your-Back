@@ -109,18 +109,22 @@ export const SensorModal: FC<modalProps> = (props) => {
 							</Box>
 						) : (
 							<Box>
-								<Grid className={classes.columns} container xs={12}>
-									<Grid container className={classes.grid} justify="flex-start" item xs={5}>
-										<Typography variant="h6">Sensor name</Typography>
+								<Grid container className={classes.columns} justify="flex-start">
+									<Grid item xs={5}>
+										<Grid container className={classes.grid} justify="flex-start">
+											<Typography variant="h6">Sensor name</Typography>
+										</Grid>
 									</Grid>
-									<Grid container className={classes.grid} justify="flex-start" item xs={3}>
-										<Typography variant="h6">Status</Typography>
+									<Grid item xs={3}>
+										<Grid container className={classes.grid} justify="flex-start">
+											<Typography variant="h6">Status</Typography>
+										</Grid>
 									</Grid>
-									<Grid container className={classes.grid} justify="center" item xs={2}></Grid>
+									<Grid item xs={2}></Grid>
 								</Grid>
 
 								{sensorsFound ? (
-									sensorsFound.map((sensor: Sensor) => <SensorRowModal clickConnect={addConnected} name={sensor.name} />)
+									sensorsFound.map((sensor: Sensor) => <SensorRowModal key={sensor.name} clickConnect={addConnected} name={sensor.name} />)
 								) : (
 									<></>
 								)}
@@ -154,7 +158,6 @@ const useStyles = makeStyles({
 		height: "1000px",
 	},
 	grid: {
-		justify: "center",
 		alignItems: "center",
 		paddingLeft: "30px",
 	},
@@ -172,18 +175,19 @@ const useStyles = makeStyles({
 		marginTop: "20px",
 	},
 	paper: {
-		height: "80%",
+		height: "calc(60% + 150px)",
 		width: "70%",
 	},
 	sensorBox: {
-		height: "60%",
+		height: "80%",
 		backgroundColor: "rgba(255,255,255,0.9)",
 		width: "95%",
 		margin: "auto",
 		overflow: "auto",
 	},
 	btnGrid: {
-		marginTop: "15%",
+		marginTop: "40px",
+		marginBottom: "30px",
 	},
 	"@keyframes rotate": {
 		from: {
