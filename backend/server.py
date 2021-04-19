@@ -143,7 +143,7 @@ def dummy_get_sensors():
         out["sensors"].append({
             "name": s.name,
             "id": s.id,
-            "battery": "50.0"
+            "battery": "69.420"
         })
     return json.dumps(out)
 
