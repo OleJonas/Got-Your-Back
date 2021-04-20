@@ -1,7 +1,7 @@
 import os
 import sys
 import csv
-import datetime
+from datetime import datetime, date, timedelta
 # sys.path.append(os.path.abspath("./lib/openzen/build"))
 import openzen
 import threading
@@ -407,11 +407,11 @@ def get_classifications_history():
     days = int(request.args.get("duration"))
     res = dict()
     filearray = os.listdir("./classifications/")
-    startDate = (datetime.date.today() - datetime.timedelta(days=days))
+    startDate = (date.today() - timedelta(days=days))
 
     # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
     for i in range(0, days):
-        ith_Day = startDate + datetime.timedelta(days=i)
+        ith_Day = startDate + timedelta(days=i)
         ith_Day_str = ith_Day.strftime("%Y-%m-%d")
         classifications = np.zeros(9)
 
@@ -469,20 +469,44 @@ User reports
 """
 
 
+def _get_report_fname():
+    return f'./reports/{datetime.now().year}-{datetime.now().month}/{date.today().strftime("%Y-%m-%d")}.csv'
+
+
 @app.route("/report/send", methods=["POST"])
-def report():
+def write_report():
     """Write how the user feels to file
     """
     req = request.json
     user_status = req["status"]
-    with open("reports/test.txt", 'a+', newline='') as file:
+    with open(_get_report_fname(), 'a+', newline='') as file:
         try:
             sc._write_to_csv(csv.writer(file), user_status)
         except:
             print("Could not write to file :(")
             return json.dumps({'success': False}), 507, {'ContentType': 'application/json'}
-
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+
+
+@app.route("/report/fetch")
+def get_report():
+    """Fetch user reports
+    """
+    try:
+        year = request.args.get('year')
+        month = request.args.get('month')
+        file_array = os.listdir(f"./reports/{year}-{month}")
+        rows = []
+        for fname in file_array:
+            with open(f"./reports/{year}-{month}/{fname}", 'r') as file:
+                try:
+                    for row in csv.reader(file):
+                        rows.append(row)
+                except IndexError:  # empty file
+                    return json.dumps({'FileEmpty': True}), 507, {'ContentType': 'application/json'}
+        return {"data": rows}
+    except FileNotFoundError:
+        return json.dumps({'Error': "FileNotFound"}), 507, {'ContentType': 'application/json'}
 
 
 def shutdown():
