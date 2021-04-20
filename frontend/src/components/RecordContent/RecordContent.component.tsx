@@ -1,12 +1,14 @@
 import { Grid, Box, makeStyles, Typography, IconButton } from "@material-ui/core";
 import loader from "../../assets/loader_white.svg";
+import { useState } from "react"
 
 // Components
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
+import StatusPopup from "../StatusPopup/StatusPopup.component";
 
 type ClassificationProps = {
-	posture: number;
+	posture: number;		
 	hasSensors: boolean;
 	isRecording: boolean;
 	setIsRecording: (bool: boolean) => void;
@@ -21,6 +23,7 @@ type ClassificationProps = {
  */
 export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles(props);
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
 
 	/**
 	 * @remarks
@@ -44,8 +47,13 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 						props.setIsRecording(false);
 					}
 				});
+			setModalOpen(true);
 		}
 	};
+
+	const close = () => {
+		setModalOpen(false);
+	}
 
 	return (
 		<Box className={classes.root}>
@@ -65,6 +73,14 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 					<Typography variant="h2" color="textPrimary">
 						{props.hasSensors ? (props.isRecording ? "Recording" : "Paused") : "Missing sensors"}
 					</Typography>
+					{modalOpen ? (
+						<StatusPopup
+							close={close}
+							open={modalOpen}
+						></StatusPopup>
+					) : (
+						<></>
+					)}
 				</Grid>
 			</Grid>
 		</Box>
