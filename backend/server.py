@@ -2,10 +2,9 @@ import os
 import sys
 import csv
 import datetime
+# sys.path.append(os.path.abspath("./lib/openzen/build"))
 import openzen
-import keras
 import threading
-import time
 import atexit
 import json
 import numpy as np

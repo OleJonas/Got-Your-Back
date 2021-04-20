@@ -1,9 +1,8 @@
-import time
 import sys
+import time
 import csv
 import numpy as np
 import openzen
-import keras
 from collections import Counter
 from datetime import datetime, date
 sys.path.append("scripts/")

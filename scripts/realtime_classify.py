@@ -5,7 +5,6 @@ After the connection is established, a new thread is made. This thread is suppos
 classification, such as loading the right model, and write the classifications in realtime to a file and terminal. 
 Further on, the main task of the main thread is to flush excess data, synchronize and collecting data until killed.
 """
-
 import time
 import sys
 import threading
@@ -294,7 +293,7 @@ def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, 
             start_time_classify = time.perf_counter()
             values_np = np.array(values)
             arr = None
-            
+
             if type == "cnn":
                 arr = values_np.reshape(values_np.shape[0], values_np.shape[1], 1)
             elif type == "rnn":
@@ -303,11 +302,11 @@ def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, 
                 arr = values_np.reshape(values_np.shape[0], values_np.shape[1])
             else:
                 arr = np.array(values)
-            
+
             classify = np.array(model(arr) if type != "rfc" else model.predict(arr))
             print(classify)
             classification = None
-            
+
             if type != "rfc":
                 argmax = [classification.argmax() for classification in classify]
                 print(argmax)
@@ -316,9 +315,9 @@ def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, 
             else:
                 end_time_classify = time.perf_counter() - start_time_classify
                 classification = Counter(classify).most_common(1)[0][0]
-            
+
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
-            with open('./classifications/classifications.csv', 'a+',newline='') as file:
+            with open('./classifications/classifications.csv', 'a+', newline='') as file:
                 _write_to_csv(csv.writer(file), classification)
                 values = []
 
