@@ -23,7 +23,21 @@ export const StatusPopup: FC<modalProps> = (props) => {
 		// eslint-disable-next-line
 	}, [props.open]);
 
+    const sendText = () => {
+        fetch("http://localhost:5000/report/send", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json",
+			},
+			body: JSON.stringify({
+				status: text,
+			}),
+        })
+    }
+
 	const handleClose = () => {
+        sendText();
         console.log(text);
 		props.close();
 		setOpen(false);
@@ -77,7 +91,15 @@ type textFieldProps = {
 
 const TextFieldWithState: FC<textFieldProps> = (props) => {
     return(
-        <TextField id="standard-basic" label="Write here??? Hmmmm yes thank you cool! Yeah!" onChange={(e) => {props.updateText(e.target.value)}} />
+        <TextField
+          id="outlined-multiline-flexible"
+          label="Write text here"
+          multiline
+          onChange={(e) => {props.updateText(e.target.value)}}
+          margin="normal"
+          variant="outlined"
+          fullWidth
+        />
     )
 }
 
@@ -90,7 +112,7 @@ const useStyles = makeStyles({
 		borderRadius: "0",
 	},
 	dialogContent: {
-		height: "1000px",
+		height: "100px",
 	},
 	grid: {
 		alignItems: "center",
@@ -110,7 +132,7 @@ const useStyles = makeStyles({
 		marginTop: "20px",
 	},
 	paper: {
-		height: "calc(60% + 150px)",
+		height: "calc(30% + 100px)",
 		width: "70%",
 	},
 	sensorBox: {
@@ -118,11 +140,10 @@ const useStyles = makeStyles({
 		backgroundColor: "rgba(255,255,255,0.9)",
 		width: "95%",
 		margin: "auto",
-		overflow: "auto",
 	},
 	btnGrid: {
-		marginTop: "40px",
-		marginBottom: "30px",
+		marginTop: "20px",
+		marginBottom: "15px",
 	},
 	"@keyframes rotate": {
 		from: {

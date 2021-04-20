@@ -95,7 +95,7 @@ def collect_data(client: openzen.ZenClient, sensor_bank: Sensor_Bank):
             continue
 
 
-def _write_to_csv(writer: csv.writer, classification: int):
+def _write_to_csv(writer: csv.writer, classification):
     """Write classification to csv.
 
     Args:
