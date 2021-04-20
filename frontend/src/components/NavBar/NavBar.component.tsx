@@ -47,11 +47,20 @@ export const NavBar: FC = () => {
 						</Box>
 					</Link>
 				</Grid>
-				<Grid item xs={10}>
+				{/* <Grid item xs={10}>
 					<Link href="#/about">
 						<Box m={1.2}>
 							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/about" ? "primary" : "textPrimary"}>
 								About
+							</Typography>
+						</Box>
+					</Link>
+				</Grid> */}
+				<Grid item xs={10}>
+					<Link href="#/report">
+						<Box m={1.2}>
+							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/report" ? "primary" : "textPrimary"}>
+								Reports
 							</Typography>
 						</Box>
 					</Link>

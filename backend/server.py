@@ -463,9 +463,11 @@ def get_status():
         "numberOfSensors": len(sensor_bank.sensor_dict)
     }
 
+
 """
 User reports
 """
+
 
 @app.route("/report/send", methods=["POST"])
 def report():
@@ -481,8 +483,6 @@ def report():
             return json.dumps({'success': False}), 507, {'ContentType': 'application/json'}
 
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
-
-
 
 
 def shutdown():
