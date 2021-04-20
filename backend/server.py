@@ -142,7 +142,7 @@ def dummy_get_sensors():
         out["sensors"].append({
             "name": s.name,
             "id": s.id,
-            "battery": "50.0"
+            "battery": "69.420"
         })
     return json.dumps(out)
 
@@ -462,6 +462,27 @@ def get_status():
         "isRecording": sensor_bank.run,
         "numberOfSensors": len(sensor_bank.sensor_dict)
     }
+
+"""
+User reports
+"""
+
+@app.route("/report/send", methods=["POST"])
+def report():
+    """Write how the user feels to file
+    """
+    req = request.json
+    user_status = req["status"]
+    with open("reports/test.txt", 'a+', newline='') as file:
+        try:
+            sc._write_to_csv(csv.writer(file), user_status)
+        except:
+            print("Could not write to file :(")
+            return json.dumps({'success': False}), 507, {'ContentType': 'application/json'}
+
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+
+
 
 
 def shutdown():
