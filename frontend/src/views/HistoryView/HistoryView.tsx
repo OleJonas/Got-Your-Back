@@ -11,8 +11,6 @@ import { ContentBox } from "../../components/ContentBox/ContentBox.component";
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { ColumnChart } from "../../components/ColumnChart/ColumnChart.component";
 
-// DENNE MÅ NOEN ANDRE KOMMENTERE ANER IKKE HVA JEG SKAL SKRIVE HER
-
 /**
  *
  * @returns The history page showing statistics from the last few days all the way back to months.
@@ -21,12 +19,8 @@ export const HistoryView = () => {
 	const [durationLine, setDurationLine] = useState<number>(7);
 	const [durationColumn, setDurationColumn] = useState<number>(7);
 	const classes = useStyles();
-	const [datapointsLine, setDatapointsLine] = useState<any>({
-		"1998-09-10 08:25:50": "1",
-	});
-	const [datapointsColumn, setDatapointsColumn] = useState<any>({
-		"1998-09-10 08:25:50": "1",
-	});
+	const [datapointsLine, setDatapointsLine] = useState<any>({});
+	const [datapointsColumn, setDatapointsColumn] = useState<any>({});
 
 	useEffect(() => {
 		fetch("http://localhost:5000/classifications/history?duration=" + durationLine, {

@@ -496,7 +496,8 @@ def get_report():
     try:
         year = int(request.args.get('year'))
         month = '%02d' % int(request.args.get('month'))
-        file_array = os.listdir(f'./reports/{year}-{month}')
+        paths = sorted(Path(f"./reports/{year}-{month}").iterdir(), key=os.path.getmtime)
+        file_array = [path.name for path in paths if not path.name.startswith(".")]
         rows = []
         for fname in file_array:
             with open(f"./reports/{year}-{month}/{fname}", 'r') as file:
@@ -515,7 +516,7 @@ def get_report():
 @ app.route("/reports/available")
 def get_report_months_available():
     paths = sorted(Path("./reports/").iterdir(), key=os.path.getmtime)
-    res = [path.name for path in paths]
+    res = [path.name for path in paths if not path.name.startswith(".")]
     return {"data": res}
 
 
