@@ -22,6 +22,9 @@ export const HistoryView = () => {
 	const [datapointsLine, setDatapointsLine] = useState<any>({});
 	const [datapointsColumn, setDatapointsColumn] = useState<any>({});
 
+	/**
+	 * Fetches classifications for a given duration (X number of days back in time) for the line chart
+	 */ 
 	useEffect(() => {
 		fetch("http://localhost:5000/classifications/history?duration=" + durationLine, {
 			headers: {
@@ -35,6 +38,9 @@ export const HistoryView = () => {
 			});
 	}, [durationLine]);
 
+	/**
+	 * Fetches classifications for a given duration (X number of days back in time) for the column chart
+	 */ 
 	useEffect(() => {
 		fetch("http://localhost:5000/classifications/history?duration=" + durationColumn, {
 			headers: {
@@ -48,14 +54,27 @@ export const HistoryView = () => {
 			});
 	}, [durationColumn]);
 
+	/**
+	 * 
+	 * @param event 
+	 * Sets duration (# of days back in time) for line chart
+	 */
 	const handleChangeLine = (event: any) => {
 		setDurationLine(event.target.value);
 	};
 
+	/**
+	 * 
+	 * @param event 
+	 * Sets duration (# of days back in time) for column chart
+	 */
 	const handleChangeColumn = (event: any) => {
 		setDurationColumn(event.target.value);
 	};
 
+	/**
+	 * 
+	 */
 	return (
 		<>
 			<Grid container justify="center" className={classes.root}>
