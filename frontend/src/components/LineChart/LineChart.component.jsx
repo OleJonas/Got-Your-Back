@@ -71,6 +71,7 @@ export const LineChart = (props) => {
 					bottom: 50,
 					left: 110,
 				},
+				pointSize: 5,
 				hAxis: {
 					title: "Timestamps",
 					textStyle: { color: "#FFF" },
@@ -98,7 +99,7 @@ export const LineChart = (props) => {
 					titleTextStyle: { color: "#FFF" },
 					gridlines: { color: "#5e5e5e" },
 				},
-				crosshair: {orientation: 'vertical', trigger: 'focus'},
+				crosshair: { orientation: "vertical", trigger: "focus" },
 				explorer: {
 					actions: props.actions ? props.actions : ["dragToPan", "rightClickToReset"],
 				},
