@@ -12,8 +12,10 @@ import {
 	Paper,
 	Select,
 	MenuItem,
+	FormControl,
+	InputLabel,
 } from "@material-ui/core";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
@@ -23,11 +25,20 @@ type reportData = {
 	caption: string;
 };
 
+
+
+function formatMonthYear(year: number, month: number){
+	return 
+}
+
 export const ReportView = () => {
 	const classes = useStyles();
 	const [data, setData] = useState<reportData[]>();
-	const [selectedDate, setSelectedDate] = useState([2021, 4]);
-	const [availableDates, setAvailableDates] = useState([]);
+	const today = new Date();
+	const [selectedDate, setSelectedDate] = useState(["" + today.getFullYear(), ("0" + (today.getMonth() + 1)).slice(-2)]);
+	const [availableDates, setAvailableDates] = useState<object[]>();
+
+	console.log(selectedDate);
 
 	useEffect(() => {
 		fetch("http://localhost:5000/reports/available", {
@@ -38,8 +49,13 @@ export const ReportView = () => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data);
-				let rows = "";
+				let res: any[] = [];
+				data["data"].map((row: string) => {
+					let splitDate: string[] = row.split("-");
+					res.push(<MenuItem value={[splitDate[0], splitDate[1]]}>{splitDate[1] + "." + splitDate[0]}</MenuItem>);
+				});
+				console.log(res);
+				setAvailableDates(res);
 			})
 			.catch(function (error) {});
 		//eslint-disable-next-line
@@ -54,7 +70,6 @@ export const ReportView = () => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data);
 				let rows: reportData[] = [];
 				data["data"].map((row: string[]) => rows.push(createData(row[0], row[1])));
 				setData(rows);
@@ -88,25 +103,30 @@ export const ReportView = () => {
 						</Grid>
 						<Grid container item xs={11} justify="flex-start">
 							<Box my={1} mx={0.5}>
-								<Select
-									labelId="durationLine-controlled-open-select-label"
-									id="durationLine-controlled-open-select"
-									value={selectedDate}
-									onChange={handleChangeDate}
-									inputProps={{
-										classes: {
-											icon: classes.icon,
-										},
-									}}
-								>
-									<MenuItem value={7}>7 days</MenuItem>
-									<MenuItem value={14}>14 days</MenuItem>
-									<MenuItem value={30}>30 days</MenuItem>
-								</Select>
+								<FormControl className={classes.dropdown}>
+									<InputLabel id="durationLine-controlled-open-select-label">
+										<Typography variant="h5" color="textPrimary">
+											Date
+										</Typography>
+									</InputLabel>
+									<Select
+										labelId="durationLine-controlled-open-select-label"
+										id="durationLine-controlled-open-select"
+										value={selectedDate}
+										// defaultValue={["" + today.getFullYear(), ("0" + (today.getMonth() + 1)).slice(-2)]}
+										onChange={handleChangeDate}
+										inputProps={{
+											classes: {
+												icon: classes.icon,
+											},
+										}}
+									>
+										{availableDates}
+									</Select>
+								</FormControl>
 							</Box>
 							<TableContainer component={Paper} className={classes.tableContainer}>
 								<Table className={classes.table} aria-label="caption table">
-									<caption>Table showing reports for each record session.</caption>
 									<TableHead>
 										<TableRow>
 											<TableCell>Date</TableCell>
@@ -157,9 +177,12 @@ const useStyles = makeStyles({
 		width: "100%",
 	},
 	tableContainer: {
-		padding: "20px 40px",
+		padding: "20px 40px 40px 40px",
 	},
 	icon: {
 		fill: "white",
+	},
+	dropdown: {
+		minWidth: 100,
 	},
 });
