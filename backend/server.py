@@ -429,6 +429,39 @@ def get_classifications_history():
     return res
 
 
+@app.route("/classifications/reports")
+def get_report_classifications():
+    """Get classifications for minimal report graph.
+
+    Returns:
+        dict: Dictionary with classifications if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
+        http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
+    """
+    year = int(request.args.get('year'))
+    month = '%02d' % int(request.args.get('month'))
+    day = '%02d' % int(request.args.get('day'))
+    INTERVAL = 600
+    counter = 0
+    classifications = np.zeros(9)
+    res = dict()
+    try:
+        with open(f'./classifications/{year}-{month}-{day}.csv', 'r') as file:
+            try:
+                for row in csv.reader(file):
+                    classifications[int(row[1])] += 1
+                    counter += 1
+                    if counter % INTERVAL == 0:
+                        res[row[0]] = int(np.argmax(classifications))
+                        classifications = np.zeros(9)
+                return res
+            except IndexError:  # empty file
+                return json.dumps({'Error': "FileEmpty"}), 507, {'ContentType': 'application/json'}
+    except FileNotFoundError:
+        return json.dumps({'Error': "FileNotFound"}), 507, {'ContentType': 'application/json'}
+    except TypeError:
+        return json.dumps({'Error': "You have to pass in both query arguments year and month!"}), 400, {'ContentType': 'application/json'}
+
+
 """
 STATUS/BATTERY LEVEL
 """
@@ -471,7 +504,7 @@ User reports
 
 
 def _get_report_fname():
-    return f'./reports/{datetime.now().year}-{datetime.now().month}/{date.today().strftime("%Y-%m-%d")}.csv'
+    return f'./reports/{datetime.now().year}-{"%02d" % datetime.now().month}/{date.today().strftime("%Y-%m-%d")}.csv'
 
 
 @app.route("/reports", methods=["POST"])
@@ -480,6 +513,9 @@ def write_report():
     """
     req = request.json
     user_status = req["status"]
+    path = f"./reports/{datetime.now().year}-{'%02d' % datetime.now().month}"
+    if not os.path.exists(path):
+        os.makedirs(path)
     with open(_get_report_fname(), 'a+', newline='') as file:
         try:
             sc._write_to_csv(csv.writer(file), user_status)
@@ -502,8 +538,10 @@ def get_report():
         for fname in file_array:
             with open(f"./reports/{year}-{month}/{fname}", 'r') as file:
                 try:
+                    new_row = []
                     for row in csv.reader(file):
-                        rows.append(row)
+                        new_row.append(row)
+                    rows.append([new_row[0][0], new_row])
                 except IndexError:  # empty file
                     return json.dumps({'FileEmpty': True}), 507, {'ContentType': 'application/json'}
         return {"data": rows}

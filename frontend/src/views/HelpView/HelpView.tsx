@@ -25,7 +25,7 @@ export const HelpView = () => {
 								<Box m={2}>
 									<Accordion defaultExpanded={true}>
 										<AccordionSummary expandIcon={<ExpandMoreIcon style={{ color: "white" }} />} aria-controls="How to connect to sensors">
-											<Typography variant="h4" color="textPrimary">
+											<Typography variant="h3" color="textPrimary">
 												Sensor placement
 											</Typography>
 										</AccordionSummary>
@@ -71,7 +71,7 @@ export const HelpView = () => {
 								<Box m={2}>
 									<Accordion>
 										<AccordionSummary expandIcon={<ExpandMoreIcon style={{ color: "white" }} />} aria-controls="How to connect to sensors">
-											<Typography variant="h4" color="textPrimary">
+											<Typography variant="h3" color="textPrimary">
 												How to connect to sensors
 											</Typography>
 										</AccordionSummary>
@@ -91,7 +91,7 @@ export const HelpView = () => {
 								<Box m={2}>
 									<Accordion>
 										<AccordionSummary expandIcon={<ExpandMoreIcon style={{ color: "white" }} />} aria-controls="How to stop collection">
-											<Typography variant="h4" color="textPrimary">
+											<Typography variant="h3" color="textPrimary">
 												Disconnecting from sensors
 											</Typography>
 										</AccordionSummary>
@@ -111,7 +111,7 @@ export const HelpView = () => {
 								<Box m={2}>
 									<Accordion>
 										<AccordionSummary expandIcon={<ExpandMoreIcon style={{ color: "white" }} />} aria-controls="How to start collection">
-											<Typography variant="h4" color="textPrimary">
+											<Typography variant="h3" color="textPrimary">
 												How to start collection
 											</Typography>
 										</AccordionSummary>
@@ -135,7 +135,7 @@ export const HelpView = () => {
 											expandIcon={<ExpandMoreIcon style={{ color: "white" }} />}
 											aria-controls="How the classifications are done"
 										>
-											<Typography variant="h4" color="textPrimary">
+											<Typography variant="h3" color="textPrimary">
 												How the classifications are done
 											</Typography>
 										</AccordionSummary>

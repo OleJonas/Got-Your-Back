@@ -19,26 +19,23 @@ import React, { useEffect, useState } from "react";
 
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
+import monthName from "../../utils/dateUtils";
+import { Button } from "../../components/Buttons/Button.component";
+import StatusGraphPopup from "../../components/StatusGraphPopup/StatusGraphPopup.component";
 
 type reportData = {
 	date: string;
-	caption: string;
+	caption: [string[]];
 };
-
-
-
-function formatMonthYear(year: number, month: number){
-	return 
-}
 
 export const ReportView = () => {
 	const classes = useStyles();
 	const [data, setData] = useState<reportData[]>();
 	const today = new Date();
-	const [selectedDate, setSelectedDate] = useState(["" + today.getFullYear(), ("0" + (today.getMonth() + 1)).slice(-2)]);
-	const [availableDates, setAvailableDates] = useState<object[]>();
-
-	console.log(selectedDate);
+	const [selectedDate, setSelectedDate] = useState(today.getFullYear() + "," + ("0" + (today.getMonth() + 1)).slice(-2));
+	const [availableDates, setAvailableDates] = useState<string[]>();
+	const [clickedDate, setClickedDate] = useState<string>();
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
 
 	useEffect(() => {
 		fetch("http://localhost:5000/reports/available", {
@@ -49,12 +46,20 @@ export const ReportView = () => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				let res: any[] = [];
-				data["data"].map((row: string) => {
+				let res: any[] = [
+					<MenuItem key={today.getMonth()} value={today.getFullYear() + "," + ("0" + (today.getMonth() + 1)).slice(-2)}>
+						{monthName[("0" + (today.getMonth() + 1)).slice(-2)] + ". " + today.getFullYear()}
+					</MenuItem>,
+				];
+				data["data"].forEach((row: string) => {
 					let splitDate: string[] = row.split("-");
-					res.push(<MenuItem value={[splitDate[0], splitDate[1]]}>{splitDate[1] + "." + splitDate[0]}</MenuItem>);
+					if (splitDate[0] === "" + today.getFullYear() && splitDate[1] === ("0" + (today.getMonth() + 1)).slice(-2)) return;
+					res.push(
+						<MenuItem key={splitDate[1]} value={splitDate[0] + "," + splitDate[1]}>
+							{monthName[splitDate[1]] + ". " + splitDate[0]}
+						</MenuItem>
+					);
 				});
-				console.log(res);
 				setAvailableDates(res);
 			})
 			.catch(function (error) {});
@@ -62,7 +67,9 @@ export const ReportView = () => {
 	}, []);
 
 	useEffect(() => {
-		fetch("http://localhost:5000/reports?year=" + selectedDate[0] + "&month=" + selectedDate[1], {
+		const year = selectedDate.split(",")[0];
+		const month = selectedDate.split(",")[1];
+		fetch("http://localhost:5000/reports?year=" + year + "&month=" + month, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -71,21 +78,25 @@ export const ReportView = () => {
 			.then((res) => res.json())
 			.then((data) => {
 				let rows: reportData[] = [];
-				data["data"].map((row: string[]) => rows.push(createData(row[0], row[1])));
+				data["data"].map((row: any) => rows.push(createData(row[0], row[1])));
 				setData(rows);
 			})
 			.catch(function (error) {});
 		//eslint-disable-next-line
 	}, [selectedDate]);
 
-	function createData(date: string, caption: string) {
-		const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+	function createData(date: string, caption: any) {
+		// const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
 		let dateFormatted = new Date(date.replace(" ", "T")).toLocaleDateString("nb-NO");
 		return { date: dateFormatted, caption };
 	}
 
 	const handleChangeDate = (event: any) => {
 		setSelectedDate(event.target.value);
+	};
+
+	const close = () => {
+		setModalOpen(false);
 	};
 
 	return (
@@ -131,7 +142,7 @@ export const ReportView = () => {
 										<TableRow>
 											<TableCell>Date</TableCell>
 											<TableCell align="left">Caption</TableCell>
-											<TableCell align="right">Distribution</TableCell>
+											<TableCell align="center">See distribution</TableCell>
 										</TableRow>
 									</TableHead>
 									<TableBody>
@@ -139,10 +150,30 @@ export const ReportView = () => {
 											data.map((row) => (
 												<TableRow key={row.date}>
 													<TableCell scope="row">{row.date}</TableCell>
-													<TableCell align="left" component="th">
-														{row.caption.replace("&comma;", ",")}
+													<TableCell align="left">
+														{row.caption.map((element: string[]) => (
+															<Box display="flex" alignItems="center">
+																<Typography variant="body1" color="textPrimary" style={{ marginRight: "8px" }}>
+																	{("0" + new Date(element[0].replace(" ", "T")).getHours()).slice(-2) +
+																		":" +
+																		("0" + new Date(element[0].replace(" ", "T")).getMinutes()).slice(-2)}
+																</Typography>
+																<Typography variant="body2" color="textPrimary">
+																	{element[1].replace("&comma;", ",")}
+																</Typography>
+															</Box>
+														))}
 													</TableCell>
-													<TableCell align="right">{1}</TableCell>
+													<TableCell align="center">
+														<Button
+															func={() => {
+																setClickedDate(row.date);
+																setModalOpen(true);
+															}}
+														>
+															Open Graph
+														</Button>
+													</TableCell>
 												</TableRow>
 											))
 										) : (
@@ -157,6 +188,17 @@ export const ReportView = () => {
 							</TableContainer>
 						</Grid>
 					</Grid>
+					{modalOpen ? (
+						<StatusGraphPopup
+							close={close}
+							open={modalOpen}
+							year={clickedDate!.split(".")[2]}
+							month={clickedDate!.split(".")[1]}
+							day={clickedDate!.split(".")[0]}
+						/>
+					) : (
+						<></>
+					)}
 				</Grid>
 			</Grid>
 		</>
@@ -183,6 +225,6 @@ const useStyles = makeStyles({
 		fill: "white",
 	},
 	dropdown: {
-		minWidth: 100,
+		minWidth: 110,
 	},
 });

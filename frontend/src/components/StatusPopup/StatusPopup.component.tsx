@@ -1,6 +1,6 @@
 import { FC, useState, useEffect } from "react";
-import { Box, Grid, Dialog, DialogContent, Typography, TextField } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Box, Grid, Dialog, DialogContent, Typography, TextField, FormControl } from "@material-ui/core";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 
 // Components
 import { Button } from "../Buttons/Button.component";
@@ -53,27 +53,18 @@ export const StatusPopup: FC<modalProps> = (props) => {
 				disableEscapeKeyDown={true}
 			>
 				<DialogContent className={classes.dialogContent} dividers>
-					<Box className={classes.sensorBox}>
-						<Box>
-							<Grid container className={classes.columns} justify="flex-start">
-								<Grid item xs={12}>
-									<Grid container className={classes.grid} justify="flex-start">
-										<Typography variant="h6">How does your back feel?</Typography>
-									</Grid>
-								</Grid>
-							</Grid>
-
-							<form className={classes.root} noValidate autoComplete="off">
+					<Box justifyContent="centre">
+						<Typography variant="h1">Report</Typography>
+						<FormControl className={classes.textfield}>
+							<form noValidate autoComplete="off">
 								<TextFieldWithState updateText={setText} />
 							</form>
-						</Box>
+						</FormControl>
 					</Box>
-					<Grid container justify="center" className={classes.btnGrid}>
-						<Grid item xs={12}>
-							<Button disabled={text === ""} func={handleClose}>
-								Send
-							</Button>
-						</Grid>
+					<Grid container justify="center" className={classes.btn}>
+						<Button disabled={text === ""} func={handleClose}>
+							Send
+						</Button>
 					</Grid>
 				</DialogContent>
 			</Dialog>
@@ -86,18 +77,40 @@ type textFieldProps = {
 	updateText: (text: string) => void;
 };
 
+const StyledTextField = withStyles({
+	root: {
+		// "& label.Mui-focused": {
+		// 	color: "white",
+		// },
+		"& .MuiOutlinedInput-root": {
+			color: "white",
+			"& fieldset": {
+				borderColor: "white",
+			},
+			"&:hover fieldset": {
+				borderColor: "white",
+			},
+		},
+	},
+})(TextField);
+
 const TextFieldWithState: FC<textFieldProps> = (props) => {
 	return (
-		<TextField
+		<StyledTextField
 			id="outlined-multiline-flexible"
-			label="Write text here"
-			multiline
+			label="How does your back feel?"
 			onChange={(e) => {
 				props.updateText(e.target.value);
 			}}
 			margin="normal"
 			variant="outlined"
+			inputProps={{ style: { fontFamily: "nunito", color: "white", height: "150px" } }}
+			InputLabelProps={{
+				shrink: true,
+			}}
+			rowsMax="8"
 			fullWidth
+			multiline
 		/>
 	);
 };
@@ -107,50 +120,22 @@ const useStyles = makeStyles({
 		background: "rgba(0,0,0,0.5)",
 		textAlign: "center",
 		borderRadius: "0",
+		position: "relative",
 	},
 	dialogContent: {
 		height: "100px",
 	},
-	grid: {
-		alignItems: "center",
-		paddingLeft: "30px",
-	},
-	columns: {
-		maxWidth: "100%",
-		justifyContent: "space-between",
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
-		height: "50px",
-		backgroundColor: "white",
-		borderBottom: "1px solid black",
-	},
-	title: {
-		marginTop: "20px",
-	},
 	paper: {
-		height: "calc(30% + 100px)",
+		height: "440px",
 		width: "70%",
 	},
-	sensorBox: {
-		height: "60%",
-		backgroundColor: "rgba(255,255,255,0.9)",
-		width: "95%",
-		margin: "auto",
+	textfield: {
+		minWidth: "80%",
+		maxWidth: "80%",
+		minHeight: "60%",
+		maxHeight: "60%",
 	},
-	btnGrid: {
-		marginTop: "20px",
-		marginBottom: "15px",
-	},
-	"@keyframes rotate": {
-		from: {
-			transform: "rotate(0)",
-		},
-		to: {
-			transform: "rotate(360deg)",
-		},
-	},
-	loading: {
-		animation: "1s linear infinite $rotate",
+	btn: {
+		margin: "30px 0px",
 	},
 });
