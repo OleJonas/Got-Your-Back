@@ -13,8 +13,7 @@ type modalProps = {
 export const StatusPopup: FC<modalProps> = (props) => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
-    const [text, setText] = useState("");
-
+	const [text, setText] = useState("");
 
 	useEffect(() => {
 		if (props.open === true) {
@@ -23,22 +22,21 @@ export const StatusPopup: FC<modalProps> = (props) => {
 		// eslint-disable-next-line
 	}, [props.open]);
 
-    const sendText = () => {
-        fetch("http://localhost:5000/report/send", {
+	const sendText = () => {
+		fetch("http://localhost:5000/reports", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
 			},
 			body: JSON.stringify({
-				status: text,
+				status: text.replace(",", "&comma;"),
 			}),
-        })
-    }
+		});
+	};
 
 	const handleClose = () => {
-        sendText();
-        console.log(text);
+		sendText();
 		props.close();
 		setOpen(false);
 	};
@@ -51,24 +49,24 @@ export const StatusPopup: FC<modalProps> = (props) => {
 				aria-labelledby="customized-dialog-title"
 				open={open}
 				className={classes.root}
-                disableBackdropClick={true}
-                disableEscapeKeyDown={true}
+				disableBackdropClick={true}
+				disableEscapeKeyDown={true}
 			>
 				<DialogContent className={classes.dialogContent} dividers>
 					<Box className={classes.sensorBox}>
-                        <Box>
-                            <Grid container className={classes.columns} justify="flex-start">
-                                <Grid item xs={12}>
-                                    <Grid container className={classes.grid} justify="flex-start">
-                                        <Typography variant="h6">How does your back feel?</Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
+						<Box>
+							<Grid container className={classes.columns} justify="flex-start">
+								<Grid item xs={12}>
+									<Grid container className={classes.grid} justify="flex-start">
+										<Typography variant="h6">How does your back feel?</Typography>
+									</Grid>
+								</Grid>
+							</Grid>
 
-                            <form className={classes.root} noValidate autoComplete="off">
-                                <TextFieldWithState updateText={setText} />
-                            </form>
-                        </Box>
+							<form className={classes.root} noValidate autoComplete="off">
+								<TextFieldWithState updateText={setText} />
+							</form>
+						</Box>
 					</Box>
 					<Grid container justify="center" className={classes.btnGrid}>
 						<Grid item xs={12}>
@@ -84,26 +82,25 @@ export const StatusPopup: FC<modalProps> = (props) => {
 };
 export default StatusPopup;
 
-
 type textFieldProps = {
-    updateText: (text: string) => void;
-}
+	updateText: (text: string) => void;
+};
 
 const TextFieldWithState: FC<textFieldProps> = (props) => {
-    return(
-        <TextField
-          id="outlined-multiline-flexible"
-          label="Write text here"
-          multiline
-          onChange={(e) => {props.updateText(e.target.value)}}
-          margin="normal"
-          variant="outlined"
-          fullWidth
-        />
-    )
-}
-
-
+	return (
+		<TextField
+			id="outlined-multiline-flexible"
+			label="Write text here"
+			multiline
+			onChange={(e) => {
+				props.updateText(e.target.value);
+			}}
+			margin="normal"
+			variant="outlined"
+			fullWidth
+		/>
+	);
+};
 
 const useStyles = makeStyles({
 	root: {
@@ -136,7 +133,7 @@ const useStyles = makeStyles({
 		width: "70%",
 	},
 	sensorBox: {
-		height: "80%",
+		height: "60%",
 		backgroundColor: "rgba(255,255,255,0.9)",
 		width: "95%",
 		margin: "auto",

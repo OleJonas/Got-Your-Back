@@ -56,7 +56,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	 */
 	const getBatteryPercent = useCallback(async () => {
 		if (!props.connected) return;
-		await fetch("http://localhost:5000/sensor/battery?name=" + props.name, {
+		await fetch("http://localhost:5000/sensors/battery?name=" + props.name, {
 			headers: {
 				Accept: "application/json",
 			},

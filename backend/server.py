@@ -11,6 +11,7 @@ import numpy as np
 from flask import Flask, request, Response
 from flask_cors import CORS
 from collections import deque
+from pathlib import Path
 sys.path.append("scripts/")
 from sensor_bank import Sensor_Bank
 from joblib import load
@@ -302,7 +303,7 @@ def start_classify():
     sensor_bank.run = True
     sensor_bank.sync_sensors(client)
     # keras model
-    #model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
+    # model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
 
     rfc_model = load(f"model/models/RFC_model_{len(sensor_bank.sensor_dict)}.joblib")
     classify_thread = threading.Thread(target=sc.classify, args=[rfc_model, sensor_bank], daemon=True)
@@ -433,7 +434,7 @@ STATUS/BATTERY LEVEL
 """
 
 
-@app.route("/sensor/battery")
+@app.route("/sensors/battery")
 def get_battery():
     """Get battery percent based on name given in request body.
 
@@ -473,7 +474,7 @@ def _get_report_fname():
     return f'./reports/{datetime.now().year}-{datetime.now().month}/{date.today().strftime("%Y-%m-%d")}.csv'
 
 
-@app.route("/report/send", methods=["POST"])
+@app.route("/reports", methods=["POST"])
 def write_report():
     """Write how the user feels to file
     """
@@ -488,14 +489,14 @@ def write_report():
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
-@app.route("/report/fetch")
+@app.route("/reports", methods=["GET"])
 def get_report():
     """Fetch user reports
     """
     try:
-        year = request.args.get('year')
-        month = request.args.get('month')
-        file_array = os.listdir(f"./reports/{year}-{month}")
+        year = int(request.args.get('year'))
+        month = '%02d' % int(request.args.get('month'))
+        file_array = os.listdir(f'./reports/{year}-{month}')
         rows = []
         for fname in file_array:
             with open(f"./reports/{year}-{month}/{fname}", 'r') as file:
@@ -507,6 +508,15 @@ def get_report():
         return {"data": rows}
     except FileNotFoundError:
         return json.dumps({'Error': "FileNotFound"}), 507, {'ContentType': 'application/json'}
+    except TypeError:
+        return json.dumps({'Error': "You have to pass in both query arguments year and month!"}), 400, {'ContentType': 'application/json'}
+
+
+@ app.route("/reports/available")
+def get_report_months_available():
+    paths = sorted(Path("./reports/").iterdir(), key=os.path.getmtime)
+    res = [path.name for path in paths]
+    return {"data": res}
 
 
 def shutdown():

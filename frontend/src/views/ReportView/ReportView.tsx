@@ -11,24 +11,47 @@ import {
 	TableBody,
 	Paper,
 } from "@material-ui/core";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
 
+type reportData = {
+	date: string;
+	caption: string;
+};
+
 export const ReportView = () => {
 	const classes = useStyles();
+	const [selectedDate, setSelectedDate] = useState([2021, 4]);
+	const [data, setData] = useState<reportData[]>();
+
+	useEffect(() => {
+		fetch("http://localhost:5000/reports?year=" + selectedDate[0] + "&month=" + selectedDate[1], {
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json",
+			},
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log(data);
+				let rows: reportData[] = [];
+				data["data"].map((row: string[]) => rows.push(createData(row[0], row[1])));
+				setData(rows);
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+		//eslint-disable-next-line
+	}, [selectedDate]);
 
 	function createData(date: string, caption: string) {
-		return { date, caption};
+		const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+		let dateFormatted = new Date(date.replace(" ", "T")).toLocaleDateString("nb-NO");
+		return { date: dateFormatted, caption };
 	}
 
-	const rows = [
-		createData("26.03.99", "I dag har jeg ganske vondt faktisk"),
-		createData("26.03.99", "I dag har jeg ganske vondt faktisk"),
-		createData("26.03.99", "I dag har jeg ganske vondt faktisk"),
-		createData("26.03.99", "I dag har jeg ganske vondt faktisk"),
-		createData("26.03.99", "I dag har jeg ganske vondt faktisk"),
-	];
 	return (
 		<>
 			<Grid container justify="center" className={classes.root}>
@@ -54,15 +77,23 @@ export const ReportView = () => {
 										</TableRow>
 									</TableHead>
 									<TableBody>
-										{rows.map((row) => (
-											<TableRow key={row.date}>
-												<TableCell scope="row">
-													{row.date}
-												</TableCell>
-												<TableCell align="left" component="th">{row.caption}</TableCell>
-												<TableCell align="right">{1}</TableCell>
-											</TableRow>
-										))}
+										{data ? (
+											data.map((row) => (
+												<TableRow key={row.date}>
+													<TableCell scope="row">{row.date}</TableCell>
+													<TableCell align="left" component="th">
+														{row.caption.replace("&comma;", ",")}
+													</TableCell>
+													<TableCell align="right">{1}</TableCell>
+												</TableRow>
+											))
+										) : (
+											<Box m={2}>
+												<Typography variant="caption" color="textPrimary">
+													No reported data yet ...
+												</Typography>
+											</Box>
+										)}
 									</TableBody>
 								</Table>
 							</TableContainer>
@@ -87,7 +118,7 @@ const useStyles = makeStyles({
 	table: {
 		width: "100%",
 	},
-    tableContainer: {
-        padding: "20px 40px",
-    }
+	tableContainer: {
+		padding: "20px 40px",
+	},
 });
