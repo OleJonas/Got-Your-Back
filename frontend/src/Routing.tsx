@@ -4,7 +4,8 @@ import { Route, HashRouter, Switch } from "react-router-dom";
 import { HomeView } from "./views/HomeView/HomeView";
 import { HistoryView } from "./views/HistoryView/HistoryView";
 import { HelpView } from "./views/HelpView/HelpView";
-import { AboutView } from "./views/AboutView/AboutView";
+// import { AboutView } from "./views/AboutView/AboutView";
+import { ReportView } from "./views/ReportView/ReportView";
 
 const Routing = () => {
 	return (
@@ -13,7 +14,7 @@ const Routing = () => {
 				<Route exact path="/" component={HomeView} />
 				<Route exact path="/history" component={HistoryView} />
 				<Route exact path="/help" component={HelpView} />
-				<Route exact path="/about" component={AboutView} />
+				<Route exact path="/report" component={ReportView} />
 			</Switch>
 		</HashRouter>
 	);

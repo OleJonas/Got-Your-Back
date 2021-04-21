@@ -3,6 +3,7 @@ import { Grid, Box, makeStyles, Typography, AccordionSummary, Accordion, Accordi
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import SensorPlacement from "../../assets/Sensor_placement_numerated.svg";
 
 export const HelpView = () => {
 	const classes = useStyles();
@@ -21,6 +22,52 @@ export const HelpView = () => {
 						</Grid>
 						<Grid container item xs={12} justify="center">
 							<Grid item xs={11}>
+								<Box m={2}>
+									<Accordion defaultExpanded={true}>
+										<AccordionSummary expandIcon={<ExpandMoreIcon style={{ color: "white" }} />} aria-controls="How to connect to sensors">
+											<Typography variant="h4" color="textPrimary">
+												Sensor placement
+											</Typography>
+										</AccordionSummary>
+										<AccordionDetails>
+											<Box>
+												<img src={SensorPlacement} className={classes.svg} alt="Sensor placement" />
+												<Typography variant="body1" color="textPrimary">
+													The machine learning algorithm used for classification supports both one, two and three sensors. Depending on how
+													many sensors you want to use, you should place them according to the illustration above. It is important that all
+													sensors is placed straight (with the text LP-RESEARCH the right way). Use suitable tape for human skin, for
+													ensuring that the sensors is held in the right position.
+												</Typography>
+												<Box mt={1}>
+													<Typography variant="h6" color="textPrimary">
+														Sensor 1
+													</Typography>
+													<Typography variant="body1" color="textPrimary">
+														The first sensor is to to be placed on the lower neck. When you tilt your head forwards, this should be the bone
+														sticking out.
+													</Typography>
+												</Box>
+												<Box mt={1}>
+													<Typography variant="h6" color="textPrimary">
+														Sensor 2
+													</Typography>
+													<Typography variant="body1" color="textPrimary">
+														The second sensor is to be placed on the lower back.
+													</Typography>
+												</Box>
+												<Box mt={1}>
+													<Typography variant="h6" color="textPrimary">
+														Sensor 3
+													</Typography>
+													<Typography variant="body1" color="textPrimary">
+														The third sensor is to be placed on the right shoulder, where the surface is flat.
+													</Typography>
+												</Box>
+											</Box>
+										</AccordionDetails>
+									</Accordion>
+								</Box>
+
 								<Box m={2}>
 									<Accordion>
 										<AccordionSummary expandIcon={<ExpandMoreIcon style={{ color: "white" }} />} aria-controls="How to connect to sensors">
@@ -122,5 +169,9 @@ const useStyles = makeStyles({
 		height: "100%",
 		padding: "20px",
 		overflow: "auto",
+	},
+	svg: {
+		width: "60%",
+		margin: "20px 20%",
 	},
 });

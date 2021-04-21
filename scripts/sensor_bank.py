@@ -139,6 +139,7 @@ class Sensor_Bank:
         """
         self.sleep_time = sleep_time
 
+
     def scan_for_sensors(self, client: openzen.ZenClient):
         """Scan for available sensors.
 
@@ -227,6 +228,13 @@ class Sensor_Bank:
             imu.execute_property(openzen.ZenImuProperty.StopSensorSync)
 
         _remove_unsync_data(client)
+
+def _get_client():
+    error, client = openzen.make_client()
+    if not error == openzen.ZenError.NoError:
+        print("Error while initializing OpenZen library")
+        return
+    return client
 
 
 def _remove_unsync_data(client: openzen.ZenClient):

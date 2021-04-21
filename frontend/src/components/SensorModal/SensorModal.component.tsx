@@ -179,7 +179,7 @@ const useStyles = makeStyles({
 		width: "70%",
 	},
 	sensorBox: {
-		height: "80%",
+		height: "60%",
 		backgroundColor: "rgba(255,255,255,0.9)",
 		width: "95%",
 		margin: "auto",

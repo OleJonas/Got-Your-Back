@@ -11,8 +11,6 @@ import { ContentBox } from "../../components/ContentBox/ContentBox.component";
 import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { ColumnChart } from "../../components/ColumnChart/ColumnChart.component";
 
-// DENNE MÅ NOEN ANDRE KOMMENTERE ANER IKKE HVA JEG SKAL SKRIVE HER
-
 /**
  *
  * @returns The history page showing statistics from the last few days all the way back to months.
@@ -21,12 +19,8 @@ export const HistoryView = () => {
 	const [durationLine, setDurationLine] = useState<number>(7);
 	const [durationColumn, setDurationColumn] = useState<number>(7);
 	const classes = useStyles();
-	const [datapointsLine, setDatapointsLine] = useState<any>({
-		"1998-09-10 08:25:50": "1",
-	});
-	const [datapointsColumn, setDatapointsColumn] = useState<any>({
-		"1998-09-10 08:25:50": "1",
-	});
+	const [datapointsLine, setDatapointsLine] = useState<any>({});
+	const [datapointsColumn, setDatapointsColumn] = useState<any>({});
 
 	useEffect(() => {
 		fetch("http://localhost:5000/classifications/history?duration=" + durationLine, {
@@ -69,7 +63,7 @@ export const HistoryView = () => {
 					<NavBar />
 				</Grid>
 				<Grid item xs={10} md={11} className={classes.height}>
-					<Grid container spacing={2} className={classes.container}>
+					<Grid container spacing={1} className={classes.container}>
 						<Grid item xs={12}>
 							<Typography variant="h1" color="textPrimary">
 								History
@@ -77,7 +71,7 @@ export const HistoryView = () => {
 						</Grid>
 
 						<Grid item xs={12} className={classes.components}>
-							<Box mb={0.6} className={classes.box}>
+							<Box my={1} mx={0.5}>
 								<FormControl className={classes.dropdown}>
 									<InputLabel id="durationLine-controlled-open-select-label">
 										<Typography variant="h5" color="textPrimary">
@@ -100,37 +94,37 @@ export const HistoryView = () => {
 										<MenuItem value={30}>30 days</MenuItem>
 									</Select>
 								</FormControl>
-								<Typography variant="h3" color="textPrimary"></Typography>
-
-								<ContentBox>
-									<LineChart duration={durationLine} data={datapointsLine} />
-								</ContentBox>
 							</Box>
+							<ContentBox>
+								<LineChart duration={durationLine} data={datapointsLine} />
+							</ContentBox>
 						</Grid>
 
 						<Grid item xs={12} md={12} className={classes.components}>
-							<FormControl className={classes.dropdown}>
-								<InputLabel id="durationColumn-controlled-open-select-label">
-									<Typography variant="h5" color="textPrimary">
-										Distribution in total
-									</Typography>
-								</InputLabel>
-								<Select
-									labelId="durationColumn-controlled-open-select-label"
-									id="durationColumn-controlled-open-select"
-									value={durationColumn}
-									onChange={handleChangeColumn}
-									inputProps={{
-										classes: {
-											icon: classes.icon,
-										},
-									}}
-								>
-									<MenuItem value={7}>7 days</MenuItem>
-									<MenuItem value={14}>14 days</MenuItem>
-									<MenuItem value={30}>30 days</MenuItem>
-								</Select>
-							</FormControl>
+							<Box my={1} mx={0.5}>
+								<FormControl className={classes.dropdown} style={{ position: "relative", marginTop: "40px" }}>
+									<InputLabel id="durationColumn-controlled-open-select-label">
+										<Typography variant="h5" color="textPrimary">
+											Distribution in total
+										</Typography>
+									</InputLabel>
+									<Select
+										labelId="durationColumn-controlled-open-select-label"
+										id="durationColumn-controlled-open-select"
+										value={durationColumn}
+										onChange={handleChangeColumn}
+										inputProps={{
+											classes: {
+												icon: classes.icon,
+											},
+										}}
+									>
+										<MenuItem value={7}>7 days</MenuItem>
+										<MenuItem value={14}>14 days</MenuItem>
+										<MenuItem value={30}>30 days</MenuItem>
+									</Select>
+								</FormControl>
+							</Box>
 
 							<ContentBox>
 								<ColumnChart data={datapointsColumn} />
@@ -148,9 +142,7 @@ const useStyles = makeStyles({
 	root: {
 		height: "100%",
 	},
-	box: {
-		height: "100%",
-	},
+
 	icon: {
 		fill: "white",
 	},
@@ -164,7 +156,7 @@ const useStyles = makeStyles({
 	},
 	components: {
 		minHeight: "300px",
-		height: "40vh",
+		height: "35vh",
 	},
 	height: {
 		height: "100%",
