@@ -515,7 +515,7 @@ def get_report():
 
 @ app.route("/reports/available")
 def get_report_months_available():
-    paths = sorted(Path("./reports/").iterdir(), key=os.path.getmtime)
+    paths = sorted(Path("./reports/").iterdir(), key=os.path.getmtime, reverse=True)
     res = [path.name for path in paths if not path.name.startswith(".")]
     return {"data": res}
 

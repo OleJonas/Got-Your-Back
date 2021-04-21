@@ -10,8 +10,10 @@ import {
 	TableCell,
 	TableBody,
 	Paper,
+	Select,
+	MenuItem,
 } from "@material-ui/core";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 // Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
@@ -23,8 +25,25 @@ type reportData = {
 
 export const ReportView = () => {
 	const classes = useStyles();
-	const [selectedDate, setSelectedDate] = useState([2021, 4]);
 	const [data, setData] = useState<reportData[]>();
+	const [selectedDate, setSelectedDate] = useState([2021, 4]);
+	const [availableDates, setAvailableDates] = useState([]);
+
+	useEffect(() => {
+		fetch("http://localhost:5000/reports/available", {
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json",
+			},
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log(data);
+				let rows = "";
+			})
+			.catch(function (error) {});
+		//eslint-disable-next-line
+	}, []);
 
 	useEffect(() => {
 		fetch("http://localhost:5000/reports?year=" + selectedDate[0] + "&month=" + selectedDate[1], {
@@ -40,9 +59,7 @@ export const ReportView = () => {
 				data["data"].map((row: string[]) => rows.push(createData(row[0], row[1])));
 				setData(rows);
 			})
-			.catch(function (error) {
-				console.log(error);
-			});
+			.catch(function (error) {});
 		//eslint-disable-next-line
 	}, [selectedDate]);
 
@@ -51,6 +68,10 @@ export const ReportView = () => {
 		let dateFormatted = new Date(date.replace(" ", "T")).toLocaleDateString("nb-NO");
 		return { date: dateFormatted, caption };
 	}
+
+	const handleChangeDate = (event: any) => {
+		setSelectedDate(event.target.value);
+	};
 
 	return (
 		<>
@@ -65,7 +86,24 @@ export const ReportView = () => {
 								Reports
 							</Typography>
 						</Grid>
-						<Grid container item xs={11} justify="center">
+						<Grid container item xs={11} justify="flex-start">
+							<Box my={1} mx={0.5}>
+								<Select
+									labelId="durationLine-controlled-open-select-label"
+									id="durationLine-controlled-open-select"
+									value={selectedDate}
+									onChange={handleChangeDate}
+									inputProps={{
+										classes: {
+											icon: classes.icon,
+										},
+									}}
+								>
+									<MenuItem value={7}>7 days</MenuItem>
+									<MenuItem value={14}>14 days</MenuItem>
+									<MenuItem value={30}>30 days</MenuItem>
+								</Select>
+							</Box>
 							<TableContainer component={Paper} className={classes.tableContainer}>
 								<Table className={classes.table} aria-label="caption table">
 									<caption>Table showing reports for each record session.</caption>
@@ -120,5 +158,8 @@ const useStyles = makeStyles({
 	},
 	tableContainer: {
 		padding: "20px 40px",
+	},
+	icon: {
+		fill: "white",
 	},
 });
