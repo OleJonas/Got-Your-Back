@@ -39,6 +39,15 @@ export const NavBar: FC = () => {
 					</Link>
 				</Grid>
 				<Grid item xs={10}>
+					<Link href="#/report">
+						<Box m={1.2}>
+							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/report" ? "primary" : "textPrimary"}>
+								Reports
+							</Typography>
+						</Box>
+					</Link>
+				</Grid>
+				<Grid item xs={10}>
 					<Link href="#/help">
 						<Box m={1.2}>
 							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/help" ? "primary" : "textPrimary"}>
@@ -56,15 +65,6 @@ export const NavBar: FC = () => {
 						</Box>
 					</Link>
 				</Grid> */}
-				<Grid item xs={10}>
-					<Link href="#/report">
-						<Box m={1.2}>
-							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/report" ? "primary" : "textPrimary"}>
-								Reports
-							</Typography>
-						</Box>
-					</Link>
-				</Grid>
 			</Grid>
 		</Box>
 	);
@@ -76,11 +76,5 @@ const useStyles = makeStyles({
 		background: "rgba(0,0,0,0.5)",
 		minHeight: "100%",
 		textAlign: "center",
-	},
-	profilePic: {
-		height: "65%",
-		width: "65%",
-		borderRadius: "50%",
-		backgroundColor: "#f5f5f5",
 	},
 });

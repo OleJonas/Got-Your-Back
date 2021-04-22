@@ -24,9 +24,12 @@ export const LineChart = (props) => {
 		let minDate = new Date();
 		let maxDate = new Date();
 
-		if (props.duration === 1) {
+		if (props.duration === 0) {
 			setMinTime(new Date(minDate.setHours(minDate.getHours() - 1)));
 			setMaxTime(maxDate);
+		} else if (props.duration === 1) {
+			setMinTime(new Date(props.year, props.month, props.day, 0,0,0,0));
+			setMaxTime(new Date(props.year, props.month, props.day, 24,0,0,0));
 		} else {
 			setMinTime(new Date(minDate.setDate(minDate.getDate() - (props.duration + 1))));
 			setMaxTime(new Date(maxDate.setDate(maxDate.getDate() - 1)));
