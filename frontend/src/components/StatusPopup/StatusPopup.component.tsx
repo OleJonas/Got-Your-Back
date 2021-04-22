@@ -32,7 +32,7 @@ export const StatusPopup: FC<modalProps> = (props) => {
 				Accept: "application/json",
 			},
 			body: JSON.stringify({
-				status: text.replace(",", "&comma;"),
+				status: text.replace(",", "&comma;") + status,
 			}),
 		});
 	};
