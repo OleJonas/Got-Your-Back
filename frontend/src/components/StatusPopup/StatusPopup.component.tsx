@@ -4,6 +4,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 
 // Components
 import { Button } from "../Buttons/Button.component";
+import StatusBar from "../../components/StatusBar/StatusBar.component";
 
 type modalProps = {
 	open: boolean;
@@ -14,6 +15,7 @@ export const StatusPopup: FC<modalProps> = (props) => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 	const [text, setText] = useState("");
+	const [status, setStatus] = useState<number>(-1);
 
 	useEffect(() => {
 		if (props.open === true) {
@@ -55,6 +57,12 @@ export const StatusPopup: FC<modalProps> = (props) => {
 				<DialogContent className={classes.dialogContent} dividers>
 					<Box justifyContent="centre">
 						<Typography variant="h1">Report</Typography>
+						<Grid container justify="center">
+							<Grid item>
+								<StatusBar status={status} setStatus={setStatus} />
+							</Grid>
+						</Grid>
+
 						<FormControl className={classes.textfield}>
 							<form noValidate autoComplete="off">
 								<TextFieldWithState updateText={setText} />
@@ -62,7 +70,7 @@ export const StatusPopup: FC<modalProps> = (props) => {
 						</FormControl>
 					</Box>
 					<Grid container justify="center" className={classes.btn}>
-						<Button disabled={text === ""} func={handleClose}>
+						<Button disabled={text === "" || status === -1} func={handleClose}>
 							Send
 						</Button>
 					</Grid>
@@ -108,7 +116,7 @@ const TextFieldWithState: FC<textFieldProps> = (props) => {
 			InputLabelProps={{
 				shrink: true,
 			}}
-			rowsMax="8"
+			rowsMax="6"
 			fullWidth
 			multiline
 		/>
@@ -126,7 +134,7 @@ const useStyles = makeStyles({
 		height: "100px",
 	},
 	paper: {
-		height: "440px",
+		height: "500px",
 		width: "70%",
 	},
 	textfield: {
@@ -136,6 +144,6 @@ const useStyles = makeStyles({
 		maxHeight: "60%",
 	},
 	btn: {
-		margin: "30px 0px",
+		margin: "25px 0px",
 	},
 });
