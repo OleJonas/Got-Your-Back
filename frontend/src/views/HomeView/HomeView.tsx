@@ -97,6 +97,10 @@ export const HomeView = () => {
 			});
 	}, 9000);
 
+	/**
+	 * @remarks
+	 * useMemo that sets buttonPressed to false every time recording is stopped.
+	 */
 	useMemo(
 		() => setButtonPressed(false),
 		//eslint-disable-next-line

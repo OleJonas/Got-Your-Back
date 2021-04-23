@@ -12,8 +12,8 @@ import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { ColumnChart } from "../../components/ColumnChart/ColumnChart.component";
 
 /**
- *
- * @returns The history page showing statistics from the last few days all the way back to months.
+ * @remarks
+ * The history page showing statistics from the last few days all the way back to months.
  */
 export const HistoryView = () => {
 	const [durationLine, setDurationLine] = useState<number>(7);
@@ -72,9 +72,6 @@ export const HistoryView = () => {
 		setDurationColumn(event.target.value);
 	};
 
-	/**
-	 *
-	 */
 	return (
 		<>
 			<Grid container justify="center" className={classes.root}>

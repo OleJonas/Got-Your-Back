@@ -29,6 +29,9 @@ type reportData = {
 	caption: [string[]];
 };
 
+/**
+ * This view visualize your reports per month. For every recording you stop, a new feedback/report has to be written. This will show up in this view.
+ */
 export const ReportView = () => {
 	const classes = useStyles();
 	const [data, setData] = useState<reportData[]>();
@@ -38,6 +41,9 @@ export const ReportView = () => {
 	const [clickedDate, setClickedDate] = useState<string>();
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 
+	/**
+	 * useEffect that fetches available months for dropdown on render.
+	 */
 	useEffect(() => {
 		fetch("http://localhost:5000/reports/available", {
 			headers: {
@@ -67,6 +73,9 @@ export const ReportView = () => {
 		//eslint-disable-next-line
 	}, []);
 
+	/**
+	 * useEffect that fetches reports when a new month is selected.
+	 */
 	useEffect(() => {
 		const year = selectedDate.split(",")[0];
 		const month = selectedDate.split(",")[1];
@@ -86,16 +95,28 @@ export const ReportView = () => {
 		//eslint-disable-next-line
 	}, [selectedDate]);
 
+	/**
+	 * @param date (string) - date written.
+	 * @param caption (string) - caption written, with numeric value on end for feedback emoticon.
+	 * Method for creating an object of reportdata, in which goes into a row in table.
+	 */
 	function createData(date: string, caption: any) {
 		// const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
 		let dateFormatted = new Date(date.replace(" ", "T")).toLocaleDateString("nb-NO");
 		return { date: dateFormatted, caption };
 	}
 
+	/**
+	 * @param event (event) - event from dropdown select.
+	 * Method for setting selected date based on select.
+	 */
 	const handleChangeDate = (event: any) => {
 		setSelectedDate(event.target.value);
 	};
 
+	/**
+	 * Method for closing modal
+	 */
 	const close = () => {
 		setModalOpen(false);
 	};
