@@ -77,3 +77,4 @@ export const ColumnChart: FC<ColumnChartProps> = (props) => {
 		/>
 	);
 };
+export default ColumnChart;

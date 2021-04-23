@@ -1,9 +1,8 @@
-import time
 import sys
+import time
 import csv
 import numpy as np
 import openzen
-import keras
 from collections import Counter
 from datetime import datetime, date
 sys.path.append("scripts/")
@@ -95,7 +94,7 @@ def collect_data(client: openzen.ZenClient, sensor_bank: Sensor_Bank):
             continue
 
 
-def _write_to_csv(writer: csv.writer, classification: int):
+def _write_to_csv(writer: csv.writer, classification):
     """Write classification to csv.
 
     Args:

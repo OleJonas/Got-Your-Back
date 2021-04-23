@@ -32,6 +32,12 @@ export const theme = createMuiTheme({
 				},
 			},
 		},
+		MuiInputLabel: { root: { color: "white" } },
+		MuiButton: {
+			root: {
+				minWidth: "0px",
+			},
+		},
 	},
 	typography: {
 		fontFamily: "Nunito",
@@ -79,11 +85,11 @@ export const theme = createMuiTheme({
 			fontWeight: 600,
 		},
 		body1: {
-			fontSize: "0.9rem",
+			fontSize: "1rem",
 			fontWeight: 300,
 		},
 		body2: {
-			fontSize: "0.8rem",
+			fontSize: "0.95rem",
 			fontWeight: 200,
 		},
 		overline: {

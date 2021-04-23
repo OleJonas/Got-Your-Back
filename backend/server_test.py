@@ -39,7 +39,6 @@ class server_test(unittest.TestCase):
 
 
 def _make_request(URL, PARAMS, TYPE):
-    
     # sending get request and saving the response as response object
     r = None
 
