@@ -22,6 +22,7 @@ import { NavBar } from "../../components/NavBar/NavBar.component";
 import monthName from "../../utils/dateUtils";
 import { Button } from "../../components/Buttons/Button.component";
 import StatusGraphPopup from "../../components/StatusGraphPopup/StatusGraphPopup.component";
+import StatusBar from "../../components/StatusBar/StatusBar.component";
 
 type reportData = {
 	date: string;
@@ -149,19 +150,26 @@ export const ReportView = () => {
 										{data ? (
 											data.map((row) => (
 												<TableRow key={row.date}>
-													<TableCell scope="row">{row.date}</TableCell>
+													<TableCell
+														scope="row" //style={{ verticalAlign: "top" }}
+													>
+														{row.date}
+													</TableCell>
 													<TableCell align="left">
 														{row.caption.map((element: string[]) => (
-															<Box display="flex" alignItems="center">
-																<Typography variant="body1" color="textPrimary" style={{ marginRight: "8px" }}>
-																	{("0" + new Date(element[0].replace(" ", "T")).getHours()).slice(-2) +
-																		":" +
-																		("0" + new Date(element[0].replace(" ", "T")).getMinutes()).slice(-2)}
-																</Typography>
-																<Typography variant="body2" color="textPrimary">
-																	{element[1].replace("&comma;", ",")}
-																</Typography>
-															</Box>
+															<>
+																<Box display="flex" alignItems="center" flexWrap="wrap">
+																	<Typography variant="body1" color="textPrimary" style={{ marginRight: "8px" }}>
+																		{("0" + new Date(element[0].replace(" ", "T")).getHours()).slice(-2) +
+																			":" +
+																			("0" + new Date(element[0].replace(" ", "T")).getMinutes()).slice(-2)}
+																	</Typography>
+																	<Typography variant="body2" color="textPrimary" className={classes.text}>
+																		{element[1].replace("&comma;", ",").slice(0, -1)}
+																	</Typography>
+																	<StatusBar status={parseInt(element[1].slice(-1))} />
+																</Box>
+															</>
 														))}
 													</TableCell>
 													<TableCell align="center">
@@ -171,7 +179,7 @@ export const ReportView = () => {
 																setModalOpen(true);
 															}}
 														>
-															Open Graph
+															Graph
 														</Button>
 													</TableCell>
 												</TableRow>
@@ -226,5 +234,8 @@ const useStyles = makeStyles({
 	},
 	dropdown: {
 		minWidth: 110,
+	},
+	text: {
+		flexGrow: 1,
 	},
 });

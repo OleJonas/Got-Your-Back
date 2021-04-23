@@ -175,7 +175,7 @@ const useStyles = makeStyles({
 		marginTop: "20px",
 	},
 	paper: {
-		height: "calc(50% + 150px)",
+		height: "calc(40% + 150px)",
 		width: "70%",
 	},
 	sensorBox: {

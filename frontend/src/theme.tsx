@@ -33,6 +33,11 @@ export const theme = createMuiTheme({
 			},
 		},
 		MuiInputLabel: { root: { color: "white" } },
+		MuiButton: {
+			root: {
+				minWidth: "0px",
+			},
+		},
 	},
 	typography: {
 		fontFamily: "Nunito",
