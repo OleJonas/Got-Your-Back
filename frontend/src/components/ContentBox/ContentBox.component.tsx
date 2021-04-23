@@ -1,13 +1,17 @@
 import { Box, makeStyles } from "@material-ui/core";
+import { FC } from "react";
+
+type contentProps = {
+	className?: any;
+};
 
 /**
- * 
- * @param props 
+ * @param props
  * @returns A component acting as a simple container (box) for different data and graphs.
  */
-export const ContentBox: React.FC = (props) => {
+export const ContentBox: FC<contentProps> = (props) => {
 	const classes = useStyles();
-	return <Box className={classes.root}>{props.children}</Box>;
+	return <Box className={`${classes.root} ${props.className}`}>{props.children}</Box>;
 };
 export default ContentBox;
 

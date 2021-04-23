@@ -24,7 +24,7 @@ export const HistoryView = () => {
 
 	/**
 	 * Fetches classifications for a given duration (X number of days back in time) for the line chart
-	 */ 
+	 */
 	useEffect(() => {
 		fetch("http://localhost:5000/classifications/history?duration=" + durationLine, {
 			headers: {
@@ -40,7 +40,7 @@ export const HistoryView = () => {
 
 	/**
 	 * Fetches classifications for a given duration (X number of days back in time) for the column chart
-	 */ 
+	 */
 	useEffect(() => {
 		fetch("http://localhost:5000/classifications/history?duration=" + durationColumn, {
 			headers: {
@@ -55,8 +55,8 @@ export const HistoryView = () => {
 	}, [durationColumn]);
 
 	/**
-	 * 
-	 * @param event 
+	 *
+	 * @param event
 	 * Sets duration (# of days back in time) for line chart
 	 */
 	const handleChangeLine = (event: any) => {
@@ -64,8 +64,8 @@ export const HistoryView = () => {
 	};
 
 	/**
-	 * 
-	 * @param event 
+	 *
+	 * @param event
 	 * Sets duration (# of days back in time) for column chart
 	 */
 	const handleChangeColumn = (event: any) => {
@@ -73,7 +73,7 @@ export const HistoryView = () => {
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	return (
 		<>
@@ -82,72 +82,79 @@ export const HistoryView = () => {
 					<NavBar />
 				</Grid>
 				<Grid item xs={10} md={11} className={classes.height}>
-					<Grid container spacing={1} className={classes.container}>
+					<Grid container alignItems="flex-start" className={classes.container}>
+						<Grid item xs={12} className={classes.title}>
+							<Box>
+								<Typography variant="h1" color="textPrimary">
+									History
+								</Typography>
+							</Box>
+						</Grid>
+
 						<Grid item xs={12}>
-							<Typography variant="h1" color="textPrimary">
-								History
-							</Typography>
+							<Box className={classes.components}>
+								<Box p={1}>
+									<FormControl className={classes.dropdown}>
+										<InputLabel id="durationLine-controlled-open-select-label">
+											<Typography variant="h5" color="textPrimary">
+												Distribution over time
+											</Typography>
+										</InputLabel>
+										<Select
+											labelId="durationLine-controlled-open-select-label"
+											id="durationLine-controlled-open-select"
+											value={durationLine}
+											onChange={handleChangeLine}
+											inputProps={{
+												classes: {
+													icon: classes.icon,
+												},
+											}}
+										>
+											<MenuItem value={7}>7 days</MenuItem>
+											<MenuItem value={14}>14 days</MenuItem>
+											<MenuItem value={30}>30 days</MenuItem>
+										</Select>
+									</FormControl>
+								</Box>
+								<ContentBox className={classes.components}>
+									<LineChart duration={durationLine} data={datapointsLine} />
+								</ContentBox>
+							</Box>
 						</Grid>
 
-						<Grid item xs={12} className={classes.components}>
-							<Box my={1} mx={0.5}>
-								<FormControl className={classes.dropdown}>
-									<InputLabel id="durationLine-controlled-open-select-label">
-										<Typography variant="h5" color="textPrimary">
-											Distribution over time
-										</Typography>
-									</InputLabel>
-									<Select
-										labelId="durationLine-controlled-open-select-label"
-										id="durationLine-controlled-open-select"
-										value={durationLine}
-										onChange={handleChangeLine}
-										inputProps={{
-											classes: {
-												icon: classes.icon,
-											},
-										}}
-									>
-										<MenuItem value={7}>7 days</MenuItem>
-										<MenuItem value={14}>14 days</MenuItem>
-										<MenuItem value={30}>30 days</MenuItem>
-									</Select>
-								</FormControl>
+						<Grid item xs={12} md={12}>
+							<Box mt={10} className={classes.components}>
+								<Box p={1}>
+									<FormControl className={classes.dropdown}>
+										<InputLabel id="durationColumn-controlled-open-select-label">
+											<Typography variant="h5" color="textPrimary">
+												Distribution in total
+											</Typography>
+										</InputLabel>
+										<Select
+											labelId="durationColumn-controlled-open-select-label"
+											id="durationColumn-controlled-open-select"
+											value={durationColumn}
+											onChange={handleChangeColumn}
+											inputProps={{
+												classes: {
+													icon: classes.icon,
+												},
+											}}
+										>
+											<MenuItem value={7}>7 days</MenuItem>
+											<MenuItem value={14}>14 days</MenuItem>
+											<MenuItem value={30}>30 days</MenuItem>
+										</Select>
+									</FormControl>
+								</Box>
+								<Box pb={5}>
+									<ContentBox className={classes.components}>
+										<ColumnChart data={datapointsColumn} />
+									</ContentBox>
+								</Box>
 							</Box>
-							<ContentBox>
-								<LineChart duration={durationLine} data={datapointsLine} />
-							</ContentBox>
-						</Grid>
-
-						<Grid item xs={12} md={12} className={classes.components}>
-							<Box my={1} mx={0.5}>
-								<FormControl className={classes.dropdown} style={{ position: "relative", marginTop: "40px" }}>
-									<InputLabel id="durationColumn-controlled-open-select-label">
-										<Typography variant="h5" color="textPrimary">
-											Distribution in total
-										</Typography>
-									</InputLabel>
-									<Select
-										labelId="durationColumn-controlled-open-select-label"
-										id="durationColumn-controlled-open-select"
-										value={durationColumn}
-										onChange={handleChangeColumn}
-										inputProps={{
-											classes: {
-												icon: classes.icon,
-											},
-										}}
-									>
-										<MenuItem value={7}>7 days</MenuItem>
-										<MenuItem value={14}>14 days</MenuItem>
-										<MenuItem value={30}>30 days</MenuItem>
-									</Select>
-								</FormControl>
-							</Box>
-
-							<ContentBox>
-								<ColumnChart data={datapointsColumn} />
-							</ContentBox>
 						</Grid>
 					</Grid>
 				</Grid>
@@ -166,6 +173,8 @@ const useStyles = makeStyles({
 		fill: "white",
 	},
 	dropdown: {
+		position: "relative",
+		marginTop: "40px",
 		minWidth: 160,
 	},
 	container: {
@@ -175,9 +184,12 @@ const useStyles = makeStyles({
 	},
 	components: {
 		minHeight: "300px",
-		height: "35vh",
+		height: "30vh",
 	},
 	height: {
 		height: "100%",
+	},
+	title: {
+		maxHeight: "50px",
 	},
 });
