@@ -12,7 +12,6 @@ import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
 import { ColumnChart } from "../../components/ColumnChart/ColumnChart.component";
 
 /**
- * @remarks
  * The history page showing statistics from the last few days all the way back to months.
  */
 export const HistoryView = () => {

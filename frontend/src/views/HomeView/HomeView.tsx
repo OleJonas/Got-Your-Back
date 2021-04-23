@@ -13,7 +13,6 @@ import handleErrors from "../../utils/handleErrors";
 import useInterval from "../../utils/useInterval";
 
 /**
- * @remarks
  * This is the main page of the application. It contains live classification data as well as different components also relating to live classification and recording of data.
  */
 export const HomeView = () => {
@@ -27,7 +26,6 @@ export const HomeView = () => {
 	const [hasSensors, setHasSensors] = useState<boolean>(false);
 
 	/**
-	 * @remarks
 	 * useEffect that fetches classifications on render.
 	 */
 	useEffect(() => {
@@ -46,7 +44,6 @@ export const HomeView = () => {
 	}, []);
 
 	/**
-	 * @remarks
 	 * custom React hook that fetches classifications every 5 seconds when recording is active.
 	 */
 	useInterval(() => {
@@ -70,7 +67,6 @@ export const HomeView = () => {
 	}, 5000);
 
 	/**
-	 * @remarks
 	 * useEffect that fetches status of the sensors on render.
 	 */
 	useEffect(() => {
@@ -85,7 +81,6 @@ export const HomeView = () => {
 	}, []);
 
 	/**
-	 * @remarks
 	 * custom React hook that fetches status of the sensors every 9 seconds.
 	 */
 	useInterval(() => {
@@ -98,7 +93,6 @@ export const HomeView = () => {
 	}, 9000);
 
 	/**
-	 * @remarks
 	 * useMemo that sets buttonPressed to false every time recording is stopped.
 	 */
 	useMemo(
