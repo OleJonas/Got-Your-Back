@@ -1,13 +1,11 @@
 import { makeStyles, Typography } from "@material-ui/core";
-
-// Components
 import { Chart } from "react-google-charts";
-import { posture_names } from "../../utils/posture_names";
+import posture_names from "../../utils/posture_names";
 
 /**
- * 
- * @param {*} props 
- * @returns 
+ *
+ * @param {*} props
+ * @returns
  */
 export const PieChart = (props) => {
 	const classes = useStyles;

@@ -5,14 +5,8 @@ root=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd "$root"
 
 # Add path variables
-export PYTHONPATH="$PWD/lib/openzen/build"; echo $PYTHONPATH
-export FLASK_APP=backend/server.py
-export FLASK_ENV=development
-
-# Run server and frontend
-# trap "exit" INT TERM ERR
-# trap "kill 0" EXIT
+export PYTHONPATH="$PWD/lib/openzen/build";
 
 open "frontend/dist/mac/Got Your Back.app"
 
-python3 -m flask run
+cd backend && waitress-serve --port 60066 "server:app"

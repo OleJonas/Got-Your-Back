@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Box, Grid, IconButton, makeStyles } from "@material-ui/core";
 import KeyboardEventHandler from "react-keyboard-event-handler";
-
-// Components
 import Logo from "../../assets/Logo.svg";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 

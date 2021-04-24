@@ -1,8 +1,7 @@
-import { FC, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Typography, Grid, makeStyles } from "@material-ui/core";
-
-// Components
 import SensorButton from "../Buttons/SensorButton.component";
+import SERVER_PORT from "../../utils/server_utils";
 
 type SensorProps = {
 	name: string;
@@ -13,10 +12,10 @@ type SensorProps = {
  * @remarks
  * A functional component showing the details of a not connected sensor.
  */
-export const SensorRowModal: FC<SensorProps> = (props) => {
+export const SensorRowModal: React.FC<SensorProps> = (props) => {
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
-	const [sensorData, setSensorData] = useState<{battery_percent: string, id: number, name: string}>();
+	const [sensorData, setSensorData] = useState<{ battery_percent: string; id: number; name: string }>();
 	const classes = useStyles();
 
 	/**
@@ -28,7 +27,7 @@ export const SensorRowModal: FC<SensorProps> = (props) => {
 		if (isFetching) return;
 		setIsFetching(true);
 
-		await fetch("http://localhost:5000/setup/connect", {
+		await fetch("http://localhost:" + SERVER_PORT + "/setup/connect", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

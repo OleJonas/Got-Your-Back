@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
 	Grid,
 	Box,
@@ -15,14 +16,12 @@ import {
 	FormControl,
 	InputLabel,
 } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
-
-// Components
-import { NavBar } from "../../components/NavBar/NavBar.component";
-import monthName from "../../utils/dateUtils";
-import { Button } from "../../components/Buttons/Button.component";
+import NavBar from "../../components/NavBar/NavBar.component";
+import Button from "../../components/Buttons/Button.component";
 import StatusGraphPopup from "../../components/StatusGraphPopup/StatusGraphPopup.component";
 import StatusBar from "../../components/StatusBar/StatusBar.component";
+import monthName from "../../utils/dateUtils";
+import SERVER_PORT from "../../utils/server_utils";
 
 type reportData = {
 	date: string;
@@ -45,7 +44,7 @@ export const ReportView = () => {
 	 * useEffect that fetches available months for dropdown on render.
 	 */
 	useEffect(() => {
-		fetch("http://localhost:5000/reports/available", {
+		fetch("http://localhost:" + SERVER_PORT + "/reports/available", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -79,7 +78,7 @@ export const ReportView = () => {
 	useEffect(() => {
 		const year = selectedDate.split(",")[0];
 		const month = selectedDate.split(",")[1];
-		fetch("http://localhost:5000/reports?year=" + year + "&month=" + month, {
+		fetch("http://localhost:" + SERVER_PORT + "/reports?year=" + year + "&month=" + month, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",

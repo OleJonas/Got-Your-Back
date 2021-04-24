@@ -1,10 +1,7 @@
 import { Grid, Box, makeStyles, Typography, AccordionSummary, Accordion, AccordionDetails } from "@material-ui/core";
-
-// Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import SensorPlacement from "../../assets/Sensor_placement_numerated.svg";
-
 
 /**
  * @remarks

@@ -10,8 +10,8 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     minWidth: 640,
     minHeight: 420,
-    width: 1024,
-    height: 832,
+    width: 1200,
+    height: 840,
     backgroundColor: "#1C355B",
   });
   mainWindow.loadURL(

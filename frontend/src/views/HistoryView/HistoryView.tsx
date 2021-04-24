@@ -4,12 +4,11 @@ import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
-
-// Components
-import { NavBar } from "../../components/NavBar/NavBar.component";
-import { ContentBox } from "../../components/ContentBox/ContentBox.component";
-import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
-import { ColumnChart } from "../../components/ColumnChart/ColumnChart.component";
+import NavBar from "../../components/NavBar/NavBar.component";
+import ContentBox from "../../components/ContentBox/ContentBox.component";
+import LineChart from "../../components/LineChart/LineChart.component.jsx";
+import ColumnChart from "../../components/ColumnChart/ColumnChart.component";
+import SERVER_PORT from "../../utils/server_utils";
 
 /**
  * The history page showing statistics from the last few days all the way back to months.
@@ -25,7 +24,7 @@ export const HistoryView = () => {
 	 * Fetches classifications for a given duration (X number of days back in time) for the line chart
 	 */
 	useEffect(() => {
-		fetch("http://localhost:5000/classifications/history?duration=" + durationLine, {
+		fetch("http://localhost:"+SERVER_PORT+"/classifications/history?duration=" + durationLine, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -41,7 +40,7 @@ export const HistoryView = () => {
 	 * Fetches classifications for a given duration (X number of days back in time) for the column chart
 	 */
 	useEffect(() => {
-		fetch("http://localhost:5000/classifications/history?duration=" + durationColumn, {
+		fetch("http://localhost:"+SERVER_PORT+"/classifications/history?duration=" + durationColumn, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",

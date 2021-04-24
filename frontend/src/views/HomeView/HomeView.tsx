@@ -1,16 +1,15 @@
 import { useState, useEffect, useMemo } from "react";
 import { Grid, Box, makeStyles, Typography } from "@material-ui/core";
-
-// Components
-import { NavBar } from "../../components/NavBar/NavBar.component";
-import { ContentBox } from "../../components/ContentBox/ContentBox.component";
-import { ClassificationContent } from "../../components/ClassificationContent/ClassificationContent.component";
-import { RecordContent } from "../../components/RecordContent/RecordContent.component";
-import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
-import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
-import { SensorListContent } from "../../components/SensorListContent/SensorListContent.component";
+import NavBar from "../../components/NavBar/NavBar.component";
+import ContentBox from "../../components/ContentBox/ContentBox.component";
+import ClassificationContent from "../../components/ClassificationContent/ClassificationContent.component";
+import RecordContent from "../../components/RecordContent/RecordContent.component";
+import LineChart from "../../components/LineChart/LineChart.component.jsx";
+import PieChart from "../../components/PieChart/PieChart.component.jsx";
+import SensorListContent from "../../components/SensorListContent/SensorListContent.component";
 import handleErrors from "../../utils/handleErrors";
 import useInterval from "../../utils/useInterval";
+import SERVER_PORT from "../../utils/server_utils";
 
 /**
  * This is the main page of the application. It contains live classification data as well as different components also relating to live classification and recording of data.
@@ -29,7 +28,7 @@ export const HomeView = () => {
 	 * useEffect that fetches classifications on render.
 	 */
 	useEffect(() => {
-		fetch("http://localhost:5000/classifications", {
+		fetch("http://localhost:"+SERVER_PORT+"/classifications", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -48,7 +47,7 @@ export const HomeView = () => {
 	 */
 	useInterval(() => {
 		if (isRecording) {
-			fetch("http://localhost:5000/classifications/latest", {
+			fetch("http://localhost:"+SERVER_PORT+"/classifications/latest", {
 				headers: {
 					"Content-Type": "application/json",
 					Accept: "application/json",
@@ -70,7 +69,7 @@ export const HomeView = () => {
 	 * useEffect that fetches status of the sensors on render.
 	 */
 	useEffect(() => {
-		fetch("http://localhost:5000/status")
+		fetch("http://localhost:"+SERVER_PORT+"/status")
 			.then((response) => response.json())
 			.then((data) => {
 				setIsRecording(data.isRecording);
@@ -84,7 +83,7 @@ export const HomeView = () => {
 	 * custom React hook that fetches status of the sensors every 9 seconds.
 	 */
 	useInterval(() => {
-		fetch("http://localhost:5000/status")
+		fetch("http://localhost:"+SERVER_PORT+"/status")
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.isRecording !== isRecording) setIsRecording(!isRecording);
