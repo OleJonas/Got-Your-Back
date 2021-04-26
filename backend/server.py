@@ -62,9 +62,12 @@ def before_request():
         return res
     else:
         global sensor_bank
-        sensor_bank.verify_sensors_alive()
-        return
-
+        if not sensor_bank.verify_sensors_alive() and sensor_bank.run:
+            stop_classify()
+            """return {
+                "error": f"Sensor(s) have disconnected", 
+                "sensors": [str(sensor) for sensor in sensor_bank.sensor_dict.items()]
+            }"""
 
 @app.route("/")
 def confirm_access():
@@ -380,7 +383,7 @@ def get_all_classifications():
 
 @app.route("/classifications/latest")
 def get_classification():
-    """Get the latest classification for today.
+    """Get the latest classification for today. If the timestamp in the url matches the timestamp of the latest classification in the file, something has gone wrong while classifying.
 
     Returns:
         dict: Dictionary with latest classification if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
@@ -477,7 +480,13 @@ def get_battery():
     """
     global sensor_bank
     name = request.args.get("name")
-    percent = sensor_bank.sensor_dict[name].get_battery_percentage()
+    try:
+        percent = sensor_bank.sensor_dict[name].get_battery_percentage()
+    except:
+        return {
+            "error": f"{name} is no longer connected",
+            "battery": "-1"
+        }
     return {"battery": str(percent).split("%")[0]}
 
 

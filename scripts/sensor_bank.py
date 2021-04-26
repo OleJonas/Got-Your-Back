@@ -128,7 +128,9 @@ class Sensor_Bank:
             self.sensor_dict.pop(s_name)
             self.n_sensors -= 1
 
-        return f"Sensor dict after error handling...: {self.sensor_dict}"
+        if len(dead_sensors) > 0:
+            return False
+        return True
 
     def set_sleep_time(self, sleep_time: float):
         """Set sleep time.
