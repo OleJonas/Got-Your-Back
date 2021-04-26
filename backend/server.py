@@ -2,7 +2,8 @@ import os
 import sys
 import csv
 from datetime import datetime, date, timedelta
-# sys.path.append(os.path.abspath("./lib/openzen/build"))
+# sys.path.append(os.path.abspath("../lib/openzen/build"))
+sys.path.append("../scripts")
 import openzen
 import threading
 import atexit
@@ -61,9 +62,12 @@ def before_request():
         return res
     else:
         global sensor_bank
-        sensor_bank.verify_sensors_alive()
-        return
-
+        if not sensor_bank.verify_sensors_alive() and sensor_bank.run:
+            stop_classify()
+            """return {
+                "error": f"Sensor(s) have disconnected", 
+                "sensors": [str(sensor) for sensor in sensor_bank.sensor_dict.items()]
+            }"""
 
 @app.route("/")
 def confirm_access():
@@ -303,9 +307,9 @@ def start_classify():
     sensor_bank.run = True
     sensor_bank.sync_sensors(client)
     # keras model
-    # model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
+    # model = keras.models.load_model(f"../model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
 
-    rfc_model = load(f"model/models/RFC_model_{len(sensor_bank.sensor_dict)}.joblib")
+    rfc_model = load(f"../model/models/RFC_model_{len(sensor_bank.sensor_dict)}.joblib")
     classify_thread = threading.Thread(target=sc.classify, args=[rfc_model, sensor_bank], daemon=True)
     collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)
     t_pool.append(classify_thread)
@@ -379,7 +383,7 @@ def get_all_classifications():
 
 @app.route("/classifications/latest")
 def get_classification():
-    """Get the latest classification for today.
+    """Get the latest classification for today. If the timestamp in the url matches the timestamp of the latest classification in the file, something has gone wrong while classifying.
 
     Returns:
         dict: Dictionary with latest classification if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
@@ -407,7 +411,7 @@ def get_classifications_history():
     """
     days = int(request.args.get("duration"))
     res = dict()
-    filearray = os.listdir("./classifications/")
+    filearray = os.listdir("../classifications/")
     startDate = (date.today() - timedelta(days=days))
 
     # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
@@ -419,7 +423,7 @@ def get_classifications_history():
         # if there is a file for the i-th day in the interval, proceed, if not, skip
         if((ith_Day_str + ".csv") in filearray):
             try:
-                with open("./classifications/" + str(ith_Day_str + ".csv"), 'r') as file:
+                with open("../classifications/" + str(ith_Day_str + ".csv"), 'r') as file:
                     reader = csv.reader(file)
                     for row in reader:
                         classifications[int(row[1])] += 1
@@ -445,7 +449,7 @@ def get_report_classifications():
     classifications = np.zeros(9)
     res = dict()
     try:
-        with open(f'./classifications/{year}-{month}-{day}.csv', 'r') as file:
+        with open(f'../classifications/{year}-{month}-{day}.csv', 'r') as file:
             try:
                 for row in csv.reader(file):
                     classifications[int(row[1])] += 1
@@ -476,7 +480,13 @@ def get_battery():
     """
     global sensor_bank
     name = request.args.get("name")
-    percent = sensor_bank.sensor_dict[name].get_battery_percentage()
+    try:
+        percent = sensor_bank.sensor_dict[name].get_battery_percentage()
+    except:
+        return {
+            "error": f"{name} is no longer connected",
+            "battery": "-1"
+        }
     return {"battery": str(percent).split("%")[0]}
 
 
@@ -504,7 +514,7 @@ User reports
 
 
 def _get_report_fname():
-    return f'./reports/{datetime.now().year}-{"%02d" % datetime.now().month}/{date.today().strftime("%Y-%m-%d")}.csv'
+    return f'../reports/{datetime.now().year}-{"%02d" % datetime.now().month}/{date.today().strftime("%Y-%m-%d")}.csv'
 
 
 @app.route("/reports", methods=["POST"])
@@ -513,7 +523,7 @@ def write_report():
     """
     req = request.json
     user_status = req["status"]
-    path = f"./reports/{datetime.now().year}-{'%02d' % datetime.now().month}"
+    path = f"../reports/{datetime.now().year}-{'%02d' % datetime.now().month}"
     if not os.path.exists(path):
         os.makedirs(path)
     with open(_get_report_fname(), 'a+', newline='') as file:
@@ -532,11 +542,11 @@ def get_report():
     try:
         year = int(request.args.get('year'))
         month = '%02d' % int(request.args.get('month'))
-        paths = sorted(Path(f"./reports/{year}-{month}").iterdir(), key=os.path.getmtime)
+        paths = sorted(Path(f"../reports/{year}-{month}").iterdir(), key=os.path.getmtime)
         file_array = [path.name for path in paths if not path.name.startswith(".")]
         rows = []
         for fname in file_array:
-            with open(f"./reports/{year}-{month}/{fname}", 'r') as file:
+            with open(f"../reports/{year}-{month}/{fname}", 'r') as file:
                 try:
                     new_row = []
                     for row in csv.reader(file):
@@ -553,7 +563,7 @@ def get_report():
 
 @ app.route("/reports/available")
 def get_report_months_available():
-    paths = sorted(Path("./reports/").iterdir(), key=os.path.getmtime, reverse=True)
+    paths = sorted(Path("../reports/").iterdir(), key=os.path.getmtime, reverse=True)
     res = [path.name for path in paths if not path.name.startswith(".")]
     return {"data": res}
 

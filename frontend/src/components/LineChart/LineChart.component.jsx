@@ -1,7 +1,7 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
-import { posture_names } from "../../utils/posture_names";
+import posture_names from "../../utils/posture_names";
 
 // type LineChartProps, = {
 // 	data: JSON,

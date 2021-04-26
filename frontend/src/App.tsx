@@ -1,8 +1,6 @@
 import Routing from "./Routing";
 import { ThemeProvider } from "@material-ui/core";
-import { theme } from "./theme";
-
-// Components
+import theme from "./theme";
 import HomeShade from "./components/HomeShade/HomeShade.component";
 
 const App = () => {

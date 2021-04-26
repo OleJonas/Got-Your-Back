@@ -1,13 +1,10 @@
-import { FC } from "react";
 import { Grid, Box, Typography, Link, makeStyles } from "@material-ui/core";
-
-// Components
 import Logo from "../../assets/Logo.svg";
 
 /**
  * @returns A vertical navbar used in every view of the application.
  */
-export const NavBar: FC = () => {
+export const NavBar: React.FC = () => {
 	const classes = useStyles();
 	return (
 		<Box className={classes.root}>

@@ -1,9 +1,7 @@
-import { FC, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Box, ButtonBase, Typography, makeStyles, Tooltip, ClickAwayListener } from "@material-ui/core";
 import loader from "../../assets/loader_white.svg";
 import sensor_placement from "../../utils/sensor_placement";
-
-// Components
 import CheckIcon from "@material-ui/icons/Check";
 import AddIcon from "@material-ui/icons/Add";
 import ClearIcon from "@material-ui/icons/Clear";
@@ -22,7 +20,7 @@ type ButtonProps = {
  * @param props
  * @returns A button component specifically used for sensor setup - connecting and disconnecting.
  */
-export const SensorButton: FC<ButtonProps> = (props) => {
+export const SensorButton: React.FC<ButtonProps> = (props) => {
 	const classes = useStyles(props);
 	const [status, setStatus] = useState<boolean>(false);
 	const [showTooltip, setShowTooltip] = useState<boolean>(false);

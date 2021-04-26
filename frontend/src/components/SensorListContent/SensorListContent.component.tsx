@@ -1,11 +1,10 @@
-import { useState, useEffect, FC } from "react";
+import { useState, useEffect } from "react";
 import { Grid, Typography, makeStyles } from "@material-ui/core";
-
-// Componentes
-import { Button } from "../Buttons/Button.component";
-import { SensorRowHome } from "../SensorRow/SensorRowHome.component";
-import { SensorModal } from "../SensorModal/SensorModal.component";
-import { sensor_placement } from "../../utils/sensor_placement";
+import Button from "../Buttons/Button.component";
+import SensorRowHome from "../SensorRow/SensorRowHome.component";
+import SensorModal from "../SensorModal/SensorModal.component";
+import sensor_placement from "../../utils/sensor_placement";
+import SERVER_PORT from "../../utils/server_utils";
 
 export type Sensor = {
 	id: number;
@@ -21,7 +20,7 @@ type ListProps = {
 /**
  * @returns A listing of the currently connected sensors.
  */
-export const SensorListContent: FC<ListProps> = (props) => {
+export const SensorListContent: React.FC<ListProps> = (props) => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 	const [sensors, setSensors] = useState<Sensor[]>([]);
@@ -76,7 +75,7 @@ export const SensorListContent: FC<ListProps> = (props) => {
 	 * Uses an API call to fetch sensors currently connected via bluetooth. Then sets state to reflect the sensors found to be connected.
 	 */
 	const getConnectedSensors = async () => {
-		await fetch("http://localhost:5000/setup/get_sensors", {
+		await fetch("http://localhost:"+SERVER_PORT+"/setup/get_sensors", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",

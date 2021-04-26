@@ -1,2 +1,1 @@
-set FLASK_APP=backend\server.py 
-start python -m flask run
+cd backend && waitress-serve --port 60066 "server:app"

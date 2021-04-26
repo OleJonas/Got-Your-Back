@@ -1,10 +1,12 @@
 import { Grid, Box, makeStyles, Typography, AccordionSummary, Accordion, AccordionDetails } from "@material-ui/core";
-
-// Components
 import { NavBar } from "../../components/NavBar/NavBar.component";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import SensorPlacement from "../../assets/Sensor_placement_numerated.svg";
 
+/**
+ * @remarks
+ * This view contains collapsibles with information for helping users out with questions such as where to place sensors and how to connect to sensors etc.
+ */
 export const HelpView = () => {
 	const classes = useStyles();
 	return (

@@ -1,12 +1,11 @@
-import { FC, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Sensor } from "../SensorListContent/SensorListContent.component";
-
-// Components
-import { Button } from "../Buttons/Button.component";
-import { SensorRowModal } from "../SensorRow/SensorRowModal.component";
+import Button from "../Buttons/Button.component";
+import SensorRowModal from "../SensorRow/SensorRowModal.component";
 import loader from "../../assets/loader.svg";
+import SERVER_PORT from "../../utils/server_utils";
 
 type modalProps = {
 	open: boolean;
@@ -15,7 +14,7 @@ type modalProps = {
 	sendSensors: (sensor: any) => void;
 };
 
-export const SensorModal: FC<modalProps> = (props) => {
+export const SensorModal: React.FC<modalProps> = (props) => {
 	const classes = useStyles();
 	const [sensorsFound, setSensorsFound] = useState<any>();
 	const [isFetching, setIsFetching] = useState(false);
@@ -29,7 +28,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 		if (isFetching) return;
 		setIsFetching(true);
 
-		await fetch("http://localhost:5000/setup/scan", {
+		await fetch("http://localhost:" + SERVER_PORT + "/setup/scan", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -175,7 +174,7 @@ const useStyles = makeStyles({
 		marginTop: "20px",
 	},
 	paper: {
-		height: "calc(40% + 150px)",
+		height: "calc(320px + 150px)",
 		width: "70%",
 	},
 	sensorBox: {
@@ -186,7 +185,7 @@ const useStyles = makeStyles({
 		overflow: "auto",
 	},
 	btnGrid: {
-		marginTop: "30px",
+		marginTop: "35px",
 		marginBottom: "10px",
 	},
 	"@keyframes rotate": {

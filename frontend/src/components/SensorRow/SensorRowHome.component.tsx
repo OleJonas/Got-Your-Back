@@ -1,9 +1,8 @@
-import { FC, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Typography, Grid, makeStyles } from "@material-ui/core";
-
-// Components
 import SensorButton from "../Buttons/SensorButton.component";
 import BluetoothConnectedIcon from "@material-ui/icons/BluetoothConnected";
+import SERVER_PORT from "../../utils/server_utils";
 
 type SensorProps = {
 	id: number;
@@ -20,7 +19,7 @@ type SensorProps = {
  * @param props
  * @returns A functional component showing data for the sensor
  */
-export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
+export const SensorRowHome: React.FC<SensorProps> = (props: SensorProps) => {
 	const [batteryPercent, setBatteryPercent] = useState<number>(props.battery);
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
@@ -33,7 +32,7 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	 * @param id A number used to identify each sensor.
 	 */
 	const disconnect = async (name: string, id: number) => {
-		await fetch("http://localhost:5000/setup/disconnect", {
+		await fetch("http://localhost:" + SERVER_PORT + "/setup/disconnect", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -56,21 +55,26 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	 */
 	const getBatteryPercent = useCallback(async () => {
 		if (!props.connected) return;
-		await fetch("http://localhost:5000/sensors/battery?name=" + props.name, {
+		await fetch("http://localhost:" + SERVER_PORT + "/sensors/battery?name=" + props.name, {
 			headers: {
 				Accept: "application/json",
 			},
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				if (data !== undefined) setBatteryPercent(data.battery);
+				if (data !== undefined){
+					if(data.battery === "-1") props.disconnectFunc(props.id);
+					else setBatteryPercent(data.battery);
+				}
 			});
 		// eslint-disable-next-line
 	}, [batteryPercent]);
 
+	let interval: any;
 	useEffect(() => {
 		if (!props.connected) return;
-		setInterval(getBatteryPercent, 60000);
+		interval = setInterval(getBatteryPercent, 30000);
+		return () => clearInterval(interval);
 		// eslint-disable-next-line
 	}, []);
 

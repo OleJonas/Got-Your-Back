@@ -26,7 +26,7 @@ class Sensor:
         """Checking if sensor has run out of battery or otherwise unexpectedly disconnected
         """
         try:
-            #Making an arbitrary call to the sensor object to see if it gives a response, if it doesn't, the sensor is no longer connected.
+            # Making an arbitrary call to the sensor object to see if it gives a response, if it doesn't, the sensor is no longer connected.
             err, test = self.sensor_obj.get_float_property(openzen.ZenSensorProperty.BatteryLevel)
             if not err == openzen.ZenError.NoError:
                 return False
@@ -78,7 +78,6 @@ class Sensor_Bank:
                 helper_id += 1
 
         self.sensor_dict[name] = Sensor(name, sensor, imu, helper_id)
-        print("connected")
         self.n_sensors += 1
 
     def set_all_sampling_rates(self, sampling_rate: int):
@@ -128,8 +127,10 @@ class Sensor_Bank:
         for s_name in dead_sensors:
             self.sensor_dict.pop(s_name)
             self.n_sensors -= 1
-        
-        return f"Sensor dict after error handling...: {self.sensor_dict}"
+
+        if len(dead_sensors) > 0:
+            return False
+        return True
 
     def set_sleep_time(self, sleep_time: float):
         """Set sleep time.
@@ -138,7 +139,6 @@ class Sensor_Bank:
             sleep_time (float): Time wanted to sleep for when needed.
         """
         self.sleep_time = sleep_time
-
 
     def scan_for_sensors(self, client: openzen.ZenClient):
         """Scan for available sensors.
@@ -203,10 +203,9 @@ class Sensor_Bank:
         battery_percent = f"{round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
 
         print(
-            f"Connected to sensor {s_name} ({battery_percent})!", flush=True, end='')
+            f"Connected to sensor {s_name} ({battery_percent})!", flush=True)
 
         return s_name, sensor, imu
-
 
     def sync_sensors(self, client: openzen.ZenClient):
         """Synchronize sensors.
@@ -228,6 +227,7 @@ class Sensor_Bank:
             imu.execute_property(openzen.ZenImuProperty.StopSensorSync)
 
         _remove_unsync_data(client)
+
 
 def _get_client():
     error, client = openzen.make_client()

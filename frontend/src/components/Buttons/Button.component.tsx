@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { Typography, Fab } from "@material-ui/core";
 
 type ButtonProps = {
@@ -11,7 +10,7 @@ type ButtonProps = {
  * @param props
  * @returns A base button component for use in several different buttons throughout the application
  */
-export const Button: FC<ButtonProps> = (props) => {
+export const Button: React.FC<ButtonProps> = (props) => {
 	return (
 		<Fab
 			variant="extended"

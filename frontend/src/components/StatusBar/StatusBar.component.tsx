@@ -1,5 +1,4 @@
-import { FC } from "react";
-import { Box, IconButton, Button } from "@material-ui/core";
+import { Box, Button } from "@material-ui/core";
 import { InlineIcon } from "@iconify/react";
 import emojiAngry20Regular from "@iconify-icons/fluent/emoji-angry-20-regular";
 import emojiSad20Regular from "@iconify-icons/fluent/emoji-sad-20-regular";
@@ -12,7 +11,7 @@ type statusProps = {
 	setStatus?: (number: 0 | 1 | 2 | 3 | 4) => void;
 };
 
-export const StatusPopup: FC<statusProps> = (props) => {
+export const StatusPopup: React.FC<statusProps> = (props) => {
 	return (
 		<Box display="flex" p={0.1}>
 			<Button

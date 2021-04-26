@@ -4,7 +4,6 @@ import { Route, HashRouter, Switch } from "react-router-dom";
 import { HomeView } from "./views/HomeView/HomeView";
 import { HistoryView } from "./views/HistoryView/HistoryView";
 import { HelpView } from "./views/HelpView/HelpView";
-// import { AboutView } from "./views/AboutView/AboutView";
 import { ReportView } from "./views/ReportView/ReportView";
 
 const Routing = () => {

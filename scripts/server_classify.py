@@ -111,7 +111,7 @@ def _classification_fname():
     Returns:
         str: Path to classification file.
     """
-    return f'./classifications/{date.today().strftime("%Y-%m-%d")}.csv'
+    return f'../classifications/{date.today().strftime("%Y-%m-%d")}.csv'
 
 
 def classify(model, sensor_bank: Sensor_Bank, type="rfc"):
@@ -124,7 +124,6 @@ def classify(model, sensor_bank: Sensor_Bank, type="rfc"):
     """
     values = []
     while True:
-
         if(min(data_queue.entries) == 0):
             time.sleep(SLEEPTIME)
         else:
