@@ -5,6 +5,7 @@ import SensorRowHome from "../SensorRow/SensorRowHome.component";
 import SensorModal from "../SensorModal/SensorModal.component";
 import sensor_placement from "../../utils/sensor_placement";
 import SERVER_PORT from "../../utils/server_utils";
+import useInterval from "../../utils/useInterval";
 
 export type Sensor = {
 	id: number;
@@ -14,7 +15,9 @@ export type Sensor = {
 
 type ListProps = {
 	recording: boolean;
+	hasSensors: boolean;
 	setHasSensors: (bool: boolean) => void;
+	setIsRecording: (bool: boolean) => void;
 };
 
 /**
@@ -49,6 +52,33 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 		setSensors(helper);
 	};
 
+	/**
+	 * useEffect that fetches status of the sensors on render.
+	 */
+	 useEffect(() => {
+		fetch("http://localhost:"+SERVER_PORT+"/status")
+			.then((response) => response.json())
+			.then((data) => {
+				props.setIsRecording(data.isRecording);
+				props.setHasSensors(data.numberOfSensors !== 0);
+			});
+
+		// eslint-disable-next-line
+	}, []);
+
+	/**
+	 * custom React hook that fetches status of the sensors every 9 seconds.
+	 */
+	useInterval(() => {
+		fetch("http://localhost:"+SERVER_PORT+"/status")
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.isRecording !== props.recording) props.setIsRecording(!props.recording);
+				if ((data.numberOfSensors !== 0) !== props.hasSensors && checkCorrectSensors()) props.setHasSensors(true);
+			});
+	}, 9000);
+
+	
 	/**
 	 * @remarks
 	 * useEffect that checks if sensorlist has sensors.
