@@ -39,5 +39,6 @@ class Data_Queue:
             data ([float]): Columns of data from sensor.
         """
         with self.__lock:
+            print("Sensor id: ", sensor_id)
             self.queue[sensor_id - 1].append(data)
             self.entries[sensor_id - 1] += 1

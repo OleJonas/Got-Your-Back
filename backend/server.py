@@ -17,6 +17,7 @@ sys.path.append("scripts/")
 from sensor_bank import Sensor_Bank
 from joblib import load
 import server_classify as sc
+import threading
 
 app = Flask(__name__)
 client = None
@@ -60,14 +61,6 @@ def before_request():
         res.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
         res.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
         return res
-    else:
-        global sensor_bank
-        if not sensor_bank.verify_sensors_alive() and sensor_bank.run:
-            stop_classify()
-            """return {
-                "error": f"Sensor(s) have disconnected", 
-                "sensors": [str(sensor) for sensor in sensor_bank.sensor_dict.items()]
-            }"""
 
 @app.route("/")
 def confirm_access():
@@ -304,6 +297,10 @@ def start_classify():
     """
     global t_pool
     global sensor_bank
+
+    # Checking to see if amount of sensors has been changed after api-call.
+    
+
     sensor_bank.run = True
     sensor_bank.sync_sensors(client)
     # keras model
@@ -389,7 +386,10 @@ def get_classification():
         dict: Dictionary with latest classification if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
         http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
     """
-
+    global sensor_bank
+    if not sensor_bank.verify_sensors_alive() and sensor_bank.run:
+        stop_classify()
+        return
     try:
         with open(sc._classification_fname(), 'r') as file:
             try:

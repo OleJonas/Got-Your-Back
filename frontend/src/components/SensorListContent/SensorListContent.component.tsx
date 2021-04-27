@@ -54,9 +54,27 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 	 * useEffect that checks if sensorlist has sensors.
 	 */
 	useEffect(() => {
-		if (sensors.length === 0) props.setHasSensors(false);
+		/*
+        Method that checks if the correct sensors are connected, if not, the user should not be allowed to start classification.
+        */
+		if (sensors.length === 0 || (checkCorrectSensors() === false)) props.setHasSensors(false);
 		//eslint-disable-next-line
 	}, [sensors]);
+
+	const checkCorrectSensors = () => {
+		const n_connected = sensors.length;
+        console.log("n_connected: " + n_connected);
+        const id_arr = sensors.map((sensor: Sensor) => sensor.id);
+		console.log("id_arr: " + id_arr);
+
+		for(let i = 1; i < sensors.length+1; i++){
+			if(!id_arr.includes(i)){
+				console.log("nonono");
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * @remarks
