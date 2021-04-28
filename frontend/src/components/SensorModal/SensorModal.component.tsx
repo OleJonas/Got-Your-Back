@@ -98,7 +98,9 @@ export const SensorModal: React.FC<modalProps> = (props) => {
 				className={classes.root}
 			>
 				<DialogTitle className={classes.title} id="customized-dialog-title">
-					<Typography variant="h2">{isFetching ? "Searching for sensors..." : "Sensors found"}</Typography>
+					<Typography variant="h2">
+						{isFetching ? "Searching for sensors..." : sensorsFound && sensorsFound.length === 0 ? "No sensors found" : "Sensors found"}
+					</Typography>
 				</DialogTitle>
 				<DialogContent className={classes.dialogContent} dividers>
 					<Box className={classes.sensorBox}>
@@ -121,7 +123,6 @@ export const SensorModal: React.FC<modalProps> = (props) => {
 									</Grid>
 									<Grid item xs={2}></Grid>
 								</Grid>
-
 								{sensorsFound ? (
 									sensorsFound.map((sensor: Sensor) => <SensorRowModal key={sensor.name} clickConnect={addConnected} name={sensor.name} />)
 								) : (
