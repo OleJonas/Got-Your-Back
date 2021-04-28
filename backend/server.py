@@ -17,6 +17,7 @@ sys.path.append("scripts/")
 from sensor_bank import Sensor_Bank
 from joblib import load
 import server_classify as sc
+import threading
 
 app = Flask(__name__)
 client = None
@@ -60,11 +61,6 @@ def before_request():
         res.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
         res.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
         return res
-    else:
-        global sensor_bank
-        sensor_bank.verify_sensors_alive()
-        return
-
 
 @app.route("/")
 def confirm_access():
@@ -301,6 +297,10 @@ def start_classify():
     """
     global t_pool
     global sensor_bank
+
+    # Checking to see if amount of sensors has been changed after api-call.
+    
+
     sensor_bank.run = True
     sensor_bank.sync_sensors(client)
     # keras model
@@ -380,13 +380,16 @@ def get_all_classifications():
 
 @app.route("/classifications/latest")
 def get_classification():
-    """Get the latest classification for today.
+    """Get the latest classification for today. If the timestamp in the url matches the timestamp of the latest classification in the file, something has gone wrong while classifying.
 
     Returns:
         dict: Dictionary with latest classification if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
         http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
     """
-
+    global sensor_bank
+    if not sensor_bank.verify_sensors_alive() and sensor_bank.run:
+        stop_classify()
+        return
     try:
         with open(sc._classification_fname(), 'r') as file:
             try:
@@ -477,7 +480,13 @@ def get_battery():
     """
     global sensor_bank
     name = request.args.get("name")
-    percent = sensor_bank.sensor_dict[name].get_battery_percentage()
+    try:
+        percent = sensor_bank.sensor_dict[name].get_battery_percentage()
+    except:
+        return {
+            "error": f"{name} is no longer connected",
+            "battery": "-1"
+        }
     return {"battery": str(percent).split("%")[0]}
 
 

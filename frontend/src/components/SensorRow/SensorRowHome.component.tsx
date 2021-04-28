@@ -62,14 +62,19 @@ export const SensorRowHome: React.FC<SensorProps> = (props: SensorProps) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				if (data !== undefined) setBatteryPercent(data.battery);
+				if (data !== undefined){
+					if(data.battery === "-1") props.disconnectFunc(props.id);
+					else setBatteryPercent(data.battery);
+				}
 			});
 		// eslint-disable-next-line
 	}, [batteryPercent]);
 
+	let interval: any;
 	useEffect(() => {
 		if (!props.connected) return;
-		setInterval(getBatteryPercent, 60000);
+		interval = setInterval(getBatteryPercent, 30000);
+		return () => clearInterval(interval);
 		// eslint-disable-next-line
 	}, []);
 

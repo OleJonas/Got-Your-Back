@@ -23,7 +23,7 @@ type ClassificationProps = {
 export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles(props);
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
-
+	
 	/**
 	 * @remarks
 	 * Function that uses the API-calls to start and stop classification.

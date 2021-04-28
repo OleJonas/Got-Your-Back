@@ -65,31 +65,6 @@ export const HomeView = () => {
 		}
 	}, 5000);
 
-	/**
-	 * useEffect that fetches status of the sensors on render.
-	 */
-	useEffect(() => {
-		fetch("http://localhost:"+SERVER_PORT+"/status")
-			.then((response) => response.json())
-			.then((data) => {
-				setIsRecording(data.isRecording);
-				setHasSensors(data.numberOfSensors !== 0);
-			});
-
-		// eslint-disable-next-line
-	}, []);
-
-	/**
-	 * custom React hook that fetches status of the sensors every 9 seconds.
-	 */
-	useInterval(() => {
-		fetch("http://localhost:"+SERVER_PORT+"/status")
-			.then((response) => response.json())
-			.then((data) => {
-				if (data.isRecording !== isRecording) setIsRecording(!isRecording);
-				if ((data.numberOfSensors !== 0) !== hasSensors) setHasSensors(true);
-			});
-	}, 9000);
 
 	/**
 	 * useMemo that sets buttonPressed to false every time recording is stopped.
@@ -121,7 +96,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<SensorListContent setHasSensors={setHasSensors} recording={isRecording} />
+								<SensorListContent hasSensors={hasSensors} setHasSensors={setHasSensors} setIsRecording={setIsRecording} recording={isRecording} />
 							</ContentBox>
 						</Grid>
 
