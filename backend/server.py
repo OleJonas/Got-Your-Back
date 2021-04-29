@@ -22,8 +22,7 @@ app = Flask(__name__)
 client = None
 found_sensors = None
 sensor_bank = None
-data_queue = None
-classify = False
+classification_handler = None
 t_pool = []
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
 CORS(app, support_credentials=True)
@@ -37,6 +36,7 @@ def init():
     global client
     global sensor_bank
     global found_sensors
+    global classification_handler
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     # Make client
     error, client = openzen.make_client()
@@ -45,6 +45,7 @@ def init():
         sys.exit(1)
     found_sensors = {}
     sensor_bank = Sensor_Bank()
+    classification_handler = sc.Classification_Handler(sensor_bank)
 
 
 @app.before_request
@@ -70,97 +71,6 @@ def confirm_access():
         str: Message confirming connection.
     """
     return "The API is up and running!"
-
-
-"""
-DEBUG
-"""
-
-
-@app.route('/dummy/scan')
-def get_dummy_scan():
-    """Fetch dummydata mocking a list of found sensors.
-
-    Returns:
-        dict: Dictionary with list of found sensors.
-                Format:
-
-                {"sensors": [str]}
-    """
-    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
-
-
-@app.route('/dummy/connect')
-def get_dummy_connect():
-    """Fetch dummydata mocking a list of connected sensors.
-
-    Returns:
-        dict: Dictionary with list of connected sensors.
-                Each sensor object is on the format:
-
-                {
-                    name: str,
-                    id: int,
-                    battery: int
-                }
-    """
-
-    global sensor_bank
-
-    res = {"sensors": [
-        {"name": "LPMSB2 - 3036EB", "id": "1", "battery_percent": "85,3%"},
-        {"name": "LPMSB2 - 4B3326", "id": "2", "battery_percent": "76,6%"},
-        {"name": "LPMSB2 - 4B31EE", "id": "3", "battery_percent": "54,26%"}
-    ]}
-
-    sensors = res["sensors"]
-
-    for sensor in sensors:
-        sensor_bank.add_sensor(sensor["name"], None, None)
-
-    return res
-
-
-@app.route("/dummy/get_sensors")
-def dummy_get_sensors():
-    """Fetch a list of dummy sensors.
-
-    Returns:
-        dict: Dictionary with list of connected sensors.
-                Each sensor object is on the format:
-
-                {
-                    name: str,
-                    id: int,
-                    battery: int
-                }
-    """
-    out = {"sensors": []}
-    for s in sensor_bank.sensor_dict.values():
-        out["sensors"].append({
-            "name": s.name,
-            "id": s.id,
-            "battery": "69.420"
-        })
-    return json.dumps(out)
-
-
-@app.route("/dummy/test_dead")
-def test_dead():
-    print(sensor_bank.sensor_dict)
-    ans = sensor_bank.test_dead()
-    print(sensor_bank.sensor_dict)
-    return ans
-
-
-@app.route('/dummy/found_sensors')
-def get_dummy_found_sensors():
-    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
-
-
-"""""""""""""""""""""""
-SENSORCONNECTION
-"""""""""""""""""""""""
 
 
 @app.route("/setup/scan")
@@ -253,7 +163,6 @@ def disconnect():
     """
     global sensor_bank
     names = request.json["names"]
-    print(names)
     for name in names:
         sensor_bank.disconnect_sensor(name)
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
@@ -273,6 +182,7 @@ def get_sensors():
                     battery: int
                 }
     """
+    sensor_bank.verify_sensors_alive()
     out = {"sensors": []}
     for s in sensor_bank.sensor_dict.values():
         out["sensors"].append({
@@ -306,8 +216,8 @@ def start_classify():
     # model = keras.models.load_model(f"../model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
 
     rfc_model = load(f"../model/models/RFC_model_{len(sensor_bank.sensor_dict)}.joblib")
-    classify_thread = threading.Thread(target=sc.classify, args=[rfc_model, sensor_bank], daemon=True)
-    collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)
+    classify_thread = threading.Thread(target=classification_handler.classify, args=[rfc_model], daemon=True)
+    collect_thread = threading.Thread(target=classification_handler.collect_data, args=[client], daemon=True)
     t_pool.append(classify_thread)
     t_pool.append(collect_thread)
     collect_thread.start()
@@ -362,7 +272,7 @@ def get_all_classifications():
     res = dict()
 
     try:
-        with open(sc._classification_fname(), 'r') as file:
+        with open(classification_handler._classification_fname(), 'r') as file:
             try:
                 for row in csv.reader(file):
                     classifications[int(row[1])] += 1
@@ -390,7 +300,7 @@ def get_classification():
         stop_classify()
         return
     try:
-        with open(sc._classification_fname(), 'r') as file:
+        with open(classification_handler._classification_fname(), 'r') as file:
             try:
                 lastrow = deque(csv.reader(file), 1)[0]
             except IndexError:  # empty file
@@ -484,7 +394,7 @@ def get_battery():
     except:
         return {
             "error": f"{name} is no longer connected",
-            "battery": "-1"
+            "battery": "0.0"
         }
     return {"battery": str(percent).split("%")[0]}
 
@@ -527,7 +437,7 @@ def write_report():
         os.makedirs(path)
     with open(_get_report_fname(), 'a+', newline='') as file:
         try:
-            sc._write_to_csv(csv.writer(file), user_status)
+            classification_handler._write_to_csv(csv.writer(file), user_status)
         except:
             print("Could not write to file :(")
             return json.dumps({'success': False}), 507, {'ContentType': 'application/json'}

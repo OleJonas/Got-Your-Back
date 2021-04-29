@@ -63,7 +63,7 @@ export const SensorRowHome: React.FC<SensorProps> = (props: SensorProps) => {
 			.then((res) => res.json())
 			.then((data) => {
 				if (data !== undefined){
-					if(data.battery === "-1") props.disconnectFunc(props.id);
+					if(data.battery == "0.0") props.disconnectFunc(props.id);
 					else setBatteryPercent(data.battery);
 				}
 			});
