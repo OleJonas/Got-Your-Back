@@ -115,6 +115,7 @@ const TextFieldWithState: React.FC<textFieldProps> = (props) => {
 				shrink: true,
 			}}
 			rowsMax="6"
+			required
 			fullWidth
 			multiline
 		/>
