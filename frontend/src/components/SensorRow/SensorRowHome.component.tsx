@@ -1,9 +1,8 @@
-import { FC, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Typography, Grid, makeStyles } from "@material-ui/core";
-
-// Components
 import SensorButton from "../Buttons/SensorButton.component";
 import BluetoothConnectedIcon from "@material-ui/icons/BluetoothConnected";
+import SERVER_PORT from "../../utils/server_utils";
 
 type SensorProps = {
 	id: number;
@@ -16,11 +15,11 @@ type SensorProps = {
 };
 
 /**
- * 
- * @param props 
+ *
+ * @param props
  * @returns A functional component showing data for the sensor
  */
-export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
+export const SensorRowHome: React.FC<SensorProps> = (props: SensorProps) => {
 	const [batteryPercent, setBatteryPercent] = useState<number>(props.battery);
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
@@ -28,12 +27,12 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	/**
 	 * @remarks
 	 * Does an async call to disconnect from the desired sensor.
-	 * 
+	 *
 	 * @param name A string containing the sensors name
 	 * @param id A number used to identify each sensor.
 	 */
 	const disconnect = async (name: string, id: number) => {
-		await fetch("http://localhost:5000/setup/disconnect", {
+		await fetch("http://localhost:" + SERVER_PORT + "/setup/disconnect", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -56,51 +55,64 @@ export const SensorRowHome: FC<SensorProps> = (props: SensorProps) => {
 	 */
 	const getBatteryPercent = useCallback(async () => {
 		if (!props.connected) return;
-		await fetch("http://localhost:5000/sensor/battery?name=" + props.name, {
+		await fetch("http://localhost:" + SERVER_PORT + "/sensors/battery?name=" + props.name, {
 			headers: {
 				Accept: "application/json",
 			},
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				if (data !== undefined) setBatteryPercent(data.battery);
+				if (data !== undefined){
+					if(data.battery == "0.0") props.disconnectFunc(props.id);
+					else setBatteryPercent(data.battery);
+				}
 			});
 		// eslint-disable-next-line
 	}, [batteryPercent]);
 
+	let interval: any;
 	useEffect(() => {
 		if (!props.connected) return;
-		setInterval(getBatteryPercent, 60000);
+		interval = setInterval(getBatteryPercent, 30000);
+		return () => clearInterval(interval);
 		// eslint-disable-next-line
 	}, []);
 
 	return (
-		<Grid container className={classes.root} direction="row" justify="center" alignItems="center">
-			<Grid item direction="row" justify="center" xs={2}>
+		<Grid container className={classes.root} justify="flex-start" alignItems="center">
+			<Grid item xs={2}>
 				<BluetoothConnectedIcon className={classes.icon} />
 			</Grid>
-			<Grid item direction="row" justify="flex-start" xs={3}>
+			<Grid item xs={3}>
 				<Typography variant="body2" color="textPrimary">
 					{props.name}
 				</Typography>
 			</Grid>
-			<Grid item direction="row" justify="flex-start" xs={3}>
+			<Grid item xs={3}>
 				<Typography variant="body2" color="textPrimary">
 					{props.position}
 				</Typography>
 			</Grid>
-			<Grid item direction="row" justify="center" xs={1}>
+			<Grid item xs={1}>
 				<Typography variant="body2" color="textPrimary">
 					{props.id}
 				</Typography>
 			</Grid>
-			<Grid item direction="row" justify="center" xs={1}>
+			<Grid item xs={1}>
 				<Typography variant="body2" color="textPrimary">
 					{batteryPercent + "%"}
 				</Typography>
 			</Grid>
-			<Grid container justify="center" item xs={2}>
-				<SensorButton type="disconnect" status={connected} func={() => disconnect(props.name, props.id)} sensorid={props.id} disabled={props.busy} />
+			<Grid item xs={2}>
+				<Grid container justify="center">
+					<SensorButton
+						type="disconnect"
+						status={connected}
+						func={() => disconnect(props.name, props.id)}
+						sensorid={props.id}
+						disabled={props.busy}
+					/>
+				</Grid>
 			</Grid>
 		</Grid>
 	);

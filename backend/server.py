@@ -1,25 +1,29 @@
 import os
 import sys
 import csv
-import datetime
+from datetime import datetime, date, timedelta
+# sys.path.append(os.path.abspath("../lib/openzen/build"))
+sys.path.append("../scripts")
 import openzen
-import keras
 import threading
-import time
 import atexit
 import json
 import numpy as np
 from flask import Flask, request, Response
 from flask_cors import CORS
 from collections import deque
+from pathlib import Path
 sys.path.append("scripts/")
 from sensor_bank import Sensor_Bank
+from joblib import load
 import server_classify as sc
+import threading
 
 app = Flask(__name__)
 client = None
 found_sensors = None
 sensor_bank = None
+classification_handler = None
 t_pool = []
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
 CORS(app, support_credentials=True)
@@ -33,6 +37,7 @@ def init():
     global client
     global sensor_bank
     global found_sensors
+    global classification_handler
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     # Make client
     error, client = openzen.make_client()
@@ -41,6 +46,7 @@ def init():
         sys.exit(1)
     found_sensors = {}
     sensor_bank = Sensor_Bank()
+    classification_handler = sc.Classification_Handler(sensor_bank)
 
 
 @app.before_request
@@ -56,10 +62,6 @@ def before_request():
         res.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
         res.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
         return res
-    else:
-        sensor_bank.verify_sensors_alive()
-        return 
-
 
 @app.route("/")
 def confirm_access():
@@ -84,7 +86,7 @@ def scan():
     """
     global found_sensors
     global sensor_bank
-    helper = sc.scan_for_sensors(client)
+    helper = sensor_bank.scan_for_sensors(client)
     out = {"sensors": []}
 
     for sensor in helper:
@@ -109,20 +111,21 @@ def connect():
     """
     global sensor_bank
     content = request.json
+    res = None
 
-    s_name, sensor, imu = sc.connect_to_sensor(client, found_sensors[content["name"]])
-    sensor_bank.add_sensor(s_name, sensor, imu)
-    s_id = sensor_bank.sensor_dict[s_name].id
-    res = {
-        "name": s_name,
-        "id": s_id,
-        "battery_percent": sensor_bank.sensor_dict[s_name].get_battery_percentage()
-    }
+    try:
+        s_name, sensor, imu = sensor_bank.connect_to_sensor(client, found_sensors[content["name"]])
+        sensor_bank.add_sensor(s_name, sensor, imu)
+        s_id = sensor_bank.sensor_dict[s_name].id
+        res = {
+            "name": s_name,
+            "id": s_id,
+            "battery_percent": sensor_bank.sensor_dict[s_name].get_battery_percentage()
+        }
+    except:
+        res = json.dumps({'success': False, 'error': "Could not connect to sensor, please try again..."}), 503, {'ContentType': 'application/json'}
+
     return res
-    """
-    print("Could not connect to sensor, please try again...")
-    return {"error": "Could not conect to sensor, please try again..."}
-    """
 
 
 @app.route("/setup/connect_all")
@@ -134,7 +137,7 @@ def connect_all():
     """
     global sensor_bank
     for sensor in found_sensors.values():
-        s_name, sensor, imu = sc.connect_to_sensor(client, sensor)
+        s_name, sensor, imu = sensor_bank.connect_to_sensor(client, sensor)
         sensor_bank.add_sensor(s_name, sensor, imu)
     return "All connected"
 
@@ -146,7 +149,7 @@ def sync_sensors():
     Returns:
         str: Message confirming that all sensors are synced.
     """
-    sc.sync_sensors(client, sensor_bank)
+    sensor_bank.sync_sensors(client, sensor_bank)
     return "All sensors are synced!"
 
 
@@ -179,6 +182,7 @@ def get_sensors():
                     battery: int
                 }
     """
+    sensor_bank.verify_sensors_alive()
     out = {"sensors": []}
     for s in sensor_bank.sensor_dict.values():
         out["sensors"].append({
@@ -203,11 +207,18 @@ def start_classify():
     """
     global t_pool
     global sensor_bank
+
+    # Checking to see if amount of sensors has been changed after api-call.
+    
+
     sensor_bank.run = True
-    sc.sync_sensors(client, sensor_bank)
-    model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
-    classify_thread = threading.Thread(target=sc.classify, args=[model, sensor_bank], daemon=True)
-    collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)
+    sensor_bank.sync_sensors(client)
+    # keras model
+    # model = keras.models.load_model(f"../model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
+
+    rfc_model = load(f"../model/models/RFC_model_{len(sensor_bank.sensor_dict)}.joblib")
+    classify_thread = threading.Thread(target=classification_handler.classify, args=[rfc_model], daemon=True)
+    collect_thread = threading.Thread(target=classification_handler.collect_data, args=[client], daemon=True)
     t_pool.append(classify_thread)
     t_pool.append(collect_thread)
     collect_thread.start()
@@ -262,7 +273,7 @@ def get_all_classifications():
     res = dict()
 
     try:
-        with open(sc._classification_fname(), 'r') as file:
+        with open(classification_handler._classification_fname(), 'r') as file:
             try:
                 for row in csv.reader(file):
                     classifications[int(row[1])] += 1
@@ -279,15 +290,18 @@ def get_all_classifications():
 
 @app.route("/classifications/latest")
 def get_classification():
-    """Get the latest classification for today.
+    """Get the latest classification for today. If the timestamp in the url matches the timestamp of the latest classification in the file, something has gone wrong while classifying.
 
     Returns:
         dict: Dictionary with latest classification if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
         http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
     """
-
+    global sensor_bank
+    if not sensor_bank.verify_sensors_alive() and sensor_bank.run:
+        stop_classify()
+        return
     try:
-        with open(sc._classification_fname(), 'r') as file:
+        with open(classification_handler._classification_fname(), 'r') as file:
             try:
                 lastrow = deque(csv.reader(file), 1)[0]
             except IndexError:  # empty file
@@ -307,19 +321,19 @@ def get_classifications_history():
     """
     days = int(request.args.get("duration"))
     res = dict()
-    filearray = os.listdir("./classifications/")
-    startDate = (datetime.date.today() - datetime.timedelta(days=days))
+    filearray = os.listdir("../classifications/")
+    startDate = (date.today() - timedelta(days=days))
 
     # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
     for i in range(0, days):
-        ith_Day = startDate + datetime.timedelta(days=i)
+        ith_Day = startDate + timedelta(days=i)
         ith_Day_str = ith_Day.strftime("%Y-%m-%d")
         classifications = np.zeros(9)
 
         # if there is a file for the i-th day in the interval, proceed, if not, skip
         if((ith_Day_str + ".csv") in filearray):
             try:
-                with open("./classifications/" + str(ith_Day_str + ".csv"), 'r') as file:
+                with open("../classifications/" + str(ith_Day_str + ".csv"), 'r') as file:
                     reader = csv.reader(file)
                     for row in reader:
                         classifications[int(row[1])] += 1
@@ -329,12 +343,45 @@ def get_classifications_history():
     return res
 
 
+@app.route("/classifications/reports")
+def get_report_classifications():
+    """Get classifications for minimal report graph.
+
+    Returns:
+        dict: Dictionary with classifications if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
+        http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
+    """
+    year = int(request.args.get('year'))
+    month = '%02d' % int(request.args.get('month'))
+    day = '%02d' % int(request.args.get('day'))
+    INTERVAL = 600
+    counter = 0
+    classifications = np.zeros(9)
+    res = dict()
+    try:
+        with open(f'../classifications/{year}-{month}-{day}.csv', 'r') as file:
+            try:
+                for row in csv.reader(file):
+                    classifications[int(row[1])] += 1
+                    counter += 1
+                    if counter % INTERVAL == 0:
+                        res[row[0]] = int(np.argmax(classifications))
+                        classifications = np.zeros(9)
+                return res
+            except IndexError:  # empty file
+                return json.dumps({'Error': "FileEmpty"}), 507, {'ContentType': 'application/json'}
+    except FileNotFoundError:
+        return json.dumps({'Error': "FileNotFound"}), 507, {'ContentType': 'application/json'}
+    except TypeError:
+        return json.dumps({'Error': "You have to pass in both query arguments year and month!"}), 400, {'ContentType': 'application/json'}
+
+
 """
 STATUS/BATTERY LEVEL
 """
 
 
-@app.route("/sensor/battery")
+@app.route("/sensors/battery")
 def get_battery():
     """Get battery percent based on name given in request body.
 
@@ -343,7 +390,13 @@ def get_battery():
     """
     global sensor_bank
     name = request.args.get("name")
-    percent = sensor_bank.sensor_dict[name].get_battery_percentage()
+    try:
+        percent = sensor_bank.sensor_dict[name].get_battery_percentage()
+    except:
+        return {
+            "error": f"{name} is no longer connected",
+            "battery": "0.0"
+        }
     return {"battery": str(percent).split("%")[0]}
 
 
@@ -363,6 +416,66 @@ def get_status():
         "isRecording": sensor_bank.run,
         "numberOfSensors": len(sensor_bank.sensor_dict)
     }
+
+
+"""
+User reports
+"""
+
+
+def _get_report_fname():
+    return f'../reports/{datetime.now().year}-{"%02d" % datetime.now().month}/{date.today().strftime("%Y-%m-%d")}.csv'
+
+
+@app.route("/reports", methods=["POST"])
+def write_report():
+    """Write how the user feels to file
+    """
+    req = request.json
+    user_status = req["status"]
+    path = f"../reports/{datetime.now().year}-{'%02d' % datetime.now().month}"
+    if not os.path.exists(path):
+        os.makedirs(path)
+    with open(_get_report_fname(), 'a+', newline='') as file:
+        try:
+            classification_handler._write_to_csv(csv.writer(file), user_status)
+        except:
+            print("Could not write to file :(")
+            return json.dumps({'success': False}), 507, {'ContentType': 'application/json'}
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+
+
+@app.route("/reports", methods=["GET"])
+def get_report():
+    """Fetch user reports
+    """
+    try:
+        year = int(request.args.get('year'))
+        month = '%02d' % int(request.args.get('month'))
+        paths = sorted(Path(f"../reports/{year}-{month}").iterdir(), key=os.path.getmtime)
+        file_array = [path.name for path in paths if not path.name.startswith(".")]
+        rows = []
+        for fname in file_array:
+            with open(f"../reports/{year}-{month}/{fname}", 'r') as file:
+                try:
+                    new_row = []
+                    for row in csv.reader(file):
+                        new_row.append(row)
+                    rows.append([new_row[0][0], new_row])
+                except IndexError:  # empty file
+                    return json.dumps({'FileEmpty': True}), 507, {'ContentType': 'application/json'}
+        return {"data": rows}
+    except FileNotFoundError:
+        return json.dumps({'Error': "FileNotFound"}), 507, {'ContentType': 'application/json'}
+    except TypeError:
+        return json.dumps({'Error': "You have to pass in both query arguments year and month!"}), 400, {'ContentType': 'application/json'}
+
+
+@ app.route("/reports/available")
+def get_report_months_available():
+    paths = sorted(Path("../reports/").iterdir(), key=os.path.getmtime, reverse=True)
+    res = [path.name for path in paths if not path.name.startswith(".")]
+    return {"data": res}
 
 
 def shutdown():

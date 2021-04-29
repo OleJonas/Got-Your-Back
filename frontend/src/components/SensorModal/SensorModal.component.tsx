@@ -1,12 +1,11 @@
-import { FC, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Sensor } from "../SensorListContent/SensorListContent.component";
-
-// Components
-import { Button } from "../Buttons/Button.component";
-import { SensorRowModal } from "../SensorRow/SensorRowModal.component";
+import Button from "../Buttons/Button.component";
+import SensorRowModal from "../SensorRow/SensorRowModal.component";
 import loader from "../../assets/loader.svg";
+import SERVER_PORT from "../../utils/server_utils";
 
 type modalProps = {
 	open: boolean;
@@ -15,7 +14,7 @@ type modalProps = {
 	sendSensors: (sensor: any) => void;
 };
 
-export const SensorModal: FC<modalProps> = (props) => {
+export const SensorModal: React.FC<modalProps> = (props) => {
 	const classes = useStyles();
 	const [sensorsFound, setSensorsFound] = useState<any>();
 	const [isFetching, setIsFetching] = useState(false);
@@ -29,7 +28,7 @@ export const SensorModal: FC<modalProps> = (props) => {
 		if (isFetching) return;
 		setIsFetching(true);
 
-		await fetch("http://localhost:5000/setup/scan", {
+		await fetch("http://localhost:" + SERVER_PORT + "/setup/scan", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -99,7 +98,9 @@ export const SensorModal: FC<modalProps> = (props) => {
 				className={classes.root}
 			>
 				<DialogTitle className={classes.title} id="customized-dialog-title">
-					<Typography variant="h2">{isFetching ? "Searching for sensors..." : "Sensors found"}</Typography>
+					<Typography variant="h2">
+						{isFetching ? "Searching for sensors..." : sensorsFound && sensorsFound.length === 0 ? "No sensors found" : "Sensors found"}
+					</Typography>
 				</DialogTitle>
 				<DialogContent className={classes.dialogContent} dividers>
 					<Box className={classes.sensorBox}>
@@ -109,18 +110,21 @@ export const SensorModal: FC<modalProps> = (props) => {
 							</Box>
 						) : (
 							<Box>
-								<Grid className={classes.columns} container xs={12}>
-									<Grid container className={classes.grid} justify="flex-start" item xs={5}>
-										<Typography variant="h6">Sensor name</Typography>
+								<Grid container className={classes.columns} justify="flex-start">
+									<Grid item xs={5}>
+										<Grid container className={classes.grid} justify="flex-start">
+											<Typography variant="h6">Sensor name</Typography>
+										</Grid>
 									</Grid>
-									<Grid container className={classes.grid} justify="flex-start" item xs={3}>
-										<Typography variant="h6">Status</Typography>
+									<Grid item xs={3}>
+										<Grid container className={classes.grid} justify="flex-start">
+											<Typography variant="h6">Status</Typography>
+										</Grid>
 									</Grid>
-									<Grid container className={classes.grid} justify="center" item xs={2}></Grid>
+									<Grid item xs={2}></Grid>
 								</Grid>
-
 								{sensorsFound ? (
-									sensorsFound.map((sensor: Sensor) => <SensorRowModal clickConnect={addConnected} name={sensor.name} />)
+									sensorsFound.map((sensor: Sensor) => <SensorRowModal key={sensor.name} clickConnect={addConnected} name={sensor.name} />)
 								) : (
 									<></>
 								)}
@@ -154,7 +158,6 @@ const useStyles = makeStyles({
 		height: "1000px",
 	},
 	grid: {
-		justify: "center",
 		alignItems: "center",
 		paddingLeft: "30px",
 	},
@@ -172,18 +175,19 @@ const useStyles = makeStyles({
 		marginTop: "20px",
 	},
 	paper: {
-		height: "80%",
+		height: "calc(320px + 150px)",
 		width: "70%",
 	},
 	sensorBox: {
-		height: "60%",
+		height: "calc(100% - 100px)",
 		backgroundColor: "rgba(255,255,255,0.9)",
 		width: "95%",
 		margin: "auto",
 		overflow: "auto",
 	},
 	btnGrid: {
-		marginTop: "15%",
+		marginTop: "35px",
+		marginBottom: "10px",
 	},
 	"@keyframes rotate": {
 		from: {

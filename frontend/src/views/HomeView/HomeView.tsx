@@ -1,19 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Grid, Box, makeStyles, Typography } from "@material-ui/core";
-
-// Components
-import { NavBar } from "../../components/NavBar/NavBar.component";
-import { ContentBox } from "../../components/ContentBox/ContentBox.component";
-import { ClassificationContent } from "../../components/ClassificationContent/ClassificationContent.component";
-import { RecordContent } from "../../components/RecordContent/RecordContent.component";
-import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
-import { PieChart } from "../../components/PieChart/PieChart.component.jsx";
-import { SensorListContent } from "../../components/SensorListContent/SensorListContent.component";
+import NavBar from "../../components/NavBar/NavBar.component";
+import ContentBox from "../../components/ContentBox/ContentBox.component";
+import ClassificationContent from "../../components/ClassificationContent/ClassificationContent.component";
+import RecordContent from "../../components/RecordContent/RecordContent.component";
+import LineChart from "../../components/LineChart/LineChart.component.jsx";
+import PieChart from "../../components/PieChart/PieChart.component.jsx";
+import SensorListContent from "../../components/SensorListContent/SensorListContent.component";
 import handleErrors from "../../utils/handleErrors";
 import useInterval from "../../utils/useInterval";
+import SERVER_PORT from "../../utils/server_utils";
 
 /**
- * @remarks
  * This is the main page of the application. It contains live classification data as well as different components also relating to live classification and recording of data.
  */
 export const HomeView = () => {
@@ -22,15 +20,15 @@ export const HomeView = () => {
 	const lastPosture: number =
 		datapoints && Object.values(datapoints).length !== 0 ? (Object.values(datapoints)[Object.values(datapoints).length - 1] as number) : -1;
 	const samplingRate: number = 5;
+	const [buttonPressed, setButtonPressed] = useState<boolean>(false);
 	const [isRecording, setIsRecording] = useState<boolean>(false);
 	const [hasSensors, setHasSensors] = useState<boolean>(false);
 
 	/**
-	 * @remarks
 	 * useEffect that fetches classifications on render.
 	 */
 	useEffect(() => {
-		fetch("http://localhost:5000/classifications", {
+		fetch("http://localhost:"+SERVER_PORT+"/classifications", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -45,12 +43,11 @@ export const HomeView = () => {
 	}, []);
 
 	/**
-	 * @remarks
-	 * custom React hook that fetches classifications every 3 seconds when recording is active.
+	 * custom React hook that fetches classifications every 5 seconds when recording is active.
 	 */
 	useInterval(() => {
 		if (isRecording) {
-			fetch("http://localhost:5000/classifications/latest", {
+			fetch("http://localhost:"+SERVER_PORT+"/classifications/latest", {
 				headers: {
 					"Content-Type": "application/json",
 					Accept: "application/json",
@@ -68,29 +65,15 @@ export const HomeView = () => {
 		}
 	}, 5000);
 
-	/**
-	 * @remarks
-	 * useEffect that fetches status of the sensors on render and every ninth second.
-	 */
-	useEffect(() => {
-		fetch("http://localhost:5000/status")
-			.then((response) => response.json())
-			.then((data) => {
-				setIsRecording(data.isRecording);
-				setHasSensors(data.numberOfSensors !== 0);
-			});
 
-		const interval = setInterval(() => {
-			fetch("http://localhost:5000/status")
-				.then((response) => response.json())
-				.then((data) => {
-					if (data.isRecording !== isRecording) setIsRecording(data.isRecording);
-					if ((data.numberOfSensors !== 0) !== hasSensors) setHasSensors(data.numberOfSensors !== 0);
-				});
-		}, 9000);
-		return () => clearInterval(interval);
-		// eslint-disable-next-line
-	}, []);
+	/**
+	 * useMemo that sets buttonPressed to false every time recording is stopped.
+	 */
+	useMemo(
+		() => setButtonPressed(false),
+		//eslint-disable-next-line
+		[isRecording]
+	);
 
 	return (
 		<>
@@ -113,7 +96,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<SensorListContent setHasSensors={setHasSensors} recording={isRecording} />
+								<SensorListContent hasSensors={hasSensors} setHasSensors={setHasSensors} setIsRecording={setIsRecording} recording={isRecording} />
 							</ContentBox>
 						</Grid>
 
@@ -128,7 +111,9 @@ export const HomeView = () => {
 									posture={lastPosture}
 									hasSensors={hasSensors}
 									isRecording={isRecording}
+									buttonPressed={buttonPressed}
 									setIsRecording={(bool: boolean) => setIsRecording(bool)}
+									setButtonPressed={(bool: boolean) => setButtonPressed(bool)}
 								></RecordContent>
 							</ContentBox>
 						</Grid>
@@ -151,7 +136,7 @@ export const HomeView = () => {
 								</Typography>
 							</Box>
 							<ContentBox>
-								<LineChart duration={1} data={datapoints} />
+								<LineChart duration={0} data={datapoints} />
 							</ContentBox>
 						</Grid>
 

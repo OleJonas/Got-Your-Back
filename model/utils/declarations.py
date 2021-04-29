@@ -38,15 +38,17 @@ training_files = {
                             "../../data/annotation/training/005_train_3_090221.txt"),
     "006": training_class("../../data/train_data/006_train_3_110221.csv",
                               "../../data/annotation/training/006_train_3_110221.txt"),
-    "007": training_class("../../data/train_data/007_train_3_030321.csv",
-                          "../../data/annotation/training/007_train_3_030321.txt"),
-    "008": training_class("../../data/train_data/008_train_3_030321.csv",
-                          "../../data/annotation/training/008_train_3_030321.txt"),
+    "009": training_class("../../data/train_data/009_train_3_120421.csv",
+                          "../../data/annotation/training/009_train_3_120421.txt"),
+    "010": training_class("../../data/train_data/010_train_3_220421.csv",
+                          "../../data/annotation/training/010_train_3_220421.txt"),
 }
 
 testing_files = {
     "001": testing_class("../../data/test_data/001_test_3_040221.csv",
                             "../../data/annotation/testing/001_test_3_040221.txt"),
+    "002": testing_class("../../data/test_data/002_test_3_140421.csv",
+                          "../../data/annotation/testing/002_test_3_140421.txt"),
     "004": testing_class("../../data/test_data/004_test_3_110221.csv",
                               "../../data/annotation/testing/004_test_3_110221.txt"),
     "005": testing_class("../../data/test_data/005_test_3_090221.csv",
@@ -54,7 +56,21 @@ testing_files = {
     "006": testing_class("../../data/test_data/006_test_3_110221.csv",
                              "../../data/annotation/testing/006_test_3_110221.txt"),
     "007": testing_class("../../data/test_data/007_test_3_030321.csv",
-                         "../../data/annotation/testing/007_test_3_030321.txt"),
-    "008": testing_class("../../data/test_data/008_test_3_030321.csv",
-                         "../../data/annotation/testing/008_test_3_030321.txt"),
+                        "../../data/annotation/testing/007_test_3_030321.txt"),
+    "009": testing_class("../../data/test_data/009_test_3_120421.csv",
+                          "../../data/annotation/testing/009_test_3_120421.txt"),
+    "010": testing_class("../../data/test_data/010_test_3_220421.csv",
+                        "../../data/annotation/testing/010_test_3_220421.txt"),
 }
+
+
+"""
+"007": testing_class("../../data/test_data/007_test_3_030321.csv",
+                        "../../data/annotation/testing/007_test_3_030321.txt"),
+"008": testing_class("../../data/test_data/008_test_3_030321.csv",
+                        "../../data/annotation/testing/008_test_3_030321.txt"),
+"007": training_class("../../data/train_data/007_train_3_030321.csv",
+                        "../../data/annotation/training/007_train_3_030321.txt"),
+"008": training_class("../../data/train_data/008_train_3_030321.csv",
+                        "../../data/annotation/training/008_train_3_030321.txt"),
+"""

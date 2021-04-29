@@ -4,32 +4,27 @@ import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
-
-// Components
-import { NavBar } from "../../components/NavBar/NavBar.component";
-import { ContentBox } from "../../components/ContentBox/ContentBox.component";
-import { LineChart } from "../../components/LineChart/LineChart.component.jsx";
-import { ColumnChart } from "../../components/ColumnChart/ColumnChart.component";
-
-// DENNE MÅ NOEN ANDRE KOMMENTERE ANER IKKE HVA JEG SKAL SKRIVE HER
+import NavBar from "../../components/NavBar/NavBar.component";
+import ContentBox from "../../components/ContentBox/ContentBox.component";
+import LineChart from "../../components/LineChart/LineChart.component.jsx";
+import ColumnChart from "../../components/ColumnChart/ColumnChart.component";
+import SERVER_PORT from "../../utils/server_utils";
 
 /**
- *
- * @returns The history page showing statistics from the last few days all the way back to months.
+ * The history page showing statistics from the last few days all the way back to months.
  */
 export const HistoryView = () => {
 	const [durationLine, setDurationLine] = useState<number>(7);
 	const [durationColumn, setDurationColumn] = useState<number>(7);
 	const classes = useStyles();
-	const [datapointsLine, setDatapointsLine] = useState<any>({
-		"1998-09-10 08:25:50": "1",
-	});
-	const [datapointsColumn, setDatapointsColumn] = useState<any>({
-		"1998-09-10 08:25:50": "1",
-	});
+	const [datapointsLine, setDatapointsLine] = useState<any>({});
+	const [datapointsColumn, setDatapointsColumn] = useState<any>({});
 
+	/**
+	 * Fetches classifications for a given duration (X number of days back in time) for the line chart
+	 */
 	useEffect(() => {
-		fetch("http://localhost:5000/classifications/history?duration=" + durationLine, {
+		fetch("http://localhost:"+SERVER_PORT+"/classifications/history?duration=" + durationLine, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -41,8 +36,11 @@ export const HistoryView = () => {
 			});
 	}, [durationLine]);
 
+	/**
+	 * Fetches classifications for a given duration (X number of days back in time) for the column chart
+	 */
 	useEffect(() => {
-		fetch("http://localhost:5000/classifications/history?duration=" + durationColumn, {
+		fetch("http://localhost:"+SERVER_PORT+"/classifications/history?duration=" + durationColumn, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -54,10 +52,20 @@ export const HistoryView = () => {
 			});
 	}, [durationColumn]);
 
+	/**
+	 *
+	 * @param event
+	 * Sets duration (# of days back in time) for line chart
+	 */
 	const handleChangeLine = (event: any) => {
 		setDurationLine(event.target.value);
 	};
 
+	/**
+	 *
+	 * @param event
+	 * Sets duration (# of days back in time) for column chart
+	 */
 	const handleChangeColumn = (event: any) => {
 		setDurationColumn(event.target.value);
 	};
@@ -69,72 +77,79 @@ export const HistoryView = () => {
 					<NavBar />
 				</Grid>
 				<Grid item xs={10} md={11} className={classes.height}>
-					<Grid container spacing={2} className={classes.container}>
-						<Grid item xs={12}>
-							<Typography variant="h1" color="textPrimary">
-								History
-							</Typography>
+					<Grid container alignItems="flex-start" className={classes.container}>
+						<Grid item xs={12} className={classes.title}>
+							<Box>
+								<Typography variant="h1" color="textPrimary">
+									History
+								</Typography>
+							</Box>
 						</Grid>
 
-						<Grid item xs={12} className={classes.components}>
-							<Box mb={0.6} className={classes.box}>
-								<FormControl className={classes.dropdown}>
-									<InputLabel id="durationLine-controlled-open-select-label">
-										<Typography variant="h5" color="textPrimary">
-											Distribution over time
-										</Typography>
-									</InputLabel>
-									<Select
-										labelId="durationLine-controlled-open-select-label"
-										id="durationLine-controlled-open-select"
-										value={durationLine}
-										onChange={handleChangeLine}
-										inputProps={{
-											classes: {
-												icon: classes.icon,
-											},
-										}}
-									>
-										<MenuItem value={7}>7 days</MenuItem>
-										<MenuItem value={14}>14 days</MenuItem>
-										<MenuItem value={30}>30 days</MenuItem>
-									</Select>
-								</FormControl>
-								<Typography variant="h3" color="textPrimary"></Typography>
-
-								<ContentBox>
+						<Grid item xs={12}>
+							<Box className={classes.components}>
+								<Box p={1}>
+									<FormControl className={classes.dropdown}>
+										<InputLabel id="durationLine-controlled-open-select-label">
+											<Typography variant="h5" color="textPrimary">
+												Distribution over time
+											</Typography>
+										</InputLabel>
+										<Select
+											labelId="durationLine-controlled-open-select-label"
+											id="durationLine-controlled-open-select"
+											value={durationLine}
+											onChange={handleChangeLine}
+											inputProps={{
+												classes: {
+													icon: classes.icon,
+												},
+											}}
+										>
+											<MenuItem value={7}>7 days</MenuItem>
+											<MenuItem value={14}>14 days</MenuItem>
+											<MenuItem value={30}>30 days</MenuItem>
+										</Select>
+									</FormControl>
+								</Box>
+								<ContentBox className={classes.components}>
 									<LineChart duration={durationLine} data={datapointsLine} />
 								</ContentBox>
 							</Box>
 						</Grid>
 
-						<Grid item xs={12} md={12} className={classes.components}>
-							<FormControl className={classes.dropdown}>
-								<InputLabel id="durationColumn-controlled-open-select-label">
-									<Typography variant="h5" color="textPrimary">
-										Distribution in total
-									</Typography>
-								</InputLabel>
-								<Select
-									labelId="durationColumn-controlled-open-select-label"
-									id="durationColumn-controlled-open-select"
-									value={durationColumn}
-									onChange={handleChangeColumn}
-									inputProps={{
-										classes: {
-											icon: classes.icon,
-										},
-									}}
-								>
-									<MenuItem value={7}>7 days</MenuItem>
-									<MenuItem value={14}>14 days</MenuItem>
-									<MenuItem value={30}>30 days</MenuItem>
-								</Select>
-							</FormControl>
-
-							<ContentBox>
-								<ColumnChart data={datapointsColumn} />
-							</ContentBox>
+						<Grid item xs={12} md={12}>
+							<Box mt={10} className={classes.components}>
+								<Box p={1}>
+									<FormControl className={classes.dropdown}>
+										<InputLabel id="durationColumn-controlled-open-select-label">
+											<Typography variant="h5" color="textPrimary">
+												Distribution in total
+											</Typography>
+										</InputLabel>
+										<Select
+											labelId="durationColumn-controlled-open-select-label"
+											id="durationColumn-controlled-open-select"
+											value={durationColumn}
+											onChange={handleChangeColumn}
+											inputProps={{
+												classes: {
+													icon: classes.icon,
+												},
+											}}
+										>
+											<MenuItem value={7}>7 days</MenuItem>
+											<MenuItem value={14}>14 days</MenuItem>
+											<MenuItem value={30}>30 days</MenuItem>
+										</Select>
+									</FormControl>
+								</Box>
+								<Box pb={5}>
+									<ContentBox className={classes.components}>
+										<ColumnChart data={datapointsColumn} />
+									</ContentBox>
+								</Box>
+							</Box>
 						</Grid>
 					</Grid>
 				</Grid>
@@ -148,13 +163,13 @@ const useStyles = makeStyles({
 	root: {
 		height: "100%",
 	},
-	box: {
-		height: "100%",
-	},
+
 	icon: {
 		fill: "white",
 	},
 	dropdown: {
+		position: "relative",
+		marginTop: "40px",
 		minWidth: 160,
 	},
 	container: {
@@ -164,9 +179,12 @@ const useStyles = makeStyles({
 	},
 	components: {
 		minHeight: "300px",
-		height: "40vh",
+		height: "30vh",
 	},
 	height: {
 		height: "100%",
+	},
+	title: {
+		maxHeight: "50px",
 	},
 });

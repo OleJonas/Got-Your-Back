@@ -5,7 +5,6 @@ After the connection is established, a new thread is made. This thread is suppos
 classification, such as loading the right model, and write the classifications in realtime to a file and terminal. 
 Further on, the main task of the main thread is to flush excess data, synchronize and collecting data until killed.
 """
-
 import time
 import sys
 import threading
@@ -16,6 +15,8 @@ import csv
 import keras
 from collections import Counter
 from Data_Queue import Data_Queue
+from rnn_utils import create_3d_array
+from joblib import load
 
 PREDICTION_INTERVAL = 1  # Interval is in seconds
 SAMPLING_RATE = 5
@@ -31,7 +32,7 @@ SENSORS_ID = {
 MAP_HANDLE_TO_ID = {}
 
 
-def scan_for_sensors(client):
+def scan_for_sensors(client: openzen.ZenClient):
     """Scan for available sensors.
 
     Args:
@@ -65,7 +66,7 @@ def scan_for_sensors(client):
     return sensors
 
 
-def connect_and_get_imus(client, sensors, chosen_sensors):
+def connect_and_get_imus(client: openzen.ZenClient, sensors: list, chosen_sensors: list):
     """Connects to chosen sensors and get a connection to their inertial measurement unit.
 
     Args:
@@ -115,7 +116,7 @@ def connect_and_get_imus(client, sensors, chosen_sensors):
     return connected_sensors, imus
 
 
-def set_sampling_rate(IMU, sampling_rate):
+def set_sampling_rate(IMU: openzen.ZenSensorComponent, sampling_rate: int):
     """Sets the sampling rate of given imu.
 
     Args:
@@ -130,7 +131,7 @@ def set_sampling_rate(IMU, sampling_rate):
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
 
-def get_sampling_rate(IMU):
+def get_sampling_rate(IMU: openzen.ZenSensorComponent):
     """Get sampling rate from imu.
 
     Args:
@@ -142,7 +143,7 @@ def get_sampling_rate(IMU):
     return IMU.get_int32_property(openzen.ZenImuProperty.SamplingRate)[1]
 
 
-def sync_sensors(imus):
+def sync_sensors(imus: list):
     """Synchronize sensors.
 
     Args:
@@ -176,7 +177,7 @@ def sync_sensors(imus):
     return imus
 
 
-def _remove_unsync_data(client):
+def _remove_unsync_data(client: openzen.ZenClient):
     """Removes data events from before sensor synchronization.
 
     Args:
@@ -187,7 +188,7 @@ def _remove_unsync_data(client):
         zenEvent = client.poll_next_event()
 
 
-def _make_row(handle, imu_data):
+def _make_row(handle: int, imu_data: openzen.ZenImuData):
     """Create row with the following data columns:
         a (m/s^2): Accleration measurement after all corrections have been applied.
         g (deg/s): Gyroscope measurement after all corrections have been applied.
@@ -211,7 +212,7 @@ def _make_row(handle, imu_data):
     return row
 
 
-def collect_data(client, data_queue):
+def collect_data(client: openzen.ZenClient, data_queue: Data_Queue):
     """Collect data from connected sensors.
 
     Args:
@@ -256,7 +257,7 @@ def collect_data(client, data_queue):
             continue
 
 
-def _write_to_csv(writer, classification):
+def _write_to_csv(writer: csv.writer, classification: int):
     """Write classification to csv.
 
     Args:
@@ -267,12 +268,13 @@ def _write_to_csv(writer, classification):
     writer.writerow([current_time, classification])
 
 
-def classify(model, data_queue):
+def classify(model: keras.engine.sequential.Sequential, data_queue: Data_Queue, type="ann"):
     """Classify in realtime based on trained model and data in data queue.
 
     Args:
         model (tensorflow.python.keras.engine.sequential.Sequential): ANN model trained for n_sensors connected.
         data_queue (Data_Queue): Data queue with data collected from sensor(s).
+        type (str): Type of model
     """
     values = []
     while True:
@@ -289,14 +291,35 @@ def classify(model, data_queue):
 
         if(len(values) == SAMPLING_RATE):
             start_time_classify = time.perf_counter()
-            classify = model(np.array(values)).numpy()
-            argmax = [classification.argmax() for classification in classify]
-            end_time_classify = time.perf_counter() - start_time_classify
-            classification = Counter(argmax).most_common(1)[0][0]
+            values_np = np.array(values)
+            arr = None
+
+            if type == "cnn":
+                arr = values_np.reshape(values_np.shape[0], values_np.shape[1], 1)
+            elif type == "rnn":
+                arr = np.array(create_3d_array(values, 50))
+            elif type == "rfc":
+                arr = values_np.reshape(values_np.shape[0], values_np.shape[1])
+            else:
+                arr = np.array(values)
+
+            classify = np.array(model(arr) if type != "rfc" else model.predict(arr))
+            print(classify)
+            classification = None
+
+            if type != "rfc":
+                argmax = [classification.argmax() for classification in classify]
+                print(argmax)
+                end_time_classify = time.perf_counter() - start_time_classify
+                classification = Counter(argmax).most_common(1)[0][0]
+            else:
+                end_time_classify = time.perf_counter() - start_time_classify
+                classification = Counter(classify).most_common(1)[0][0]
+
             print(f"Classified as {classification} in {round(end_time_classify,2)}s!")
-            with open('./classifications/classifications.csv', 'a+') as file:
+            with open('../classifications/classifications.csv', 'a+', newline='') as file:
                 _write_to_csv(csv.writer(file), classification)
-            values = []
+                values = []
 
 
 if __name__ == "__main__":
@@ -319,9 +342,11 @@ if __name__ == "__main__":
     sync_sensors(imus)
 
     # Classify
-    model = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
-    # model = load(f'RFC_model_{NUM_SENSORS}.joblib')
-    classify_thread = threading.Thread(target=classify, args=[model, data_queue], daemon=True)
+    model_ann = keras.models.load_model(f'model/models/ANN_model_{NUM_SENSORS}.h5')
+    model_cnn = keras.models.load_model(f'model/models/CNN_model_{NUM_SENSORS}.h5')
+    model_rfc = load(f'../model/models/RFC_model_{NUM_SENSORS}.joblib')
+
+    classify_thread = threading.Thread(target=classify, args=[model_rfc, data_queue, "rfc"], daemon=True)
     classify_thread.start()
 
     collect_data(client, data_queue)

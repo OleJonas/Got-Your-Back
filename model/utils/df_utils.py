@@ -63,9 +63,15 @@ class df_wrapper:
         if " FrameNumber" not in self.df.columns:
             drop_arr = ['SensorId']
         else:
+
+            # Old 
+            #
             drop_arr = ['SensorId', ' FrameNumber', ' LinAccX (g)', ' LinAccY (g)', ' LinAccZ (g)',
                         ' Pressure (kPa)', ' Altitude (m)', ' Temperature (degC)', ' HeaveMotion (m)', 
                         ' MagX (uT)', ' MagY (uT)', ' MagZ (uT)']
+
+            # New
+            # drop_arr = ['SensorId', ' FrameNumber', ' EulerX (deg)', ' EulerY (deg)', ' EulerZ (deg)', ' QuatW', ' QuatX', ' QuatY', ' QuatZ', ' LinAccX (g)', ' LinAccY (g)', ' LinAccZ (g)', ' Pressure (kPa)', ' Altitude (m)', ' Temperature (degC)', ' HeaveMotion (m)']
 
         self.df_arr[0] = self.df_arr[0].drop(drop_arr, axis=1)
         drop_arr.append(' TimeStamp (s)')

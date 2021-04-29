@@ -4,6 +4,7 @@ import { createMuiTheme } from "@material-ui/core/styles";
 export const theme = createMuiTheme({
 	palette: {
 		primary: {
+			light: "#ccc",
 			main: "#EDB93C",
 			dark: "#a37f2a",
 		},
@@ -32,6 +33,12 @@ export const theme = createMuiTheme({
 				},
 			},
 		},
+		MuiInputLabel: { root: { color: "white" } },
+		MuiButton: {
+			root: {
+				minWidth: "0px",
+			},
+		},
 	},
 	typography: {
 		fontFamily: "Nunito",
@@ -41,7 +48,7 @@ export const theme = createMuiTheme({
 			lineHeight: "2em",
 		},
 		h2: {
-			fontSize: "1.75rem",
+			fontSize: "1.5rem",
 			fontWeight: 400,
 			color: "white",
 		},
@@ -79,11 +86,11 @@ export const theme = createMuiTheme({
 			fontWeight: 600,
 		},
 		body1: {
-			fontSize: "0.9rem",
+			fontSize: "1rem",
 			fontWeight: 300,
 		},
 		body2: {
-			fontSize: "0.8rem",
+			fontSize: "0.95rem",
 			fontWeight: 200,
 		},
 		overline: {
@@ -97,6 +104,7 @@ export const theme = createMuiTheme({
 			fontWeight: 700,
 			padding: "10px",
 			textTransform: "none",
+			textShadow: "0px 0px 1px rgba(0, 0, 0, 1)",
 		},
 	},
 });

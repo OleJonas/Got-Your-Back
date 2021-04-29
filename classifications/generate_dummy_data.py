@@ -30,12 +30,17 @@ def generate(from_date: str, to_date: str, hours_per_day: int):
             nextTime = current_day
 
             # for every second of the day, generate random posture from 0-8
+            counter = 0
+            current_value = random.randint(0, 8)
             for i in range(0, int(total_seconds)):
-                randomNumber = random.randint(0, 8)
+                if counter == 300:
+                    current_value = random.randint(0, 8)
+                    counter = 0
 
                 # Write posture for each second to res
-                writer.writerow({'time': datetime.datetime.strftime(nextTime, '%Y-%m-%d %H:%M:%S'), 'prediction': randomNumber})
+                writer.writerow({'time': datetime.datetime.strftime(nextTime, '%Y-%m-%d %H:%M:%S'), 'prediction': current_value})
                 nextTime = nextTime + datetime.timedelta(seconds=1)
+                counter += 1
 
         # iterating to next day, and proceed to check if equal to the last day
         current_day = current_day + datetime.timedelta(days=1)

@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useState } from "react"
 import { Grid, Box, makeStyles, Typography, IconButton } from "@material-ui/core";
-import loader from "../../assets/loader_black.svg";
-
-// Components
+import loader from "../../assets/loader_white.svg";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
+import StatusPopup from "../StatusPopup/StatusPopup.component";
+import SERVER_PORT from "../../utils/server_utils";
 
 type ClassificationProps = {
-	posture: number;
+	posture: number;		
 	hasSensors: boolean;
 	isRecording: boolean;
 	setIsRecording: (bool: boolean) => void;
+	buttonPressed: boolean;
+	setButtonPressed: (bool: boolean) => void;
 };
 
 /**
@@ -20,42 +22,45 @@ type ClassificationProps = {
  */
 export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles(props);
-	const [buttonPressed, setButtonPressed] = useState<Boolean>(false);
-
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
+	
 	/**
 	 * @remarks
 	 * Function that uses the API-calls to start and stop classification.
 	 */
 	const onButtonPressed = () => {
-		setButtonPressed(true);
+		props.setButtonPressed(true);
 		if (!props.isRecording) {
-			fetch("http://localhost:5000/classify/start")
+			fetch("http://localhost:"+SERVER_PORT+"/classify/start")
 				.then((response) => response.json())
 				.then((data) => {
-					setButtonPressed(false);
 					if (data) {
 						props.setIsRecording(true);
 					}
 				});
 		} else {
-			fetch("http://localhost:5000/classify/stop")
+			fetch("http://localhost:"+SERVER_PORT+"/classify/stop")
 				.then((response) => response.json())
 				.then((data) => {
-					setButtonPressed(false);
 					if (!data) {
 						props.setIsRecording(false);
 					}
 				});
+			setModalOpen(true);
 		}
 	};
 
+	const close = () => {
+		setModalOpen(false);
+	}
+
 	return (
 		<Box className={classes.root}>
-			<Grid className={classes.grid} justify="center" alignItems="center" container item xs={12}>
+			<Grid container className={classes.grid} justify="center" alignItems="center">
 				<Grid item xs={12}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<IconButton onClick={onButtonPressed} className={classes.btn} disabled={!props.hasSensors}>
-							{buttonPressed ? (
+							{props.buttonPressed === true ? (
 								<img src={loader} className={classes.loading} alt="Rotating loading icon" />
 							) : !props.isRecording ? (
 								<PlayArrowIcon className={classes.recordIcon} />
@@ -67,6 +72,14 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 					<Typography variant="h2" color="textPrimary">
 						{props.hasSensors ? (props.isRecording ? "Recording" : "Paused") : "Missing sensors"}
 					</Typography>
+					{modalOpen ? (
+						<StatusPopup
+							close={close}
+							open={modalOpen}
+						></StatusPopup>
+					) : (
+						<></>
+					)}
 				</Grid>
 			</Grid>
 		</Box>
