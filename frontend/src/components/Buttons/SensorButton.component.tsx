@@ -51,7 +51,11 @@ export const SensorButton: React.FC<ButtonProps> = (props) => {
 				disableFocusListener
 				disableHoverListener
 				disableTouchListener
-				title={"" + sensor_placement[props.sensorid.toString()]}
+				title={
+					<Typography variant="body1" color="textPrimary">
+						{sensor_placement[props.sensorid.toString()]}
+					</Typography>
+				}
 				placement="right"
 				arrow
 			>

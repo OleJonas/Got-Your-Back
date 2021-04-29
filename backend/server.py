@@ -13,11 +13,10 @@ from flask import Flask, request, Response
 from flask_cors import CORS
 from collections import deque
 from pathlib import Path
-sys.path.append("scripts/")
-from sensor_bank import Sensor_Bank
-from joblib import load
-import server_classify as sc
 import threading
+from joblib import load
+from sensor_bank import Sensor_Bank
+import server_classify as sc
 
 app = Flask(__name__)
 client = None
@@ -62,6 +61,7 @@ def before_request():
         res.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
         res.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
         return res
+
 
 @app.route("/")
 def confirm_access():
@@ -209,7 +209,6 @@ def start_classify():
     global sensor_bank
 
     # Checking to see if amount of sensors has been changed after api-call.
-    
 
     sensor_bank.run = True
     sensor_bank.sync_sensors(client)
@@ -364,7 +363,7 @@ def get_report_classifications():
                 for row in csv.reader(file):
                     classifications[int(row[1])] += 1
                     counter += 1
-                    if counter % INTERVAL == 0:
+                    if counter % (INTERVAL + 1) == 0:
                         res[row[0]] = int(np.argmax(classifications))
                         classifications = np.zeros(9)
                 return res

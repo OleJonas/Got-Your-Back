@@ -74,6 +74,50 @@ export const HelpView = () => {
 									<Accordion>
 										<AccordionSummary expandIcon={<ExpandMoreIcon style={{ color: "white" }} />} aria-controls="How to connect to sensors">
 											<Typography variant="h3" color="textPrimary">
+												Sitting postures explained
+											</Typography>
+										</AccordionSummary>
+										<AccordionDetails>
+											<Box>
+												<Typography variant="body1" color="textPrimary">
+													In this application there is nine defined sitting postures.
+												</Typography>
+												<Typography variant="body1" color="textPrimary">
+													{<b>Straight</b>} is when you are sitting comfortably straight in your chair.
+												</Typography>
+												<Typography variant="body1" color="textPrimary">
+													{<b>Forward</b>} is when you are leaning straight forward.
+												</Typography>
+												<Typography variant="body1" color="textPrimary">
+													{<b>Forward-right</b>} is when you are leaning forward and to the right.
+												</Typography>
+												<Typography variant="body1" color="textPrimary">
+													{<b>Right</b>} is when you are leaning to the right.
+												</Typography>
+												<Typography variant="body1" color="textPrimary">
+													{<b>Backward-right</b>} is when you are leaning backward and to the right.
+												</Typography>
+												<Typography variant="body1" color="textPrimary">
+													{<b>Backward</b>} is when you are leaning straight backward.
+												</Typography>
+												<Typography variant="body1" color="textPrimary">
+													{<b>Backward-left</b>} is when you are leaning backward and to the right.
+												</Typography>
+												<Typography variant="body1" color="textPrimary">
+													{<b>Left</b>} is when you are leaning to the left.
+												</Typography>
+												<Typography variant="body1" color="textPrimary">
+													{<b>Forward-left</b>} is when you are leaning forward and to the left.
+												</Typography>
+											</Box>
+										</AccordionDetails>
+									</Accordion>
+								</Box>
+
+								<Box m={2}>
+									<Accordion>
+										<AccordionSummary expandIcon={<ExpandMoreIcon style={{ color: "white" }} />} aria-controls="How to connect to sensors">
+											<Typography variant="h3" color="textPrimary">
 												How to connect to sensors
 											</Typography>
 										</AccordionSummary>
