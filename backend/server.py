@@ -20,8 +20,6 @@ app = Flask(__name__)
 client = None
 found_sensors = None
 sensor_bank = None
-data_queue = None
-classify = False
 t_pool = []
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
 CORS(app, support_credentials=True)
@@ -71,57 +69,6 @@ def confirm_access():
         str: Message confirming connection.
     """
     return "The API is up and running!"
-
-
-"""
-DEBUG
-"""
-
-
-@app.route('/dummy/scan')
-def get_dummy_scan():
-    """Fetch dummydata mocking a list of found sensors.
-
-    Returns:
-        dict: Dictionary with list of found sensors.
-                Format:
-
-                {"sensors": [str]}
-    """
-    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
-
-
-@app.route('/dummy/connect')
-def get_dummy_connect():
-    """Fetch dummydata mocking a list of connected sensors.
-
-    Returns:
-        dict: Dictionary with list of connected sensors.
-                Each sensor object is on the format:
-
-                {
-                    name: str,
-                    id: int,
-                    battery: int
-                }
-    """
-    return {"sensors": [
-        {"name": "LPMSB2 - 3036EB", "id": "1", "battery_percent": "85,3%"},
-        {"name": "LPMSB2 - 4B3326", "id": "2", "battery_percent": "76,6%"},
-        {"name": "LPMSB2 - 4B31EE", "id": "3", "battery_percent": "54,26%"}
-    ]}
-
-@app.route("/dummy/test_dead")
-def test_dead():
-    print(sensor_bank.sensor_dict)
-    ans = sensor_bank.test_dead()
-    print(sensor_bank.sensor_dict)
-    return ans
-
-
-@app.route('/dummy/found_sensors')
-def get_dummy_found_sensors():
-    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
 
 
 @app.route("/setup/scan")
@@ -213,7 +160,6 @@ def disconnect():
     """
     global sensor_bank
     names = request.json["names"]
-    print(names)
     for name in names:
         sensor_bank.disconnect_sensor(name)
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
@@ -241,20 +187,6 @@ def get_sensors():
             "battery": s.get_battery_percentage().split("%")[0]
         })
     return json.dumps(out)
-
-
-@app.route("/setup/set_id", methods=["POST"])
-def set_id():
-    """Set id on sensor based on name. New id and name has to be sent in request body.
-
-    Returns:
-        str: Message confirming successful change of id.
-        http.HTTPStatus.OK: Response status code 200.
-    """
-    name = request.json["name"]
-    s_id = request.json["id"]
-    sensor_bank.set_id(name, s_id)
-    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 
 """""""""""""""""""""""
