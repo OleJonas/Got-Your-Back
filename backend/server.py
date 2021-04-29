@@ -23,6 +23,7 @@ app = Flask(__name__)
 client = None
 found_sensors = None
 sensor_bank = None
+classification_handler = None
 data_queue = None
 classify = False
 t_pool = []
@@ -38,6 +39,7 @@ def init():
     global client
     global sensor_bank
     global found_sensors
+    global classification_handler
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     # Make client
     error, client = openzen.make_client()
@@ -46,6 +48,7 @@ def init():
         sys.exit(1)
     found_sensors = {}
     sensor_bank = Sensor_Bank()
+    classification_handler = sc.Classification_Handler(sensor_bank)
 
 
 @app.before_request
@@ -273,6 +276,7 @@ def get_sensors():
                     battery: int
                 }
     """
+    sensor_bank.verify_sensors_alive()
     out = {"sensors": []}
     for s in sensor_bank.sensor_dict.values():
         out["sensors"].append({
@@ -307,8 +311,8 @@ def start_classify():
     # model = keras.models.load_model(f"../model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
 
     rfc_model = load(f"../model/models/RFC_model_{len(sensor_bank.sensor_dict)}.joblib")
-    classify_thread = threading.Thread(target=sc.classify, args=[rfc_model, sensor_bank], daemon=True)
-    collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)
+    classify_thread = threading.Thread(target=classification_handler.classify, args=[rfc_model], daemon=True)
+    collect_thread = threading.Thread(target=classification_handler.collect_data, args=[client], daemon=True)
     t_pool.append(classify_thread)
     t_pool.append(collect_thread)
     collect_thread.start()
@@ -363,7 +367,7 @@ def get_all_classifications():
     res = dict()
 
     try:
-        with open(sc._classification_fname(), 'r') as file:
+        with open(classification_handler._classification_fname(), 'r') as file:
             try:
                 for row in csv.reader(file):
                     classifications[int(row[1])] += 1
@@ -391,7 +395,7 @@ def get_classification():
         stop_classify()
         return
     try:
-        with open(sc._classification_fname(), 'r') as file:
+        with open(classification_handler._classification_fname(), 'r') as file:
             try:
                 lastrow = deque(csv.reader(file), 1)[0]
             except IndexError:  # empty file
@@ -485,7 +489,7 @@ def get_battery():
     except:
         return {
             "error": f"{name} is no longer connected",
-            "battery": "-1"
+            "battery": "0.0"
         }
     return {"battery": str(percent).split("%")[0]}
 
@@ -528,7 +532,7 @@ def write_report():
         os.makedirs(path)
     with open(_get_report_fname(), 'a+', newline='') as file:
         try:
-            sc._write_to_csv(csv.writer(file), user_status)
+            classification_handler._write_to_csv(csv.writer(file), user_status)
         except:
             print("Could not write to file :(")
             return json.dumps({'success': False}), 507, {'ContentType': 'application/json'}

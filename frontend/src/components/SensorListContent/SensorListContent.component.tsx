@@ -131,6 +131,7 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
+				console.log(data);
 				setSensors(data["sensors"]);
 			});
 	};
