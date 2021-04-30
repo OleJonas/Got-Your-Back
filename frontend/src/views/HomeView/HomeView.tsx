@@ -105,6 +105,7 @@ export const HomeView = () => {
 									hasSensors={hasSensors}
 									setHasSensors={setHasSensors}
 									setIsRecording={setIsRecording}
+									buttonPressed={buttonPressed}
 									recording={isRecording}
 								/>
 							</ContentBox>
@@ -122,8 +123,8 @@ export const HomeView = () => {
 									posture={lastPosture}
 									hasSensors={hasSensors}
 									isRecording={isRecording}
-									buttonPressed={buttonPressed}
 									setIsRecording={(bool: boolean) => setIsRecording(bool)}
+									buttonPressed={buttonPressed}
 									setButtonPressed={(bool: boolean) => setButtonPressed(bool)}
 								></RecordContent>
 							</ContentBox>
@@ -146,7 +147,7 @@ export const HomeView = () => {
 								<Typography variant="h3" color="textPrimary">
 									Last hour
 								</Typography>
-								<InfoTooltip text={"Shows classifications for over the last hour. Hover over points for classification at given time."} />
+								<InfoTooltip text={"Shows classifications for the last hour. Hover over points for classification at given time."} />
 							</Box>
 							<ContentBox>
 								<LineChart duration={0} data={datapoints} />

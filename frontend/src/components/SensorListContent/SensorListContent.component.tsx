@@ -18,6 +18,7 @@ type ListProps = {
 	hasSensors: boolean;
 	setHasSensors: (bool: boolean) => void;
 	setIsRecording: (bool: boolean) => void;
+	buttonPressed: boolean;
 };
 
 /**
@@ -55,8 +56,8 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 	/**
 	 * useEffect that fetches status of the sensors on render.
 	 */
-	 useEffect(() => {
-		fetch("http://localhost:"+SERVER_PORT+"/status")
+	useEffect(() => {
+		fetch("http://localhost:" + SERVER_PORT + "/status")
 			.then((response) => response.json())
 			.then((data) => {
 				props.setIsRecording(data.isRecording);
@@ -70,7 +71,7 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 	 * custom React hook that fetches status of the sensors every 9 seconds.
 	 */
 	useInterval(() => {
-		fetch("http://localhost:"+SERVER_PORT+"/status")
+		fetch("http://localhost:" + SERVER_PORT + "/status")
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.isRecording !== props.recording) props.setIsRecording(!props.recording);
@@ -78,7 +79,6 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 			});
 	}, 9000);
 
-	
 	/**
 	 * @remarks
 	 * useEffect that checks if sensorlist has sensors.
@@ -87,24 +87,20 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 		/*
         Method that checks if the correct sensors are connected, if not, the user should not be allowed to start classification.
         */
-		if (sensors.length === 0 || (checkCorrectSensors() === false)) props.setHasSensors(false);
+		if (sensors.length === 0 || checkCorrectSensors() === false) props.setHasSensors(false);
 		//eslint-disable-next-line
 	}, [sensors]);
 
 	const checkCorrectSensors = () => {
-		const n_connected = sensors.length;
-        console.log("n_connected: " + n_connected);
-        const id_arr = sensors.map((sensor: Sensor) => sensor.id);
-		console.log("id_arr: " + id_arr);
+		const id_arr = sensors.map((sensor: Sensor) => sensor.id);
 
-		for(let i = 1; i < sensors.length+1; i++){
-			if(!id_arr.includes(i)){
-				console.log("nonono");
+		for (let i = 1; i < sensors.length + 1; i++) {
+			if (!id_arr.includes(i)) {
 				return false;
 			}
 		}
 		return true;
-	}
+	};
 
 	/**
 	 * @remarks
@@ -123,7 +119,7 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 	 * Uses an API call to fetch sensors currently connected via bluetooth. Then sets state to reflect the sensors found to be connected.
 	 */
 	const getConnectedSensors = async () => {
-		await fetch("http://localhost:"+SERVER_PORT+"/setup/get_sensors", {
+		await fetch("http://localhost:" + SERVER_PORT + "/setup/get_sensors", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -131,7 +127,6 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				console.log(data);
 				setSensors(data["sensors"]);
 			});
 	};
@@ -151,7 +146,7 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 				key={sensor.id}
 				connected={true}
 				id={sensor.id}
-				busy={props.recording}
+				busy={props.recording || props.buttonPressed}
 				disconnectFunc={removeSensor}
 				name={sensor.name}
 				position={sensor_placement[sensor.id.toString()]}
@@ -210,7 +205,7 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 			</Grid>
 			<Grid item xs={12}>
 				<Grid container className={classes.button}>
-					<Button func={openModal} disabled={props.recording}>
+					<Button func={openModal} disabled={props.recording || props.buttonPressed}>
 						Scan
 					</Button>
 					{open ? (

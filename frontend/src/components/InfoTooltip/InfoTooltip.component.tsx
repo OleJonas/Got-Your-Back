@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, IconButton, makeStyles, Tooltip, ClickAwayListener, Typography } from "@material-ui/core";
+import { Box, IconButton, Tooltip, ClickAwayListener, Typography } from "@material-ui/core";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 
 type InfoTooltipProps = {
@@ -52,5 +52,3 @@ export const InfoTooltip: React.FC<InfoTooltipProps> = (props) => {
 	);
 };
 export default InfoTooltip;
-
-const useStyles = makeStyles({});

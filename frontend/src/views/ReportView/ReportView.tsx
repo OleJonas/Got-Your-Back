@@ -33,7 +33,7 @@ type reportData = {
  */
 export const ReportView = () => {
 	const classes = useStyles();
-	const [data, setData] = useState<reportData[]>();
+	const [data, setData] = useState<reportData[]>([]);
 	const today = new Date();
 	const [selectedDate, setSelectedDate] = useState(today.getFullYear() + "," + ("0" + (today.getMonth() + 1)).slice(-2));
 	const [availableDates, setAvailableDates] = useState<string[]>();
@@ -90,7 +90,9 @@ export const ReportView = () => {
 				data["data"].map((row: any) => rows.push(createData(row[0], row[1])));
 				setData(rows);
 			})
-			.catch(function (error) {});
+			.catch(function (error) {
+				setData([]);
+			});
 		//eslint-disable-next-line
 	}, [selectedDate]);
 
@@ -167,7 +169,13 @@ export const ReportView = () => {
 										</TableRow>
 									</TableHead>
 									<TableBody>
-										{data ? (
+										{data.length === 0 ? (
+											<Box m={2}>
+												<Typography variant="caption" color="textPrimary">
+													No reported data yet ...
+												</Typography>
+											</Box>
+										) : (
 											data.map((row) => (
 												<TableRow key={row.date}>
 													<TableCell
@@ -204,12 +212,6 @@ export const ReportView = () => {
 													</TableCell>
 												</TableRow>
 											))
-										) : (
-											<Box m={2}>
-												<Typography variant="caption" color="textPrimary">
-													No reported data yet ...
-												</Typography>
-											</Box>
 										)}
 									</TableBody>
 								</Table>

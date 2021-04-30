@@ -10,7 +10,6 @@ import LineChart from "../../components/LineChart/LineChart.component.jsx";
 import ColumnChart from "../../components/ColumnChart/ColumnChart.component";
 import SERVER_PORT from "../../utils/server_utils";
 import InfoTooltip from "../../components/InfoTooltip/InfoTooltip.component";
-import posture_names from "../../utils/posture_names";
 
 /**
  * The history page showing statistics from the last few days all the way back to months.
