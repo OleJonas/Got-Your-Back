@@ -35,18 +35,17 @@ export const HelpView = () => {
 											<Box>
 												<img src={SensorPlacement} className={classes.svg} alt="Sensor placement" />
 												<Typography variant="body1" color="textPrimary">
-													The machine learning algorithm used for classification supports both one, two and three sensors. Depending on how
-													many sensors you want to use, you should place them according to the illustration above. It is important that all
-													sensors is placed straight (with the text LP-RESEARCH the right way). Use suitable tape for human skin, for
-													ensuring that the sensors is held in the right position.
+													The machine learning algorithm used for classification supports one, two and three sensors. Examine the illustrations above for instructions on where to place the sensors. It is important that all
+													sensors are placed with the text LP-RESEARCH the right way up. Use tape suitable for human skin to
+													ensure that the sensors are held in place.
 												</Typography>
 												<Box mt={1}>
 													<Typography variant="h6" color="textPrimary">
 														Sensor 1
 													</Typography>
 													<Typography variant="body1" color="textPrimary">
-														The first sensor is to to be placed on the lower neck. When you tilt your head forwards, this should be the bone
-														sticking out.
+														The first sensor is to to be placed on the lower neck. When you tilt your head forwards, there should be a bone
+														sticking out. Place the sensor here.
 													</Typography>
 												</Box>
 												<Box mt={1}>
@@ -54,7 +53,7 @@ export const HelpView = () => {
 														Sensor 2
 													</Typography>
 													<Typography variant="body1" color="textPrimary">
-														The second sensor is to be placed on the lower back.
+														The second sensor is to be placed on the lower back, in the middle of the lumbar spine.
 													</Typography>
 												</Box>
 												<Box mt={1}>
@@ -62,7 +61,7 @@ export const HelpView = () => {
 														Sensor 3
 													</Typography>
 													<Typography variant="body1" color="textPrimary">
-														The third sensor is to be placed on the right shoulder, where the surface is flat.
+														The third sensor is to be placed on the right shoulder where the surface is flat.
 													</Typography>
 												</Box>
 											</Box>
@@ -80,13 +79,13 @@ export const HelpView = () => {
 										<AccordionDetails>
 											<Box>
 												<Typography variant="body1" color="textPrimary">
-													In this application there is nine defined sitting postures.
+													This application distinguishes between nine different sitting postures.
 												</Typography>
 												<Typography variant="body1" color="textPrimary">
 													{<b>Straight</b>} is when you are sitting comfortably straight in your chair.
 												</Typography>
 												<Typography variant="body1" color="textPrimary">
-													{<b>Forward</b>} is when you are leaning straight forward.
+													{<b>Forward</b>} is when you are leaning forward.
 												</Typography>
 												<Typography variant="body1" color="textPrimary">
 													{<b>Forward-right</b>} is when you are leaning forward and to the right.
@@ -95,13 +94,13 @@ export const HelpView = () => {
 													{<b>Right</b>} is when you are leaning to the right.
 												</Typography>
 												<Typography variant="body1" color="textPrimary">
-													{<b>Backward-right</b>} is when you are leaning backward and to the right.
+													{<b>Backward-right</b>} is when you are leaning backwards and to the right.
 												</Typography>
 												<Typography variant="body1" color="textPrimary">
-													{<b>Backward</b>} is when you are leaning straight backward.
+													{<b>Backward</b>} is when you are leaning straight backwards.
 												</Typography>
 												<Typography variant="body1" color="textPrimary">
-													{<b>Backward-left</b>} is when you are leaning backward and to the right.
+													{<b>Backward-left</b>} is when you are leaning backwards and to the right.
 												</Typography>
 												<Typography variant="body1" color="textPrimary">
 													{<b>Left</b>} is when you are leaning to the left.
@@ -118,7 +117,7 @@ export const HelpView = () => {
 									<Accordion>
 										<AccordionSummary expandIcon={<ExpandMoreIcon style={{ color: "white" }} />} aria-controls="How to connect to sensors">
 											<Typography variant="h3" color="textPrimary">
-												How to connect to sensors
+												Connecting to the sensors
 											</Typography>
 										</AccordionSummary>
 										<AccordionDetails>
@@ -146,7 +145,7 @@ export const HelpView = () => {
 												<Typography variant="body1" color="textPrimary">
 													To disconnect from a sensor, navigate to the "Home" section of the application and find the "Connected sensors"
 													module. Here you will see a listing of all currently connected sensors. To disconnect from one, click the yellow
-													button with an x adjacent to it. Disconnecting sensors while classifying is not possible, and the button is
+													button with an x in it. Disconnecting sensors while classifying should not be done as this affects the data sent to the model, and the button is
 													therefore disabled during live classification.
 												</Typography>
 											</Box>
@@ -164,11 +163,10 @@ export const HelpView = () => {
 										<AccordionDetails>
 											<Box>
 												<Typography variant="body1" color="textPrimary">
-													To start collecting data and classifying positions, navigate to the "Home" section of the application and click
-													the "Start recording" button. This will start collecting data from all connected sensors and present the models
-													classifications on these data. While collecting data, you cannot click the button to disconnect from the sensors.
-													To stop collecting data, click the same button you clicked to start collecting data, only now it is labelled "Stop
-													recording".
+													To start collecting data and classifying postures, navigate to the "Home" section of the application and click
+													the play button. This will start collecting data from all connected sensors and present the models
+													classifications on these data.
+													To stop collecting data, click the same button you clicked to start collecting data that is now showing a pause sign.
 												</Typography>
 											</Box>
 										</AccordionDetails>
@@ -189,9 +187,8 @@ export const HelpView = () => {
 											<Box>
 												<Typography variant="body1" color="textPrimary">
 													The classifications are performed by a machine learning model trained on a large dataset of different people in
-													the 9 positions available for classification. Currently we are using an ANN model, but we are experimenting with
-													several others such as RFC and CNN. An interesting candidate seems to be an LSTM-model, but this is still some
-													time in the future.
+													the 9 postures available for classification. Currently we are using an RFC model, but we are experimenting with
+													several others such as ANN and CNN.
 												</Typography>
 											</Box>
 										</AccordionDetails>

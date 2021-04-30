@@ -108,7 +108,7 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 	 *
 	 * @param sensor An object of the sensor type
 	 */
-	const addSensors = (sensor: Sensor) => {
+	const addSensor = (sensor: Sensor) => {
 		let helper = sensors;
 		helper.push(sensor);
 		setSensors(helper);
@@ -210,7 +210,7 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 					</Button>
 					{open ? (
 						<SensorModal
-							sendSensors={addSensors}
+							sendSensors={addSensor}
 							alreadyConnected={getSensorsConnectedNames()}
 							close={closeModal}
 							open={open}
