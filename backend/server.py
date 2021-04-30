@@ -439,7 +439,7 @@ def write_report():
         try:
             classification_handler._write_to_csv(csv.writer(file), user_status)
         except:
-            print("Could not write to file :(")
+            print("Could not write to file")
             return json.dumps({'success': False}), 507, {'ContentType': 'application/json'}
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 

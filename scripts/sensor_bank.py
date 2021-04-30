@@ -30,11 +30,9 @@ class Sensor:
         try:
             # Making an arbitrary call to the sensor object to see if it gives a response, if it doesn't, the sensor is no longer connected.
             err, test = self.sensor_obj.get_float_property(openzen.ZenSensorProperty.BatteryLevel)
-            print("test: ", test)
             if not err == openzen.ZenError.NoError or round(test,1) == 0.0:
                 return False
         except:
-            print("sensor_obj failed bruh")
             return False
         return True
 
@@ -81,8 +79,6 @@ class Sensor_Bank:
         for s in self.sensor_dict.values():
             if helper_id == s.id:
                 helper_id += 1
-
-        print("s_id: ", helper_id)
         self.sensor_dict[name] = Sensor(name, sensor, imu, helper_id, self.zen_handles)
         self.handle_to_id[self.zen_handles] = helper_id
         self.n_sensors += 1
@@ -135,12 +131,10 @@ class Sensor_Bank:
         dead_sensors = []
         for sensor in self.sensor_dict.values():
             alive = sensor.check_alive()
-            print(alive)
             if not alive:
                 dead_sensors.append(sensor.name)
 
         for s_name in dead_sensors:
-            print(s_name)
             self.handle_to_id.pop(self.sensor_dict[s_name].zen_handle)
             self.sensor_dict.pop(s_name)
             self.n_sensors -= 1

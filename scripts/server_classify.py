@@ -53,8 +53,6 @@ class Classification_Handler:
             sensor_bank (Sensor_Bank): Object containing the connected sensors.
         """
         self.data_queue = Data_Queue(len(self.sensor_bank.sensor_dict))
-        print("length of data queue: ", len(self.data_queue.queue))
-        print(len(self.sensor_bank.sensor_dict))
 
         _remove_unsync_data(client)
         occurences = [0, 0, 0]
