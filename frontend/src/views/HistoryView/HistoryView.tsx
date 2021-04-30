@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Grid, Box, makeStyles, Typography } from "@material-ui/core";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -117,6 +117,7 @@ export const HistoryView = () => {
 									</FormControl>
 								</Box>
 								<ContentBox className={classes.components}>
+									{console.log(datapointsLine)}
 									<LineChart duration={durationLine} data={datapointsLine} />
 								</ContentBox>
 							</Box>

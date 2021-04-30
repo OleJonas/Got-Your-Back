@@ -46,9 +46,11 @@ export const LineChart = (props) => {
 		if (isHistoryView) {
 			firstRow +=
 				"<b>" +
-				date.getDay() +
+				new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date) +
+				" " +
+				date.getDate() +
 				". " +
-				new Intl.DateTimeFormat("nb-no", { month: "short" }).format(date) +
+				new Intl.DateTimeFormat("en-US", { month: "short" }).format(date) +
 				" " +
 				date.getFullYear() +
 				"</b>";
