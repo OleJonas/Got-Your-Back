@@ -5,10 +5,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8.5]
+        python-version: 3.8.5
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python.version }}
       - name: Python version
@@ -23,7 +24,7 @@ jobs:
       steps:
         - name: Running tests
           run: python -m unittest test_module.TestClass
-  
+
   # Explore-GitHub-Actions:
   #   runs-on: ubuntu-latest
   #   steps: a
