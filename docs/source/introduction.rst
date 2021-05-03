@@ -1,7 +1,9 @@
 Structure
 **********
 
-Our backend is split into three main folders; one for the server, one for classification, and one for the main scripts used. In addition to this, there is folders for classifications and reports made by the application.
+Our backend is split into three main folders;
+one for the server, one for classification, and one for the main scripts used. 
+In addition to this, there is folders for classifications and reports made by the application.
 
 ::
    
