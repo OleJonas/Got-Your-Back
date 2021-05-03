@@ -165,8 +165,316 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="server-module">
-<h1>server module<a class="headerlink" href="#server-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-server">
+<span id="server-module"></span><h1>server module<a class="headerlink" href="#module-server" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="server.before_request">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">before_request</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.before_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create response for OPTIONS-requests.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Response with the right headers.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>flask.Response</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.check_classify">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">check_classify</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.check_classify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if classifying.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if server is classifying. False if not.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.confirm_access">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">confirm_access</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.confirm_access" title="Permalink to this definition">¶</a></dt>
+<dd><p>Confirm connection to API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Message confirming connection.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.connect">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">connect</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to sensor based on sensorname.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl>
+<dt>Dictionary with information about connected sensor if connected. Error message if not.</dt><dd><p>Each sensor object is on the format:</p>
+<dl class="simple">
+<dt>{</dt><dd><p>name: str,
+id: int,
+battery: int</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.connect_all">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">connect_all</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.connect_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to all sensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Message confirming that all sensors are connected.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.disconnect">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">disconnect</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect sensor(s) based on name(s) given in request body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Message confirming successful disconnect.
+http.HTTPStatus.OK: Response status code 200.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.get_all_classifications">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">get_all_classifications</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.get_all_classifications" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all classifications for today.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary with classifications if file found and not empty. {Error: “FileEmpty” | “FileNotFound”} if not.
+http.HTTPStatus: Response status code 200 if file found and not empty, else 507.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.get_battery">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">get_battery</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.get_battery" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get battery percent based on name given in request body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary on the format {battery: str}</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.get_classification">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">get_classification</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.get_classification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the latest classification for today. If the timestamp in the url matches the timestamp of the latest classification in the file, something has gone wrong while classifying.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary with latest classification if file found and not empty. {Error: “FileEmpty” | “FileNotFound”} if not.
+http.HTTPStatus: Response status code 200 if file found and not empty, else 507.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.get_classifications_history">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">get_classifications_history</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.get_classifications_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get historical classifications based on duration given in request body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary with classifications if file not empty. {Error: “FileEmpty”} if not.
+http.HTTPStatus: Response status code 200 if file not empty, else 507.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.get_report">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">get_report</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.get_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch user reports</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.get_report_classifications">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">get_report_classifications</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.get_report_classifications" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get classifications for minimal report graph.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary with classifications if file found and not empty. {Error: “FileEmpty” | “FileNotFound”} if not.
+http.HTTPStatus: Response status code 200 if file found and not empty, else 507.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.get_report_months_available">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">get_report_months_available</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.get_report_months_available" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="server.get_sensors">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">get_sensors</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.get_sensors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch a list of connected sensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl>
+<dt>Dictionary with list of connected sensors.</dt><dd><p>Each sensor object is on the format:</p>
+<dl class="simple">
+<dt>{</dt><dd><p>name: str,
+id: int,
+battery: int</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.get_status">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">get_status</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.get_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get status about connection and classification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl>
+<dt>Dictionary with status information on the format:</dt><dd><dl class="simple">
+<dt>{</dt><dd><p>isRecording: str,
+numberOfSensors: int</p>
+</dd>
+</dl>
+<p>}</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.init">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">init</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Global initialisation of variables used in the server.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.scan">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">scan</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.scan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scan for available sensors using the openZen library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl>
+<dt>Dictionary with list of found sensors.</dt><dd><p>Format:</p>
+<p>{“sensors”: [str]}</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.shutdown">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">shutdown</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect sensors and close connections by server shutdown.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.start_classify">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">start_classify</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.start_classify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start classifying.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Message confirming that the server is classifying.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.stop_classify">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">stop_classify</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.stop_classify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop classifying.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Message confirming that the server has stopped classifying.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.sync_sensors">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">sync_sensors</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.sync_sensors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronize all sensors using the openZen library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Message confirming that all sensors are synced.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="server.write_report">
+<code class="sig-prename descclassname"><span class="pre">server.</span></code><code class="sig-name descname"><span class="pre">write_report</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.write_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write how the user feels to file</p>
+</dd></dl>
+
 </div>
 
 

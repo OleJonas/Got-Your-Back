@@ -165,8 +165,184 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="sensor-bank-module">
-<h1>sensor_bank module<a class="headerlink" href="#sensor-bank-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-sensor_bank">
+<span id="sensor-bank-module"></span><h1>sensor_bank module<a class="headerlink" href="#module-sensor_bank" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="sensor_bank.Sensor">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">sensor_bank.</span></code><code class="sig-name descname"><span class="pre">Sensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zen_handle</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class representing a sensor with the properties we want from the OpenZen-library.</p>
+<dl class="py method">
+<dt id="sensor_bank.Sensor.check_alive">
+<code class="sig-name descname"><span class="pre">check_alive</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor.check_alive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checking if sensor has run out of battery or otherwise unexpectedly disconnected</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sensor_bank.Sensor.get_battery_percentage">
+<code class="sig-name descname"><span class="pre">get_battery_percentage</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor.get_battery_percentage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the battery percentage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Battery percentage of sensor, with one decimal precision.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sensor_bank.Sensor.set_sampling_rate">
+<code class="sig-name descname"><span class="pre">set_sampling_rate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor.set_sampling_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the sampling rate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sampling_rate</strong> (<em>int</em>) – New sampling rate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sensor_bank.Sensor.start_collect">
+<code class="sig-name descname"><span class="pre">start_collect</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor.start_collect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start streaming data from sensor.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="sensor_bank.Sensor_Bank">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">sensor_bank.</span></code><code class="sig-name descname"><span class="pre">Sensor_Bank</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensor_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to make managing sensor properties easier.</p>
+<dl class="py method">
+<dt id="sensor_bank.Sensor_Bank.acquire_lock">
+<code class="sig-name descname"><span class="pre">acquire_lock</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.acquire_lock" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="sensor_bank.Sensor_Bank.add_sensor">
+<code class="sig-name descname"><span class="pre">add_sensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenSensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imu</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenSensorComponent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.add_sensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add sensor to sensor bank.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Sensor name.</p></li>
+<li><p><strong>sensor</strong> (<em>openzen.ZenSensor</em>) – Sensor object.</p></li>
+<li><p><strong>imu</strong> (<em>openzen.ZenSensorComponent</em>) – inertial measurement unit.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sensor_bank.Sensor_Bank.connect_to_sensor">
+<code class="sig-name descname"><span class="pre">connect_to_sensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenClient</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_sensor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenSensorComponent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.connect_to_sensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connects to chosen sensor and establishes a connection to it’s inertial measurement unit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p></li>
+<li><p><strong>input_sensor</strong> (<em>openzen.ZenSensorDesc</em>) – Found sensor object from the OpenZen-library.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Sensor name.
+openzen.ZenSensor: Sensor object.
+openzen.ZenSensorComponent: imu.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sensor_bank.Sensor_Bank.disconnect_sensor">
+<code class="sig-name descname"><span class="pre">disconnect_sensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.disconnect_sensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect sensor from sensor bank.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Sensor name</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sensor_bank.Sensor_Bank.get_sensor">
+<code class="sig-name descname"><span class="pre">get_sensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.get_sensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get sensor object from sensor bank.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Sensor name.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Sensor object if found, else None.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>openzen.ZenSensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sensor_bank.Sensor_Bank.scan_for_sensors">
+<code class="sig-name descname"><span class="pre">scan_for_sensors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenClient</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.scan_for_sensors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scan for available sensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of available sensor objects.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>[openzen.ZenSensorDesc]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sensor_bank.Sensor_Bank.set_all_sampling_rates">
+<code class="sig-name descname"><span class="pre">set_all_sampling_rates</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.set_all_sampling_rates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the sampling rates for all sensors connected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sampling_rate</strong> (<em>int</em>) – New sampling rate.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sensor_bank.Sensor_Bank.set_sleep_time">
+<code class="sig-name descname"><span class="pre">set_sleep_time</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sleep_time</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.set_sleep_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set sleep time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sleep_time</strong> (<em>float</em>) – Time wanted to sleep for when needed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sensor_bank.Sensor_Bank.sync_sensors">
+<code class="sig-name descname"><span class="pre">sync_sensors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenClient</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.sync_sensors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronize sensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="sensor_bank.Sensor_Bank.verify_sensors_alive">
+<code class="sig-name descname"><span class="pre">verify_sensors_alive</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.verify_sensors_alive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 
 

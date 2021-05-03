@@ -165,8 +165,135 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="realtime-classify-module">
-<h1>realtime_classify module<a class="headerlink" href="#realtime-classify-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-realtime_classify">
+<span id="realtime-classify-module"></span><h1>realtime_classify module<a class="headerlink" href="#module-realtime_classify" title="Permalink to this headline">¶</a></h1>
+<p>Classification in realtime using terminal.</p>
+<p>Implemented methods for scanning, listing and connecting to supported sensors using the openZen library.
+After the connection is established, a new thread is made. This thread is supposed to take care of the live
+classification, such as loading the right model, and write the classifications in realtime to a file and terminal.
+Further on, the main task of the main thread is to flush excess data, synchronize and collecting data until killed.</p>
+<dl class="py function">
+<dt id="realtime_classify.classify">
+<code class="sig-prename descclassname"><span class="pre">realtime_classify.</span></code><code class="sig-name descname"><span class="pre">classify</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tensorflow.python.keras.engine.sequential.Sequential</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_queue</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="data_queue.html#data_queue.Data_Queue" title="data_queue.Data_Queue"><span class="pre">data_queue.Data_Queue</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ann'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#realtime_classify.classify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classify in realtime based on trained model and data in data queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>tensorflow.python.keras.engine.sequential.Sequential</em>) – ANN model trained for n_sensors connected.</p></li>
+<li><p><strong>data_queue</strong> (<a class="reference internal" href="data_queue.html#data_queue.Data_Queue" title="data_queue.Data_Queue"><em>Data_Queue</em></a>) – Data queue with data collected from sensor(s).</p></li>
+<li><p><strong>type</strong> (<em>str</em>) – Type of model</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="realtime_classify.collect_data">
+<code class="sig-prename descclassname"><span class="pre">realtime_classify.</span></code><code class="sig-name descname"><span class="pre">collect_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenClient</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_queue</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="data_queue.html#data_queue.Data_Queue" title="data_queue.Data_Queue"><span class="pre">data_queue.Data_Queue</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#realtime_classify.collect_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect data from connected sensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p></li>
+<li><p><strong>data_queue</strong> (<a class="reference internal" href="data_queue.html#data_queue.Data_Queue" title="data_queue.Data_Queue"><em>Data_Queue</em></a>) – Data queue with data collected from sensor(s).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="realtime_classify.connect_and_get_imus">
+<code class="sig-prename descclassname"><span class="pre">realtime_classify.</span></code><code class="sig-name descname"><span class="pre">connect_and_get_imus</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenClient</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensors</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chosen_sensors</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#realtime_classify.connect_and_get_imus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connects to chosen sensors and get a connection to their inertial measurement unit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p></li>
+<li><p><strong>sensors</strong> (<em>[</em><em>openzen.ZenSensorDesc</em><em>]</em>) – List of available sensor objects.</p></li>
+<li><p><strong>chosen_sensors</strong> (<em>[</em><em>int</em><em>]</em>) – List of chosen sensor indices.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of connected sensors.
+[openzen.ZenSensorComponent]: List of imus of connected sensors.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>[openzen.ZenSensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="realtime_classify.get_sampling_rate">
+<code class="sig-prename descclassname"><span class="pre">realtime_classify.</span></code><code class="sig-name descname"><span class="pre">get_sampling_rate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">IMU</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenSensorComponent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#realtime_classify.get_sampling_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get sampling rate from imu.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>IMU</strong> (<em>openzen.ZenSensorComponent</em>) – Object representing the inertial measurement unit on connected sensor.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Sampling rate of imu.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="realtime_classify.scan_for_sensors">
+<code class="sig-prename descclassname"><span class="pre">realtime_classify.</span></code><code class="sig-name descname"><span class="pre">scan_for_sensors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenClient</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#realtime_classify.scan_for_sensors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scan for available sensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of available sensor objects.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>[openzen.ZenSensorDesc]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="realtime_classify.set_sampling_rate">
+<code class="sig-prename descclassname"><span class="pre">realtime_classify.</span></code><code class="sig-name descname"><span class="pre">set_sampling_rate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">IMU</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenSensorComponent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#realtime_classify.set_sampling_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the sampling rate of given imu.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>IMU</strong> (<em>openzen.ZenSensorComponent</em>) – Object representing the inertial measurement unit on connected sensor.</p></li>
+<li><p><strong>sampling_rate</strong> (<em>int</em>) – New sampling rate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Sampling rate of imu.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="realtime_classify.sync_sensors">
+<code class="sig-prename descclassname"><span class="pre">realtime_classify.</span></code><code class="sig-name descname"><span class="pre">sync_sensors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imus</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#realtime_classify.sync_sensors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronize sensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>imus</strong> (<em>[</em><em>openzen.ZenSensorComponent</em><em>]</em>) – List of imus of connected sensors.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of synchronized imus.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>[openzen.ZenSensorComponent]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
