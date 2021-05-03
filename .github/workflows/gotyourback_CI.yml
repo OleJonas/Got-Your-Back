@@ -1,5 +1,6 @@
 name: GotYourBack CI/CD
 on: [push]
+
 jobs:
   python-setup-and-test:
     runs-on: ubuntu-latest
