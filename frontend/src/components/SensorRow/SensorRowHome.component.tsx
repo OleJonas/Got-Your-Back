@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Typography, Grid, makeStyles } from "@material-ui/core";
 import SensorButton from "../Buttons/SensorButton.component";
 import BluetoothConnectedIcon from "@material-ui/icons/BluetoothConnected";
 import SERVER_PORT from "../../utils/server_utils";
+import useInterval from "../../utils/useInterval";
 
 type SensorProps = {
 	id: number;
@@ -62,21 +63,18 @@ export const SensorRowHome: React.FC<SensorProps> = (props: SensorProps) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-				if (data !== undefined){
-					if(data.battery === "-1") props.disconnectFunc(props.id);
+				if (data !== undefined) {
+					if (data.battery === "0.0") props.disconnectFunc(props.id);
 					else setBatteryPercent(data.battery);
 				}
 			});
 		// eslint-disable-next-line
 	}, [batteryPercent]);
 
-	let interval: any;
-	useEffect(() => {
+	useInterval(() => {
 		if (!props.connected) return;
-		interval = setInterval(getBatteryPercent, 30000);
-		return () => clearInterval(interval);
-		// eslint-disable-next-line
-	}, []);
+		getBatteryPercent();
+	}, 30000);
 
 	return (
 		<Grid container className={classes.root} justify="flex-start" alignItems="center">

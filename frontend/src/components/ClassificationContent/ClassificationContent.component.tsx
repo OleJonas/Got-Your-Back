@@ -19,11 +19,11 @@ export const ClassificationContent: React.FC<ClassificationProps> = (props) => {
 		<Box className={classes.root}>
 			<Grid container className={classes.grid} justify="center" alignItems="center">
 				<Grid item xs={12}>
-					<Box display="flex" justifyContent="center" alignItems="center">
+					{/* <Box display="flex" justifyContent="center" alignItems="center">
 						<Typography variant="subtitle1" color="textPrimary">
 							{props.recording ? (props.posture === -1 ? "-" : props.posture) : "-"}
 						</Typography>
-					</Box>
+					</Box> */}
 					<Typography variant="h2" color="textPrimary">
 						{props.recording ? posture_names[props.posture] : "Not recording"}
 					</Typography>

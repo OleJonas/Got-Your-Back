@@ -10,6 +10,7 @@ import SensorListContent from "../../components/SensorListContent/SensorListCont
 import handleErrors from "../../utils/handleErrors";
 import useInterval from "../../utils/useInterval";
 import SERVER_PORT from "../../utils/server_utils";
+import InfoTooltip from "../../components/InfoTooltip/InfoTooltip.component";
 
 /**
  * This is the main page of the application. It contains live classification data as well as different components also relating to live classification and recording of data.
@@ -28,7 +29,7 @@ export const HomeView = () => {
 	 * useEffect that fetches classifications on render.
 	 */
 	useEffect(() => {
-		fetch("http://localhost:"+SERVER_PORT+"/classifications", {
+		fetch("http://localhost:" + SERVER_PORT + "/classifications", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -47,7 +48,7 @@ export const HomeView = () => {
 	 */
 	useInterval(() => {
 		if (isRecording) {
-			fetch("http://localhost:"+SERVER_PORT+"/classifications/latest", {
+			fetch("http://localhost:" + SERVER_PORT + "/classifications/latest", {
 				headers: {
 					"Content-Type": "application/json",
 					Accept: "application/json",
@@ -64,32 +65,6 @@ export const HomeView = () => {
 				.catch(function (error) {});
 		}
 	}, 5000);
-
-	/**
-	 * useEffect that fetches status of the sensors on render.
-	 */
-	useEffect(() => {
-		fetch("http://localhost:"+SERVER_PORT+"/status")
-			.then((response) => response.json())
-			.then((data) => {
-				setIsRecording(data.isRecording);
-				setHasSensors(data.numberOfSensors !== 0);
-			});
-
-		// eslint-disable-next-line
-	}, []);
-
-	/**
-	 * custom React hook that fetches status of the sensors every 9 seconds.
-	 */
-	useInterval(() => {
-		fetch("http://localhost:"+SERVER_PORT+"/status")
-			.then((response) => response.json())
-			.then((data) => {
-				if (data.isRecording !== isRecording) setIsRecording(!isRecording);
-				if ((data.numberOfSensors !== 0) !== hasSensors) setHasSensors(true);
-			});
-	}, 9000);
 
 	/**
 	 * useMemo that sets buttonPressed to false every time recording is stopped.
@@ -115,39 +90,52 @@ export const HomeView = () => {
 						</Grid>
 
 						<Grid item xs={12} md={6} className={classes.infoContainer}>
-							<Box mb={0.6}>
+							<Box mb={0.6} display="flex" alignItems="center">
 								<Typography variant="h3" color="textPrimary">
 									Connected sensors
 								</Typography>
+								<InfoTooltip
+									text={
+										'Shows the sensors connected to your machine using bluetooth. Scan for sensors by pressing the "Scan"-button below.'
+									}
+								/>
 							</Box>
 							<ContentBox>
-								<SensorListContent setHasSensors={setHasSensors} recording={isRecording} />
+								<SensorListContent
+									hasSensors={hasSensors}
+									setHasSensors={setHasSensors}
+									setIsRecording={setIsRecording}
+									buttonPressed={buttonPressed}
+									recording={isRecording}
+								/>
 							</ContentBox>
 						</Grid>
 
 						<Grid item xs={6} md={3} className={classes.infoContainer}>
-							<Box mb={0.6}>
+							<Box mb={0.6} display="flex" alignItems="center">
 								<Typography variant="h3" color="textPrimary">
 									Record
 								</Typography>
+								<InfoTooltip text={"Start/stop recording by pressing the button below. Disabled if sensors are missing."} />
 							</Box>
 							<ContentBox>
 								<RecordContent
 									posture={lastPosture}
 									hasSensors={hasSensors}
 									isRecording={isRecording}
-									buttonPressed={buttonPressed}
 									setIsRecording={(bool: boolean) => setIsRecording(bool)}
+									buttonPressed={buttonPressed}
 									setButtonPressed={(bool: boolean) => setButtonPressed(bool)}
 								></RecordContent>
 							</ContentBox>
 						</Grid>
 
 						<Grid item xs={6} md={3} className={classes.infoContainer}>
-							<Box mb={0.6}>
+							<Box mb={0.6} display="flex" alignItems="center">
 								<Typography variant="h3" color="textPrimary">
 									Classification
 								</Typography>
+								<InfoTooltip text={"Shows the current classification. See the help section for further information."} />
 							</Box>
 							<ContentBox>
 								<ClassificationContent posture={lastPosture} samplingRate={samplingRate} recording={isRecording}></ClassificationContent>
@@ -155,10 +143,11 @@ export const HomeView = () => {
 						</Grid>
 
 						<Grid item xs={12} md={7} className={classes.graphContainer}>
-							<Box mb={0.6}>
+							<Box mb={0.6} display="flex" alignItems="center">
 								<Typography variant="h3" color="textPrimary">
 									Last hour
 								</Typography>
+								<InfoTooltip text={"Shows classifications for the last hour. Hover over points for classification at given time."} />
 							</Box>
 							<ContentBox>
 								<LineChart duration={0} data={datapoints} />
@@ -166,10 +155,11 @@ export const HomeView = () => {
 						</Grid>
 
 						<Grid item xs={12} md={5} className={classes.graphContainer}>
-							<Box mb={0.6}>
+							<Box mb={0.6} display="flex" alignItems="center">
 								<Typography variant="h3" color="textPrimary">
 									Distribution
 								</Typography>
+								<InfoTooltip text={"Shows the total distribution for today. Empty pane if you have yet to record data today."} />
 							</Box>
 							<ContentBox>
 								<PieChart data={datapoints} />
