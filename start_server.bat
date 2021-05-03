@@ -1,1 +1,1 @@
-cd backend && waitress-serve --port 60066 "server:app"
+cd backend && waitress-serve --port 60066 "backend/server:app"
