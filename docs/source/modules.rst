@@ -6,7 +6,7 @@ Modules
    
    data_queue
    sensor_bank
-   server_classify
+   classification_handler
    realtime_classify
    server
    rnn_utils

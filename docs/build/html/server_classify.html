@@ -165,43 +165,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-server_classify">
-<span id="server-classify-module"></span><h1>server_classify module<a class="headerlink" href="#module-server_classify" title="Permalink to this headline">¶</a></h1>
-<dl class="py class">
-<dt id="server_classify.Classification_Handler">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">server_classify.</span></code><code class="sig-name descname"><span class="pre">Classification_Handler</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensor_bank</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#server_classify.Classification_Handler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt id="server_classify.Classification_Handler.classify">
-<code class="sig-name descname"><span class="pre">classify</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rfc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#server_classify.Classification_Handler.classify" title="Permalink to this definition">¶</a></dt>
-<dd><p>Classify in realtime based on trained model and data in data queue.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>tensorflow.python.keras.engine.sequential.Sequential</em>) – ANN model trained for n_sensors connected.</p></li>
-<li><p><strong>sensor_bank</strong> (<a class="reference internal" href="sensor_bank.html#sensor_bank.Sensor_Bank" title="sensor_bank.Sensor_Bank"><em>Sensor_Bank</em></a>) – Object containing the connected sensors.</p></li>
-<li><p><strong>type</strong> (<em>str</em>) – Type of model</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="server_classify.Classification_Handler.collect_data">
-<code class="sig-name descname"><span class="pre">collect_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenClient</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#server_classify.Classification_Handler.collect_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Collect data from connected sensors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p></li>
-<li><p><strong>sensor_bank</strong> (<a class="reference internal" href="sensor_bank.html#sensor_bank.Sensor_Bank" title="sensor_bank.Sensor_Bank"><em>Sensor_Bank</em></a>) – Object containing the connected sensors.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+  <div class="section" id="server-classify-module">
+<h1>server_classify module<a class="headerlink" href="#server-classify-module" title="Permalink to this headline">¶</a></h1>
 </div>
 
 
