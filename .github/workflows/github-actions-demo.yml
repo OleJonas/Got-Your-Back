@@ -21,8 +21,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Running tests
-        run: python -m unittest test_module.TestClass
+      - name: Running server-tests
+        run: python -m unittest backend/server_test
 
   # Explore-GitHub-Actions:
   #   runs-on: ubuntu-latest
