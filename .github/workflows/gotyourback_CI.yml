@@ -42,6 +42,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Dependencies
-        run: pip install -u sphinx
+        run: pip install sphinx
       - name: Deploy
         run: cd docs && sphinx-build ./source ./build/html
