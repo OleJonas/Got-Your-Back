@@ -2,13 +2,14 @@ import csv
 import datetime
 import random
 
+
 def generate(from_date: str, to_date: str, hours_per_day: int):
     """Generate dummy classification data from date to another date.
 
     Args:
         from_date (str): Start date on format "%Y-%m-%d %H:%M:%S".
         to_date (str): End date on format "%Y-%m-%d".
-        hours_per_day (int): Number of hours of recording each day-
+        hours_per_day (int): Number of hours of recording each day.
     """
     # Parse input-strings to Datetime-objects
     current_day = datetime.datetime.strptime(from_date, '%Y-%m-%d %H:%M:%S')

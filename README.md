@@ -1,6 +1,6 @@
 # Got Your Back
 
-This project contains code written in relation to our bachelor project at NTNU. Our assignment is to classify sitting postures with machine learning algorithms on accelerometer- and gyroscope-data. The datasets are recorded using sensors from LP-RESEARCH, and provided in this repository. Additionally, we will have developed an electron app for recording data and live-classify your sitting posture over time.
+This project contains code written in relation to our bachelor project at NTNU. Our assignment is to classify sitting postures with machine learning algorithms on accelerometer- and gyroscope-data. The datasets are recorded using sensors from LP-RESEARCH, and provided in this repository. Additionally, we have developed an electron app for recording data and live-classify your sitting posture over time.
 
 #### Releases:
 

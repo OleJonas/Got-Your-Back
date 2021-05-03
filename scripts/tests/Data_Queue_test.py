@@ -1,7 +1,7 @@
 import unittest
 import sys
 sys.path.append("../")
-from Data_Queue import *
+from data_queue import *
 
 class Data_Queue_test(unittest.TestCase):
     def setUp(self):

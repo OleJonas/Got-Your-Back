@@ -6,7 +6,7 @@ import openzen
 from collections import Counter
 from datetime import datetime, date
 sys.path.append("scripts/")
-from Data_Queue import Data_Queue
+from data_queue import Data_Queue
 from sensor_bank import Sensor_Bank, _remove_unsync_data
 from rnn_utils import create_3d_array
 
