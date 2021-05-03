@@ -25,8 +25,9 @@ jobs:
       - uses: actions/checkout@v2
       - run: ls -a
       - run: pwd
-      - name: Running Data Queue tests
+      - name: Changing directory
         run: cd "scripts/tests"
+      - name: Running Data Queue tests
         run: python -m unittest Data_Queue_test.py
 
   # Explore-GitHub-Actions:
