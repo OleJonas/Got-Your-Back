@@ -26,7 +26,7 @@ jobs:
       - name: Changing directory
         run: cd "scripts/tests"
       - name: Running Data Queue tests
-        run: python -m unittest Data_Queue_test.py
+        run: python -m unittest Data_Queue_test
 
   # Explore-GitHub-Actions:
   #   runs-on: ubuntu-latest
