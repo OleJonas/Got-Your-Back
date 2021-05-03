@@ -27,8 +27,14 @@ body {
 }
 
 .body {
+	margin-top: 10px;
+	width: 380px;
 	padding: 20px 10px 30px 10px;
 	text-align: left;
+}
+
+p {
+	text-align: justify;
 }
 
 .buttons {
