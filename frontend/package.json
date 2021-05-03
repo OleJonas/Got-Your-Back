@@ -28,7 +28,6 @@
     "make": "electron-builder -mw",
     "make_windows": "electron-builder -w"
   },
-
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
