@@ -24,9 +24,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Changing directory
-        run: cd "scripts/tests"
-      - name: Running Data Queue tests
-        run: python -m unittest discover
+        run: cd "scripts/tests" && python -m unittest Data_Queue_test.py
+      # - name: Running Data Queue tests
+      # run: python -m unittest 
 
   # Explore-GitHub-Actions:
   #   runs-on: ubuntu-latest
