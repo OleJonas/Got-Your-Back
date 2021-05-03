@@ -5,7 +5,7 @@ scripts
    :maxdepth: 4
 
    Data_Queue
-   config_test
    realtime_classify
+   rnn_utils
    sensor_bank
    server_classify

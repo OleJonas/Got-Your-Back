@@ -10,10 +10,10 @@ This is the API documentation for code written in the project Got Your Back. The
 <https://lp-research.com>`_, classify sitting postures in realtime using machine learning algorithms - and give a user the possibility to control all this in an application provided by us.
 
 
-.. Structure::
+
 
 Structure
-********
+**********
 
 This project's API is divided into two parts; one for the sensor handling, data collection and classification in Python, and one for the frontend application in React Typescript.
 

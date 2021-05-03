@@ -1,7 +1,7 @@
-Data\_Queue module
+data\_queue module
 ==================
 
-.. automodule:: Data_Queue
+.. automodule:: data_queue
    :members:
    :undoc-members:
    :show-inheritance:
