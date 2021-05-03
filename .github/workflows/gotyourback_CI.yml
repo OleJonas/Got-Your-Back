@@ -26,13 +26,19 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 
+      - name: Use Node.js
         uses: actions/setup-node@v1
         with:
           node-version: "14.16.0"
       - name: Node version
         run: node -v
       - name: Install dependencies
-        run: cd frontend && npm install
-      - name: Build 🔧
+        run: cd frontend && npm ci
+      - name: Build
         run: cd frontend && npm run make
+
+  api-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        run: cd docs && sphinx-build ./source ./build/html
