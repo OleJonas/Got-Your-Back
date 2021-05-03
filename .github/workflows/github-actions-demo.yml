@@ -26,7 +26,8 @@ jobs:
       - run: ls -a
       - run: pwd
       - name: Running Data Queue tests
-        run: python -m unittest "scripts/tests/Data_Queue_test.py"
+        run: cd "scripts/tests"
+        run: python -m unittest Data_Queue_test.py
 
   # Explore-GitHub-Actions:
   #   runs-on: ubuntu-latest
