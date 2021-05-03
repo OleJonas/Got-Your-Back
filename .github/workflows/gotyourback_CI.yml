@@ -46,4 +46,4 @@ jobs:
       - name: Typedoc
         run: cd frontend && npm install typedoc
       - name: Deploy
-        run: cd "../docs" && sphinx-build ./source ./build/html
+        run: cd docs && sphinx-build ./source ./build/html
