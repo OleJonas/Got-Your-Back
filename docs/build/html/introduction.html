@@ -86,8 +86,6 @@
             
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Structure</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#backend">Backend</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#frontend">Frontend</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 </li>
@@ -161,10 +159,9 @@
             
   <div class="section" id="structure">
 <h1>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h1>
-<p>This project’s API is divided into two parts; one for the sensor handling, data collection and classification in Python, and one for the frontend application in React Typescript.</p>
-<div class="section" id="backend">
-<h2>Backend<a class="headerlink" href="#backend" title="Permalink to this headline">¶</a></h2>
-<p>Our backend code is split into three folders; one for the server, one for classification and one for the main scripts used.</p>
+<p>Our backend is split into three main folders;
+one for the server, one for classification, and one for the main scripts used.
+In addition to this, there is folders for classifications and reports made by the application.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Got Your Back
 ├── backend
 │     ├── openzen.pyd
@@ -180,29 +177,6 @@
       ├── sensor_id.txt
       └── server_classify.py
 </pre></div>
-</div>
-</div>
-<div class="section" id="frontend">
-<h2>Frontend<a class="headerlink" href="#frontend" title="Permalink to this headline">¶</a></h2>
-<p>Our frontend folder is a React project, and we will therefore only focus on the src folder as this is where the relevant .ts and .tsx files are located.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>frontend/src
-├── assets
-├── components
-│     ├── Buttons
-│     │     ├── Button.component.tsx
-│     │     ├── SensorButton.component.tsx
-├── utils
-├── views
-│     ├── AboutView
-│     │     ├── AboutView.tsx
-├── App.test.tsx
-├── App.tsx
-├── index.tsx
-├── openzen.pyd
-├── Routing.tsx
-└── theme.tsx
-</pre></div>
-</div>
 </div>
 <div class="section" id="indices-and-tables">
 <h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>

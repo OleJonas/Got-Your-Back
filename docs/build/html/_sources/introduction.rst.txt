@@ -1,13 +1,9 @@
 Structure
 **********
 
-This project's API is divided into two parts; one for the sensor handling, data collection and classification in Python, and one for the frontend application in React Typescript.
-
-
-Backend
--------
-
-Our backend code is split into three folders; one for the server, one for classification and one for the main scripts used.
+Our backend is split into three main folders;
+one for the server, one for classification, and one for the main scripts used. 
+In addition to this, there is folders for classifications and reports made by the application.
 
 ::
    
@@ -25,32 +21,6 @@ Our backend code is split into three folders; one for the server, one for classi
          ├── sensor_bank.py
          ├── sensor_id.txt
          └── server_classify.py
-
-
-Frontend
---------
-
-Our frontend folder is a React project, and we will therefore only focus on the src folder as this is where the relevant .ts and .tsx files are located.
-
-::
-
-   frontend/src
-   ├── assets
-   ├── components
-   │     ├── Buttons
-   │     │     ├── Button.component.tsx
-   │     │     ├── SensorButton.component.tsx
-   ├── utils
-   ├── views
-   │     ├── AboutView
-   │     │     ├── AboutView.tsx
-   ├── App.test.tsx
-   ├── App.tsx
-   ├── index.tsx
-   ├── openzen.pyd
-   ├── Routing.tsx
-   └── theme.tsx
-
 
 
 Indices and tables
