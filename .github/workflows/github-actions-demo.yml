@@ -18,11 +18,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Running server-tests
-        run: python -m unittest "backend/server_test.py"
+      - uses: actions/checkout@v2
+      - name: Changing directory
+        run: cd "scripts/tests"
+      - name: Running Data Queue tests
+        run: python -m unittest Data_Queue_test
 
   # Explore-GitHub-Actions:
   #   runs-on: ubuntu-latest

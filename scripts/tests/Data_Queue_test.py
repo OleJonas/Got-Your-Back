@@ -3,7 +3,7 @@ import sys
 sys.path.append("../")
 from Data_Queue import *
 
-class Data_Queue_Test(unittest.TestCase):
+class Data_Queue_test(unittest.TestCase):
     def setUp(self):
         self.data_queue_1 = Data_Queue()
         self.data_queue_2 = Data_Queue(2)

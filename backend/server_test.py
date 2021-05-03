@@ -1,7 +1,7 @@
 import requests
 import unittest
 
-url = 'http://localhost:5000'
+url = 'http://0.0.0.0:60066'
 
 class server_test(unittest.TestCase):
     """
@@ -23,7 +23,7 @@ class server_test(unittest.TestCase):
         _make_request(url+"/dummy/connect", {}, "get")
 
         res = _make_request(url+"/dummy/get_sensors", {}, "get")["sensors"]
-        
+
         assert isinstance(res, list)
         for sensor in res:
             assert "name" in sensor
