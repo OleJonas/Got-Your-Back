@@ -18,12 +18,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
-    test:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Running tests
-          run: python -m unittest test_module.TestClass
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Running tests
+        run: python -m unittest test_module.TestClass
 
   # Explore-GitHub-Actions:
   #   runs-on: ubuntu-latest
