@@ -1,3 +1,7 @@
+body {
+	background-color: #0a2339;
+}
+
 .container {
 	height: 95vh;
 	width: 95vw;
@@ -5,6 +9,7 @@
 }
 
 .main {
+	background-color: white;
 	place-self: center;
 	display: grid;
 	border: 3px solid black;
@@ -32,11 +37,13 @@
 
 h1,
 h2 {
+	/* color: white; */
 	font-family: nunito;
 	font-weight: 600;
 	margin: 0;
 }
 p {
+	/* color: white; */
 	font-family: nunito;
 	font-weight: 400;
 	margin: 0;
@@ -60,14 +67,14 @@ a.button {
 	font-family: "nunito";
 	font-weight: 300;
 	color: #fff;
-	background-color: black;
+	background-color: #0a2339;
 	text-align: center;
 	transition: all 0.2s;
 }
 a.button:hover {
 	color: #000;
 	background-color: #fff;
-	border: 0.1em solid #000;
+	border: 0.1em solid#0a2339;
 	cursor: pointer;
 }
 @media all and (max-width: 30em) {
