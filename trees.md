@@ -111,9 +111,9 @@ Got Your Back
 │   │   ├── 00043E4B31EE_CAL
 │   │   └── 00043E4B3326_CAL
 │   ├── test_data
-│   │   └── [test data files]
+│   │   └── [testing datasets]
 │   └── train_data
-│       └── [training data files]
+│       └── [training datasets]
 ├── model
 │   ├── models
 │   ├── src
