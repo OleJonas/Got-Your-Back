@@ -11,7 +11,11 @@ type statusProps = {
 	setStatus?: (number: number) => void;
 };
 
-export const StatusPopup: React.FC<statusProps> = (props) => {
+/**
+ * @param {statusProps} props
+ * A functional component displaying status emoticons.
+ */
+export const StatusBar: React.FC<statusProps> = (props) => {
 	const icons = [emojiAngry20Regular, emojiSad20Regular, emojiMeh20Regular, emoji20Regular, emojiLaugh20Regular];
 	return (
 		<Box display="flex" p={0.1}>
@@ -34,4 +38,4 @@ export const StatusPopup: React.FC<statusProps> = (props) => {
 		</Box>
 	);
 };
-export default StatusPopup;
+export default StatusBar;

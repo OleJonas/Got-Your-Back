@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Box, Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import LineChart from "../LineChart/LineChart.component";
-import SERVER_PORT from "../../utils/server_utils";
+import SERVER_PORT from "../../utils/serverUtils";
 import CloseIcon from "@material-ui/icons/Close";
 
 type modalProps = {
@@ -12,6 +12,11 @@ type modalProps = {
 	open: boolean;
 	close: () => void;
 };
+
+/**
+ * @param {modalProps} props
+ * A functional component displaying a modal with classification graph on report day given.
+ */
 
 export const StatusGraphPopup: React.FC<modalProps> = (props) => {
 	const classes = useStyles();

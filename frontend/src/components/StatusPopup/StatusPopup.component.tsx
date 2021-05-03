@@ -3,12 +3,17 @@ import { Box, Grid, Dialog, DialogContent, Typography, TextField, FormControl } 
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Button from "../Buttons/Button.component";
 import StatusBar from "../../components/StatusBar/StatusBar.component";
-import SERVER_PORT from "../../utils/server_utils";
+import SERVER_PORT from "../../utils/serverUtils";
 
 type modalProps = {
 	open: boolean;
 	close: () => void;
 };
+
+/**
+ * @param {modalProps} props
+ * A functional component displaying a modal for reporting how your back feels after ended recording.
+ */
 
 export const StatusPopup: React.FC<modalProps> = (props) => {
 	const classes = useStyles();
@@ -85,9 +90,6 @@ type textFieldProps = {
 
 const StyledTextField = withStyles({
 	root: {
-		// "& label.Mui-focused": {
-		// 	color: "white",
-		// },
 		"& .MuiOutlinedInput-root": {
 			color: "white",
 			"& fieldset": {
@@ -100,6 +102,10 @@ const StyledTextField = withStyles({
 	},
 })(TextField);
 
+/**
+ * @param {textFieldProps} props
+ * A styled textfield with a state of written feedback.
+ */
 const TextFieldWithState: React.FC<textFieldProps> = (props) => {
 	return (
 		<StyledTextField

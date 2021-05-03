@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Box, ButtonBase, Typography, makeStyles, Tooltip } from "@material-ui/core";
 import loader from "../../assets/loader_white.svg";
-import sensor_placement from "../../utils/sensor_placement";
+import sensorPlacement from "../../utils/sensorPlacement";
 import CheckIcon from "@material-ui/icons/Check";
 import AddIcon from "@material-ui/icons/Add";
 import ClearIcon from "@material-ui/icons/Clear";
@@ -16,9 +16,8 @@ type ButtonProps = {
 };
 
 /**
- *
  * @param props
- * @returns A button component specifically used for sensor setup - connecting and disconnecting.
+ * A button component specifically used for sensor setup - connecting and disconnecting.
  */
 export const SensorButton: React.FC<ButtonProps> = (props) => {
 	const classes = useStyles(props);
@@ -53,7 +52,7 @@ export const SensorButton: React.FC<ButtonProps> = (props) => {
 				disableTouchListener
 				title={
 					<Typography variant="body1" color="textPrimary">
-						{sensor_placement[props.sensorid.toString()]}
+						{sensorPlacement[props.sensorid.toString()]}
 					</Typography>
 				}
 				placement="right"

@@ -5,8 +5,7 @@ import Logo from "../../assets/Logo.svg";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 /**
- *
- * @returns A foreground that is pulled back when clicking any button. This serves as the "landing page".
+ * A foreground that is pulled back when clicking any button. This serves as the "landing page".
  */
 export const HomeShade: React.FC = () => {
 	const classes = useStyles();

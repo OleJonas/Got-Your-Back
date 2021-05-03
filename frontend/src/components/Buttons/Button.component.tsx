@@ -6,9 +6,8 @@ type ButtonProps = {
 };
 
 /**
- *
  * @param props
- * @returns A base button component for use in several different buttons throughout the application
+ * A base button component for use in several different buttons throughout the application
  */
 export const Button: React.FC<ButtonProps> = (props) => {
 	return (

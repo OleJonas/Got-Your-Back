@@ -8,9 +8,8 @@ type InfoTooltipProps = {
 };
 
 /**
- *
- * @param props
- * @returns A tooltip component in which adds an information-icon and shows a tooltip when clicked on.
+ * @param {InfoTooltipProps} props
+ * A tooltip component in which adds an information-icon and shows a tooltip when clicked on.
  */
 export const InfoTooltip: React.FC<InfoTooltipProps> = (props) => {
 	const [showTooltip, setShowTooltip] = useState<boolean>(false);

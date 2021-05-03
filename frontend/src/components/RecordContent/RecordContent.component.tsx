@@ -4,7 +4,7 @@ import loader from "../../assets/loader_white.svg";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 import StatusPopup from "../StatusPopup/StatusPopup.component";
-import SERVER_PORT from "../../utils/server_utils";
+import SERVER_PORT from "../../utils/serverUtils";
 
 type ClassificationProps = {
 	posture: number;		
@@ -16,8 +16,7 @@ type ClassificationProps = {
 };
 
 /**
- *
- * @param props
+ * @param {ClassificationProps} props
  * @returns A GUI interface that lets the user start and stop recording and classification of data. This is contained inside a material-ui Box.
  */
 export const RecordContent: React.FC<ClassificationProps> = (props) => {
@@ -25,7 +24,6 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	
 	/**
-	 * @remarks
 	 * Function that uses the API-calls to start and stop classification.
 	 */
 	const onButtonPressed = () => {

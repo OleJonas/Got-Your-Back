@@ -1,6 +1,6 @@
 import { Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
-import posture_names from "../../utils/posture_names";
+import postureNames from "../../utils/postureNames";
 
 type ColumnChartProps = {
 	data: JSON;
@@ -9,10 +9,11 @@ type ColumnChartProps = {
 };
 
 /**
- * @param props
- * @returns A column chart presenting the classification data over a set period of time.
+ * @param {ColumnChartProps} props
+ * A column chart presenting the classification data over a set period of time.
  */
 export const ColumnChart: React.FC<ColumnChartProps> = (props) => {
+
 	/**
 	 * @returns An array containing the amount of times each posture is observed in the classification data.
 	 */
@@ -23,7 +24,7 @@ export const ColumnChart: React.FC<ColumnChartProps> = (props) => {
 		let chartData = [];
 		chartData.push(["Postures", "Occurences"]);
 		for (let i = 0; i < posture_occurences.length; i += 1) {
-			chartData.push([posture_names[i], posture_occurences[i]]);
+			chartData.push([postureNames[i], posture_occurences[i]]);
 		}
 		return chartData;
 	};
