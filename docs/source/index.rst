@@ -10,16 +10,33 @@ This is the API documentation for code written in the project Got Your Back. The
 <https://lp-research.com>`_, classify sitting postures in realtime using machine learning algorithms - and give a user the possibility to control all this in an application provided by us.
 
 
-.. Structure::
+Contents
+--------
+
+.. toctree::
+    :maxdepth: 2
+
+    ./Data_Queue.rst
+    ./getting_started
+    ./examples
+    ./supported_sensors
+    ./data
+    ./io_systems
+    ./c_api
+    ./cpp_api
+    ./python_api
+    ./csharp_api
+    ./unity_plugin
+    ./ros
 
 Structure
-********
+**********
 
 This project's API is divided into two parts; one for the sensor handling, data collection and classification in Python, and one for the frontend application in React Typescript.
 
 
 Backend
------------------
+-------
 
 Our backend code is split into three folders; one for the server, one for classification and one for the main scripts used.
 
@@ -42,7 +59,7 @@ Our backend code is split into three folders; one for the server, one for classi
 
 
 Frontend
------------------
+--------
 
 Our frontend folder is a React project, and we will therefore only focus on the src folder as this is where the relevant .ts and .tsx files are located.
 

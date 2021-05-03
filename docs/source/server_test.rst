@@ -1,7 +1,7 @@
-config\_test module
+server\_test module
 ===================
 
-.. automodule:: config_test
+.. automodule:: server_test
    :members:
    :undoc-members:
    :show-inheritance:
