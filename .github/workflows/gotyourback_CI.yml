@@ -41,7 +41,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Dependencies
+      - name: Sphinx-Dependencies
         run: pip install sphinx && pip install sphinxcontrib-napoleon && pip install sphinx-rtd-theme && pip install sphinx-js
+      - name: Typedoc 
+        run: npm install -g typedoc
       - name: Deploy
         run: cd docs && sphinx-build ./source ./build/html
