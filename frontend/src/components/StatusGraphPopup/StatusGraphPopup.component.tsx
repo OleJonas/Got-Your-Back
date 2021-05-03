@@ -57,7 +57,13 @@ export const StatusGraphPopup: React.FC<modalProps> = (props) => {
 					<Box display="flex" alignItems="center">
 						<Box flexGrow={1}>
 							<Typography variant="h2" color="textPrimary">
-								{props.day + ". " + new Intl.DateTimeFormat("nb-no", { month: "short" }).format(parseInt(props.month)) + " " + props.year}
+								{props.day +
+									". " +
+									new Intl.DateTimeFormat("en-US", { month: "short" }).format(
+										new Date(parseInt(props.year), parseInt(props.month) - 1, parseInt(props.day))
+									) +
+									" " +
+									props.year}
 							</Typography>
 						</Box>
 						<Box>

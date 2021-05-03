@@ -2,7 +2,6 @@ import csv
 import datetime
 import random
 
-
 def generate(from_date: str, to_date: str, hours_per_day: int):
     """Generate dummy classification data from date to another date.
 
