@@ -1,7 +1,7 @@
 name: GotYourBack CI/CD
 on: [push]
 jobs:
-  python-setup:
+  python-setup-and-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -19,13 +19,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run test(s)
-        run: cd "scripts/tests" && python -m unittest Data_Queue_test.py
+        run: cd "scripts/tests" && python -m unittest data_queue_test.py
 
-  node-setup-build:
+  node-setup-and-build:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js
+      - name: Use Node.js 
         uses: actions/setup-node@v1
         with:
           node-version: "14.16.0"
@@ -33,5 +33,5 @@ jobs:
         run: node -v
       - name: Install dependencies
         run: cd frontend && npm install
-      - name: build
+      - name: Build 🔧
         run: cd frontend && npm run make
