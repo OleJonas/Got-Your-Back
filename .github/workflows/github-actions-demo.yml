@@ -25,8 +25,8 @@ jobs:
       - uses: actions/checkout@v2
       - run: ls -a
       - run: pwd
-      - name: Running server-tests
-        run: python -m unittest "backend/server_test.py"
+      - name: Running Data Queue tests
+        run: python -m unittest "scripts/tests/Data_Queue_test.py"
 
   # Explore-GitHub-Actions:
   #   runs-on: ubuntu-latest

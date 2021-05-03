@@ -91,10 +91,6 @@ class sensor_bank_test(unittest.TestCase):
         for i in range(len(sensors)):
             self.bank.add_sensor(s_names[i], sensors[i], imus[i])
         
-
-
-
-
 def suite():
     suite = unittest.TestSuite()
     suite.addTest()
