@@ -18,9 +18,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
   test:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      - run: ls -a
+      - run: pwd
       - name: Running server-tests
         run: python -m unittest "backend/server_test.py"
 
