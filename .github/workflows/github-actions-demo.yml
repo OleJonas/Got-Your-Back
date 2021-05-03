@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Running server-tests
-        run: python -m unittest backend/server_test
+        run: python -m unittest "backend/server_test.py"
 
   # Explore-GitHub-Actions:
   #   runs-on: ubuntu-latest
