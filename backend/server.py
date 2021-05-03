@@ -27,7 +27,6 @@ t_pool = []
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
 CORS(app, support_credentials=True)
 
-
 @app.before_first_request
 def init():
     """
