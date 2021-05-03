@@ -17,7 +17,7 @@ def generate(from_date: str, to_date: str, hours_per_day: int):
 
     # Iterate through every day, checks if the date is equal to the "from_date", which was
     # given as input
-    while(not (current_day.date() == end_day.date())):
+    while(not (current_day.date() == (end_day.date() + datetime.timedelta(days=1)))):
         # Create new CSV-file, with date of 'current_day' as filename
         with open(f"./classifications/{str(datetime.datetime.strftime(current_day, '%Y-%m-%d'))}.csv", 'w+', newline='') as file:
             # Declaring fieldnames and DictWriter

@@ -61,216 +61,23 @@
 				<a href="#got-your-back" id="got-your-back" style="color: inherit; text-decoration: none;">
 					<h1>Got Your Back</h1>
 				</a>
-				<p>This repository is for our Bachelors project; a project in which we want to be able to classify your posture over time and give feedback to the user regarding their posture both live and over time. This will be visualized by Simon Årdal&#39;s seaborn diagrams, in which you will find EVERYWHERE. Buckle up, this gonna be a wild ride!!!</p>
-				<a href="#for-cloning-this-repo-write" id="for-cloning-this-repo-write" style="color: inherit; text-decoration: none;">
-					<h4>For cloning this repo, write:</h4>
+				<p>This project contains code written in relation to our bachelor project at NTNU. Our assignment is to classify sitting postures with machine learning algorithms on accelerometer- and gyroscope-data. The datasets are recorded using sensors from LP-RESEARCH, and provided in this repository. Additionally, we will have developed an electron app for recording data and live-classify your sitting posture over time.</p>
+				<a href="#releases" id="releases" style="color: inherit; text-decoration: none;">
+					<h4>Releases:</h4>
 				</a>
-				<p>As we depend on another repo for the OpenZen-library, you have to clone the project with the submodules included.
-				The following line wil fix this for you:</p>
+				<p>For cloning:
+				As we depend on another repo for the OpenZen-library, you have to clone the project with the submodules included. The following line will fix this for you:</p>
 				<p><code>git clone --recurse-submodules https://github.com/OleJonas/Got-Your-Back.git &#39;GotYourBack&#39;</code></p>
+				<p>TODO:
+				Create releases for both windows and mac and upload</p>
 				<a href="#setup" id="setup" style="color: inherit; text-decoration: none;">
 					<h4>Setup</h4>
 				</a>
-				<p>We have to fix the setupprocess for openzen, for Linux and for Windows. Maybe create a script for building, adding classpath and updating the openzen.pyd/so for Linux and Mac automatically if possible?</p>
 				<a href="#structure" id="structure" style="color: inherit; text-decoration: none;">
 					<h4>Structure</h4>
 				</a>
-				<p>Here we will describe the folderstructure:</p>
-				<pre><code class="language-bash"><span style="color: #000000">Got Your Back</span>
-<span style="color: #000000">├── ANN_model</span>
-<span style="color: #000000">│   ├── saved_model.pb</span>
-<span style="color: #000000">│   └── variables</span>
-<span style="color: #000000">│       ├── variables.data-00000-of-00001</span>
-<span style="color: #000000">│       └── variables.index</span>
-<span style="color: #000000">├── README.md</span>
-<span style="color: #000000">├── assets</span>
-<span style="color: #000000">│   └── Logo.svg</span>
-<span style="color: #000000">├── data</span>
-<span style="color: #000000">│   ├── annotation</span>
-<span style="color: #000000">│   │   ├── testing</span>
-<span style="color: #000000">│   │   │   ├── elise_test_3_090221.txt</span>
-<span style="color: #000000">│   │   │   ├── emanuel_test_3_110221.txt</span>
-<span style="color: #000000">│   │   │   ├── martin_test_1_030221.txt</span>
-<span style="color: #000000">│   │   │   ├── martin_test_2_030221.txt</span>
-<span style="color: #000000">│   │   │   ├── martin_test_3_040221.txt</span>
-<span style="color: #000000">│   │   │   ├── simon_test_1_020221.txt</span>
-<span style="color: #000000">│   │   │   └── xiaomeng_test_3_110221.txt</span>
-<span style="color: #000000">│   │   └── training</span>
-<span style="color: #000000">│   │       ├── elise_train_3_090221.txt</span>
-<span style="color: #000000">│   │       ├── emanuel_train_3_110221.txt</span>
-<span style="color: #000000">│   │       ├── jonas_train_1_080221.txt</span>
-<span style="color: #000000">│   │       ├── jonas_train_3_080221.txt</span>
-<span style="color: #000000">│   │       ├── martin_train_1_020221.txt</span>
-<span style="color: #000000">│   │       ├── martin_train_2_020221.txt</span>
-<span style="color: #000000">│   │       ├── martin_train_3_030221.txt</span>
-<span style="color: #000000">│   │       ├── simon_train_1_080221.txt</span>
-<span style="color: #000000">│   │       ├── simon_train_1_280121.txt</span>
-<span style="color: #000000">│   │       ├── simon_train_2_080221.txt</span>
-<span style="color: #000000">│   │       ├── simon_train_3_080221.txt</span>
-<span style="color: #000000">│   │       └── xiaomeng_train_3_110221.txt</span>
-<span style="color: #000000">│   ├── confirm_data.ipynb</span>
-<span style="color: #000000">│   ├── live</span>
-<span style="color: #000000">│   │   └── info.txt</span>
-<span style="color: #000000">│   ├── overview_of_data_collection.ipynb</span>
-<span style="color: #000000">│   ├── sensor_calibrations</span>
-<span style="color: #000000">│   │   ├── 00043E4B31EE_CAL</span>
-<span style="color: #000000">│   │   ├── 00043E4B3326_CAL</span>
-<span style="color: #000000">│   │   └── 00043E3036EB_CAL</span>
-<span style="color: #000000">│   ├── test_data</span>
-<span style="color: #000000">│   │   ├── elise_test_3_090221.csv</span>
-<span style="color: #000000">│   │   ├── emanuel_test_3_110221.csv</span>
-<span style="color: #000000">│   │   ├── martin_test_1_030221.csv</span>
-<span style="color: #000000">│   │   ├── martin_test_2_030221.csv</span>
-<span style="color: #000000">│   │   ├── martin_test_3_040221.csv</span>
-<span style="color: #000000">│   │   ├── simon_test_1_020221.csv</span>
-<span style="color: #000000">│   │   └── xiaomeng_test_3_110221.csv</span>
-<span style="color: #000000">│   └── train_data</span>
-<span style="color: #000000">│       ├── elise_train_3_090221.csv</span>
-<span style="color: #000000">│       ├── emanuel_train_3_110221.csv</span>
-<span style="color: #000000">│       ├── jonas_train_1_080221.csv</span>
-<span style="color: #000000">│       ├── jonas_train_2_080221.csv</span>
-<span style="color: #000000">│       ├── jonas_train_3_080221.csv</span>
-<span style="color: #000000">│       ├── martin_train_1_020221.csv</span>
-<span style="color: #000000">│       ├── martin_train_2_020221.csv</span>
-<span style="color: #000000">│       ├── martin_train_3_020221.csv</span>
-<span style="color: #000000">│       ├── martin_train_3_030221.csv</span>
-<span style="color: #000000">│       ├── simon_train_1_080221.csv</span>
-<span style="color: #000000">│       ├── simon_train_1_280121.csv</span>
-<span style="color: #000000">│       ├── simon_train_2_080221.csv</span>
-<span style="color: #000000">│       ├── simon_train_3_080221.csv</span>
-<span style="color: #000000">│       └── xiaomeng_train_3_110221.csv</span>
-<span style="color: #000000">├── lib</span>
-<span style="color: #000000">├── model</span>
-<span style="color: #000000">│   ├── annotation</span>
-<span style="color: #000000">│   │   ├── ANVIL</span>
-<span style="color: #000000">│   │   │   └── data_management.ipynb</span>
-<span style="color: #000000">│   │   └── FCPX</span>
-<span style="color: #000000">│   │       ├── annotation_for_FCPX.py</span>
-<span style="color: #000000">│   │       ├── data_management.py</span>
-<span style="color: #000000">│   │       └── markers.txt</span>
-<span style="color: #000000">│   ├── deprecated</span>
-<span style="color: #000000">│   │   ├── ANN_PyTorch.ipynb</span>
-<span style="color: #000000">│   │   ├── openzen.pyd</span>
-<span style="color: #000000">│   │   └── openzen_python_test.py</span>
-<span style="color: #000000">│   ├── df_utils.py</span>
-<span style="color: #000000">│   ├── file_declarations.py</span>
-<span style="color: #000000">│   ├── ml_algorithms</span>
-<span style="color: #000000">│   │   ├── ANN.ipynb</span>
-<span style="color: #000000">│   │   └── RFC.ipynb</span>
-<span style="color: #000000">│   └── sensors.py</span>
-<span style="color: #000000">├── realtimetest.csv</span>
-<span style="color: #000000">├── requirements.txt</span>
-<span style="color: #000000">├── scripts</span>
-<span style="color: #000000">│   ├── Queue.py</span>
-<span style="color: #000000">│   ├── openzen.pyd</span>
-<span style="color: #000000">│   └── realtime_classify.py</span>
-<span style="color: #000000">└── setup.cfg</span>
+				<pre><code class="language-bash">
 </code></pre>
-				<a href="#sensor-properties-fetchable" id="sensor-properties-fetchable" style="color: inherit; text-decoration: none;">
-					<h3>Sensor properties fetchable</h3>
-				</a>
-				<p>From the sensors we can fetch different properties using one of the following methods:</p>
-				<ul>
-					<li>get_float_property()</li>
-					<li>get_byte_property()</li>
-					<li>get_int32_property()</li>
-					<li>get_uint64_property()</li>
-					<li>get_array_property()</li>
-					<li>execute_command()</li>
-				</ul>
-				<p>ZenImu object:</p>
-				<pre><code><span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">Invalid</span><span style="color: #000000"> = </span><span style="color: #098658">0</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">StreamData</span><span style="color: #000000"> = </span><span style="color: #098658">1000</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">SamplingRate</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">SupportedSamplingRates</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">PollSensorData</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">CalibrateGyro</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">ResetOrientationOffset</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">CentricCompensationRate</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">LinearCompensationRate</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">FieldRadius</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">FilterMode</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">SupportedFilterModes</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">FilterPreset</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OrientationOffsetMode</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">AccAlignment</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">AccBias</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">AccRange</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">AccSupportedRanges</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">GyrAlignment</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">GyrBias</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">GyrRange</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">GyrSupportedRanges</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">GyrUseAutoCalibration</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">GyrUseThreshold</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">MagAlignment</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">MagBias</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">MagRange</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">MagSupportedRanges</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">MagReference</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">MagHardIronOffset</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">MagSoftIronMatrix</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputLowPrecision</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputRawAcc</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputRawGyr</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputRawMag</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputEuler</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputQuat</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputAngularVel</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputLinearAcc</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputHeaveMotion</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputAltitude</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputPressure</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputTemperature</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputAccCalibrated</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputRawGyr0</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputRawGyr1</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputGyr0BiasCalib</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputGyr1BiasCalib</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputGyr0AlignCalib</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputGyr1AlignCalib</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">OutputMagCalib</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">DegRadOutput</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">CanChannelMode</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">CanPointMode</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">CanStartId</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">CanBaudrate</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">CanMapping</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">CanHeartbeat</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">UartBaudRate</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">UartFormat</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">StartSensorSync</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">StopSensorSync</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenImuProperty</span><span style="color: #000000">.</span><span style="color: #001080">Max</span>
-</code></pre>
-				<p>ZenSensor object:</p>
-				<pre><code><span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">Invalid</span><span style="color: #000000"> = </span><span style="color: #098658">0</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">DeviceName</span><span style="color: #000000"> = </span><span style="color: #098658">1000</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">FirmwareInfo</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">FirmwareVersion</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">SerialNumber</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">RestoreFactorySettings</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">StoreSettingsInFlash</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">BatteryCharging</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">BatteryLevel</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">BatteryVoltage</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">BaudRate</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">SupportedBaudRates</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">DataMode</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">TimeOffset</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">SensorModel</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">SensorSpecific_Start</span><span style="color: #000000"> = </span><span style="color: #098658">10000</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">SensorSpecific_End</span><span style="color: #000000"> = </span><span style="color: #098658">19999</span><span style="color: #000000">,</span>
-<span style="color: #001080">openzen</span><span style="color: #000000">.</span><span style="color: #001080">ZenSensorProperty</span><span style="color: #000000">.</span><span style="color: #001080">Max</span>
-</code></pre>
-				<a href="#creating-python-docs" id="creating-python-docs" style="color: inherit; text-decoration: none;">
-					<h2>Creating Python docs</h2>
-				</a>
-				<p>With Sphinx fully installed and python lib accessible from terminal:</p>
-				<pre><code><span style="color: #001080">cd</span><span style="color: #000000"> </span><span style="color: #001080">docs</span>
-<span style="color: #001080">sphinx</span><span style="color: #000000">-</span><span style="color: #001080">build</span><span style="color: #000000"> ./</span><span style="color: #001080">source</span><span style="color: #000000"> ./</span><span style="color: #001080">build</span><span style="color: #000000">/</span><span style="color: #001080">html</span>
-</code></pre>
-				<p>and make html from rst only with <code>make html</code></p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -287,9 +94,6 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/src_app.html">src/<wbr>App</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/src_app_test.html">src/<wbr>App.test</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/src_routing.html">src/<wbr>Routing</a>
@@ -311,6 +115,9 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/src_components_homeshade_homeshade_component.html">src/components/<wbr>Home<wbr>Shade/<wbr>Home<wbr>Shade.component</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/src_components_infotooltip_infotooltip_component.html">src/components/<wbr>Info<wbr>Tooltip/<wbr>Info<wbr>Tooltip.component</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/src_components_linechart_linechart_component.html">src/components/<wbr>Line<wbr>Chart/<wbr>Line<wbr>Chart.component</a>
@@ -337,6 +144,15 @@
 						<a href="modules/src_components_sensorrow_sensorrowmodal_component.html">src/components/<wbr>Sensor<wbr>Row/<wbr>Sensor<wbr>Row<wbr>Modal.component</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/src_components_statusbar_statusbar_component.html">src/components/<wbr>Status<wbr>Bar/<wbr>Status<wbr>Bar.component</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/src_components_statusgraphpopup_statusgraphpopup_component.html">src/components/<wbr>Status<wbr>Graph<wbr>Popup/<wbr>Status<wbr>Graph<wbr>Popup.component</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/src_components_statuspopup_statuspopup_component.html">src/components/<wbr>Status<wbr>Popup/<wbr>Status<wbr>Popup.component</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/src_react_app_env.html">src/react-<wbr>app-<wbr>env</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -346,19 +162,25 @@
 						<a href="modules/src_setuptests.html">src/setup<wbr>Tests</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_test_pipe.html">src/test_<wbr>pipe</a>
+						<a href="modules/src_theme.html">src/theme</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_theme.html">src/theme</a>
+						<a href="modules/src_utils_dateutils.html">src/utils/date<wbr>Utils</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/src_utils_handleerrors.html">src/utils/handle<wbr>Errors</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_utils_posture_names.html">src/utils/posture_<wbr>names</a>
+						<a href="modules/src_utils_posturenames.html">src/utils/posture<wbr>Names</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_views_aboutview_aboutview.html">src/views/<wbr>About<wbr>View/<wbr>About<wbr>View</a>
+						<a href="modules/src_utils_sensorplacement.html">src/utils/sensor<wbr>Placement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/src_utils_serverutils.html">src/utils/server<wbr>Utils</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/src_utils_useinterval.html">src/utils/use<wbr>Interval</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/src_views_helpview_helpview.html">src/views/<wbr>Help<wbr>View/<wbr>Help<wbr>View</a>
@@ -368,6 +190,9 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/src_views_homeview_homeview.html">src/views/<wbr>Home<wbr>View/<wbr>Home<wbr>View</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/src_views_reportview_reportview.html">src/views/<wbr>Report<wbr>View/<wbr>Report<wbr>View</a>
 					</li>
 				</ul>
 			</nav>
