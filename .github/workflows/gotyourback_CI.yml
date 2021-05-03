@@ -41,4 +41,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
+        run: pwd
         run: cd docs && sphinx-build ./source ./build/html
