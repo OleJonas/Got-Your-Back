@@ -40,5 +40,8 @@ jobs:
   api-deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      - name: Dependencies
+        run: pip install -u sphinx
       - name: Deploy
-        run: cd ./docs && sphinx-build ./source ./build/html
+        run: cd docs && sphinx-build ./source ./build/html
