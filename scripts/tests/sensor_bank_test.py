@@ -3,7 +3,6 @@ import sys
 sys.path.append("../")
 import sensor_bank as sb
 import openzen
-from data_queue import Data_Queue
 
 
 class sensor_bank_test(unittest.TestCase):
