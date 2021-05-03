@@ -1,6 +1,5 @@
 import { Grid, Box, Typography, makeStyles } from "@material-ui/core";
-// Components
-import { posture_names } from "../../utils/posture_names";
+import posture_names from "../../utils/posture_names";
 
 type ClassificationProps = {
 	posture: number;
@@ -20,11 +19,11 @@ export const ClassificationContent: React.FC<ClassificationProps> = (props) => {
 		<Box className={classes.root}>
 			<Grid container className={classes.grid} justify="center" alignItems="center">
 				<Grid item xs={12}>
-					<Box display="flex" justifyContent="center" alignItems="center">
+					{/* <Box display="flex" justifyContent="center" alignItems="center">
 						<Typography variant="subtitle1" color="textPrimary">
 							{props.recording ? (props.posture === -1 ? "-" : props.posture) : "-"}
 						</Typography>
-					</Box>
+					</Box> */}
 					<Typography variant="h2" color="textPrimary">
 						{props.recording ? posture_names[props.posture] : "Not recording"}
 					</Typography>

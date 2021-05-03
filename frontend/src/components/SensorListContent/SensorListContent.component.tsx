@@ -1,11 +1,11 @@
-import { useState, useEffect, FC } from "react";
+import { useState, useEffect } from "react";
 import { Grid, Typography, makeStyles } from "@material-ui/core";
-
-// Componentes
-import { Button } from "../Buttons/Button.component";
-import { SensorRowHome } from "../SensorRow/SensorRowHome.component";
-import { SensorModal } from "../SensorModal/SensorModal.component";
-import { sensor_placement } from "../../utils/sensor_placement";
+import Button from "../Buttons/Button.component";
+import SensorRowHome from "../SensorRow/SensorRowHome.component";
+import SensorModal from "../SensorModal/SensorModal.component";
+import sensor_placement from "../../utils/sensor_placement";
+import SERVER_PORT from "../../utils/server_utils";
+import useInterval from "../../utils/useInterval";
 
 export type Sensor = {
 	id: number;
@@ -15,13 +15,16 @@ export type Sensor = {
 
 type ListProps = {
 	recording: boolean;
+	hasSensors: boolean;
 	setHasSensors: (bool: boolean) => void;
+	setIsRecording: (bool: boolean) => void;
+	buttonPressed: boolean;
 };
 
 /**
  * @returns A listing of the currently connected sensors.
  */
-export const SensorListContent: FC<ListProps> = (props) => {
+export const SensorListContent: React.FC<ListProps> = (props) => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 	const [sensors, setSensors] = useState<Sensor[]>([]);
@@ -51,13 +54,53 @@ export const SensorListContent: FC<ListProps> = (props) => {
 	};
 
 	/**
+	 * useEffect that fetches status of the sensors on render.
+	 */
+	useEffect(() => {
+		fetch("http://localhost:" + SERVER_PORT + "/status")
+			.then((response) => response.json())
+			.then((data) => {
+				props.setIsRecording(data.isRecording);
+				props.setHasSensors(data.numberOfSensors !== 0);
+			});
+
+		// eslint-disable-next-line
+	}, []);
+
+	/**
+	 * custom React hook that fetches status of the sensors every 9 seconds.
+	 */
+	useInterval(() => {
+		fetch("http://localhost:" + SERVER_PORT + "/status")
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.isRecording !== props.recording) props.setIsRecording(!props.recording);
+				if ((data.numberOfSensors !== 0) !== props.hasSensors && checkCorrectSensors()) props.setHasSensors(true);
+			});
+	}, 9000);
+
+	/**
 	 * @remarks
 	 * useEffect that checks if sensorlist has sensors.
 	 */
 	useEffect(() => {
-		if (sensors.length === 0) props.setHasSensors(false);
+		/*
+        Method that checks if the correct sensors are connected, if not, the user should not be allowed to start classification.
+        */
+		if (sensors.length === 0 || checkCorrectSensors() === false) props.setHasSensors(false);
 		//eslint-disable-next-line
 	}, [sensors]);
+
+	const checkCorrectSensors = () => {
+		const id_arr = sensors.map((sensor: Sensor) => sensor.id);
+
+		for (let i = 1; i < sensors.length + 1; i++) {
+			if (!id_arr.includes(i)) {
+				return false;
+			}
+		}
+		return true;
+	};
 
 	/**
 	 * @remarks
@@ -65,7 +108,7 @@ export const SensorListContent: FC<ListProps> = (props) => {
 	 *
 	 * @param sensor An object of the sensor type
 	 */
-	const addSensors = (sensor: Sensor) => {
+	const addSensor = (sensor: Sensor) => {
 		let helper = sensors;
 		helper.push(sensor);
 		setSensors(helper);
@@ -76,7 +119,7 @@ export const SensorListContent: FC<ListProps> = (props) => {
 	 * Uses an API call to fetch sensors currently connected via bluetooth. Then sets state to reflect the sensors found to be connected.
 	 */
 	const getConnectedSensors = async () => {
-		await fetch("http://localhost:5000/setup/get_sensors", {
+		await fetch("http://localhost:" + SERVER_PORT + "/setup/get_sensors", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -103,7 +146,7 @@ export const SensorListContent: FC<ListProps> = (props) => {
 				key={sensor.id}
 				connected={true}
 				id={sensor.id}
-				busy={props.recording}
+				busy={props.recording || props.buttonPressed}
 				disconnectFunc={removeSensor}
 				name={sensor.name}
 				position={sensor_placement[sensor.id.toString()]}
@@ -162,12 +205,12 @@ export const SensorListContent: FC<ListProps> = (props) => {
 			</Grid>
 			<Grid item xs={12}>
 				<Grid container className={classes.button}>
-					<Button func={openModal} disabled={props.recording}>
+					<Button func={openModal} disabled={props.recording || props.buttonPressed}>
 						Scan
 					</Button>
 					{open ? (
 						<SensorModal
-							sendSensors={addSensors}
+							sendSensors={addSensor}
 							alreadyConnected={getSensorsConnectedNames()}
 							close={closeModal}
 							open={open}

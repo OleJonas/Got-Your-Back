@@ -2,7 +2,8 @@ import os
 import sys
 import csv
 from datetime import datetime, date, timedelta
-# sys.path.append(os.path.abspath("./lib/openzen/build"))
+# sys.path.append(os.path.abspath("../lib/openzen/build"))
+sys.path.append("../scripts")
 import openzen
 import threading
 import atexit
@@ -12,17 +13,16 @@ from flask import Flask, request, Response
 from flask_cors import CORS
 from collections import deque
 from pathlib import Path
-sys.path.append("scripts/")
-from sensor_bank import Sensor_Bank
+import threading
 from joblib import load
+from sensor_bank import Sensor_Bank
 import server_classify as sc
 
 app = Flask(__name__)
 client = None
 found_sensors = None
 sensor_bank = None
-data_queue = None
-classify = False
+classification_handler = None
 t_pool = []
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
 CORS(app, support_credentials=True)
@@ -36,6 +36,7 @@ def init():
     global client
     global sensor_bank
     global found_sensors
+    global classification_handler
     openzen.set_log_level(openzen.ZenLogLevel.Warning)
     # Make client
     error, client = openzen.make_client()
@@ -44,6 +45,7 @@ def init():
         sys.exit(1)
     found_sensors = {}
     sensor_bank = Sensor_Bank()
+    classification_handler = sc.Classification_Handler(sensor_bank)
 
 
 @app.before_request
@@ -59,10 +61,6 @@ def before_request():
         res.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
         res.headers["Access-Control-Allow-Methods"] = "GET,PUT,POST,DELETE,OPTIONS"
         return res
-    else:
-        global sensor_bank
-        sensor_bank.verify_sensors_alive()
-        return
 
 
 @app.route("/")
@@ -73,97 +71,6 @@ def confirm_access():
         str: Message confirming connection.
     """
     return "The API is up and running!"
-
-
-"""
-DEBUG
-"""
-
-
-@app.route('/dummy/scan')
-def get_dummy_scan():
-    """Fetch dummydata mocking a list of found sensors.
-
-    Returns:
-        dict: Dictionary with list of found sensors.
-                Format:
-
-                {"sensors": [str]}
-    """
-    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
-
-
-@app.route('/dummy/connect')
-def get_dummy_connect():
-    """Fetch dummydata mocking a list of connected sensors.
-
-    Returns:
-        dict: Dictionary with list of connected sensors.
-                Each sensor object is on the format:
-
-                {
-                    name: str,
-                    id: int,
-                    battery: int
-                }
-    """
-
-    global sensor_bank
-
-    res = {"sensors": [
-        {"name": "LPMSB2 - 3036EB", "id": "1", "battery_percent": "85,3%"},
-        {"name": "LPMSB2 - 4B3326", "id": "2", "battery_percent": "76,6%"},
-        {"name": "LPMSB2 - 4B31EE", "id": "3", "battery_percent": "54,26%"}
-    ]}
-
-    sensors = res["sensors"]
-
-    for sensor in sensors:
-        sensor_bank.add_sensor(sensor["name"], None, None)
-
-    return res
-
-
-@app.route("/dummy/get_sensors")
-def dummy_get_sensors():
-    """Fetch a list of dummy sensors.
-
-    Returns:
-        dict: Dictionary with list of connected sensors.
-                Each sensor object is on the format:
-
-                {
-                    name: str,
-                    id: int,
-                    battery: int
-                }
-    """
-    out = {"sensors": []}
-    for s in sensor_bank.sensor_dict.values():
-        out["sensors"].append({
-            "name": s.name,
-            "id": s.id,
-            "battery": "69.420"
-        })
-    return json.dumps(out)
-
-
-@app.route("/dummy/test_dead")
-def test_dead():
-    print(sensor_bank.sensor_dict)
-    ans = sensor_bank.test_dead()
-    print(sensor_bank.sensor_dict)
-    return ans
-
-
-@app.route('/dummy/found_sensors')
-def get_dummy_found_sensors():
-    return {"sensors": ["LPMSB2 - 3036EB", "LPMSB2 - 4B3326", "LPMSB2 - 4B31EE"]}
-
-
-"""""""""""""""""""""""
-SENSORCONNECTION
-"""""""""""""""""""""""
 
 
 @app.route("/setup/scan")
@@ -256,7 +163,6 @@ def disconnect():
     """
     global sensor_bank
     names = request.json["names"]
-    print(names)
     for name in names:
         sensor_bank.disconnect_sensor(name)
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
@@ -276,6 +182,7 @@ def get_sensors():
                     battery: int
                 }
     """
+    sensor_bank.verify_sensors_alive()
     out = {"sensors": []}
     for s in sensor_bank.sensor_dict.values():
         out["sensors"].append({
@@ -300,14 +207,17 @@ def start_classify():
     """
     global t_pool
     global sensor_bank
+
+    # Checking to see if amount of sensors has been changed after api-call.
+
     sensor_bank.run = True
     sensor_bank.sync_sensors(client)
     # keras model
-    # model = keras.models.load_model(f"model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
+    # model = keras.models.load_model(f"../model/models/ANN_model_{len(sensor_bank.sensor_dict)}.h5")
 
-    rfc_model = load(f"model/models/RFC_model_{len(sensor_bank.sensor_dict)}.joblib")
-    classify_thread = threading.Thread(target=sc.classify, args=[rfc_model, sensor_bank], daemon=True)
-    collect_thread = threading.Thread(target=sc.collect_data, args=[client, sensor_bank], daemon=True)
+    rfc_model = load(f"../model/models/RFC_model_{len(sensor_bank.sensor_dict)}.joblib")
+    classify_thread = threading.Thread(target=classification_handler.classify, args=[rfc_model], daemon=True)
+    collect_thread = threading.Thread(target=classification_handler.collect_data, args=[client], daemon=True)
     t_pool.append(classify_thread)
     t_pool.append(collect_thread)
     collect_thread.start()
@@ -362,7 +272,7 @@ def get_all_classifications():
     res = dict()
 
     try:
-        with open(sc._classification_fname(), 'r') as file:
+        with open(classification_handler._classification_fname(), 'r') as file:
             try:
                 for row in csv.reader(file):
                     classifications[int(row[1])] += 1
@@ -379,15 +289,18 @@ def get_all_classifications():
 
 @app.route("/classifications/latest")
 def get_classification():
-    """Get the latest classification for today.
+    """Get the latest classification for today. If the timestamp in the url matches the timestamp of the latest classification in the file, something has gone wrong while classifying.
 
     Returns:
         dict: Dictionary with latest classification if file found and not empty. {Error: "FileEmpty" | "FileNotFound"} if not.
         http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
     """
-
+    global sensor_bank
+    if not sensor_bank.verify_sensors_alive() and sensor_bank.run:
+        stop_classify()
+        return
     try:
-        with open(sc._classification_fname(), 'r') as file:
+        with open(classification_handler._classification_fname(), 'r') as file:
             try:
                 lastrow = deque(csv.reader(file), 1)[0]
             except IndexError:  # empty file
@@ -407,7 +320,7 @@ def get_classifications_history():
     """
     days = int(request.args.get("duration"))
     res = dict()
-    filearray = os.listdir("./classifications/")
+    filearray = os.listdir("../classifications/")
     startDate = (date.today() - timedelta(days=days))
 
     # Iterate through every day of the 'duration'-days long interval, and get the most frequently occurent prediction from each day
@@ -419,7 +332,7 @@ def get_classifications_history():
         # if there is a file for the i-th day in the interval, proceed, if not, skip
         if((ith_Day_str + ".csv") in filearray):
             try:
-                with open("./classifications/" + str(ith_Day_str + ".csv"), 'r') as file:
+                with open("../classifications/" + str(ith_Day_str + ".csv"), 'r') as file:
                     reader = csv.reader(file)
                     for row in reader:
                         classifications[int(row[1])] += 1
@@ -445,12 +358,12 @@ def get_report_classifications():
     classifications = np.zeros(9)
     res = dict()
     try:
-        with open(f'./classifications/{year}-{month}-{day}.csv', 'r') as file:
+        with open(f'../classifications/{year}-{month}-{day}.csv', 'r') as file:
             try:
                 for row in csv.reader(file):
                     classifications[int(row[1])] += 1
                     counter += 1
-                    if counter % INTERVAL == 0:
+                    if counter % (INTERVAL + 1) == 0:
                         res[row[0]] = int(np.argmax(classifications))
                         classifications = np.zeros(9)
                 return res
@@ -476,7 +389,13 @@ def get_battery():
     """
     global sensor_bank
     name = request.args.get("name")
-    percent = sensor_bank.sensor_dict[name].get_battery_percentage()
+    try:
+        percent = sensor_bank.sensor_dict[name].get_battery_percentage()
+    except:
+        return {
+            "error": f"{name} is no longer connected",
+            "battery": "0.0"
+        }
     return {"battery": str(percent).split("%")[0]}
 
 
@@ -504,7 +423,7 @@ User reports
 
 
 def _get_report_fname():
-    return f'./reports/{datetime.now().year}-{"%02d" % datetime.now().month}/{date.today().strftime("%Y-%m-%d")}.csv'
+    return f'../reports/{datetime.now().year}-{"%02d" % datetime.now().month}/{date.today().strftime("%Y-%m-%d")}.csv'
 
 
 @app.route("/reports", methods=["POST"])
@@ -513,14 +432,14 @@ def write_report():
     """
     req = request.json
     user_status = req["status"]
-    path = f"./reports/{datetime.now().year}-{'%02d' % datetime.now().month}"
+    path = f"../reports/{datetime.now().year}-{'%02d' % datetime.now().month}"
     if not os.path.exists(path):
         os.makedirs(path)
     with open(_get_report_fname(), 'a+', newline='') as file:
         try:
-            sc._write_to_csv(csv.writer(file), user_status)
+            classification_handler._write_to_csv(csv.writer(file), user_status)
         except:
-            print("Could not write to file :(")
+            print("Could not write to file")
             return json.dumps({'success': False}), 507, {'ContentType': 'application/json'}
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
@@ -532,11 +451,11 @@ def get_report():
     try:
         year = int(request.args.get('year'))
         month = '%02d' % int(request.args.get('month'))
-        paths = sorted(Path(f"./reports/{year}-{month}").iterdir(), key=os.path.getmtime)
+        paths = sorted(Path(f"../reports/{year}-{month}").iterdir(), key=os.path.getmtime)
         file_array = [path.name for path in paths if not path.name.startswith(".")]
         rows = []
         for fname in file_array:
-            with open(f"./reports/{year}-{month}/{fname}", 'r') as file:
+            with open(f"../reports/{year}-{month}/{fname}", 'r') as file:
                 try:
                     new_row = []
                     for row in csv.reader(file):
@@ -553,7 +472,7 @@ def get_report():
 
 @ app.route("/reports/available")
 def get_report_months_available():
-    paths = sorted(Path("./reports/").iterdir(), key=os.path.getmtime, reverse=True)
+    paths = sorted(Path("../reports/").iterdir(), key=os.path.getmtime, reverse=True)
     res = [path.name for path in paths if not path.name.startswith(".")]
     return {"data": res}
 

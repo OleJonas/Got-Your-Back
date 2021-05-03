@@ -7,6 +7,4 @@ cd "$root"
 # Add path variables
 export PYTHONPATH="$PWD/lib/openzen/build";
 
-open "frontend/dist/mac/Got Your Back.app"
-
 cd backend && waitress-serve --port 60066 "server:app"

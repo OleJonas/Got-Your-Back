@@ -1,11 +1,10 @@
+import { useState } from "react"
 import { Grid, Box, makeStyles, Typography, IconButton } from "@material-ui/core";
 import loader from "../../assets/loader_white.svg";
-import { useState } from "react"
-
-// Components
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 import StatusPopup from "../StatusPopup/StatusPopup.component";
+import SERVER_PORT from "../../utils/server_utils";
 
 type ClassificationProps = {
 	posture: number;		
@@ -24,7 +23,7 @@ type ClassificationProps = {
 export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles(props);
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
-
+	
 	/**
 	 * @remarks
 	 * Function that uses the API-calls to start and stop classification.
@@ -32,7 +31,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const onButtonPressed = () => {
 		props.setButtonPressed(true);
 		if (!props.isRecording) {
-			fetch("http://localhost:5000/classify/start")
+			fetch("http://localhost:"+SERVER_PORT+"/classify/start")
 				.then((response) => response.json())
 				.then((data) => {
 					if (data) {
@@ -40,7 +39,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 					}
 				});
 		} else {
-			fetch("http://localhost:5000/classify/stop")
+			fetch("http://localhost:"+SERVER_PORT+"/classify/stop")
 				.then((response) => response.json())
 				.then((data) => {
 					if (!data) {
@@ -60,7 +59,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 			<Grid container className={classes.grid} justify="center" alignItems="center">
 				<Grid item xs={12}>
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<IconButton onClick={onButtonPressed} className={classes.btn} disabled={!props.hasSensors}>
+						<IconButton onClick={onButtonPressed} className={classes.btn} disabled={!props.hasSensors || props.buttonPressed}>
 							{props.buttonPressed === true ? (
 								<img src={loader} className={classes.loading} alt="Rotating loading icon" />
 							) : !props.isRecording ? (

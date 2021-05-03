@@ -1,5 +1,6 @@
 import openzen
 import time
+import threading
 
 SUPPORTED_SAMPLING_RATES = [5, 10, 25, 50, 100, 200, 400]
 
@@ -8,11 +9,12 @@ class Sensor:
     """Class representing a sensor with the properties we want from the OpenZen-library.
     """
 
-    def __init__(self, name, sensor, imu, id):
+    def __init__(self, name: str, sensor, imu, id: int, zen_handle: int):
         self.name = name
         self.sensor_obj = sensor
         self.imu_obj = imu
         self.id = id
+        self.zen_handle = zen_handle
 
     def get_battery_percentage(self):
         """Get the battery percentage.
@@ -26,12 +28,11 @@ class Sensor:
         """Checking if sensor has run out of battery or otherwise unexpectedly disconnected
         """
         try:
-            #Making an arbitrary call to the sensor object to see if it gives a response, if it doesn't, the sensor is no longer connected.
+            # Making an arbitrary call to the sensor object to see if it gives a response, if it doesn't, the sensor is no longer connected.
             err, test = self.sensor_obj.get_float_property(openzen.ZenSensorProperty.BatteryLevel)
-            if not err == openzen.ZenError.NoError:
+            if not err == openzen.ZenError.NoError or round(test,1) == 0.0:
                 return False
         except:
-            print("sensor_obj failed bruh")
             return False
         return True
 
@@ -62,6 +63,9 @@ class Sensor_Bank:
         self.sampling_rate = sampling_rate
         self.sleep_time = sleep_time
         self.run = False
+        self.lock = threading.Lock()
+        self.zen_handles = 1
+        self.handle_to_id = {}
 
     def add_sensor(self, name: str, sensor: openzen.ZenSensor, imu: openzen.ZenSensorComponent):
         """Add sensor to sensor bank.
@@ -71,15 +75,14 @@ class Sensor_Bank:
             sensor (openzen.ZenSensor): Sensor object.
             imu (openzen.ZenSensorComponent): inertial measurement unit.
         """
-
         helper_id = 1
         for s in self.sensor_dict.values():
             if helper_id == s.id:
                 helper_id += 1
-
-        self.sensor_dict[name] = Sensor(name, sensor, imu, helper_id)
-        print("connected")
+        self.sensor_dict[name] = Sensor(name, sensor, imu, helper_id, self.zen_handles)
+        self.handle_to_id[self.zen_handles] = helper_id
         self.n_sensors += 1
+        self.zen_handles += 1
 
     def set_all_sampling_rates(self, sampling_rate: int):
         """Set the sampling rates for all sensors connected.
@@ -113,7 +116,12 @@ class Sensor_Bank:
             name (str): Sensor name
         """
         if name in self.sensor_dict:
-            self.sensor_dict[name].sensor_obj.release()
+            try:
+                self.sensor_dict[name].sensor_obj.release()
+            except:
+                print("Already disconnected")
+
+            self.handle_to_id.pop(self.sensor_dict[name].zen_handle)
             self.sensor_dict.pop(name)
             self.n_sensors -= 1
 
@@ -122,14 +130,18 @@ class Sensor_Bank:
     def verify_sensors_alive(self):
         dead_sensors = []
         for sensor in self.sensor_dict.values():
-            if not sensor.check_alive():
+            alive = sensor.check_alive()
+            if not alive:
                 dead_sensors.append(sensor.name)
 
         for s_name in dead_sensors:
+            self.handle_to_id.pop(self.sensor_dict[s_name].zen_handle)
             self.sensor_dict.pop(s_name)
             self.n_sensors -= 1
-        
-        return f"Sensor dict after error handling...: {self.sensor_dict}"
+
+        if len(dead_sensors) > 0:
+            return False
+        return True
 
     def set_sleep_time(self, sleep_time: float):
         """Set sleep time.
@@ -138,7 +150,6 @@ class Sensor_Bank:
             sleep_time (float): Time wanted to sleep for when needed.
         """
         self.sleep_time = sleep_time
-
 
     def scan_for_sensors(self, client: openzen.ZenClient):
         """Scan for available sensors.
@@ -203,10 +214,9 @@ class Sensor_Bank:
         battery_percent = f"{round(sensor.get_float_property(openzen.ZenSensorProperty.BatteryLevel)[1], 1)}%"
 
         print(
-            f"Connected to sensor {s_name} ({battery_percent})!", flush=True, end='')
+            f"Connected to sensor {s_name} ({battery_percent})!", flush=True)
 
         return s_name, sensor, imu
-
 
     def sync_sensors(self, client: openzen.ZenClient):
         """Synchronize sensors.
@@ -228,6 +238,10 @@ class Sensor_Bank:
             imu.execute_property(openzen.ZenImuProperty.StopSensorSync)
 
         _remove_unsync_data(client)
+
+    def acquire_lock(self):
+        return self.lock
+
 
 def _get_client():
     error, client = openzen.make_client()

@@ -1,9 +1,9 @@
-import { FC, useState, useEffect } from "react";
-import { Box, Dialog, DialogContent } from "@material-ui/core";
+import { useState, useEffect } from "react";
+import { Box, Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-
-// Components
 import LineChart from "../LineChart/LineChart.component";
+import SERVER_PORT from "../../utils/server_utils";
+import CloseIcon from "@material-ui/icons/Close";
 
 type modalProps = {
 	year: string;
@@ -13,17 +13,20 @@ type modalProps = {
 	close: () => void;
 };
 
-export const StatusGraphPopup: FC<modalProps> = (props) => {
+export const StatusGraphPopup: React.FC<modalProps> = (props) => {
 	const classes = useStyles();
 	const [datapoints, setDatapoints] = useState<any>({});
 
 	useEffect(() => {
-		fetch("http://localhost:5000/classifications/reports?year=" + props.year + "&month=" + props.month + "&day=" + props.day, {
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json",
-			},
-		})
+		fetch(
+			"http://localhost:" + SERVER_PORT + "/classifications/reports?year=" + props.year + "&month=" + props.month + "&day=" + props.day,
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+				},
+			}
+		)
 			.then((res) => res.json())
 			.then((data) => {
 				setDatapoints(data);
@@ -45,6 +48,20 @@ export const StatusGraphPopup: FC<modalProps> = (props) => {
 				open={props.open}
 				className={classes.root}
 			>
+				<DialogTitle id="id">
+					<Box display="flex" alignItems="center">
+						<Box flexGrow={1}>
+							<Typography variant="h2" color="textPrimary">
+								{props.day + ". " + new Intl.DateTimeFormat("nb-no", { month: "short" }).format(parseInt(props.month)) + " " + props.year}
+							</Typography>
+						</Box>
+						<Box>
+							<IconButton onClick={handleClose}>
+								<CloseIcon style={{ color: "white" }} />
+							</IconButton>
+						</Box>
+					</Box>
+				</DialogTitle>
 				<DialogContent className={classes.dialogContent} dividers>
 					<LineChart
 						duration={1}

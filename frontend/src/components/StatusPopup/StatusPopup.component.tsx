@@ -1,17 +1,16 @@
-import { FC, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Box, Grid, Dialog, DialogContent, Typography, TextField, FormControl } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-
-// Components
-import { Button } from "../Buttons/Button.component";
+import Button from "../Buttons/Button.component";
 import StatusBar from "../../components/StatusBar/StatusBar.component";
+import SERVER_PORT from "../../utils/server_utils";
 
 type modalProps = {
 	open: boolean;
 	close: () => void;
 };
 
-export const StatusPopup: FC<modalProps> = (props) => {
+export const StatusPopup: React.FC<modalProps> = (props) => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 	const [text, setText] = useState("");
@@ -25,7 +24,7 @@ export const StatusPopup: FC<modalProps> = (props) => {
 	}, [props.open]);
 
 	const sendText = () => {
-		fetch("http://localhost:5000/reports", {
+		fetch("http://localhost:" + SERVER_PORT + "/reports", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -37,7 +36,7 @@ export const StatusPopup: FC<modalProps> = (props) => {
 		});
 	};
 
-	const handleClose = () => {
+	const handleSend = () => {
 		sendText();
 		props.close();
 		setOpen(false);
@@ -47,7 +46,6 @@ export const StatusPopup: FC<modalProps> = (props) => {
 		<Box>
 			<Dialog
 				classes={{ paper: classes.paper }}
-				onClose={handleClose}
 				aria-labelledby="customized-dialog-title"
 				open={open}
 				className={classes.root}
@@ -66,14 +64,14 @@ export const StatusPopup: FC<modalProps> = (props) => {
 						<FormControl className={classes.textfield}>
 							<form noValidate autoComplete="off">
 								<TextFieldWithState updateText={setText} />
+								<Grid container justify="center" className={classes.btn}>
+									<Button disabled={text === "" || status === -1} func={handleSend}>
+										Send
+									</Button>
+								</Grid>
 							</form>
 						</FormControl>
 					</Box>
-					<Grid container justify="center" className={classes.btn}>
-						<Button disabled={text === "" || status === -1} func={handleClose}>
-							Send
-						</Button>
-					</Grid>
 				</DialogContent>
 			</Dialog>
 		</Box>
@@ -102,7 +100,7 @@ const StyledTextField = withStyles({
 	},
 })(TextField);
 
-const TextFieldWithState: FC<textFieldProps> = (props) => {
+const TextFieldWithState: React.FC<textFieldProps> = (props) => {
 	return (
 		<StyledTextField
 			id="outlined-multiline-flexible"
@@ -117,6 +115,7 @@ const TextFieldWithState: FC<textFieldProps> = (props) => {
 				shrink: true,
 			}}
 			rowsMax="6"
+			required
 			fullWidth
 			multiline
 		/>

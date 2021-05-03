@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
 	Grid,
 	Box,
@@ -15,31 +16,35 @@ import {
 	FormControl,
 	InputLabel,
 } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
-
-// Components
-import { NavBar } from "../../components/NavBar/NavBar.component";
-import monthName from "../../utils/dateUtils";
-import { Button } from "../../components/Buttons/Button.component";
+import NavBar from "../../components/NavBar/NavBar.component";
+import Button from "../../components/Buttons/Button.component";
 import StatusGraphPopup from "../../components/StatusGraphPopup/StatusGraphPopup.component";
 import StatusBar from "../../components/StatusBar/StatusBar.component";
+import monthName from "../../utils/dateUtils";
+import SERVER_PORT from "../../utils/server_utils";
 
 type reportData = {
 	date: string;
 	caption: [string[]];
 };
 
+/**
+ * This view visualize your reports per month. For every recording you stop, a new feedback/report has to be written. This will show up in this view.
+ */
 export const ReportView = () => {
 	const classes = useStyles();
-	const [data, setData] = useState<reportData[]>();
+	const [data, setData] = useState<reportData[]>([]);
 	const today = new Date();
 	const [selectedDate, setSelectedDate] = useState(today.getFullYear() + "," + ("0" + (today.getMonth() + 1)).slice(-2));
 	const [availableDates, setAvailableDates] = useState<string[]>();
 	const [clickedDate, setClickedDate] = useState<string>();
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 
+	/**
+	 * useEffect that fetches available months for dropdown on render.
+	 */
 	useEffect(() => {
-		fetch("http://localhost:5000/reports/available", {
+		fetch("http://localhost:" + SERVER_PORT + "/reports/available", {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -67,10 +72,13 @@ export const ReportView = () => {
 		//eslint-disable-next-line
 	}, []);
 
+	/**
+	 * useEffect that fetches reports when a new month is selected.
+	 */
 	useEffect(() => {
 		const year = selectedDate.split(",")[0];
 		const month = selectedDate.split(",")[1];
-		fetch("http://localhost:5000/reports?year=" + year + "&month=" + month, {
+		fetch("http://localhost:" + SERVER_PORT + "/reports?year=" + year + "&month=" + month, {
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -82,20 +90,34 @@ export const ReportView = () => {
 				data["data"].map((row: any) => rows.push(createData(row[0], row[1])));
 				setData(rows);
 			})
-			.catch(function (error) {});
+			.catch(function (error) {
+				setData([]);
+			});
 		//eslint-disable-next-line
 	}, [selectedDate]);
 
+	/**
+	 * @param date (string) - date written.
+	 * @param caption (string) - caption written, with numeric value on end for feedback emoticon.
+	 * Method for creating an object of reportdata, in which goes into a row in table.
+	 */
 	function createData(date: string, caption: any) {
 		// const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
 		let dateFormatted = new Date(date.replace(" ", "T")).toLocaleDateString("nb-NO");
 		return { date: dateFormatted, caption };
 	}
 
+	/**
+	 * @param event (event) - event from dropdown select.
+	 * Method for setting selected date based on select.
+	 */
 	const handleChangeDate = (event: any) => {
 		setSelectedDate(event.target.value);
 	};
 
+	/**
+	 * Method for closing modal
+	 */
 	const close = () => {
 		setModalOpen(false);
 	};
@@ -147,7 +169,13 @@ export const ReportView = () => {
 										</TableRow>
 									</TableHead>
 									<TableBody>
-										{data ? (
+										{data.length === 0 ? (
+											<Box m={2}>
+												<Typography variant="caption" color="textPrimary">
+													No reported data yet ...
+												</Typography>
+											</Box>
+										) : (
 											data.map((row) => (
 												<TableRow key={row.date}>
 													<TableCell
@@ -184,12 +212,6 @@ export const ReportView = () => {
 													</TableCell>
 												</TableRow>
 											))
-										) : (
-											<Box m={2}>
-												<Typography variant="caption" color="textPrimary">
-													No reported data yet ...
-												</Typography>
-											</Box>
 										)}
 									</TableBody>
 								</Table>

@@ -1,7 +1,7 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
-import { posture_names } from "../../utils/posture_names";
+import posture_names from "../../utils/posture_names";
 
 // type LineChartProps, = {
 // 	data: JSON,
@@ -24,12 +24,15 @@ export const LineChart = (props) => {
 		let minDate = new Date();
 		let maxDate = new Date();
 
+		//duration===0 means its for last hour homeview
+		//duration===1 means its for day view reportview
+		//else its for historyview
 		if (props.duration === 0) {
 			setMinTime(new Date(minDate.setHours(minDate.getHours() - 1)));
 			setMaxTime(maxDate);
 		} else if (props.duration === 1) {
-			setMinTime(new Date(props.year, props.month, props.day, 0,0,0,0));
-			setMaxTime(new Date(props.year, props.month, props.day, 24,0,0,0));
+			setMinTime(new Date(props.year, props.month, props.day, 0, 0, 0, 0));
+			setMaxTime(new Date(props.year, props.month, props.day, 24, 0, 0, 0));
 		} else {
 			setMinTime(new Date(minDate.setDate(minDate.getDate() - (props.duration + 1))));
 			setMaxTime(new Date(maxDate.setDate(maxDate.getDate() - 1)));
@@ -37,21 +40,49 @@ export const LineChart = (props) => {
 		//eslint-disable-next-line
 	}, [props.data]);
 
+	const createTooltip = (isHistoryView, timestamp, classification) => {
+		const date = new Date(timestamp.replace(" ", "T"));
+		let firstRow = '<p style="font-family:nunito;padding:0 10px;color:black">';
+		if (isHistoryView) {
+			firstRow +=
+				"<b>" +
+				new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date) +
+				" " +
+				date.getDate() +
+				". " +
+				new Intl.DateTimeFormat("en-US", { month: "short" }).format(date) +
+				" " +
+				date.getFullYear() +
+				"</b>";
+		} else {
+			const hoursTwoDigitFormat = ("0" + date.getHours()).slice(-2);
+			const minutesTwoDigitFormat = ("0" + date.getMinutes()).slice(-2);
+			firstRow += "<b>" + hoursTwoDigitFormat + ":" + minutesTwoDigitFormat + "</b>";
+		}
+		let secondRow = posture_names[classification];
+		return firstRow + "<br/>" + secondRow + "</p>";
+	};
+
 	/**
 	 *
 	 * @returns The data to be used in the rendering of the component. The data is structured as an array of tuples each containing the time of the classification and the classification itself.
 	 */
 	const processedData = () => {
 		const timestamps = Object.keys(props.data);
-		const predictions = Object.values(props.data);
+		const classifications = Object.values(props.data);
 		const chartData = [
 			[
 				{ type: "date", label: "Timestamp" },
 				{ type: "number", label: "Value" },
+				{ type: "string", role: "tooltip", p: { html: true } },
 			],
 		];
 		for (let i = 0; i < timestamps.length; i += 1) {
-			chartData.push([new Date(timestamps[i].replace(" ", "T")), predictions[i]]);
+			chartData.push([
+				new Date(timestamps[i].replace(" ", "T")),
+				classifications[i],
+				createTooltip(props.duration > 1, timestamps[i], classifications[i]),
+			]);
 		}
 		return chartData;
 	};
@@ -109,6 +140,7 @@ export const LineChart = (props) => {
 				backgroundColor: "transparent",
 				colors: ["#EDB93C"],
 				legend: { position: "none" },
+				tooltip: { isHtml: true },
 			}}
 			rootProps={{ "data-testid": "1" }}
 			className={classes.root}
