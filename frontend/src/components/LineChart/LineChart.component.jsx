@@ -34,7 +34,7 @@ export const LineChart = (props) => {
 	}, [props.data]);
 
 	/**
-	 * 
+	 *
 	 * @param isHistoryView Boolean saying if its meant for HistoryView or not.
 	 * @param timestamp Timestamp on format "dd-mm.YYYY"
 	 * @param classification Classification as int
@@ -57,7 +57,8 @@ export const LineChart = (props) => {
 		} else {
 			const hoursTwoDigitFormat = ("0" + date.getHours()).slice(-2);
 			const minutesTwoDigitFormat = ("0" + date.getMinutes()).slice(-2);
-			firstRow += "<b>" + hoursTwoDigitFormat + ":" + minutesTwoDigitFormat + "</b>";
+			const secondsTwoDigitFormat = ("0" + date.getSeconds()).slice(-2);
+			firstRow += "<b>" + hoursTwoDigitFormat + ":" + minutesTwoDigitFormat + ":" + secondsTwoDigitFormat + "</b>";
 		}
 		let secondRow = postureNames[classification];
 		return firstRow + "<br/>" + secondRow + "</p>";
