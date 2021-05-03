@@ -89,6 +89,10 @@ Got Your Back/frontend
 └── tsconfig.json
 ```
 
+```
+tree -L 4 -I 'node_modules' "Got Your Back/frontend"
+```
+
 ### Backend
 
 ```bash
@@ -142,4 +146,8 @@ Got Your Back
 ├── start.command
 ├── start_server.bat
 └── start_server.command
+```
+
+```
+tree -L 3 -I 'frontend|lib|docs|*.md|*.csv|2021*' "Got Your Back"
 ```
