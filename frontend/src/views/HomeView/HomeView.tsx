@@ -9,7 +9,7 @@ import PieChart from "../../components/PieChart/PieChart.component.jsx";
 import SensorListContent from "../../components/SensorListContent/SensorListContent.component";
 import handleErrors from "../../utils/handleErrors";
 import useInterval from "../../utils/useInterval";
-import SERVER_PORT from "../../utils/server_utils";
+import SERVER_PORT from "../../utils/serverUtils";
 import InfoTooltip from "../../components/InfoTooltip/InfoTooltip.component";
 
 /**

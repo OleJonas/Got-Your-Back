@@ -5,8 +5,8 @@ type contentProps = {
 };
 
 /**
- * @param props
- * @returns A component acting as a simple container (box) for different data and graphs.
+ * @param {contentProps} props
+ * A component acting as a simple container (box) for different data and graphs.
  */
 export const ContentBox: React.FC<contentProps> = (props) => {
 	const classes = useStyles();

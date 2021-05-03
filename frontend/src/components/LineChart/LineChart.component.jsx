@@ -1,18 +1,10 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
-import posture_names from "../../utils/posture_names";
-
-// type LineChartProps, = {
-// 	data: JSON,
-// 	hAxisFormat?: "HH:mm:ss" | "HH:mm" | "dd.mm",
-// 	actions?: [], //["dragToPan", "dragToZoom", "rightClickToReset"]
-// 	type?: "1 day" | "7 days" | "14 days" | "30 days",
-// };
+import postureNames from "../../utils/postureNames";
 
 /**
- *
- * @param {*} props
+ * @param props
  * @returns A LineChart that updates with new classification data received.
  */
 export const LineChart = (props) => {
@@ -20,13 +12,14 @@ export const LineChart = (props) => {
 	const [minTime, setMinTime] = useState(new Date());
 	const [maxTime, setMaxTime] = useState(new Date());
 
+	/**
+	 * useEffect hook for setting the right interval along the x-axis.
+	 * props.duration: 0 means its for HomeView, 1 means its for ReportView
+		else its for historyview.
+	 */
 	useEffect(() => {
 		let minDate = new Date();
 		let maxDate = new Date();
-
-		//duration===0 means its for last hour homeview
-		//duration===1 means its for day view reportview
-		//else its for historyview
 		if (props.duration === 0) {
 			setMinTime(new Date(minDate.setHours(minDate.getHours() - 1)));
 			setMaxTime(maxDate);
@@ -40,6 +33,13 @@ export const LineChart = (props) => {
 		//eslint-disable-next-line
 	}, [props.data]);
 
+	/**
+	 * 
+	 * @param isHistoryView Boolean saying if its meant for HistoryView or not.
+	 * @param timestamp Timestamp on format "dd-mm.YYYY"
+	 * @param classification Classification as int
+	 * @returns HTML string for react-google-chart tooltip
+	 */
 	const createTooltip = (isHistoryView, timestamp, classification) => {
 		const date = new Date(timestamp.replace(" ", "T"));
 		let firstRow = '<p style="font-family:nunito;padding:0 10px;color:black">';
@@ -59,7 +59,7 @@ export const LineChart = (props) => {
 			const minutesTwoDigitFormat = ("0" + date.getMinutes()).slice(-2);
 			firstRow += "<b>" + hoursTwoDigitFormat + ":" + minutesTwoDigitFormat + "</b>";
 		}
-		let secondRow = posture_names[classification];
+		let secondRow = postureNames[classification];
 		return firstRow + "<br/>" + secondRow + "</p>";
 	};
 
@@ -119,15 +119,15 @@ export const LineChart = (props) => {
 				},
 				vAxis: {
 					ticks: [
-						{ v: 0, f: posture_names[0] },
-						{ v: 1, f: posture_names[1] },
-						{ v: 2, f: posture_names[2] },
-						{ v: 3, f: posture_names[3] },
-						{ v: 4, f: posture_names[4] },
-						{ v: 5, f: posture_names[5] },
-						{ v: 6, f: posture_names[6] },
-						{ v: 7, f: posture_names[7] },
-						{ v: 8, f: posture_names[8] },
+						{ v: 0, f: postureNames[0] },
+						{ v: 1, f: postureNames[1] },
+						{ v: 2, f: postureNames[2] },
+						{ v: 3, f: postureNames[3] },
+						{ v: 4, f: postureNames[4] },
+						{ v: 5, f: postureNames[5] },
+						{ v: 6, f: postureNames[6] },
+						{ v: 7, f: postureNames[7] },
+						{ v: 8, f: postureNames[8] },
 					],
 					textStyle: { color: "#FFF" },
 					titleTextStyle: { color: "#FFF" },

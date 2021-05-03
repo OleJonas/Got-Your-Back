@@ -21,7 +21,7 @@ import Button from "../../components/Buttons/Button.component";
 import StatusGraphPopup from "../../components/StatusGraphPopup/StatusGraphPopup.component";
 import StatusBar from "../../components/StatusBar/StatusBar.component";
 import monthName from "../../utils/dateUtils";
-import SERVER_PORT from "../../utils/server_utils";
+import SERVER_PORT from "../../utils/serverUtils";
 
 type reportData = {
 	date: string;
@@ -97,8 +97,8 @@ export const ReportView = () => {
 	}, [selectedDate]);
 
 	/**
-	 * @param date (string) - date written.
-	 * @param caption (string) - caption written, with numeric value on end for feedback emoticon.
+	 * @param {string} date
+	 * @param {caption} caption
 	 * Method for creating an object of reportdata, in which goes into a row in table.
 	 */
 	function createData(date: string, caption: any) {
@@ -108,7 +108,7 @@ export const ReportView = () => {
 	}
 
 	/**
-	 * @param event (event) - event from dropdown select.
+	 * @param {event} event event from dropdown select.
 	 * Method for setting selected date based on select.
 	 */
 	const handleChangeDate = (event: any) => {
