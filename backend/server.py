@@ -16,7 +16,7 @@ from pathlib import Path
 import threading
 from joblib import load
 from sensor_bank import Sensor_Bank
-import server_classify as sc
+import classification_handler as ch
 
 app = Flask(__name__)
 client = None
@@ -26,6 +26,7 @@ classification_handler = None
 t_pool = []
 app.config['CORS_ALLOW_HEADERS'] = ["*"]
 CORS(app, support_credentials=True)
+
 
 @app.before_first_request
 def init():
@@ -44,7 +45,7 @@ def init():
         sys.exit(1)
     found_sensors = {}
     sensor_bank = Sensor_Bank()
-    classification_handler = sc.Classification_Handler(sensor_bank)
+    classification_handler = ch.Classification_Handler(sensor_bank)
 
 
 @app.before_request
