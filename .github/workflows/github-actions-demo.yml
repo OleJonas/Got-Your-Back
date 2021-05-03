@@ -28,7 +28,7 @@ jobs:
       # - name: Running Data Queue tests
       # run: python -m unittest
 
-  node-setup and build:
+  node-setup-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
