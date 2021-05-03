@@ -44,7 +44,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build
-        run: npm run make
+        run: cd frontend && npm run make
 
   # Explore-GitHub-Actions:
   #   runs-on: ubuntu-latest
