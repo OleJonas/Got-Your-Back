@@ -42,4 +42,4 @@ jobs:
     steps:
       - name: Deploy
         run: pwd
-        run: cd docs && sphinx-build ./source ./build/html
+        #run: cd docs && sphinx-build ./source ./build/html
