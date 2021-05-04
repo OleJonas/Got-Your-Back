@@ -222,18 +222,7 @@
 <dd><p>Connect to sensor based on sensorname.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl>
-<dt>Dictionary with information about connected sensor if connected. Error message if not.</dt><dd><p>Each sensor object is on the format:</p>
-<dl class="simple">
-<dt>{</dt><dd><p>name: str,
-id: int,
-battery: int</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-</p>
+<dd class="field-odd"><p>Dictionary with information about connected sensor if connected. Error message if not. Each sensor object is on the format: { name: str, id: int, battery: int }</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>dict</p>
@@ -361,18 +350,7 @@ http.HTTPStatus: Response status code 200 if file found and not empty, else 507.
 <dd><p>Fetch a list of connected sensors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl>
-<dt>Dictionary with list of connected sensors.</dt><dd><p>Each sensor object is on the format:</p>
-<dl class="simple">
-<dt>{</dt><dd><p>name: str,
-id: int,
-battery: int</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-</p>
+<dd class="field-odd"><p>Dictionary with list of connected sensors. Each sensor object is on the format: { name: str, id: int, battery: int }</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>dict</p>
@@ -386,16 +364,7 @@ battery: int</p>
 <dd><p>Get status about connection and classification.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl>
-<dt>Dictionary with status information on the format:</dt><dd><dl class="simple">
-<dt>{</dt><dd><p>isRecording: str,
-numberOfSensors: int</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-</p>
+<dd class="field-odd"><p>Dictionary with status information on the format: { isRecording: str, numberOfSensors: int }</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>dict</p>
@@ -415,12 +384,7 @@ numberOfSensors: int</p>
 <dd><p>Scan for available sensors using the openZen library.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl>
-<dt>Dictionary with list of found sensors.</dt><dd><p>Format:</p>
-<p>{“sensors”: [str]}</p>
-</dd>
-</dl>
-</p>
+<dd class="field-odd"><p>Dictionary with list of found sensors. Format: {“sensors”: [str]}</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>dict</p>
