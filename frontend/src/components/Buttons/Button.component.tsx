@@ -1,13 +1,19 @@
+/**
+ * @module Button
+ * @category Components
+ */
 import { Typography, Fab } from "@material-ui/core";
 
-type ButtonProps = {
+export type ButtonProps = {
 	func?: any;
 	disabled?: boolean;
 };
 
 /**
- * @param props
- * A base button component for use in several different buttons throughout the application
+ *
+ * A base button component for use in several different buttons throughout the application.
+ *
+ * @param {ButtonProps} props {@link ButtonProps}
  */
 export const Button: React.FC<ButtonProps> = (props) => {
 	return (

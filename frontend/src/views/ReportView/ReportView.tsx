@@ -1,3 +1,7 @@
+/**
+ * @module ReportView
+ * @category Views
+ */
 import { useEffect, useState } from "react";
 import {
 	Grid,

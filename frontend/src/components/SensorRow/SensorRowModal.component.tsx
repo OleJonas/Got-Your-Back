@@ -1,3 +1,7 @@
+/**
+ * @module SensorRowModal
+ * @category Components
+ */
 import { useState, useEffect, useCallback } from "react";
 import { Typography, Grid, makeStyles } from "@material-ui/core";
 import SensorButton from "../Buttons/SensorButton.component";
@@ -19,7 +23,7 @@ export const SensorRowModal: React.FC<SensorProps> = (props) => {
 	const classes = useStyles();
 
 	/**
-	 * 
+	 *
 	 * Function that connects to the chosen sensor via bluetooth.
 	 * Then the function sets the state variables sensorData and connected, as well as isFetching to the corresponding data returned from the async call.
 	 */

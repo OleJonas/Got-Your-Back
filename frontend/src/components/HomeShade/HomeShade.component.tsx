@@ -1,3 +1,7 @@
+/**
+ * @module HomeShade
+ * @category Components
+ */
 import { useState } from "react";
 import { Box, Grid, IconButton, makeStyles } from "@material-ui/core";
 import KeyboardEventHandler from "react-keyboard-event-handler";

@@ -1,3 +1,7 @@
+/**
+ * @module ClassificationContent
+ * @category Components
+ */
 import { Grid, Box, Typography, makeStyles } from "@material-ui/core";
 import postureNames from "../../utils/postureNames";
 

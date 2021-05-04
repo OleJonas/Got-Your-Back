@@ -1,14 +1,15 @@
-
 ## Structure
 
 The frontend folder has the following subfolders of importance:
-* build - output directory for built react project
-* dist - output directory for built electron application
-* src
 
+- build - output directory for built react project
+- dist - output directory for built electron application
+- src
+  - components - functional components
+  - views - each program view
+  - utils - typescript utilities
 
-one for the backend server, one for classifications, one for models and one for the main scripts used. 
-In addition to this, there is folders for data recorded for model training, classifications and reports made by the application.
+**Full tree:**
 
 ```bash
 Got Your Back/frontend
@@ -98,29 +99,24 @@ Got Your Back/frontend
 ```
 
 ## Setup & download
-=================
 
-There is two options when it comes to dowloading the project. 
-The recommended option is to download one of the releases from GitHub. 
+There is two options when it comes to dowloading the project.
+The recommended option is to download one of the releases from GitHub.
 Another option is to fork the project, but as we depend on the repository of openzen, make sure to fork with submodules.
 
 For setting up the backend side of the project, run
-``pip install -r "requirements.txt"``
-from the project root. 
+`pip install -r "requirements.txt"`
+from the project root. By downloading a release it is not necessary to install further dependencies. If forking the project instead, run `cd frontend && npm install`
 
-## Start server
+## Run application
 
+#### Release download
 
-This project utilizes the pip package waitress-serve for running a production server.
-This can be run by running the ``start_server.bat`` for windows and ``start_server.command`` for mac.
-Another option is to run 
-``waitress-serve --port 60066 "server:app"``
-from inside the backend folder. 
+Run the `start.command`/`start.bat` executable.
 
-*For running the application, you could either:*
-      - Release
-            - click on the ``start.command``/``start.bat`` (recommended) - this also starts server!
-      - Forked
-            - find the application in dist and run it from there
-            - run ``npm start`` (in browser) or ``npm run dev`` (in electron) from the frontend folder.
+#### Forked project
 
+Find the application in dist and run it from there or run the application with one of the following scripts (in frontend directory):
+
+- `npm start` (in browser)
+- `npm run dev` (in electron) from the frontend folder.

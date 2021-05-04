@@ -1,3 +1,7 @@
+/**
+ * @module PieChart
+ * @category Components
+ */
 import { makeStyles, Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
 import postureNames from "../../utils/postureNames";

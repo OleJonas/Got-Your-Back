@@ -1,3 +1,7 @@
+/**
+ * @module HomeView
+ * @category Views
+ */
 import { useState, useEffect, useMemo } from "react";
 import { Grid, Box, makeStyles, Typography } from "@material-ui/core";
 import NavBar from "../../components/NavBar/NavBar.component";

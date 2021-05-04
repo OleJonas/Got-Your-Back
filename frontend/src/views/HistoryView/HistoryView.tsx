@@ -1,3 +1,7 @@
+/**
+ * @module HistoryView
+ * @category Views
+ */
 import { useEffect, useState } from "react";
 import { Grid, Box, makeStyles, Typography } from "@material-ui/core";
 import Select from "@material-ui/core/Select";

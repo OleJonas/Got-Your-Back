@@ -1,3 +1,7 @@
+/**
+ * @module HelpView
+ * @category Views
+ */
 import { Grid, Box, makeStyles, Typography, AccordionSummary, Accordion, AccordionDetails } from "@material-ui/core";
 import { NavBar } from "../../components/NavBar/NavBar.component";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";

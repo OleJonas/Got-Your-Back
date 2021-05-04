@@ -21,7 +21,16 @@
   "typedocOptions": {
     "entryPoints": ["src/index.tsx"],
     "out": "./build_frontend/html",
-    "exclude": "**/node_modules/**",
-    "theme": "default"
+    "exclude": [
+      "**/node_modules/**",
+      "**/@types",
+      "**/setupTests.*",
+      "**/react-app-env.*",
+      "**/reportWebVitals.*"
+    ],
+    "theme": "default",
+    // "plugin": "../frontend/node_modules/typedoc-neo-theme/bin",
+    // "theme": "../frontend/node_modules/typedoc-neo-theme/bin/default",
+    "name": "Frontend API Documentation"
   }
 }

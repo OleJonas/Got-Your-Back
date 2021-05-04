@@ -1,3 +1,7 @@
+/**
+ * @module StatusBar
+ * @category Components
+ */
 import { Box, Button } from "@material-ui/core";
 import { InlineIcon } from "@iconify/react";
 import emojiAngry20Regular from "@iconify-icons/fluent/emoji-angry-20-regular";

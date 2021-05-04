@@ -1,3 +1,7 @@
+/**
+ * @module SensorRowHome
+ * @category Components
+ */
 import { useState, useCallback } from "react";
 import { Typography, Grid, makeStyles } from "@material-ui/core";
 import SensorButton from "../Buttons/SensorButton.component";
@@ -24,7 +28,7 @@ export const SensorRowHome: React.FC<SensorProps> = (props: SensorProps) => {
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
 
-	/** 
+	/**
 	 * @param {string} name A string containing the sensors name
 	 * @param {number} id A number used to identify each sensor.
 	 * Does an async call to disconnect from the desired sensor.

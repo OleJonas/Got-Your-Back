@@ -1,4 +1,8 @@
-import { useState } from "react"
+/**
+ * @module RecordContent
+ * @category Components
+ */
+import { useState } from "react";
 import { Grid, Box, makeStyles, Typography, IconButton } from "@material-ui/core";
 import loader from "../../assets/loader_white.svg";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
@@ -6,8 +10,8 @@ import PauseIcon from "@material-ui/icons/Pause";
 import StatusPopup from "../StatusPopup/StatusPopup.component";
 import SERVER_PORT from "../../utils/serverUtils";
 
-type ClassificationProps = {
-	posture: number;		
+export type ClassificationProps = {
+	posture: number;
 	hasSensors: boolean;
 	isRecording: boolean;
 	setIsRecording: (bool: boolean) => void;
@@ -22,14 +26,14 @@ type ClassificationProps = {
 export const RecordContent: React.FC<ClassificationProps> = (props) => {
 	const classes = useStyles(props);
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
-	
+
 	/**
 	 * Function that uses the API-calls to start and stop classification.
 	 */
 	const onButtonPressed = () => {
 		props.setButtonPressed(true);
 		if (!props.isRecording) {
-			fetch("http://localhost:"+SERVER_PORT+"/classify/start")
+			fetch("http://localhost:" + SERVER_PORT + "/classify/start")
 				.then((response) => response.json())
 				.then((data) => {
 					if (data) {
@@ -37,7 +41,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 					}
 				});
 		} else {
-			fetch("http://localhost:"+SERVER_PORT+"/classify/stop")
+			fetch("http://localhost:" + SERVER_PORT + "/classify/stop")
 				.then((response) => response.json())
 				.then((data) => {
 					if (!data) {
@@ -50,7 +54,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 
 	const close = () => {
 		setModalOpen(false);
-	}
+	};
 
 	return (
 		<Box className={classes.root}>
@@ -70,14 +74,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 					<Typography variant="h2" color="textPrimary">
 						{props.hasSensors ? (props.isRecording ? "Recording" : "Paused") : "Missing sensors"}
 					</Typography>
-					{modalOpen ? (
-						<StatusPopup
-							close={close}
-							open={modalOpen}
-						></StatusPopup>
-					) : (
-						<></>
-					)}
+					{modalOpen ? <StatusPopup close={close} open={modalOpen}></StatusPopup> : <></>}
 				</Grid>
 			</Grid>
 		</Box>

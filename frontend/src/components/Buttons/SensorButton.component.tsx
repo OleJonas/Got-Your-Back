@@ -1,3 +1,7 @@
+/**
+ * @module SensorButton
+ * @category Components
+ */
 import { useState, useEffect } from "react";
 import { Box, ButtonBase, Typography, makeStyles, Tooltip } from "@material-ui/core";
 import loader from "../../assets/loader_white.svg";
@@ -6,7 +10,7 @@ import CheckIcon from "@material-ui/icons/Check";
 import AddIcon from "@material-ui/icons/Add";
 import ClearIcon from "@material-ui/icons/Clear";
 
-type ButtonProps = {
+export type SensorButtonProps = {
 	type: "connect" | "disconnect";
 	func?: any;
 	sensorid: number;
@@ -16,10 +20,12 @@ type ButtonProps = {
 };
 
 /**
- * @param props
+ *
  * A button component specifically used for sensor setup - connecting and disconnecting.
+ *
+ * @param {SensorButtonProps} props
  */
-export const SensorButton: React.FC<ButtonProps> = (props) => {
+export const SensorButton: React.FC<SensorButtonProps> = (props) => {
 	const classes = useStyles(props);
 	const [status, setStatus] = useState<boolean>(false);
 	const [showTooltip, setShowTooltip] = useState<boolean>(false);
@@ -94,7 +100,7 @@ const useStyles = makeStyles({
 		height: "25px",
 		width: "25px",
 		borderRadius: "5px",
-		backgroundColor: (props: ButtonProps) => (props.disabled ? "rgba(60, 60, 60, 0.5)" : "#EDB93C") as string,
+		backgroundColor: (props: SensorButtonProps) => (props.disabled ? "rgba(60, 60, 60, 0.5)" : "#EDB93C") as string,
 	},
 	icon: {
 		marginTop: "10px",
