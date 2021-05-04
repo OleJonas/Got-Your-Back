@@ -2,8 +2,6 @@ import unittest
 import sys
 sys.path.append("../")
 import sensor_bank as sb
-import openzen
-
 
 class sensor_bank_test(unittest.TestCase):
     """
@@ -89,8 +87,10 @@ def with_server_suite():
     suite.addTest(sensor_bank_test("test_remove_unsync_data"))
     suite.addTest(sensor_bank_test("test_disconnect_sensor"))
 
+# 69
 
 if __name__ == "__main__":
+    
     runner = unittest.TextTestRunner()
     runner.run(no_server_suite())
     #runner.run(with_server_suite())
