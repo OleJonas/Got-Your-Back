@@ -90,7 +90,6 @@ def with_server_suite():
 # 69
 
 if __name__ == "__main__":
-    
     runner = unittest.TextTestRunner()
     runner.run(no_server_suite())
     #runner.run(with_server_suite())

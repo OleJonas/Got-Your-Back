@@ -3,7 +3,8 @@ import sys
 sys.path.append("../")
 import sensor_bank as sb
 
-class sensor_bank_test(unittest.TestCase):
+class sensor_bank_offline_test(unittest.TestCase):
+
     """
     This test class is dependent on having compatible bluetooth devices available. Almost all tests will fail if this requirement is not met.
     """
