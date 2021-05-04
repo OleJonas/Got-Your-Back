@@ -94,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="server.html">server module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rnn_utils.html">rnn_utils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generate_dummy_data.html">generate_dummy_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openzen.html">openzen module</a></li>
 </ul>
 </li>
 </ul>
@@ -223,14 +224,14 @@
 
 <dl class="py method">
 <dt id="sensor_bank.Sensor_Bank.add_sensor">
-<code class="sig-name descname"><span class="pre">add_sensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenSensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imu</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenSensorComponent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.add_sensor" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">add_sensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="openzen.html#openzen.ZenSensor" title="openzen.ZenSensor"><span class="pre">openzen.ZenSensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">imu</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="openzen.html#openzen.ZenSensorComponent" title="openzen.ZenSensorComponent"><span class="pre">openzen.ZenSensorComponent</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.add_sensor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add sensor to sensor bank.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – Sensor name.</p></li>
-<li><p><strong>sensor</strong> (<em>openzen.ZenSensor</em>) – Sensor object.</p></li>
-<li><p><strong>imu</strong> (<em>openzen.ZenSensorComponent</em>) – inertial measurement unit.</p></li>
+<li><p><strong>sensor</strong> (<a class="reference internal" href="openzen.html#openzen.ZenSensor" title="openzen.ZenSensor"><em>openzen.ZenSensor</em></a>) – Sensor object.</p></li>
+<li><p><strong>imu</strong> (<a class="reference internal" href="openzen.html#openzen.ZenSensorComponent" title="openzen.ZenSensorComponent"><em>openzen.ZenSensorComponent</em></a>) – inertial measurement unit.</p></li>
 </ul>
 </dd>
 </dl>
@@ -238,13 +239,13 @@
 
 <dl class="py method">
 <dt id="sensor_bank.Sensor_Bank.connect_to_sensor">
-<code class="sig-name descname"><span class="pre">connect_to_sensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenClient</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_sensor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenSensorComponent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.connect_to_sensor" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">connect_to_sensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="openzen.html#openzen.ZenClient" title="openzen.ZenClient"><span class="pre">openzen.ZenClient</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_sensor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="openzen.html#openzen.ZenSensorComponent" title="openzen.ZenSensorComponent"><span class="pre">openzen.ZenSensorComponent</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.connect_to_sensor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connects to chosen sensor and establishes a connection to it’s inertial measurement unit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p></li>
-<li><p><strong>input_sensor</strong> (<em>openzen.ZenSensorDesc</em>) – Found sensor object from the OpenZen-library.</p></li>
+<li><p><strong>client</strong> (<a class="reference internal" href="openzen.html#openzen.ZenClient" title="openzen.ZenClient"><em>openzen.ZenClient</em></a>) – Client object from the OpenZen-library.</p></li>
+<li><p><strong>input_sensor</strong> (<a class="reference internal" href="openzen.html#openzen.ZenSensorDesc" title="openzen.ZenSensorDesc"><em>openzen.ZenSensorDesc</em></a>) – Found sensor object from the OpenZen-library.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -281,24 +282,24 @@ openzen.ZenSensorComponent: imu.</p>
 <dd class="field-even"><p>Sensor object if found, else None.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>openzen.ZenSensor</p>
+<dd class="field-odd"><p><a class="reference internal" href="openzen.html#openzen.ZenSensor" title="openzen.ZenSensor">openzen.ZenSensor</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="sensor_bank.Sensor_Bank.scan_for_sensors">
-<code class="sig-name descname"><span class="pre">scan_for_sensors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenClient</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.scan_for_sensors" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">scan_for_sensors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="openzen.html#openzen.ZenClient" title="openzen.ZenClient"><span class="pre">openzen.ZenClient</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.scan_for_sensors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scan for available sensors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p>
+<dd class="field-odd"><p><strong>client</strong> (<a class="reference internal" href="openzen.html#openzen.ZenClient" title="openzen.ZenClient"><em>openzen.ZenClient</em></a>) – Client object from the OpenZen-library.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>List of available sensor objects.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>[openzen.ZenSensorDesc]</p>
+<dd class="field-odd"><p>[<a class="reference internal" href="openzen.html#openzen.ZenSensorDesc" title="openzen.ZenSensorDesc">openzen.ZenSensorDesc</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -327,11 +328,11 @@ openzen.ZenSensorComponent: imu.</p>
 
 <dl class="py method">
 <dt id="sensor_bank.Sensor_Bank.sync_sensors">
-<code class="sig-name descname"><span class="pre">sync_sensors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">openzen.ZenClient</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.sync_sensors" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">sync_sensors</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="openzen.html#openzen.ZenClient" title="openzen.ZenClient"><span class="pre">openzen.ZenClient</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensor_bank.Sensor_Bank.sync_sensors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Synchronize sensors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>client</strong> (<em>openzen.ZenClient</em>) – Client object from the OpenZen-library.</p>
+<dd class="field-odd"><p><strong>client</strong> (<a class="reference internal" href="openzen.html#openzen.ZenClient" title="openzen.ZenClient"><em>openzen.ZenClient</em></a>) – Client object from the OpenZen-library.</p>
 </dd>
 </dl>
 </dd></dl>
