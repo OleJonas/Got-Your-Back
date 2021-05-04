@@ -21,6 +21,7 @@
   "typedocOptions": {
     "entryPoints": ["src/index.tsx"],
     "out": "./build_frontend/html",
-    "exclude": "**/node_modules/**"
+    "exclude": "**/node_modules/**",
+    "theme": "default"
   }
 }

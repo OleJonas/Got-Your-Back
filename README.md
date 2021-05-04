@@ -35,8 +35,6 @@ Got Your Back/frontend
 │   └── robots.txt
 ├── src
 │   ├── @types
-│   │   └── react-keyboard-event-handler
-│   │       └── index.d.ts
 │   ├── App.tsx
 │   ├── Routing.tsx
 │   ├── assets
