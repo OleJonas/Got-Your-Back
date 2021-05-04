@@ -9,7 +9,7 @@ import BluetoothConnectedIcon from "@material-ui/icons/BluetoothConnected";
 import SERVER_PORT from "../../utils/serverUtils";
 import useInterval from "../../utils/useInterval";
 
-type SensorProps = {
+export type sensorProps = {
 	id: number;
 	connected: boolean;
 	name: string;
@@ -20,10 +20,12 @@ type SensorProps = {
 };
 
 /**
- * @param {SensorProps} props
+ *
  * A functional component showing data for the sensor
+ *
+ * @param {sensorProps} props {@link sensorProps}
  */
-export const SensorRowHome: React.FC<SensorProps> = (props: SensorProps) => {
+export const SensorRowHome: React.FC<sensorProps> = (props: sensorProps) => {
 	const [batteryPercent, setBatteryPercent] = useState<number>(props.battery);
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();

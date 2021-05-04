@@ -7,16 +7,18 @@ import { Typography, Grid, makeStyles } from "@material-ui/core";
 import SensorButton from "../Buttons/SensorButton.component";
 import SERVER_PORT from "../../utils/serverUtils";
 
-type SensorProps = {
+export type sensorProps = {
 	name: string;
 	clickConnect?: any;
 };
 
 /**
- * @param {SensorProps} props
+ *
  * A functional component showing the details of a not connected sensor.
+ *
+ * @param {sensorProps} props {@link sensorProps}
  */
-export const SensorRowModal: React.FC<SensorProps> = (props) => {
+export const SensorRowModal: React.FC<sensorProps> = (props) => {
 	const [isFetching, setIsFetching] = useState<boolean>(false);
 	const [connected, setConnected] = useState<boolean>(false);
 	const [sensorData, setSensorData] = useState<{ battery_percent: string; id: number; name: string }>();

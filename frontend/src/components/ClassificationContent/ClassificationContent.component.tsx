@@ -5,17 +5,19 @@
 import { Grid, Box, Typography, makeStyles } from "@material-ui/core";
 import postureNames from "../../utils/postureNames";
 
-type ClassificationProps = {
+export type classificationProps = {
 	posture: number;
 	samplingRate: number;
 	recording: boolean;
 };
 
 /**
- * @param {ClassificationProps} props
+ * 
  * A component containing the classification GUI such as the posture recorded, both as a number and a string.
- */
-export const ClassificationContent: React.FC<ClassificationProps> = (props) => {
+ * 
+ * @param {classificationProps} props {@link classificationProps}
+*/
+export const ClassificationContent: React.FC<classificationProps> = (props) => {
 	const classes = useStyles();
 
 	return (

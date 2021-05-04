@@ -6,18 +6,19 @@ import { Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
 import postureNames from "../../utils/postureNames";
 
-type ColumnChartProps = {
+export type columnChartProps = {
 	data: JSON;
 	hAxisFormat?: "HH:mm:ss" | "HH:mm" | "dd.mm";
 	actions?: []; //["dragToPan", "dragToZoom", "rightClickToReset"]
 };
 
 /**
- * @param {ColumnChartProps} props
+ *
  * A column chart presenting the classification data over a set period of time.
+ *
+ * @param {columnChartProps} props {@link columnChartProps}
  */
-export const ColumnChart: React.FC<ColumnChartProps> = (props) => {
-
+export const ColumnChart: React.FC<columnChartProps> = (props) => {
 	/**
 	 * @returns An array containing the amount of times each posture is observed in the classification data.
 	 */

@@ -1,15 +1,9 @@
 ## Structure
 
-The frontend folder has the following subfolders of importance:
-
-- build - output directory for built react project
-- dist - output directory for built electron application
-- src
-  - components - functional components
-  - views - each program view
-  - utils - typescript utilities
-
-**Full tree:**
+The frontend directory has the following folders of importance:
+**build** is the output directory for react project build.
+**dist** is the output directory for electron application build.
+**src** contains three subfolders, one for functional components, one for views and one for utilities.
 
 ```bash
 Got Your Back/frontend

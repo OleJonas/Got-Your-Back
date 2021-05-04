@@ -7,8 +7,10 @@ import { Chart } from "react-google-charts";
 import postureNames from "../../utils/postureNames";
 
 /**
+ *
  * A customized piechart from google-react-charts
- * @param props
+ *
+ * @param props props
  */
 export const PieChart = (props) => {
 	const classes = useStyles;

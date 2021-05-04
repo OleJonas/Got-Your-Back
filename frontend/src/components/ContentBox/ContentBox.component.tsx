@@ -4,13 +4,15 @@
  */
 import { Box, makeStyles } from "@material-ui/core";
 
-type contentProps = {
+export type contentProps = {
 	className?: any;
 };
 
 /**
- * @param {contentProps} props
+ *
  * A component acting as a simple container (box) for different data and graphs.
+ *
+ * @param {contentProps} props {@link contentProps}
  */
 export const ContentBox: React.FC<contentProps> = (props) => {
 	const classes = useStyles();

@@ -10,7 +10,7 @@ import PauseIcon from "@material-ui/icons/Pause";
 import StatusPopup from "../StatusPopup/StatusPopup.component";
 import SERVER_PORT from "../../utils/serverUtils";
 
-export type ClassificationProps = {
+export type classificationProps = {
 	posture: number;
 	hasSensors: boolean;
 	isRecording: boolean;
@@ -20,10 +20,12 @@ export type ClassificationProps = {
 };
 
 /**
- * @param {ClassificationProps} props
- * @returns A GUI interface that lets the user start and stop recording and classification of data. This is contained inside a material-ui Box.
+ *
+ * A GUI interface that lets the user start and stop recording and classification of data. This is contained inside a material-ui Box.
+ *
+ * @param {classificationProps} props {@link classificationProps}
  */
-export const RecordContent: React.FC<ClassificationProps> = (props) => {
+export const RecordContent: React.FC<classificationProps> = (props) => {
 	const classes = useStyles(props);
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 
@@ -91,14 +93,14 @@ const useStyles = makeStyles((theme) => ({
 		textAlign: "center",
 	},
 	btn: {
-		backgroundColor: (props: ClassificationProps) => (!props.hasSensors ? "rgba(60, 60, 60, 0.5)" : theme.palette.primary.main) as string,
+		backgroundColor: (props: classificationProps) => (!props.hasSensors ? "rgba(60, 60, 60, 0.5)" : theme.palette.primary.main) as string,
 		margin: "20px",
 		"&:hover": {
 			backgroundColor: theme.palette.primary.dark,
 		},
 	},
 	recordIcon: {
-		color: (props: ClassificationProps) => (!props.hasSensors ? "#aaa" : "#fff") as string,
+		color: (props: classificationProps) => (!props.hasSensors ? "#aaa" : "#fff") as string,
 		fontSize: "100px",
 	},
 	"@keyframes rotate": {
