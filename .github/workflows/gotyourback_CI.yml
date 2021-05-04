@@ -42,20 +42,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Build documentation
+        run: cd docs && sphinx-build -b html ./source ./build_backend/html
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.1
         with:
           branch: github_pages # The branch the action should deploy to.
           folder: docs # The folder the action should deploy.
 
-
-  # api-deploy:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: Sphinx-Dependencies
-  #       run: pip install sphinx && pip install sphinxcontrib-napoleon && pip install sphinx-rtd-theme && pip install sphinx-js
-  #     - name: Typedoc
-  #       run: cd docs && npm install -g typedoc
-  #     - name: Deploy
-  #       run: cd docs && sphinx-build ./source ./build/html
