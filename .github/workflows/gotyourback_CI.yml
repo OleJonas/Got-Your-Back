@@ -46,6 +46,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          npm install typescript
       - name: Build documentation
         run: cd docs && sphinx-build -b html ./source ./build_backend/html
       - name: Deploy
