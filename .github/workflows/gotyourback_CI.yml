@@ -22,7 +22,7 @@ jobs:
       - name: Run data_queue_tests
         run: cd "scripts/tests" && python -m unittest data_queue_test.py
       - name: Run sensor bank tests
-        run: cd "scripts/tests" && python -m unittest sensor_bank_test.py
+        run: cd "scripts/tests" && python -m unittest sensor_bank_test.py offline
 
   node-setup-and-build:
     runs-on: macos-latest

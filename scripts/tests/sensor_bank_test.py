@@ -2,8 +2,6 @@ import unittest
 import sys
 sys.path.append("../")
 import sensor_bank as sb
-import openzen
-
 
 class sensor_bank_test(unittest.TestCase):
     """
@@ -91,6 +89,10 @@ def with_server_suite():
 
 
 if __name__ == "__main__":
+    args = sys.argv
+    if args[0] == "online":
+        import openzen
+    
     runner = unittest.TextTestRunner()
     runner.run(no_server_suite())
     #runner.run(with_server_suite())
