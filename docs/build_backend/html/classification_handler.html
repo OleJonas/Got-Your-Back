@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>server_classify module &mdash; Got Your Back 2021 documentation</title>
+  <title>classification_handler module &mdash; Got Your Back 2021 documentation</title>
   
 
   
@@ -85,15 +85,22 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#structure">Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#setup-download">Setup &amp; download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#start-server">Start server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="data_queue.html">data_queue module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sensor_bank.html">sensor_bank module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">server_classify module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">classification_handler module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="realtime_classify.html">realtime_classify module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="server.html">server module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rnn_utils.html">rnn_utils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generate_dummy_data.html">generate_dummy_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openzen.html">openzen module</a></li>
 </ul>
 </li>
 </ul>
@@ -146,13 +153,13 @@
         
           <li><a href="modules.html">Modules</a> &raquo;</li>
         
-      <li>server_classify module</li>
+      <li>classification_handler module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/server_classify.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/classification_handler.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -165,8 +172,43 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="server-classify-module">
-<h1>server_classify module<a class="headerlink" href="#server-classify-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-classification_handler">
+<span id="classification-handler-module"></span><h1>classification_handler module<a class="headerlink" href="#module-classification_handler" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="classification_handler.Classification_Handler">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">classification_handler.</span></code><code class="sig-name descname"><span class="pre">Classification_Handler</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensor_bank</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#classification_handler.Classification_Handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="classification_handler.Classification_Handler.classify">
+<code class="sig-name descname"><span class="pre">classify</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rfc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#classification_handler.Classification_Handler.classify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classify in realtime based on trained model and data in data queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>tensorflow.python.keras.engine.sequential.Sequential</em>) – ANN model trained for n_sensors connected.</p></li>
+<li><p><strong>sensor_bank</strong> (<a class="reference internal" href="sensor_bank.html#sensor_bank.Sensor_Bank" title="sensor_bank.Sensor_Bank"><em>Sensor_Bank</em></a>) – Object containing the connected sensors.</p></li>
+<li><p><strong>type</strong> (<em>str</em>) – Type of model</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="classification_handler.Classification_Handler.collect_data">
+<code class="sig-name descname"><span class="pre">collect_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="openzen.html#openzen.ZenClient" title="openzen.ZenClient"><span class="pre">openzen.ZenClient</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#classification_handler.Classification_Handler.collect_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect data from connected sensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> (<a class="reference internal" href="openzen.html#openzen.ZenClient" title="openzen.ZenClient"><em>openzen.ZenClient</em></a>) – Client object from the OpenZen-library.</p></li>
+<li><p><strong>sensor_bank</strong> (<a class="reference internal" href="sensor_bank.html#sensor_bank.Sensor_Bank" title="sensor_bank.Sensor_Bank"><em>Sensor_Bank</em></a>) – Object containing the connected sensors.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 

@@ -7,8 +7,8 @@ Welcome to Got Your Back's documentation!
 =========================================
 
 This is the API documentation for code written in the project Got Your Back. 
-The main goal of the methods and code provided is to connect and collect data 
-from sensors provided by `LP-RESEARCH <https://lp-research.com>`_, classify 
+The main goal of the code provided is to connect and collect data 
+from sensors provided by `LP-RESEARCH <https://lp-research.com>`_, and to classify 
 sitting postures in realtime using machine learning algorithms. This project's 
 API is divided into two parts; one for the sensor handling, data collection and 
 classification in Python, and one for the frontend application in React Typescript. 

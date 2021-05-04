@@ -11,3 +11,4 @@ Modules
    server
    rnn_utils
    generate_dummy_data.rst
+   openzen
