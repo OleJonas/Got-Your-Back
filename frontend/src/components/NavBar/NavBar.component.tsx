@@ -1,3 +1,7 @@
+/**
+ * @module NavBar
+ * @category Components
+ */
 import { Grid, Box, Typography, Link, makeStyles } from "@material-ui/core";
 import Logo from "../../assets/Logo.svg";
 

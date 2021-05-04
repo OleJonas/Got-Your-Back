@@ -1,3 +1,7 @@
+/**
+ * @module useInterval
+ * @category Utils
+ */
 import * as React from "react";
 const { useEffect, useRef } = React;
 

@@ -1,3 +1,7 @@
+/**
+ * @module monthName
+ * @category Utils
+ */
 export const monthName: any = {
   "01": "Jan",
   "02": "Feb",

@@ -1,3 +1,7 @@
+/**
+ * @module ColumnChart
+ * @category Components
+ */
 import { Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
 import postureNames from "../../utils/postureNames";

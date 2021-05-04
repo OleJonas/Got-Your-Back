@@ -1,3 +1,7 @@
+/**
+ * @module SensorModal
+ * @category Components
+ */
 import { useState, useEffect, useCallback } from "react";
 import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";

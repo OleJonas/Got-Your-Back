@@ -1,3 +1,7 @@
+/**
+ * @module postureNames
+ * @category Utils
+ */
 export const postureNames: string[] = [
   "Straight",
   "Forward",

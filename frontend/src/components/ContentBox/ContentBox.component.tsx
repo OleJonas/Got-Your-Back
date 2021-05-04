@@ -1,3 +1,7 @@
+/**
+ * @module ContentBox
+ * @category Components
+ */
 import { Box, makeStyles } from "@material-ui/core";
 
 type contentProps = {

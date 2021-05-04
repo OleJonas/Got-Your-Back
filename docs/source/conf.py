@@ -39,8 +39,7 @@ extensions = [
     'sphinx_js',
     "sphinx_rtd_theme"
 ]
-
-js_source_path = '../../frontend'
+js_source_path = '../../frontend/src'
 jsdoc_config_path = "../../frontend/tsconfig.json"
 js_language = 'typescript'
 

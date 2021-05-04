@@ -1,3 +1,7 @@
+/**
+ * @module StatusPopup
+ * @category Components
+ */
 import { useState, useEffect } from "react";
 import { Box, Grid, Dialog, DialogContent, Typography, TextField, FormControl } from "@material-ui/core";
 import { makeStyles, withStyles } from "@material-ui/core/styles";

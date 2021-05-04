@@ -1,3 +1,7 @@
+/**
+ * @module StatusGraphPopup
+ * @category Components
+ */
 import { useState, useEffect } from "react";
 import { Box, Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";

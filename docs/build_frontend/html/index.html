@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title></title>
-	<meta name="description" content="Documentation for ">
+	<title>Frontend API Documentation</title>
+	<meta name="description" content="Documentation for Frontend API Documentation">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
 	<script async src="assets/js/search.js" id="search-script"></script>
@@ -23,7 +23,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title"></a>
+					<a href="index.html" class="title">Frontend API Documentation</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -50,7 +50,7 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<h1></h1>
+			<h1>Frontend API Documentation</h1>
 		</div>
 	</div>
 </header>
@@ -58,26 +58,130 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<a href="#got-your-back" id="got-your-back" style="color: inherit; text-decoration: none;">
-					<h1>Got Your Back</h1>
-				</a>
-				<p>This project contains code written in relation to our bachelor project at NTNU. Our assignment is to classify sitting postures with machine learning algorithms on accelerometer- and gyroscope-data. The datasets are recorded using sensors from LP-RESEARCH, and provided in this repository. Additionally, we have developed an electron app for recording data and live-classify your sitting posture over time.</p>
-				<a href="#releases" id="releases" style="color: inherit; text-decoration: none;">
-					<h4>Releases:</h4>
-				</a>
-				<p>For cloning:
-				As we depend on another repo for the OpenZen-library, you have to clone the project with the submodules included. The following line will fix this for you:</p>
-				<p><code>git clone --recurse-submodules https://github.com/OleJonas/Got-Your-Back.git &#39;GotYourBack&#39;</code></p>
-				<p>TODO:
-				Create releases for both windows and mac and upload</p>
-				<a href="#setup" id="setup" style="color: inherit; text-decoration: none;">
-					<h4>Setup</h4>
-				</a>
 				<a href="#structure" id="structure" style="color: inherit; text-decoration: none;">
-					<h4>Structure</h4>
+					<h2>Structure</h2>
 				</a>
-				<pre><code class="language-bash">
+				<p>The frontend folder has the following subfolders of importance:</p>
+				<ul>
+					<li>build - output directory for built react project</li>
+					<li>dist - output directory for built electron application</li>
+					<li>src<ul>
+							<li>components - functional components</li>
+							<li>views - each program view</li>
+							<li>utils - typescript utilities</li>
+						</ul>
+					</li>
+				</ul>
+				<p><strong>Full tree:</strong></p>
+				<pre><code class="language-bash"><span style="color: #000000">Got Your Back/frontend</span>
+<span style="color: #000000">├── README.md</span>
+<span style="color: #000000">├── assets</span>
+<span style="color: #000000">│   └── icon.png</span>
+<span style="color: #000000">├── build</span>
+<span style="color: #000000">├── dist</span>
+<span style="color: #000000">├── package-lock.json</span>
+<span style="color: #000000">├── package.json</span>
+<span style="color: #000000">├── public</span>
+<span style="color: #000000">│   ├── electron.js</span>
+<span style="color: #000000">│   ├── favicon.ico</span>
+<span style="color: #000000">│   ├── index.html</span>
+<span style="color: #000000">│   ├── manifest.json</span>
+<span style="color: #000000">│   └── robots.txt</span>
+<span style="color: #000000">├── src</span>
+<span style="color: #000000">│   ├── @types</span>
+<span style="color: #000000">│   ├── App.tsx</span>
+<span style="color: #000000">│   ├── Routing.tsx</span>
+<span style="color: #000000">│   ├── assets</span>
+<span style="color: #000000">│   │   ├── App_Icon.png</span>
+<span style="color: #000000">│   │   ├── Logo.svg</span>
+<span style="color: #000000">│   │   ├── Sensor_placement.svg</span>
+<span style="color: #000000">│   │   ├── Sensor_placement_numerated.svg</span>
+<span style="color: #000000">│   │   ├── loader.svg</span>
+<span style="color: #000000">│   │   ├── loader_black.svg</span>
+<span style="color: #000000">│   │   └── loader_white.svg</span>
+<span style="color: #000000">│   ├── components</span>
+<span style="color: #000000">│   │   ├── Buttons</span>
+<span style="color: #000000">│   │   │   ├── Button.component.tsx</span>
+<span style="color: #000000">│   │   │   └── SensorButton.component.tsx</span>
+<span style="color: #000000">│   │   ├── ClassificationContent</span>
+<span style="color: #000000">│   │   │   └── ClassificationContent.component.tsx</span>
+<span style="color: #000000">│   │   ├── ColumnChart</span>
+<span style="color: #000000">│   │   │   └── ColumnChart.component.tsx</span>
+<span style="color: #000000">│   │   ├── ContentBox</span>
+<span style="color: #000000">│   │   │   └── ContentBox.component.tsx</span>
+<span style="color: #000000">│   │   ├── HomeShade</span>
+<span style="color: #000000">│   │   │   └── HomeShade.component.tsx</span>
+<span style="color: #000000">│   │   ├── InfoTooltip</span>
+<span style="color: #000000">│   │   │   └── InfoTooltip.component.tsx</span>
+<span style="color: #000000">│   │   ├── LineChart</span>
+<span style="color: #000000">│   │   │   └── LineChart.component.jsx</span>
+<span style="color: #000000">│   │   ├── NavBar</span>
+<span style="color: #000000">│   │   │   └── NavBar.component.tsx</span>
+<span style="color: #000000">│   │   ├── PieChart</span>
+<span style="color: #000000">│   │   │   └── PieChart.component.jsx</span>
+<span style="color: #000000">│   │   ├── RecordContent</span>
+<span style="color: #000000">│   │   │   └── RecordContent.component.tsx</span>
+<span style="color: #000000">│   │   ├── SensorListContent</span>
+<span style="color: #000000">│   │   │   └── SensorListContent.component.tsx</span>
+<span style="color: #000000">│   │   ├── SensorModal</span>
+<span style="color: #000000">│   │   │   └── SensorModal.component.tsx</span>
+<span style="color: #000000">│   │   ├── SensorRow</span>
+<span style="color: #000000">│   │   │   ├── SensorRowHome.component.tsx</span>
+<span style="color: #000000">│   │   │   └── SensorRowModal.component.tsx</span>
+<span style="color: #000000">│   │   ├── StatusBar</span>
+<span style="color: #000000">│   │   │   └── StatusBar.component.tsx</span>
+<span style="color: #000000">│   │   ├── StatusGraphPopup</span>
+<span style="color: #000000">│   │   │   └── StatusGraphPopup.component.tsx</span>
+<span style="color: #000000">│   │   └── StatusPopup</span>
+<span style="color: #000000">│   │       └── StatusPopup.component.tsx</span>
+<span style="color: #000000">│   ├── index.css</span>
+<span style="color: #000000">│   ├── index.tsx</span>
+<span style="color: #000000">│   ├── react-app-env.d.ts</span>
+<span style="color: #000000">│   ├── reportWebVitals.ts</span>
+<span style="color: #000000">│   ├── setupTests.ts</span>
+<span style="color: #000000">│   ├── theme.tsx</span>
+<span style="color: #000000">│   ├── utils</span>
+<span style="color: #000000">│   │   ├── dateUtils.ts</span>
+<span style="color: #000000">│   │   ├── handleErrors.ts</span>
+<span style="color: #000000">│   │   ├── postureNames.ts</span>
+<span style="color: #000000">│   │   ├── sensorPlacement.ts</span>
+<span style="color: #000000">│   │   ├── serverUtils.ts</span>
+<span style="color: #000000">│   │   └── useInterval.ts</span>
+<span style="color: #000000">│   └── views</span>
+<span style="color: #000000">│       ├── HelpView</span>
+<span style="color: #000000">│       │   └── HelpView.tsx</span>
+<span style="color: #000000">│       ├── HistoryView</span>
+<span style="color: #000000">│       │   └── HistoryView.tsx</span>
+<span style="color: #000000">│       ├── HomeView</span>
+<span style="color: #000000">│       │   └── HomeView.tsx</span>
+<span style="color: #000000">│       └── ReportView</span>
+<span style="color: #000000">│           └── ReportView.tsx</span>
+<span style="color: #000000">└── tsconfig.json</span>
 </code></pre>
+				<a href="#setup-amp-download" id="setup-amp-download" style="color: inherit; text-decoration: none;">
+					<h2>Setup &amp; download</h2>
+				</a>
+				<p>There is two options when it comes to dowloading the project.
+					The recommended option is to download one of the releases from GitHub.
+				Another option is to fork the project, but as we depend on the repository of openzen, make sure to fork with submodules.</p>
+				<p>For setting up the backend side of the project, run
+					<code>pip install -r &quot;requirements.txt&quot;</code>
+				from the project root. By downloading a release it is not necessary to install further dependencies. If forking the project instead, run <code>cd frontend &amp;&amp; npm install</code></p>
+				<a href="#run-application" id="run-application" style="color: inherit; text-decoration: none;">
+					<h2>Run application</h2>
+				</a>
+				<a href="#release-download" id="release-download" style="color: inherit; text-decoration: none;">
+					<h4>Release download</h4>
+				</a>
+				<p>Run the <code>start.command</code>/<code>start.bat</code> executable.</p>
+				<a href="#forked-project" id="forked-project" style="color: inherit; text-decoration: none;">
+					<h4>Forked project</h4>
+				</a>
+				<p>Find the application in dist and run it from there or run the application with one of the following scripts (in frontend directory):</p>
+				<ul>
+					<li><code>npm start</code> (in browser)</li>
+					<li><code>npm run dev</code> (in electron) from the frontend folder.</li>
+				</ul>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -87,112 +191,100 @@
 						<a href="modules.html">Exports</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src.html">src</a>
+						<a href="modules/app.html">App</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src__types_react_keyboard_event_handler.html">src/@types/react-<wbr>keyboard-<wbr>event-<wbr>handler</a>
+						<a href="modules/button.html">Button</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_app.html">src/<wbr>App</a>
+						<a href="modules/classificationcontent.html">Classification<wbr>Content</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_routing.html">src/<wbr>Routing</a>
+						<a href="modules/columnchart.html">Column<wbr>Chart</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_buttons_button_component.html">src/components/<wbr>Buttons/<wbr>Button.component</a>
+						<a href="modules/contentbox.html">Content<wbr>Box</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_buttons_sensorbutton_component.html">src/components/<wbr>Buttons/<wbr>Sensor<wbr>Button.component</a>
+						<a href="modules/helpview.html">Help<wbr>View</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_classificationcontent_classificationcontent_component.html">src/components/<wbr>Classification<wbr>Content/<wbr>Classification<wbr>Content.component</a>
+						<a href="modules/historyview.html">History<wbr>View</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_columnchart_columnchart_component.html">src/components/<wbr>Column<wbr>Chart/<wbr>Column<wbr>Chart.component</a>
+						<a href="modules/homeshade.html">Home<wbr>Shade</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_contentbox_contentbox_component.html">src/components/<wbr>Content<wbr>Box/<wbr>Content<wbr>Box.component</a>
+						<a href="modules/homeview.html">Home<wbr>View</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_homeshade_homeshade_component.html">src/components/<wbr>Home<wbr>Shade/<wbr>Home<wbr>Shade.component</a>
+						<a href="modules/infotooltip.html">Info<wbr>Tooltip</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_infotooltip_infotooltip_component.html">src/components/<wbr>Info<wbr>Tooltip/<wbr>Info<wbr>Tooltip.component</a>
+						<a href="modules/linechart.html">Line<wbr>Chart</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_linechart_linechart_component.html">src/components/<wbr>Line<wbr>Chart/<wbr>Line<wbr>Chart.component</a>
+						<a href="modules/navbar.html">Nav<wbr>Bar</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_navbar_navbar_component.html">src/components/<wbr>Nav<wbr>Bar/<wbr>Nav<wbr>Bar.component</a>
+						<a href="modules/piechart.html">Pie<wbr>Chart</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_piechart_piechart_component.html">src/components/<wbr>Pie<wbr>Chart/<wbr>Pie<wbr>Chart.component</a>
+						<a href="modules/recordcontent.html">Record<wbr>Content</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_recordcontent_recordcontent_component.html">src/components/<wbr>Record<wbr>Content/<wbr>Record<wbr>Content.component</a>
+						<a href="modules/reportview.html">Report<wbr>View</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_sensorlistcontent_sensorlistcontent_component.html">src/components/<wbr>Sensor<wbr>List<wbr>Content/<wbr>Sensor<wbr>List<wbr>Content.component</a>
+						<a href="modules/routing.html">Routing</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_sensormodal_sensormodal_component.html">src/components/<wbr>Sensor<wbr>Modal/<wbr>Sensor<wbr>Modal.component</a>
+						<a href="modules/sensorbutton.html">Sensor<wbr>Button</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_sensorrow_sensorrowhome_component.html">src/components/<wbr>Sensor<wbr>Row/<wbr>Sensor<wbr>Row<wbr>Home.component</a>
+						<a href="modules/sensorlistcontent.html">Sensor<wbr>List<wbr>Content</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_sensorrow_sensorrowmodal_component.html">src/components/<wbr>Sensor<wbr>Row/<wbr>Sensor<wbr>Row<wbr>Modal.component</a>
+						<a href="modules/sensormodal.html">Sensor<wbr>Modal</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_statusbar_statusbar_component.html">src/components/<wbr>Status<wbr>Bar/<wbr>Status<wbr>Bar.component</a>
+						<a href="modules/sensorrowhome.html">Sensor<wbr>Row<wbr>Home</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_statusgraphpopup_statusgraphpopup_component.html">src/components/<wbr>Status<wbr>Graph<wbr>Popup/<wbr>Status<wbr>Graph<wbr>Popup.component</a>
+						<a href="modules/sensorrowmodal.html">Sensor<wbr>Row<wbr>Modal</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_components_statuspopup_statuspopup_component.html">src/components/<wbr>Status<wbr>Popup/<wbr>Status<wbr>Popup.component</a>
+						<a href="modules/statusbar.html">Status<wbr>Bar</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_react_app_env.html">src/react-<wbr>app-<wbr>env</a>
+						<a href="modules/statusgraphpopup.html">Status<wbr>Graph<wbr>Popup</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_reportwebvitals.html">src/report<wbr>Web<wbr>Vitals</a>
+						<a href="modules/statuspopup.html">Status<wbr>Popup</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_setuptests.html">src/setup<wbr>Tests</a>
+						<a href="modules/handleerrors.html">handle<wbr>Errors</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_theme.html">src/theme</a>
+						<a href="modules/index.html">index</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_utils_dateutils.html">src/utils/date<wbr>Utils</a>
+						<a href="modules/monthname.html">month<wbr>Name</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_utils_handleerrors.html">src/utils/handle<wbr>Errors</a>
+						<a href="modules/posturenames.html">posture<wbr>Names</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_utils_posturenames.html">src/utils/posture<wbr>Names</a>
+						<a href="modules/sensorplacement.html">sensor<wbr>Placement</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_utils_sensorplacement.html">src/utils/sensor<wbr>Placement</a>
+						<a href="modules/serverutils.html">server<wbr>Utils</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_utils_serverutils.html">src/utils/server<wbr>Utils</a>
+						<a href="modules/theme.html">theme</a>
 					</li>
 					<li class=" tsd-kind-module">
-						<a href="modules/src_utils_useinterval.html">src/utils/use<wbr>Interval</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/src_views_helpview_helpview.html">src/views/<wbr>Help<wbr>View/<wbr>Help<wbr>View</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/src_views_historyview_historyview.html">src/views/<wbr>History<wbr>View/<wbr>History<wbr>View</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/src_views_homeview_homeview.html">src/views/<wbr>Home<wbr>View/<wbr>Home<wbr>View</a>
-					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/src_views_reportview_reportview.html">src/views/<wbr>Report<wbr>View/<wbr>Report<wbr>View</a>
+						<a href="modules/useinterval.html">use<wbr>Interval</a>
 					</li>
 				</ul>
 			</nav>

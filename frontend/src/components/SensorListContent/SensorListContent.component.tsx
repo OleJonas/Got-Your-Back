@@ -1,3 +1,7 @@
+/**
+ * @module SensorListContent
+ * @category Components
+ */
 import { useState, useEffect } from "react";
 import { Grid, Typography, makeStyles } from "@material-ui/core";
 import Button from "../Buttons/Button.component";
@@ -13,7 +17,7 @@ export type Sensor = {
 	battery: number;
 };
 
-type ListProps = {
+export type ListProps = {
 	recording: boolean;
 	hasSensors: boolean;
 	setHasSensors: (bool: boolean) => void;
