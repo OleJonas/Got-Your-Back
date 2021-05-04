@@ -9,7 +9,7 @@ import LineChart from "../LineChart/LineChart.component";
 import SERVER_PORT from "../../utils/serverUtils";
 import CloseIcon from "@material-ui/icons/Close";
 
-type modalProps = {
+export type modalProps = {
 	year: string;
 	month: string;
 	day: string;
@@ -18,8 +18,10 @@ type modalProps = {
 };
 
 /**
- * @param {modalProps} props
+ *
  * A functional component displaying a modal with classification graph on report day given.
+ *
+ * @param {modalProps} props {@link modalProps}
  */
 
 export const StatusGraphPopup: React.FC<modalProps> = (props) => {

@@ -8,8 +8,10 @@ import { Chart } from "react-google-charts";
 import postureNames from "../../utils/postureNames";
 
 /**
- * @param props
- * @returns A LineChart that updates with new classification data received.
+ *
+ * A LineChart that updates with new classification data received.
+ *
+ * @param props props
  */
 export const LineChart = (props) => {
 	const classes = useStyles;

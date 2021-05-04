@@ -26,11 +26,12 @@
       "**/@types",
       "**/setupTests.*",
       "**/react-app-env.*",
-      "**/reportWebVitals.*"
+      "**/reportWebVitals.*",
+      "**/App.tsx",
+      "**/index.tsx",
+      "**/Routing.tsx"
     ],
     "theme": "default",
-    // "plugin": "../frontend/node_modules/typedoc-neo-theme/bin",
-    // "theme": "../frontend/node_modules/typedoc-neo-theme/bin/default",
     "name": "Frontend API Documentation"
   }
 }

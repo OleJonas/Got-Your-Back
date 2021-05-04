@@ -11,7 +11,7 @@ import SensorRowModal from "../SensorRow/SensorRowModal.component";
 import loader from "../../assets/loader.svg";
 import SERVER_PORT from "../../utils/serverUtils";
 
-type modalProps = {
+export type modalProps = {
 	open: boolean;
 	alreadyConnected: string[]; // Array of sensor names that are already connected
 	close: () => void;
@@ -19,8 +19,10 @@ type modalProps = {
 };
 
 /**
- * @param {modalProps} props
+ *
  * A GUI interface modal for connecting to sensors.
+ *
+ * @param {modalProps} props {@link modalProps}
  */
 export const SensorModal: React.FC<modalProps> = (props) => {
 	const classes = useStyles();

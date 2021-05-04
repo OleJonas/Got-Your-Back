@@ -2,6 +2,10 @@
  * @module monthName
  * @category Utils
  */
+
+/**
+ * @returns {{}} A json-object with two-digit numbers as keys and their associated monthnames.
+ */
 export const monthName: any = {
   "01": "Jan",
   "02": "Feb",

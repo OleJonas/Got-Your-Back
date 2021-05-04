@@ -2,6 +2,10 @@
  * @module postureNames
  * @category Utils
  */
+
+/**
+ * @returns {string[]} list of postures.
+ */
 export const postureNames: string[] = [
   "Straight",
   "Forward",

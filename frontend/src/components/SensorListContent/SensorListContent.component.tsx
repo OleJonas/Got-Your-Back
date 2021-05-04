@@ -17,7 +17,7 @@ export type Sensor = {
 	battery: number;
 };
 
-export type ListProps = {
+export type listProps = {
 	recording: boolean;
 	hasSensors: boolean;
 	setHasSensors: (bool: boolean) => void;
@@ -26,9 +26,9 @@ export type ListProps = {
 };
 
 /**
- * @returns A listing of the currently connected sensors.
+ * A listing of the currently connected sensors.
  */
-export const SensorListContent: React.FC<ListProps> = (props) => {
+export const SensorListContent: React.FC<listProps> = (props) => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 	const [sensors, setSensors] = useState<Sensor[]>([]);
@@ -137,7 +137,7 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 	}, []);
 
 	/**
-	 * Returns an array containing one SensorRowHome component for each sensor in this components sensors array.
+	 * @returns An array containing one SensorRowHome component for each sensor in this components sensors array.
 	 */
 	const mapSensors = sensors.map((sensor: Sensor) => {
 		return (

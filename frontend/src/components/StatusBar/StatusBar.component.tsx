@@ -10,14 +10,16 @@ import emojiMeh20Regular from "@iconify-icons/fluent/emoji-meh-20-regular";
 import emoji20Regular from "@iconify-icons/fluent/emoji-20-regular";
 import emojiLaugh20Regular from "@iconify-icons/fluent/emoji-laugh-20-regular";
 
-type statusProps = {
+export type statusProps = {
 	status: number;
 	setStatus?: (number: number) => void;
 };
 
 /**
- * @param {statusProps} props
+ *
  * A functional component displaying status emoticons.
+ *
+ * @param {statusProps} props {@link statusProps}
  */
 export const StatusBar: React.FC<statusProps> = (props) => {
 	const icons = [emojiAngry20Regular, emojiSad20Regular, emojiMeh20Regular, emoji20Regular, emojiLaugh20Regular];

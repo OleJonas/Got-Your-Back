@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Got Your Back's documentation!
-=========================================
+Backend API Documentation
+==========================
 
 This is the API documentation for code written in the project Got Your Back. 
 The main goal of the code provided is to connect and collect data 

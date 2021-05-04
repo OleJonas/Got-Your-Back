@@ -9,14 +9,16 @@ import Button from "../Buttons/Button.component";
 import StatusBar from "../../components/StatusBar/StatusBar.component";
 import SERVER_PORT from "../../utils/serverUtils";
 
-type modalProps = {
+export type modalProps = {
 	open: boolean;
 	close: () => void;
 };
 
 /**
- * @param {modalProps} props
+ *
  * A functional component displaying a modal for reporting how your back feels after ended recording.
+ *
+ * @param {modalProps} props {@link modalProps}
  */
 
 export const StatusPopup: React.FC<modalProps> = (props) => {
