@@ -90,9 +90,6 @@ def with_server_suite():
 # 69
 
 if __name__ == "__main__":
-    args = sys.argv
-    if args[0] == "online":
-        import openzen
     
     runner = unittest.TextTestRunner()
     runner.run(no_server_suite())
