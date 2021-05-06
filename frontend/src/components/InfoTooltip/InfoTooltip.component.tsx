@@ -1,18 +1,23 @@
+/**
+ * @module InfoTooltip
+ * @category Components
+ */
 import { useState } from "react";
 import { Box, IconButton, Tooltip, ClickAwayListener, Typography } from "@material-ui/core";
 import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 
-type InfoTooltipProps = {
+export type infoTooltipProps = {
 	text: string;
 	color?: string;
 };
 
 /**
  *
- * @param props
- * @returns A tooltip component in which adds an information-icon and shows a tooltip when clicked on.
+ * A tooltip component in which adds an information-icon and shows a tooltip when clicked on.
+ *
+ * @param {infoTooltipProps} props {@link infoTooltipProps}
  */
-export const InfoTooltip: React.FC<InfoTooltipProps> = (props) => {
+export const InfoTooltip: React.FC<infoTooltipProps> = (props) => {
 	const [showTooltip, setShowTooltip] = useState<boolean>(false);
 
 	const handleTooltipOpen = () => {

@@ -1,17 +1,28 @@
+/**
+ * @module StatusGraphPopup
+ * @category Components
+ */
 import { useState, useEffect } from "react";
 import { Box, Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import LineChart from "../LineChart/LineChart.component";
-import SERVER_PORT from "../../utils/server_utils";
+import SERVER_PORT from "../../utils/serverUtils";
 import CloseIcon from "@material-ui/icons/Close";
 
-type modalProps = {
+export type modalProps = {
 	year: string;
 	month: string;
 	day: string;
 	open: boolean;
 	close: () => void;
 };
+
+/**
+ *
+ * A functional component displaying a modal with classification graph on report day given.
+ *
+ * @param {modalProps} props {@link modalProps}
+ */
 
 export const StatusGraphPopup: React.FC<modalProps> = (props) => {
 	const classes = useStyles();
@@ -52,7 +63,13 @@ export const StatusGraphPopup: React.FC<modalProps> = (props) => {
 					<Box display="flex" alignItems="center">
 						<Box flexGrow={1}>
 							<Typography variant="h2" color="textPrimary">
-								{props.day + ". " + new Intl.DateTimeFormat("nb-no", { month: "short" }).format(parseInt(props.month)) + " " + props.year}
+								{props.day +
+									". " +
+									new Intl.DateTimeFormat("en-US", { month: "short" }).format(
+										new Date(parseInt(props.year), parseInt(props.month) - 1, parseInt(props.day))
+									) +
+									" " +
+									props.year}
 							</Typography>
 						</Box>
 						<Box>

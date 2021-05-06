@@ -1,4 +1,8 @@
-import { useEffect, useState, useMemo } from "react";
+/**
+ * @module HistoryView
+ * @category Views
+ */
+import { useEffect, useState } from "react";
 import { Grid, Box, makeStyles, Typography } from "@material-ui/core";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -8,7 +12,7 @@ import NavBar from "../../components/NavBar/NavBar.component";
 import ContentBox from "../../components/ContentBox/ContentBox.component";
 import LineChart from "../../components/LineChart/LineChart.component.jsx";
 import ColumnChart from "../../components/ColumnChart/ColumnChart.component";
-import SERVER_PORT from "../../utils/server_utils";
+import SERVER_PORT from "../../utils/serverUtils";
 import InfoTooltip from "../../components/InfoTooltip/InfoTooltip.component";
 
 /**

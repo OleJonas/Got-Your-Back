@@ -1,11 +1,16 @@
+/**
+ * @module PieChart
+ * @category Components
+ */
 import { makeStyles, Typography } from "@material-ui/core";
 import { Chart } from "react-google-charts";
-import posture_names from "../../utils/posture_names";
+import postureNames from "../../utils/postureNames";
 
 /**
  *
- * @param {*} props
- * @returns
+ * A customized piechart from google-react-charts
+ *
+ * @param props props
  */
 export const PieChart = (props) => {
 	const classes = useStyles;
@@ -16,7 +21,7 @@ export const PieChart = (props) => {
 		classifications.forEach((classification) => (posture_occurences[classification] += 1));
 		let chartData = [["Posture", "Total amount of predicions"]];
 		for (let i = 0; i < posture_occurences.length; i += 1) {
-			chartData.push([posture_names[i], posture_occurences[i]]);
+			chartData.push([postureNames[i], posture_occurences[i]]);
 		}
 		return chartData;
 	};
@@ -34,11 +39,7 @@ export const PieChart = (props) => {
 			data={processedData()}
 			options={{
 				backgroundColor: "transparent",
-				pieSliceBorderColor: "transparent", //"#0a2339"
-				// pieSliceText: "label",
-				// slices: { 4: { offset: 0.1 }},
-				// pieHole: 0.4,
-				// tooltip: {ignoreBounds: false},
+				pieSliceBorderColor: "transparent",
 				chartArea: {
 					top: 20,
 					left: 20,

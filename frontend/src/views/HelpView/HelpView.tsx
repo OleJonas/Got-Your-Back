@@ -1,10 +1,13 @@
+/**
+ * @module HelpView
+ * @category Views
+ */
 import { Grid, Box, makeStyles, Typography, AccordionSummary, Accordion, AccordionDetails } from "@material-ui/core";
 import { NavBar } from "../../components/NavBar/NavBar.component";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import SensorPlacement from "../../assets/Sensor_placement_numerated.svg";
 
 /**
- * @remarks
  * This view contains collapsibles with information for helping users out with questions such as where to place sensors and how to connect to sensors etc.
  */
 export const HelpView = () => {
@@ -35,9 +38,10 @@ export const HelpView = () => {
 											<Box>
 												<img src={SensorPlacement} className={classes.svg} alt="Sensor placement" />
 												<Typography variant="body1" color="textPrimary">
-													The machine learning algorithm used for classification supports one, two and three sensors. Examine the illustrations above for instructions on where to place the sensors. It is important that all
-													sensors are placed with the text LP-RESEARCH the right way up. Use tape suitable for human skin to
-													ensure that the sensors are held in place.
+													The machine learning algorithm used for classification supports one, two and three sensors. Examine the
+													illustrations above for instructions on where to place the sensors. It is important that all sensors are placed
+													with the text LP-RESEARCH the right way up. Use tape suitable for human skin to ensure that the sensors are held
+													in place.
 												</Typography>
 												<Box mt={1}>
 													<Typography variant="h6" color="textPrimary">
@@ -145,8 +149,8 @@ export const HelpView = () => {
 												<Typography variant="body1" color="textPrimary">
 													To disconnect from a sensor, navigate to the "Home" section of the application and find the "Connected sensors"
 													module. Here you will see a listing of all currently connected sensors. To disconnect from one, click the yellow
-													button with an x in it. Disconnecting sensors while classifying should not be done as this affects the data sent to the model, and the button is
-													therefore disabled during live classification.
+													button with an x in it. Disconnecting sensors while classifying should not be done as this affects the data sent
+													to the model, and the button is therefore disabled during live classification.
 												</Typography>
 											</Box>
 										</AccordionDetails>
@@ -163,10 +167,10 @@ export const HelpView = () => {
 										<AccordionDetails>
 											<Box>
 												<Typography variant="body1" color="textPrimary">
-													To start collecting data and classifying postures, navigate to the "Home" section of the application and click
-													the play button. This will start collecting data from all connected sensors and present the models
-													classifications on these data.
-													To stop collecting data, click the same button you clicked to start collecting data that is now showing a pause sign.
+													To start collecting data and classifying postures, navigate to the "Home" section of the application and click the
+													play button. This will start collecting data from all connected sensors and present the models classifications on
+													these data. To stop collecting data, click the same button you clicked to start collecting data that is now
+													showing a pause sign.
 												</Typography>
 											</Box>
 										</AccordionDetails>

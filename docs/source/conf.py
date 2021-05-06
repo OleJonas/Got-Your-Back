@@ -9,10 +9,10 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
 import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../../'))
 sys.path.insert(0, os.path.abspath('../../backend'))
 sys.path.insert(0, os.path.abspath('../../classifications'))
 sys.path.insert(0, os.path.abspath('../../scripts'))
@@ -34,12 +34,12 @@ release = '2021'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.autodoc',
     'sphinxcontrib.napoleon',
     'sphinx_js',
     "sphinx_rtd_theme"
 ]
-
-js_source_path = '../../frontend'
+js_source_path = '../../frontend/src'
 jsdoc_config_path = "../../frontend/tsconfig.json"
 js_language = 'typescript'
 
@@ -58,6 +58,12 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+html_theme_options = {
+    # Toc options
+    'collapse_navigation': False,
+    'sticky_navigation': True,
+    'navigation_depth': 4,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

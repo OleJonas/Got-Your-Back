@@ -1,3 +1,6 @@
-cd backend && waitress-serve --port 60066 "server:app"
-start /b /WAIT ..\frontend\dist\win-unpacked\GotYourBack.exe
-taskkill /FI "WINDOWTITLE eq SERVER" /F
+cd backend
+start waitress-serve --port 60066 "server:app"
+cd ..
+start frontend\dist\win-unpacked\"Got Your Back.exe"
+
+#taskkill /FI "WINDOWTITLE eq SERVER" /F

@@ -1,3 +1,7 @@
+/**
+ * @module SensorModal
+ * @category Components
+ */
 import { useState, useEffect, useCallback } from "react";
 import { Box, Grid, Dialog, DialogTitle, DialogContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -5,15 +9,21 @@ import { Sensor } from "../SensorListContent/SensorListContent.component";
 import Button from "../Buttons/Button.component";
 import SensorRowModal from "../SensorRow/SensorRowModal.component";
 import loader from "../../assets/loader.svg";
-import SERVER_PORT from "../../utils/server_utils";
+import SERVER_PORT from "../../utils/serverUtils";
 
-type modalProps = {
+export type modalProps = {
 	open: boolean;
 	alreadyConnected: string[]; // Array of sensor names that are already connected
 	close: () => void;
 	sendSensors: (sensor: any) => void;
 };
 
+/**
+ *
+ * A GUI interface modal for connecting to sensors.
+ *
+ * @param {modalProps} props {@link modalProps}
+ */
 export const SensorModal: React.FC<modalProps> = (props) => {
 	const classes = useStyles();
 	const [sensorsFound, setSensorsFound] = useState<any>();
@@ -21,7 +31,6 @@ export const SensorModal: React.FC<modalProps> = (props) => {
 	const [open, setOpen] = useState(false);
 
 	/**
-	 * @remarks
 	 * Uses an API call to fetch sensors available to connect to via bluetooth. When found, the state is updated.
 	 */
 	const scanForSensors = useCallback(async () => {
@@ -57,11 +66,9 @@ export const SensorModal: React.FC<modalProps> = (props) => {
 	};
 
 	/**
-	 * @remarks
-	 * Function that sends sensor data up to the SensorListContent component
-	 *
 	 * @param data JSON data about the sensor returned from the connect API call.
 	 * @param isConnected Boolean telling if the sensor is connected or not.
+	 * Function that sends sensor data up to the SensorListContent component
 	 */
 	const addConnected = (data: any, isConnected: boolean) => {
 		if (isConnected) {
@@ -76,10 +83,8 @@ export const SensorModal: React.FC<modalProps> = (props) => {
 	};
 
 	/**
-	 *
 	 * @returns An array of Sensor type objects that are found via searching, but not yet connected.
 	 */
-
 	const getSensorsNotConnected: (foundSensors: Sensor[]) => Sensor[] = (foundSensors): Sensor[] => {
 		if (props.alreadyConnected.length > 0) {
 			return foundSensors.filter((sensor: Sensor) => !props.alreadyConnected.includes(sensor.name));

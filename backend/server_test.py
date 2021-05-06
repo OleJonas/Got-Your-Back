@@ -1,7 +1,8 @@
 import requests
 import unittest
 
-url = 'http://localhost:5000'
+url = 'http://0.0.0.0:60066'
+
 
 class server_test(unittest.TestCase):
     """
@@ -9,33 +10,29 @@ class server_test(unittest.TestCase):
     """
 
     ###########
-    ########### DUMMY SUITE
+    # DUMMY SUITE
     ###########
-    
+
     def test_get_dummy_connect(self):
-        res = _make_request(url+"/dummy/connect", {}, "get")
+        res = _make_request(url + "/dummy/connect", {}, "get")
 
         sensors = res["sensors"]
         assert isinstance(sensors, list)
 
-
     def test_dummy_get_sensors(self):
-        _make_request(url+"/dummy/connect", {}, "get")
+        _make_request(url + "/dummy/connect", {}, "get")
 
-        res = _make_request(url+"/dummy/get_sensors", {}, "get")["sensors"]
+        res = _make_request(url + "/dummy/get_sensors", {}, "get")["sensors"]
 
         assert isinstance(res, list)
         for sensor in res:
             assert "name" in sensor
             assert "id" in sensor
             assert "battery" in sensor
-    
 
     ###########
-    ########### LIVE TEST SUITE
+    # LIVE TEST SUITE
     ###########
-
-    
 
 
 def _make_request(URL, PARAMS, TYPE):
@@ -43,10 +40,10 @@ def _make_request(URL, PARAMS, TYPE):
     r = None
 
     if TYPE == "get":
-        r = requests.get(url = URL, params = PARAMS)
+        r = requests.get(url=URL, params=PARAMS)
     else:
         r = requests.post(url=URL, params=PARAMS)
-    
+
     # extracting data in json format
     return r.json()
 
@@ -57,8 +54,10 @@ def dummy_suite():
     suite.addTest(server_test("test_dummy_get_sensors"))
     return suite
 
+
 def live_suite():
     pass
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()

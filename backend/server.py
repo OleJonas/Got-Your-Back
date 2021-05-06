@@ -16,7 +16,7 @@ from pathlib import Path
 import threading
 from joblib import load
 from sensor_bank import Sensor_Bank
-import server_classify as sc
+import classification_handler as ch
 
 app = Flask(__name__)
 client = None
@@ -45,7 +45,7 @@ def init():
         sys.exit(1)
     found_sensors = {}
     sensor_bank = Sensor_Bank()
-    classification_handler = sc.Classification_Handler(sensor_bank)
+    classification_handler = ch.Classification_Handler(sensor_bank)
 
 
 @app.before_request
@@ -79,10 +79,7 @@ def scan():
     Scan for available sensors using the openZen library.
 
     Returns:
-        dict: Dictionary with list of found sensors.
-                Format:
-
-                {"sensors": [str]}
+        dict: Dictionary with list of found sensors. Format: {"sensors": [str]}
     """
     global found_sensors
     global sensor_bank
@@ -100,14 +97,7 @@ def connect():
     """Connect to sensor based on sensorname.
 
     Returns:
-        dict: Dictionary with information about connected sensor if connected. Error message if not.
-                Each sensor object is on the format:
-
-                {
-                    name: str,
-                    id: int,
-                    battery: int
-                }
+        dict: Dictionary with information about connected sensor if connected. Error message if not. Each sensor object is on the format: { name: str, id: int, battery: int }
     """
     global sensor_bank
     content = request.json
@@ -173,14 +163,7 @@ def get_sensors():
     """Fetch a list of connected sensors.
 
     Returns:
-        dict: Dictionary with list of connected sensors.
-                Each sensor object is on the format:
-
-                {
-                    name: str,
-                    id: int,
-                    battery: int
-                }
+        dict: Dictionary with list of connected sensors. Each sensor object is on the format: { name: str, id: int, battery: int }
     """
     sensor_bank.verify_sensors_alive()
     out = {"sensors": []}
@@ -404,11 +387,7 @@ def get_status():
     """Get status about connection and classification.
 
     Returns:
-        dict: Dictionary with status information on the format:
-            {
-                isRecording: str,
-                numberOfSensors: int
-            }
+        dict: Dictionary with status information on the format: { isRecording: str, numberOfSensors: int }
     """
     global sensor_bank
     return {

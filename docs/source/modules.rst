@@ -1,11 +1,14 @@
-scripts
+Modules
 =======
 
 .. toctree::
-   :maxdepth: 4
-
-   Data_Queue
-   config_test
-   realtime_classify
+   :maxdepth: 2
+   
+   data_queue
    sensor_bank
-   server_classify
+   classification_handler
+   realtime_classify
+   server
+   rnn_utils
+   generate_dummy_data.rst
+   openzen

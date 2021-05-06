@@ -9,7 +9,7 @@ def generate(from_date: str, to_date: str, hours_per_day: int):
     Args:
         from_date (str): Start date on format "%Y-%m-%d %H:%M:%S".
         to_date (str): End date on format "%Y-%m-%d".
-        hours_per_day (int): Number of hours of recording each day-
+        hours_per_day (int): Number of hours of recording each day.
     """
     # Parse input-strings to Datetime-objects
     current_day = datetime.datetime.strptime(from_date, '%Y-%m-%d %H:%M:%S')
@@ -17,7 +17,7 @@ def generate(from_date: str, to_date: str, hours_per_day: int):
 
     # Iterate through every day, checks if the date is equal to the "from_date", which was
     # given as input
-    while(not (current_day.date() == end_day.date())):
+    while(not (current_day.date() == (end_day.date() + datetime.timedelta(days=1)))):
         # Create new CSV-file, with date of 'current_day' as filename
         with open(f"./classifications/{str(datetime.datetime.strftime(current_day, '%Y-%m-%d'))}.csv", 'w+', newline='') as file:
             # Declaring fieldnames and DictWriter

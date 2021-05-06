@@ -1,10 +1,14 @@
+/**
+ * @module SensorListContent
+ * @category Components
+ */
 import { useState, useEffect } from "react";
 import { Grid, Typography, makeStyles } from "@material-ui/core";
 import Button from "../Buttons/Button.component";
 import SensorRowHome from "../SensorRow/SensorRowHome.component";
 import SensorModal from "../SensorModal/SensorModal.component";
-import sensor_placement from "../../utils/sensor_placement";
-import SERVER_PORT from "../../utils/server_utils";
+import sensorPlacement from "../../utils/sensorPlacement";
+import SERVER_PORT from "../../utils/serverUtils";
 import useInterval from "../../utils/useInterval";
 
 export type Sensor = {
@@ -13,7 +17,7 @@ export type Sensor = {
 	battery: number;
 };
 
-type ListProps = {
+export type listProps = {
 	recording: boolean;
 	hasSensors: boolean;
 	setHasSensors: (bool: boolean) => void;
@@ -22,13 +26,12 @@ type ListProps = {
 };
 
 /**
- * @returns A listing of the currently connected sensors.
+ * A listing of the currently connected sensors.
  */
-export const SensorListContent: React.FC<ListProps> = (props) => {
+export const SensorListContent: React.FC<listProps> = (props) => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 	const [sensors, setSensors] = useState<Sensor[]>([]);
-	//const [classifying, setClassifying] = useState<boolean>(false);
 
 	const openModal = () => {
 		getConnectedSensors().then(() => {
@@ -41,7 +44,7 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 	};
 
 	/**
-	 * @remarks
+	 *
 	 * Removes the chosen sensor from the sensors array.
 	 *
 	 * @param id Number denoting which sensor is to be removed
@@ -80,20 +83,20 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 	}, 9000);
 
 	/**
-	 * @remarks
+	 *
 	 * useEffect that checks if sensorlist has sensors.
 	 */
 	useEffect(() => {
-		/*
-        Method that checks if the correct sensors are connected, if not, the user should not be allowed to start classification.
-        */
 		if (sensors.length === 0 || checkCorrectSensors() === false) props.setHasSensors(false);
 		//eslint-disable-next-line
 	}, [sensors]);
 
+	/**
+	 * Method for checking that id's in sensorlist is in correct ascending order.
+	 * @returns boolean representing correct order or not.
+	 */
 	const checkCorrectSensors = () => {
 		const id_arr = sensors.map((sensor: Sensor) => sensor.id);
-
 		for (let i = 1; i < sensors.length + 1; i++) {
 			if (!id_arr.includes(i)) {
 				return false;
@@ -103,9 +106,7 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 	};
 
 	/**
-	 * @remarks
-	 * Adds the given sensor to the sensors array
-	 *
+	 * Adds the given sensor to the sensors array.
 	 * @param sensor An object of the sensor type
 	 */
 	const addSensor = (sensor: Sensor) => {
@@ -115,7 +116,6 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 	};
 
 	/**
-	 * @remarks
 	 * Uses an API call to fetch sensors currently connected via bluetooth. Then sets state to reflect the sensors found to be connected.
 	 */
 	const getConnectedSensors = async () => {
@@ -137,8 +137,7 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 	}, []);
 
 	/**
-	 * @remarks
-	 * Returns an array containing one SensorRowHome component for each sensor in this components sensors array.
+	 * @returns An array containing one SensorRowHome component for each sensor in this components sensors array.
 	 */
 	const mapSensors = sensors.map((sensor: Sensor) => {
 		return (
@@ -149,17 +148,15 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 				busy={props.recording || props.buttonPressed}
 				disconnectFunc={removeSensor}
 				name={sensor.name}
-				position={sensor_placement[sensor.id.toString()]}
+				position={sensorPlacement[sensor.id.toString()]}
 				battery={sensor.battery}
 			/>
 		);
 	});
 
 	/**
-	 * @remarks
 	 * A helper method for use in the SensorModal component. It is used to tell the component which sensors are already connected and should not show up in the list of available sensors.
-	 * @returns
-	 * An array of strings containing the names of the currently connected sensors.
+	 * @returns An array of strings containing the names of the currently connected sensors.
 	 */
 	const getSensorsConnectedNames = () => {
 		let out: string[] = [];
@@ -209,12 +206,7 @@ export const SensorListContent: React.FC<ListProps> = (props) => {
 						Scan
 					</Button>
 					{open ? (
-						<SensorModal
-							sendSensors={addSensor}
-							alreadyConnected={getSensorsConnectedNames()}
-							close={closeModal}
-							open={open}
-						></SensorModal>
+						<SensorModal sendSensors={addSensor} alreadyConnected={getSensorsConnectedNames()} close={closeModal} open={open}></SensorModal>
 					) : (
 						<></>
 					)}

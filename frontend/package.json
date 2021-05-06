@@ -15,6 +15,13 @@
     ],
     "directories": {
       "buildResources": "assets"
+    },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "target": "portable"
     }
   },
   "proxy": "http://localhost:3000",
@@ -42,6 +49,7 @@
     "react-keyboard-event-handler": "^1.5.4",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "typedoc": "^0.20.36",
     "web-vitals": "^1.1.0"
   },
   "devDependencies": {

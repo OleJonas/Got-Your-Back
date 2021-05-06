@@ -1,11 +1,15 @@
+/**
+ * @module SensorRowHome
+ * @category Components
+ */
 import { useState, useCallback } from "react";
 import { Typography, Grid, makeStyles } from "@material-ui/core";
 import SensorButton from "../Buttons/SensorButton.component";
 import BluetoothConnectedIcon from "@material-ui/icons/BluetoothConnected";
-import SERVER_PORT from "../../utils/server_utils";
+import SERVER_PORT from "../../utils/serverUtils";
 import useInterval from "../../utils/useInterval";
 
-type SensorProps = {
+export type sensorProps = {
 	id: number;
 	connected: boolean;
 	name: string;
@@ -17,20 +21,19 @@ type SensorProps = {
 
 /**
  *
- * @param props
- * @returns A functional component showing data for the sensor
+ * A functional component showing data for the sensor
+ *
+ * @param {sensorProps} props {@link sensorProps}
  */
-export const SensorRowHome: React.FC<SensorProps> = (props: SensorProps) => {
+export const SensorRowHome: React.FC<sensorProps> = (props: sensorProps) => {
 	const [batteryPercent, setBatteryPercent] = useState<number>(props.battery);
 	const [connected, setConnected] = useState<boolean>(false);
 	const classes = useStyles();
 
 	/**
-	 * @remarks
+	 * @param {string} name A string containing the sensors name
+	 * @param {number} id A number used to identify each sensor.
 	 * Does an async call to disconnect from the desired sensor.
-	 *
-	 * @param name A string containing the sensors name
-	 * @param id A number used to identify each sensor.
 	 */
 	const disconnect = async (name: string, id: number) => {
 		await fetch("http://localhost:" + SERVER_PORT + "/setup/disconnect", {
@@ -51,7 +54,6 @@ export const SensorRowHome: React.FC<SensorProps> = (props: SensorProps) => {
 	};
 
 	/**
-	 * @remarks
 	 * Does an async fetch request to aquire the current battery level of the sensor
 	 */
 	const getBatteryPercent = useCallback(async () => {

@@ -1,8 +1,12 @@
+/**
+ * @module NavBar
+ * @category Components
+ */
 import { Grid, Box, Typography, Link, makeStyles } from "@material-ui/core";
 import Logo from "../../assets/Logo.svg";
 
 /**
- * @returns A vertical navbar used in every view of the application.
+ * A vertical navbar used in every view of the application.
  */
 export const NavBar: React.FC = () => {
 	const classes = useStyles();
@@ -53,15 +57,6 @@ export const NavBar: React.FC = () => {
 						</Box>
 					</Link>
 				</Grid>
-				{/* <Grid item xs={10}>
-					<Link href="#/about">
-						<Box m={1.2}>
-							<Typography variant="caption" color={window.location.href.split("/#")[1] === "/about" ? "primary" : "textPrimary"}>
-								About
-							</Typography>
-						</Box>
-					</Link>
-				</Grid> */}
 			</Grid>
 		</Box>
 	);

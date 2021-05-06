@@ -1,13 +1,17 @@
-import { useState } from "react"
+/**
+ * @module RecordContent
+ * @category Components
+ */
+import { useState } from "react";
 import { Grid, Box, makeStyles, Typography, IconButton } from "@material-ui/core";
 import loader from "../../assets/loader_white.svg";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 import StatusPopup from "../StatusPopup/StatusPopup.component";
-import SERVER_PORT from "../../utils/server_utils";
+import SERVER_PORT from "../../utils/serverUtils";
 
-type ClassificationProps = {
-	posture: number;		
+export type classificationProps = {
+	posture: number;
 	hasSensors: boolean;
 	isRecording: boolean;
 	setIsRecording: (bool: boolean) => void;
@@ -17,21 +21,21 @@ type ClassificationProps = {
 
 /**
  *
- * @param props
- * @returns A GUI interface that lets the user start and stop recording and classification of data. This is contained inside a material-ui Box.
+ * A GUI interface that lets the user start and stop recording and classification of data. This is contained inside a material-ui Box.
+ *
+ * @param {classificationProps} props {@link classificationProps}
  */
-export const RecordContent: React.FC<ClassificationProps> = (props) => {
+export const RecordContent: React.FC<classificationProps> = (props) => {
 	const classes = useStyles(props);
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
-	
+
 	/**
-	 * @remarks
 	 * Function that uses the API-calls to start and stop classification.
 	 */
 	const onButtonPressed = () => {
 		props.setButtonPressed(true);
 		if (!props.isRecording) {
-			fetch("http://localhost:"+SERVER_PORT+"/classify/start")
+			fetch("http://localhost:" + SERVER_PORT + "/classify/start")
 				.then((response) => response.json())
 				.then((data) => {
 					if (data) {
@@ -39,7 +43,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 					}
 				});
 		} else {
-			fetch("http://localhost:"+SERVER_PORT+"/classify/stop")
+			fetch("http://localhost:" + SERVER_PORT + "/classify/stop")
 				.then((response) => response.json())
 				.then((data) => {
 					if (!data) {
@@ -52,7 +56,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 
 	const close = () => {
 		setModalOpen(false);
-	}
+	};
 
 	return (
 		<Box className={classes.root}>
@@ -72,14 +76,7 @@ export const RecordContent: React.FC<ClassificationProps> = (props) => {
 					<Typography variant="h2" color="textPrimary">
 						{props.hasSensors ? (props.isRecording ? "Recording" : "Paused") : "Missing sensors"}
 					</Typography>
-					{modalOpen ? (
-						<StatusPopup
-							close={close}
-							open={modalOpen}
-						></StatusPopup>
-					) : (
-						<></>
-					)}
+					{modalOpen ? <StatusPopup close={close} open={modalOpen}></StatusPopup> : <></>}
 				</Grid>
 			</Grid>
 		</Box>
@@ -96,14 +93,14 @@ const useStyles = makeStyles((theme) => ({
 		textAlign: "center",
 	},
 	btn: {
-		backgroundColor: (props: ClassificationProps) => (!props.hasSensors ? "rgba(60, 60, 60, 0.5)" : theme.palette.primary.main) as string,
+		backgroundColor: (props: classificationProps) => (!props.hasSensors ? "rgba(60, 60, 60, 0.5)" : theme.palette.primary.main) as string,
 		margin: "20px",
 		"&:hover": {
 			backgroundColor: theme.palette.primary.dark,
 		},
 	},
 	recordIcon: {
-		color: (props: ClassificationProps) => (!props.hasSensors ? "#aaa" : "#fff") as string,
+		color: (props: classificationProps) => (!props.hasSensors ? "#aaa" : "#fff") as string,
 		fontSize: "100px",
 	},
 	"@keyframes rotate": {

@@ -1,0 +1,52 @@
+name: GotYourBack CI/CD
+on: [push]
+
+jobs:
+  python-setup-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8.5]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python.version }}
+      - name: Python version
+        run: python -c "import sys; print(sys.version)"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run data_queue_tests
+        run: cd "scripts/tests" && python -m unittest data_queue_test.py
+      - name: Run sensor bank tests
+        run: cd "scripts/tests" && python -m unittest sensor_bank_offline_test.py
+
+  node-setup-and-build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.16.0"
+      - name: Node version
+        run: node -v
+      - name: Install dependencies
+        run: cd frontend && npm ci
+      - name: Build
+        run: cd frontend && npm run make
+
+  api-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@4.1.1
+        with:
+          branch: github_pages # The branch the action should deploy to.
+          folder: docs # The folder the action should deploy.
+

@@ -21,6 +21,17 @@
   "typedocOptions": {
     "entryPoints": ["src/index.tsx"],
     "out": "./build_frontend/html",
-    "exclude": "**/node_modules/**"
+    "exclude": [
+      "**/node_modules/**",
+      "**/@types",
+      "**/setupTests.*",
+      "**/react-app-env.*",
+      "**/reportWebVitals.*",
+      "**/App.tsx",
+      "**/index.tsx",
+      "**/Routing.tsx"
+    ],
+    "theme": "default",
+    "name": "Frontend API Documentation"
   }
 }

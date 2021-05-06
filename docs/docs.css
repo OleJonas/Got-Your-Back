@@ -1,0 +1,91 @@
+body {
+	background-color: #0a2339;
+}
+
+.container {
+	height: 95vh;
+	width: 95vw;
+	display: grid;
+}
+
+.main {
+	background-color: white;
+	place-self: center;
+	display: grid;
+	border: 3px solid black;
+	border-radius: 5px;
+	padding: 30px 50px;
+}
+
+.title {
+	text-align: center;
+}
+
+.subtitle {
+	display: flex;
+	align-items: center;
+}
+
+.body {
+	margin-top: 10px;
+	width: 380px;
+	padding: 20px 10px 30px 10px;
+	text-align: left;
+}
+
+p {
+	text-align: justify;
+}
+
+.buttons {
+	text-align: center;
+}
+
+h1,
+h2 {
+	/* color: white; */
+	font-family: nunito;
+	font-weight: 600;
+	margin: 0;
+}
+p {
+	/* color: white; */
+	font-family: nunito;
+	font-weight: 400;
+	margin: 0;
+}
+
+hr {
+	width: 30px;
+	height: 3px;
+	border: none;
+	background-color: black;
+}
+
+a.button {
+	display: inline-block;
+	padding: 0.35em 1.2em;
+	border: 0.1em solid #ffffff;
+	margin: 0.5em 0.6em;
+	border-radius: 0.12em;
+	box-sizing: border-box;
+	text-decoration: none;
+	font-family: "nunito";
+	font-weight: 300;
+	color: #fff;
+	background-color: #0a2339;
+	text-align: center;
+	transition: all 0.2s;
+}
+a.button:hover {
+	color: #000;
+	background-color: #fff;
+	border: 0.1em solid#0a2339;
+	cursor: pointer;
+}
+@media all and (max-width: 30em) {
+	  a.button {
+		display: block;
+		margin: 0.4em auto;
+	}
+}
