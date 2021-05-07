@@ -87,8 +87,6 @@ def with_server_suite():
     suite.addTest(sensor_bank_test("test_remove_unsync_data"))
     suite.addTest(sensor_bank_test("test_disconnect_sensor"))
 
-# 69
-
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(no_server_suite())
