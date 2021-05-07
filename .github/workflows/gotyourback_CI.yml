@@ -25,7 +25,7 @@ jobs:
         run: cd "scripts/tests" && python -m unittest sensor_bank_offline_test.py
 
   node-setup-and-build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js
@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: cd frontend && npm ci
       - name: Build
-        run: cd frontend && npm run make
+        run: cd frontend && npm run build
 
   api-deploy:
     runs-on: ubuntu-latest

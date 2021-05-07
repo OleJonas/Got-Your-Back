@@ -110,7 +110,6 @@ Run the `start.command`/`start.bat` executable.
 
 #### Forked project
 
-Find the application in dist and run it from there or run the application with one of the following scripts (in frontend directory):
+Run `npm install`, followed by running ``npm run make_windows`` (only windows) or ``npm run make`` (both macOS and Windows) for building the application. 
 
-- `npm start` (in browser)
-- `npm run dev` (in electron) from the frontend folder.
+Now you could either find the application in dist and run it from there, or you can run ``npm start`` (in browser) or ``npm run dev`` (in electron) from the frontend folder to run as a development application. When built you can also run ``start.command`` or ``start.bat`` to open the application.

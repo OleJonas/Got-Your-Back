@@ -85,9 +85,11 @@ from inside the backend folder.
 *For running the application, you could either:*
       - Release
             - click on the ``start.command``/``start.bat`` (recommended) - this also starts server!
-      - Forked
-            - find the application in dist and run it from there
-            - run ``npm start`` (in browser) or ``npm run dev`` (in electron) from the frontend folder.
+      - Forked - Build application
+            - run ``npm install``
+            - build by running ``npm run make_windows`` (only windows) or ``npm run make`` (both macOS and Windows)
+            - now you could either find the application in dist and run it from there. Also possible to run ``start.command`` or ``start.bat`` now.
+            - or you can run ``npm start`` (in browser) or ``npm run dev`` (in electron) from the frontend folder to run as development application.
 
 
 Indices and tables
