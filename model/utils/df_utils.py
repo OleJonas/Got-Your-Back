@@ -1,4 +1,3 @@
-import numpy
 import pandas as pd
 
 
@@ -55,25 +54,13 @@ class df_wrapper:
         # print("Splitting into ", n_sensors, " separate dataframes...")
         self.split_mult_sensor_data(n_sensors)
 
-        # print("Fixing time offsets")
-        offsets = self.fix_offsets()
-
-        # print("Dropping unused columns...")
-
         drop_arr = []
         if " FrameNumber" not in self.df.columns:
             drop_arr = ['SensorId']
         else:
+            drop_arr = ['SensorId', ' FrameNumber', ' MagX (uT)', ' MagY (uT)', ' MagZ (uT)', ' EulerX (deg)', ' EulerY (deg)',
+                        ' EulerZ (deg)', ' Pressure (kPa)', ' Altitude (m)', ' Temperature (degC)', ' HeaveMotion (m)']
 
-            # Old
-            #
-            # drop_arr = ['SensorId', ' FrameNumber', ' LinAccX (g)', ' LinAccY (g)', ' LinAccZ (g)',
-            #             ' Pressure (kPa)', ' Altitude (m)', ' Temperature (degC)', ' HeaveMotion (m)', 
-            #             ' MagX (uT)', ' MagY (uT)', ' MagZ (uT)']
-
-            # New
-            drop_arr = ['SensorId', ' FrameNumber', ' MagX (uT)', ' MagY (uT)', ' MagZ (uT)' , ' EulerX (deg)', ' EulerY (deg)', ' EulerZ (deg)', ' Pressure (kPa)', ' Altitude (m)', ' Temperature (degC)', ' HeaveMotion (m)']
-        
         self.df_arr[0] = self.df_arr[0].drop(drop_arr, axis=1)
         drop_arr.append(' TimeStamp (s)')
 

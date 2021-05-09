@@ -2,6 +2,7 @@ model/__pycache__/*
 model/__pycache__/
 model/__pycache__
 data/*/*_labels.txt
+data/preprocessed_data/*
 .vscode
 __pycache__
 __pycache__*
