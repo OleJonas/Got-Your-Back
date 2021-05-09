@@ -72,7 +72,7 @@ class df_wrapper:
                         ' MagX (uT)', ' MagY (uT)', ' MagZ (uT)']"""
 
             # New
-            drop_arr = ['SensorId', ' FrameNumber',
+            drop_arr = ['SensorId', ' FrameNumber', ' EulerX (deg)', ' EulerY (deg)', ' EulerZ (deg)',
                         ' Pressure (kPa)', ' Altitude (m)', ' Temperature (degC)', ' HeaveMotion (m)',
                         ' MagX (uT)', ' MagY (uT)', ' MagZ (uT)']
 
