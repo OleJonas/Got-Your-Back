@@ -38,18 +38,16 @@ training_files = {
                             "../../data/annotation/training/005_train_3_090221.txt"),
     "006": training_class("../../data/train_data/006_train_3_110221.csv",
                               "../../data/annotation/training/006_train_3_110221.txt"),
+    # "007": training_class("../../data/train_data/007_train_3_030321.csv",
+    #                     "../../data/annotation/training/007_train_3_030321.txt"),
+    # "008": training_class("../../data/train_data/008_train_3_030321.csv",
+    #                     "../../data/annotation/training/008_train_3_030321.txt"),
     "009": training_class("../../data/train_data/009_train_3_120421.csv",
-                          "../../data/annotation/training/009_train_3_120421.txt")
+                          "../../data/annotation/training/009_train_3_120421.txt"),
+    # "010": training_class("../../data/train_data/010_train_3_220421.csv",
+    #                       "../../data/annotation/training/010_train_3_220421.txt"),
 }
-"""
-"010": training_class("../../data/train_data/010_train_3_220421.csv",
-                          "../../data/annotation/training/010_train_3_220421.txt"),
 
-"007": training_class("../../data/train_data/007_train_3_030321.csv",
-                        "../../data/annotation/training/007_train_3_030321.txt"),
-"008": training_class("../../data/train_data/008_train_3_030321.csv",
-                        "../../data/annotation/training/008_train_3_030321.txt"),
-"""
 
 testing_files = {
     "001": testing_class("../../data/test_data/001_test_3_040221.csv",
