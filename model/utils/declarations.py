@@ -50,10 +50,12 @@ training_files = {
 
 
 testing_files = {
-    "001": testing_class("../../data/test_data/001_test_3_040221.csv",
-                            "../../data/annotation/testing/001_test_3_040221.txt"),
+    "001": testing_class("../../data/test_data/001_test_3_100521.csv",
+                            "../../data/annotation/testing/001_test_3_100521.txt"),
     "002": testing_class("../../data/test_data/002_test_3_140421.csv",
                           "../../data/annotation/testing/002_test_3_140421.txt"),
+    "003": testing_class("../../data/test_data/003_test_3_100521.csv",
+                          "../../data/annotation/testing/003_test_3_100521.txt"),
     "004": testing_class("../../data/test_data/004_test_3_110221.csv",
                               "../../data/annotation/testing/004_test_3_110221.txt"),
     "005": testing_class("../../data/test_data/005_test_3_090221.csv",
