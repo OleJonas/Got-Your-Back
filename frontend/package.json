@@ -3,7 +3,7 @@
   "productName": "Got Your Back",
   "author": "NTNU - Bachelor's group 66",
   "description": "An application for classifying variety in sitting posture using machine learning.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "main": "public/electron.js",
   "homepage": "./",
