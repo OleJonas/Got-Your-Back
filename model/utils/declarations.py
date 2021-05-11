@@ -64,14 +64,11 @@ testing_files = {
                              "../../data/annotation/testing/006_test_3_110221.txt"),
     "007": testing_class("../../data/test_data/007_test_3_030321.csv",
                         "../../data/annotation/testing/007_test_3_030321.txt"),
+    "008": testing_class("../../data/test_data/008_test_3_030321.csv",
+                        "../../data/annotation/testing/008_test_3_030321.txt"),
     "009": testing_class("../../data/test_data/009_test_3_120421.csv",
                           "../../data/annotation/testing/009_test_3_120421.txt"),
     "010": testing_class("../../data/test_data/010_test_3_220421.csv",
                         "../../data/annotation/testing/010_test_3_220421.txt"),
 }
 
-
-"""
-"008": testing_class("../../data/test_data/008_test_3_030321.csv",
-                        "../../data/annotation/testing/008_test_3_030321.txt"),
-"""
