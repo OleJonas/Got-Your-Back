@@ -21,8 +21,6 @@ jobs:
           pip install -r requirements.txt
       - name: Run data_queue_tests
         run: cd "scripts/tests" && python -m unittest data_queue_test.py
-      - name: Run sensor bank tests
-        run: cd "scripts/tests" && python -m unittest sensor_bank_offline_test.py
 
   node-setup-and-build:
     runs-on: ubuntu-latest
