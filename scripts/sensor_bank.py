@@ -1,4 +1,7 @@
-import openzen
+try:
+    import openzen
+except ImportError:
+    pass
 import time
 import threading
 
