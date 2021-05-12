@@ -70,7 +70,7 @@ class Sensor_Bank:
         self.zen_handles = 1
         self.handle_to_id = {}
 
-    def add_sensor(self, name: str, sensor: openzen.ZenSensor, imu: openzen.ZenSensorComponent):
+    def add_sensor(self, name: str, sensor: openzen.ZenSensor or str, imu: openzen.ZenSensorComponent or str):
         """Add sensor to sensor bank.
 
         Args:
