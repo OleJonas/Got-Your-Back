@@ -74,9 +74,6 @@ Got Your Back/frontend
 │   │       └── StatusPopup.component.tsx
 │   ├── index.css
 │   ├── index.tsx
-│   ├── react-app-env.d.ts
-│   ├── reportWebVitals.ts
-│   ├── setupTests.ts
 │   ├── theme.tsx
 │   ├── utils
 │   │   ├── dateUtils.ts
