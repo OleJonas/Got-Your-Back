@@ -22,7 +22,6 @@ Create releases for both windows and mac and upload
 Got Your Back/frontend
 ├── README.md
 ├── assets
-│   └── icon.png
 ├── build
 ├── dist
 ├── package-lock.json
@@ -38,13 +37,6 @@ Got Your Back/frontend
 │   ├── App.tsx
 │   ├── Routing.tsx
 │   ├── assets
-│   │   ├── App_Icon.png
-│   │   ├── Logo.svg
-│   │   ├── Sensor_placement.svg
-│   │   ├── Sensor_placement_numerated.svg
-│   │   ├── loader.svg
-│   │   ├── loader_black.svg
-│   │   └── loader_white.svg
 │   ├── components
 │   │   ├── Buttons
 │   │   │   ├── Button.component.tsx
