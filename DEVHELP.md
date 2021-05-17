@@ -1,11 +1,7 @@
-# Got Your Back
-
-This repository is for our Bachelors project; a project in which we want to be able to classify your posture over time and give feedback to the user regarding their posture both live and over time. This will be visualized by Simon Årdal's seaborn diagrams, in which you will find EVERYWHERE. Buckle up, this gonna be a wild ride!!!
-
-#### For cloning this repo, write:
+#### For cloning repo:
 
 As we depend on another repo for the OpenZen-library, you have to clone the project with the submodules included.
-The following line wil fix this for you:
+The following line will fix this for you:
 
 `git clone --recurse-submodules https://github.com/OleJonas/Got-Your-Back.git 'GotYourBack'`
 
@@ -119,6 +115,7 @@ cd docs
 sphinx-build -b html ./source ./build_backend/html
 ```
 and make html from rst only with `make html`
+
 
 ## Create trees
 
