@@ -1,8 +1,7 @@
 # Got Your Back
 
 [![GotYourBack CI/CD](https://github.com/OleJonas/Got-Your-Back/actions/workflows/gotyourback_CI.yml/badge.svg?branch=main)](https://github.com/OleJonas/Got-Your-Back/actions/workflows/gotyourback_CI.yml)
-[![Documentation Status](https://readthedocs.org/projects/ansicolortags/badge/?version=latest)](http://ansicolortags.readthedocs.io/?badge=latest)
-[![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://olejonas.github.io/Got-Your-Back/)
+[![Documentation Status](https://readthedocs.org/projects/ansicolortags/badge/?version=latest)](https://olejonas.github.io/Got-Your-Back/)
 
 This project contains code written in relation to our bachelor project at NTNU. Our assignment was to classify sitting postures with machine learning algorithms on accelerometer- and gyroscope-data. The datasets are recorded using sensors from LP-RESEARCH, and provided in this repository. Additionally, we have developed an electron app for recording data and classifying your sitting posture in realtime.
 
