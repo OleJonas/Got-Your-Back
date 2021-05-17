@@ -39,6 +39,8 @@ In addition to this, there is folders for data recorded for model training, clas
       │   │   ├── ANN.ipynb
       │   │   ├── CNN.ipynb
       │   │   ├── LSTM.ipynb
+      │   │   ├── Preprocess_data.ipynb
+      │   │   ├── Precision.ipynb
       │   │   └── RFC.ipynb
       │   └── utils
       │       ├── declarations.py
@@ -61,6 +63,7 @@ In addition to this, there is folders for data recorded for model training, clas
       ├── start.command
       ├── start_server.bat
       └── start_server.command
+      
 
 Setup & download
 =================
