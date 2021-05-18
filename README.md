@@ -135,12 +135,12 @@ Got Your Back
 │   │   ├── ANN.ipynb
 │   │   ├── CNN.ipynb
 │   │   ├── LSTM.ipynb
-│   │   ├── Preprocess_data.ipynb
-│   │   ├── Precision.ipynb
 │   │   └── RFC.ipynb
 │   └── utils
 │       ├── declarations.py
-│       └── df_utils.py
+│       ├── df_utils.py
+│       ├── Preprocess_data.ipynb
+│       └── Precision.ipynb
 ├── reports
 ├── requirements.txt
 ├── scripts
