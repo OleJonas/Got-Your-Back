@@ -8,7 +8,6 @@ __pycache__
 __pycache__*
 __pycache__/
 /node_modules
-model/src
 # model/src/ANN.ipynb
 # model/src/LSTM.ipynb  
 # model/src/Data_presentation.ipynb
