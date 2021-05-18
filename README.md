@@ -1,18 +1,28 @@
 # Got Your Back
 
-This project contains code written in relation to our bachelor project at NTNU. Our assignment is to classify sitting postures with machine learning algorithms on accelerometer- and gyroscope-data. The datasets are recorded using sensors from LP-RESEARCH, and provided in this repository. Additionally, we have developed an electron app for recording data and live-classify your sitting posture over time.
+[![GotYourBack CI/CD](https://github.com/OleJonas/Got-Your-Back/actions/workflows/gotyourback_CI.yml/badge.svg?branch=main)](https://github.com/OleJonas/Got-Your-Back/actions/workflows/gotyourback_CI.yml)
+[![Documentation Status](https://readthedocs.org/projects/ansicolortags/badge/?version=latest)](https://olejonas.github.io/Got-Your-Back/)
 
-#### Releases:
+This project contains code written in relation to our bachelor project at NTNU. Our assignment was to classify sitting postures with machine learning algorithms on accelerometer- and gyroscope-data. The datasets are recorded using sensors from LP-RESEARCH, and provided in this repository. Additionally, we have developed an electron app for recording data and classifying your sitting posture in realtime.
 
-For cloning:
+#### Installation and setup:
+
+##### Prerequisites
+* [Python](https://www.python.org/downloads/)
+* [pip](https://pip.pypa.io/en/stable/installing/)
+* [node.js](https://nodejs.org/en/download/7.2)
+
+##### Setup:
+* Download latest release
+* Open a terminal in the project root
+* Run `pip install -r "requirements.txt"`
+* Run the command `start.bat` for windows and `start.command` for mac
+
+##### Alternative: Clone project
 As we depend on another repo for the OpenZen-library, you have to clone the project with the submodules included. The following line will fix this for you:
-
 `git clone --recurse-submodules https://github.com/OleJonas/Got-Your-Back.git 'GotYourBack'`
 
-TODO:
-Create releases for both windows and mac and upload
-
-#### Setup
+You will also need to run `npm install` inside the frontend-folder, and `pip install -r "requirements.txt"` inside root. For running the application you will need to make it using `npm run make_windows` for windows or `npm run make` for mac. Another option is to run as development server either in browser (`npm start`) or as an electron application (`npm run dev`).
 
 #### Structure
 
@@ -22,7 +32,6 @@ Create releases for both windows and mac and upload
 Got Your Back/frontend
 ├── README.md
 ├── assets
-│   └── icon.png
 ├── build
 ├── dist
 ├── package-lock.json
@@ -38,13 +47,6 @@ Got Your Back/frontend
 │   ├── App.tsx
 │   ├── Routing.tsx
 │   ├── assets
-│   │   ├── App_Icon.png
-│   │   ├── Logo.svg
-│   │   ├── Sensor_placement.svg
-│   │   ├── Sensor_placement_numerated.svg
-│   │   ├── loader.svg
-│   │   ├── loader_black.svg
-│   │   └── loader_white.svg
 │   ├── components
 │   │   ├── Buttons
 │   │   │   ├── Button.component.tsx
@@ -82,9 +84,6 @@ Got Your Back/frontend
 │   │       └── StatusPopup.component.tsx
 │   ├── index.css
 │   ├── index.tsx
-│   ├── react-app-env.d.ts
-│   ├── reportWebVitals.ts
-│   ├── setupTests.ts
 │   ├── theme.tsx
 │   ├── utils
 │   │   ├── dateUtils.ts
@@ -139,7 +138,9 @@ Got Your Back
 │   │   └── RFC.ipynb
 │   └── utils
 │       ├── declarations.py
-│       └── df_utils.py
+│       ├── df_utils.py
+│       ├── Preprocess_data.ipynb
+│       └── Precision.ipynb
 ├── reports
 ├── requirements.txt
 ├── scripts
