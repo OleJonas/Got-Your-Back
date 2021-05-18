@@ -39,12 +39,13 @@ In addition to this, there is folders for data recorded for model training, clas
       │   │   ├── ANN.ipynb
       │   │   ├── CNN.ipynb
       │   │   ├── LSTM.ipynb
-      │   │   ├── Preprocess_data.ipynb
-      │   │   ├── Precision.ipynb
       │   │   └── RFC.ipynb
       │   └── utils
+      │       ├── Data_presentation.ipynb
       │       ├── declarations.py
-      │       └── df_utils.py
+      │       ├── df_utils.py
+      │       ├── Preprocess_data.ipynb
+      │       └── Precision.ipynb
       ├── reports
       ├── requirements.txt
       ├── scripts
