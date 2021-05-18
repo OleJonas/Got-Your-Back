@@ -16,7 +16,7 @@ This project contains code written in relation to our bachelor project at NTNU. 
 * Download latest release
 * Open a terminal in the project root
 * Run `pip install -r "requirements.txt"`
-* Run the command `start.bat` for windows and `start.command` for mac
+* Run the command `start.bat` for windows or `start.command` for mac
 
 ##### Alternative: Clone project
 As we depend on another repo for the OpenZen-library, you have to clone the project with the submodules included. The following line will fix this for you:
