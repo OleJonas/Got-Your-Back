@@ -8,7 +8,7 @@ This project contains code written in relation to our bachelor project at NTNU. 
 #### Installation and setup:
 
 ##### Prerequisites
-* [Python](https://www.python.org/downloads/)
+* [Python 3.8](https://www.python.org/downloads/release/python-380/)
 * [pip](https://pip.pypa.io/en/stable/installing/)
 * [node.js](https://nodejs.org/en/download/7.2)
 
