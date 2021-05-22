@@ -26,7 +26,7 @@ You will also need to run `npm install` inside the frontend-folder, and `pip ins
 
 #### Troubleshooting
 
-If you are experiencing any problems during sensor connection (may result in `The file "btScan" doesn't exist` written in the terminal), try building the openzen lib again. 
+If you are experiencing any problems connecting to the sensors (eg. `The file "btScan" doesn't exist`), try building the openzen lib again. 
 This is done by running the following commands:
 - `cd ./lib/openzen`
 - `mkdir build && cd build`
